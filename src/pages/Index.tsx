@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Map as MapIcon, Camera, Award } from "lucide-react";
+import { ArrowRight, Map as MapIcon, Camera, Award, Music, Trophy, Landmark } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import FeaturedContest from "@/components/FeaturedContest";
@@ -10,10 +10,10 @@ import Map from "@/components/Map";
 // Mock data for featured contest
 const featuredContest = {
   id: "1",
-  title: "Festival de Fotografía Urbana",
-  description: "Captura la esencia de la ciudad y sus habitantes en este concurso especializado en fotografía urbana. Buscamos miradas únicas que revelen la vida cotidiana desde perspectivas innovadoras.",
-  imageUrl: "https://images.unsplash.com/photo-1514565131-fce0801e5785?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80",
-  location: "Barcelona",
+  title: "Festival de Música Rock",
+  description: "Captura los mejores momentos del festival más importante del año. Buscamos fotos que transmitan la energía, emoción y ambiente único de este evento musical.",
+  imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80",
+  location: "Madrid",
   dateStart: "2023-06-15",
   dateEnd: "2023-06-30",
   participantsCount: 124,
@@ -24,9 +24,9 @@ const featuredContest = {
 const popularContests = [
   {
     id: "2",
-    title: "Naturaleza Salvaje",
-    imageUrl: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
-    location: "Parque Nacional de Doñana",
+    title: "Maratón de la Ciudad",
+    imageUrl: "https://images.unsplash.com/photo-1530137073265-ac01e0a5ef2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
+    location: "Barcelona",
     dateStart: "2023-07-01",
     dateEnd: "2023-07-10",
     participantsCount: 78,
@@ -34,9 +34,9 @@ const popularContests = [
   },
   {
     id: "3",
-    title: "Gastronomía Local",
-    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
-    location: "Madrid",
+    title: "Plaza Mayor - Monumentos Históricos",
+    imageUrl: "https://images.unsplash.com/photo-1558370781-d6196949e317?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
+    location: "Salamanca",
     dateStart: "2023-07-15",
     dateEnd: "2023-07-20",
     participantsCount: 56,
@@ -44,8 +44,8 @@ const popularContests = [
   },
   {
     id: "4",
-    title: "Arquitectura Moderna",
-    imageUrl: "https://images.unsplash.com/photo-1496564203457-11bb12075d90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2276&q=80",
+    title: "Festival Gastronómico",
+    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Valencia",
     dateStart: "2023-08-01",
     dateEnd: "2023-08-10",
@@ -86,8 +86,54 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Map Section */}
+      {/* Event Types Section */}
       <section className="py-16 px-4 bg-muted/30">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Fotografía cualquier tipo de evento</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Desde eventos musicales y competiciones deportivas hasta monumentos históricos y plazas emblemáticas.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Music className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Eventos Musicales</h3>
+              <p className="text-muted-foreground text-sm">Conciertos, festivales y actuaciones en vivo</p>
+            </div>
+            
+            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Trophy className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Eventos Deportivos</h3>
+              <p className="text-muted-foreground text-sm">Competiciones, carreras y torneos</p>
+            </div>
+            
+            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Landmark className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Lugares Turísticos</h3>
+              <p className="text-muted-foreground text-sm">Monumentos, plazas y atracciones</p>
+            </div>
+            
+            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+              <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Camera className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-2">Concursos Temáticos</h3>
+              <p className="text-muted-foreground text-sm">Gastronomía, naturaleza y arte</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Map Section */}
+      <section className="py-16 px-4">
         <div className="container max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
             <div>
@@ -162,6 +208,25 @@ const Index = () => {
               <Link to="/register">
                 <span>Empieza ahora</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Organizer Section */}
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container max-w-7xl mx-auto">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-4">¿Eres organizador o colaborador?</h2>
+            <p className="text-muted-foreground mb-8">
+              Crea concursos fotográficos para tus eventos o promociona tu negocio con la mejor plataforma para
+              concursos de fotografía geolocalizada.
+            </p>
+            <Button asChild size="lg">
+              <Link to="/organizers">
+                <Building className="mr-2 h-5 w-5" />
+                <span>Descubre nuestros planes</span>
               </Link>
             </Button>
           </div>

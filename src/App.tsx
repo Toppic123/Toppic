@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import Organizers from "./pages/Organizers";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="profile/:username" element={<Profile />} />
               <Route path="register" element={<Register />} />
               <Route path="login" element={<Login />} />
+              <Route path="organizers" element={<Organizers />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Route>

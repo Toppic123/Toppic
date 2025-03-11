@@ -10,7 +10,8 @@ import {
   X, 
   Map, 
   Award, 
-  PlusCircle
+  PlusCircle,
+  Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ const Header = () => {
   const navItems = [
     { name: "Concursos", path: "/contests", icon: Award },
     { name: "Mapa", path: "/contests", icon: Map },
+    { name: "Organizar", path: "/organizers", icon: Building },
     { name: "Perfil", path: "/profile", icon: User },
   ];
   
