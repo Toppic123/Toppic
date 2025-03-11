@@ -1,0 +1,92 @@
+
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Calendar, MapPin, Camera, User } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type ContestCardProps = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  location: string;
+  dateStart: string;
+  dateEnd: string;
+  participantsCount: number;
+  photosCount: number;
+};
+
+const ContestCard = ({
+  id,
+  title,
+  imageUrl,
+  location,
+  dateStart,
+  dateEnd,
+  participantsCount,
+  photosCount,
+}: ContestCardProps) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="group"
+    >
+      <Link to={`/contests/${id}`} className="block focus:outline-none">
+        <div className="overflow-hidden rounded-xl relative">
+          {/* Image */}
+          <div className="aspect-[16/9] bg-muted overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-70 transition-opacity group-hover:opacity-90" />
+            <img
+              src={imageUrl}
+              alt={title}
+              className={cn(
+                "w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105",
+                imageLoaded ? "opacity-100" : "opacity-0"
+              )}
+              onLoad={() => setImageLoaded(true)}
+            />
+          </div>
+          
+          {/* Overlay content */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 z-20 text-white">
+            <h3 className="font-medium text-lg mb-1">{title}</h3>
+            <div className="flex items-center text-xs text-white/80 mb-2">
+              <MapPin className="w-3 h-3 mr-1" />
+              <span>{location}</span>
+            </div>
+          </div>
+          
+          {/* Pill badge for date */}
+          <div className="absolute top-3 left-3 z-20">
+            <div className="bg-black/70 backdrop-blur-sm text-white text-xs py-1 px-2 rounded-full flex items-center">
+              <Calendar className="w-3 h-3 mr-1" />
+              <span>
+                {new Date(dateStart).toLocaleDateString('es-ES', { 
+                  day: 'numeric', month: 'short' 
+                })}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Stats */}
+        <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+          <div className="flex items-center">
+            <User className="w-3 h-3 mr-1" />
+            <span>{participantsCount} participantes</span>
+          </div>
+          <div className="flex items-center">
+            <Camera className="w-3 h-3 mr-1" />
+            <span>{photosCount} fotos</span>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+};
+
+export default ContestCard;
