@@ -11,8 +11,6 @@ import {
   Info, 
   Flag, 
   AlertTriangle,
-  ThumbsUp,
-  ThumbsDown, 
   ArrowLeft,
   Upload
 } from "lucide-react";
@@ -23,7 +21,6 @@ import { Separator } from "@/components/ui/separator";
 import PhotoCard from "@/components/PhotoCard";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock contest data
 const contestData = {
   id: "1",
   title: "Festival de Fotografía Urbana",
@@ -34,7 +31,7 @@ const contestData = {
   dateEnd: "2023-06-30T20:00:00",
   participantsCount: 124,
   photosCount: 348,
-  status: "active", // active, voting, finished
+  status: "active",
   prizesDescription: "El ganador recibirá un kit de fotografía profesional valorado en 500€ y la oportunidad de exponer su trabajo en la galería central durante el festival.",
   rules: [
     "Las fotografías deben ser tomadas dentro del área del festival.",
@@ -49,7 +46,6 @@ const contestData = {
   }
 };
 
-// Mock photos data
 const photosData = [
   {
     id: "p1",
@@ -99,8 +95,6 @@ const ContestDetail = () => {
   const [contest, setContest] = useState(contestData);
   const [photos, setPhotos] = useState(photosData);
   const [activeTab, setActiveTab] = useState("photos");
-  const [votingMode, setVotingMode] = useState(false);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [votedPhotoId, setVotedPhotoId] = useState<string | null>(null);
   const { toast } = useToast();
   
@@ -126,22 +120,26 @@ const ContestDetail = () => {
   };
   
   const handleVote = (photoId: string, isUpvote: boolean) => {
-    if (votedPhotoId && votedPhotoId !== photoId) {
-      setPhotos(prevPhotos => 
-        prevPhotos.map(photo => 
-          photo.id === votedPhotoId
-            ? { ...photo, votes: photo.votes - 1 }
-            : photo
-        )
-      );
-      
-      toast({
-        title: "Voto cambiado",
-        description: "Tu voto anterior ha sido eliminado",
-      });
+    if (votedPhotoId) {
+      if (votedPhotoId !== photoId) {
+        setPhotos(prevPhotos => 
+          prevPhotos.map(photo => 
+            photo.id === votedPhotoId
+              ? { ...photo, votes: photo.votes - 1 }
+              : photo
+          )
+        );
+        
+        toast({
+          title: "Voto cambiado",
+          description: "Tu voto anterior ha sido eliminado",
+        });
+      } else {
+        return;
+      }
     }
     
-    if (!votedPhotoId || votedPhotoId !== photoId) {
+    if (votedPhotoId !== photoId) {
       if (isUpvote) {
         setPhotos(prevPhotos => 
           prevPhotos.map(photo => 
@@ -156,18 +154,6 @@ const ContestDetail = () => {
         toast({
           title: "Voto registrado",
           description: "Has votado a favor de esta foto",
-        });
-      }
-    }
-    
-    if (votingMode) {
-      if (currentPhotoIndex < photos.length - 1) {
-        setCurrentPhotoIndex(currentPhotoIndex + 1);
-      } else {
-        setVotingMode(false);
-        toast({
-          title: "Votación completada",
-          description: "Has visto todas las fotos del concurso",
         });
       }
     }
@@ -237,66 +223,29 @@ const ContestDetail = () => {
                 </TabsList>
                 
                 <TabsContent value="photos">
-                  {votingMode ? (
-                    <div className="py-8">
-                      <div className="text-center mb-6">
-                        <h3 className="text-xl font-bold mb-2">Modo votación</h3>
-                        <p className="text-muted-foreground mb-4">
-                          Desliza hacia arriba para votar a favor, hacia abajo para pasar
-                        </p>
-                      </div>
-                      
-                      <PhotoCard
-                        {...photos[currentPhotoIndex]}
-                        mode="swipe"
-                        onVote={handleVote}
-                        onReport={handleReport}
-                        userVoted={votedPhotoId === photos[currentPhotoIndex].id}
-                      />
-                      
-                      <div className="text-center mt-8">
-                        <p className="text-sm text-muted-foreground">
-                          Foto {currentPhotoIndex + 1} de {photos.length}
-                        </p>
-                        <Button
-                          variant="outline"
-                          onClick={() => setVotingMode(false)}
-                          className="mt-4"
-                        >
-                          Salir del modo votación
-                        </Button>
-                      </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-xl font-bold">Fotografías participantes</h3>
+                      <Button asChild variant="outline">
+                        <Link to={`/upload/${id}`}>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Subir foto
+                        </Link>
+                      </Button>
                     </div>
-                  ) : (
-                    <div>
-                      <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-xl font-bold">Fotografías participantes</h3>
-                        <div className="flex space-x-2">
-                          <Button onClick={() => setVotingMode(true)}>
-                            Modo votación
-                          </Button>
-                          <Button asChild variant="outline">
-                            <Link to={`/upload/${id}`}>
-                              <Upload className="mr-2 h-4 w-4" />
-                              Subir foto
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                        {photos.map((photo) => (
-                          <PhotoCard
-                            key={photo.id}
-                            {...photo}
-                            onVote={handleVote}
-                            onReport={handleReport}
-                            userVoted={votedPhotoId === photo.id}
-                          />
-                        ))}
-                      </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                      {photos.map((photo) => (
+                        <PhotoCard
+                          key={photo.id}
+                          {...photo}
+                          onVote={handleVote}
+                          onReport={handleReport}
+                          userVoted={votedPhotoId === photo.id}
+                        />
+                      ))}
                     </div>
-                  )}
+                  </div>
                 </TabsContent>
                 
                 <TabsContent value="info">
@@ -428,10 +377,6 @@ const ContestDetail = () => {
                       Participar
                     </Link>
                   </Button>
-                  <Button variant="outline" className="w-full" onClick={() => setVotingMode(true)}>
-                    <ThumbsUp className="mr-2 h-4 w-4" />
-                    Votar fotos
-                  </Button>
                 </div>
               </div>
             </div>
@@ -443,3 +388,4 @@ const ContestDetail = () => {
 };
 
 export default ContestDetail;
+

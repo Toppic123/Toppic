@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Heart, Flag, ThumbsUp, ThumbsDown } from "lucide-react";
@@ -35,6 +36,16 @@ const PhotoCard = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.3 });
   const { toast } = useToast();
+  
+  useEffect(() => {
+    // Update local state when userVoted prop changes
+    setIsVoted(userVoted);
+  }, [userVoted]);
+
+  useEffect(() => {
+    // Update local votes count when votes prop changes
+    setLocalVotes(votes);
+  }, [votes]);
   
   const handleTapOrClick = () => {
     const now = Date.now();
