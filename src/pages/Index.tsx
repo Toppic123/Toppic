@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Map as MapIcon, Camera, Award, Music, Trophy, Landmark } from "lucide-react";
+import { ArrowRight, Map as MapIcon, Camera, Award, Music, Trophy, Landmark, Building } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import FeaturedContest from "@/components/FeaturedContest";
