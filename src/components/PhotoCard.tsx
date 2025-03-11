@@ -1,8 +1,8 @@
-
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Heart, Flag, ThumbsUp, ThumbsDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 type PhotoCardProps = {
   id: string;
@@ -13,6 +13,7 @@ type PhotoCardProps = {
   mode?: "grid" | "swipe";
   onVote?: (id: string, vote: boolean) => void;
   onReport?: (id: string) => void;
+  userVoted?: boolean;
 };
 
 const PhotoCard = ({
@@ -24,13 +25,48 @@ const PhotoCard = ({
   mode = "grid",
   onVote,
   onReport,
+  userVoted = false,
 }: PhotoCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [direction, setDirection] = useState<number>(0);
+  const [isVoted, setIsVoted] = useState<boolean>(userVoted);
+  const [localVotes, setLocalVotes] = useState<number>(votes);
+  const [lastTap, setLastTap] = useState<number>(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.3 });
+  const { toast } = useToast();
   
-  // Handle swipe logic for voting mode
+  const handleTapOrClick = () => {
+    const now = Date.now();
+    const DOUBLE_TAP_DELAY = 300;
+    
+    if (now - lastTap < DOUBLE_TAP_DELAY) {
+      handleVoteToggle();
+    }
+    
+    setLastTap(now);
+  };
+  
+  const handleVoteToggle = () => {
+    if (isVoted) {
+      toast({
+        title: "Ya has votado esta foto",
+        description: "Solo puedes votar una foto por concurso",
+      });
+      return;
+    }
+    
+    setIsVoted(true);
+    setLocalVotes(prev => prev + 1);
+    
+    onVote?.(id, true);
+    
+    toast({
+      title: "Voto registrado",
+      description: "Has votado a favor de esta foto",
+    });
+  };
+  
   useEffect(() => {
     if (mode !== "swipe" || !cardRef.current) return;
     
@@ -51,9 +87,8 @@ const PhotoCard = ({
       const diffX = startX - currentX;
       const diffY = startY - currentY;
       
-      // If vertical swipe is greater than horizontal, use for voting
       if (Math.abs(diffY) > Math.abs(diffX)) {
-        const direction = diffY > 0 ? -1 : 1; // up: -1, down: 1
+        const direction = diffY > 0 ? -1 : 1;
         setDirection(direction);
       }
     };
@@ -102,9 +137,9 @@ const PhotoCard = ({
             imageLoaded ? "opacity-100" : "opacity-0"
           )}
           onLoad={() => setImageLoaded(true)}
+          onClick={handleTapOrClick}
         />
         
-        {/* Swipe indicators */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
           {direction === 1 && (
             <div className="bg-green-500/80 text-white rounded-full p-4">
@@ -118,7 +153,6 @@ const PhotoCard = ({
           )}
         </div>
         
-        {/* Photographer info */}
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white z-10">
           <div className="flex items-center space-x-2">
             {photographerAvatar ? (
@@ -136,10 +170,14 @@ const PhotoCard = ({
           </div>
           
           <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center space-x-1">
-              <Heart className="w-4 h-4 text-red-500" />
-              <span className="text-sm">{votes}</span>
-            </div>
+            <button 
+              className="flex items-center space-x-1 group"
+              onClick={handleVoteToggle}
+              aria-label="Vote for this photo"
+            >
+              <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
+              <span className="text-sm">{localVotes}</span>
+            </button>
             <button
               onClick={() => onReport?.(id)}
               className="text-white/80 hover:text-white transition-colors"
@@ -161,7 +199,10 @@ const PhotoCard = ({
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, delay: 0.1 }}
     >
-      <div className="aspect-[3/4] bg-muted overflow-hidden rounded-xl">
+      <div 
+        className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative"
+        onClick={handleTapOrClick}
+      >
         <img
           src={imageUrl}
           alt={`Photo by ${photographer}`}
@@ -171,6 +212,11 @@ const PhotoCard = ({
           )}
           onLoad={() => setImageLoaded(true)}
         />
+        {isVoted && (
+          <div className="absolute top-2 right-2 bg-primary/90 text-white p-1.5 rounded-full">
+            <Heart className="w-4 h-4 fill-white" />
+          </div>
+        )}
       </div>
       
       <div className="p-2">
@@ -190,10 +236,14 @@ const PhotoCard = ({
             <span className="text-sm font-medium">{photographer}</span>
           </div>
           
-          <div className="flex items-center space-x-1">
-            <Heart className="w-4 h-4 text-red-500" />
-            <span className="text-xs text-muted-foreground">{votes}</span>
-          </div>
+          <button 
+            className="flex items-center space-x-1 group"
+            onClick={handleVoteToggle}
+            aria-label="Vote for this photo"
+          >
+            <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
+            <span className="text-xs text-muted-foreground">{localVotes}</span>
+          </button>
         </div>
       </div>
     </motion.div>

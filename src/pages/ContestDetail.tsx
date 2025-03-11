@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -102,16 +101,13 @@ const ContestDetail = () => {
   const [activeTab, setActiveTab] = useState("photos");
   const [votingMode, setVotingMode] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [votedPhotoId, setVotedPhotoId] = useState<string | null>(null);
   const { toast } = useToast();
   
-  // In a real app, you would fetch the contest and photos data here
   useEffect(() => {
-    // Fetch contest and photos data based on the id
-    // This is just a placeholder
     console.log(`Fetching contest with id: ${id}`);
   }, [id]);
   
-  // Calculate time remaining for the contest
   const getTimeRemaining = () => {
     const now = new Date();
     const end = new Date(contest.dateEnd);
@@ -129,26 +125,42 @@ const ContestDetail = () => {
     }
   };
   
-  // Handle voting in swipe mode
   const handleVote = (photoId: string, isUpvote: boolean) => {
-    if (isUpvote) {
-      toast({
-        title: "Voto registrado",
-        description: "Has votado a favor de esta foto",
-      });
+    if (votedPhotoId && votedPhotoId !== photoId) {
+      setPhotos(prevPhotos => 
+        prevPhotos.map(photo => 
+          photo.id === votedPhotoId
+            ? { ...photo, votes: photo.votes - 1 }
+            : photo
+        )
+      );
       
-      // Move to next photo
-      if (currentPhotoIndex < photos.length - 1) {
-        setCurrentPhotoIndex(currentPhotoIndex + 1);
-      } else {
-        setVotingMode(false);
+      toast({
+        title: "Voto cambiado",
+        description: "Tu voto anterior ha sido eliminado",
+      });
+    }
+    
+    if (!votedPhotoId || votedPhotoId !== photoId) {
+      if (isUpvote) {
+        setPhotos(prevPhotos => 
+          prevPhotos.map(photo => 
+            photo.id === photoId
+              ? { ...photo, votes: photo.votes + 1 }
+              : photo
+          )
+        );
+        
+        setVotedPhotoId(photoId);
+        
         toast({
-          title: "Votación completada",
-          description: "Has visto todas las fotos del concurso",
+          title: "Voto registrado",
+          description: "Has votado a favor de esta foto",
         });
       }
-    } else {
-      // Skip to next photo
+    }
+    
+    if (votingMode) {
       if (currentPhotoIndex < photos.length - 1) {
         setCurrentPhotoIndex(currentPhotoIndex + 1);
       } else {
@@ -161,7 +173,6 @@ const ContestDetail = () => {
     }
   };
   
-  // Handle reporting a photo
   const handleReport = (photoId: string) => {
     toast({
       title: "Foto reportada",
@@ -182,7 +193,6 @@ const ContestDetail = () => {
           </Link>
           
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-            {/* Main content */}
             <div className="lg:col-span-3">
               <div className="relative aspect-[16/9] rounded-xl overflow-hidden mb-6">
                 <img
@@ -241,6 +251,7 @@ const ContestDetail = () => {
                         mode="swipe"
                         onVote={handleVote}
                         onReport={handleReport}
+                        userVoted={votedPhotoId === photos[currentPhotoIndex].id}
                       />
                       
                       <div className="text-center mt-8">
@@ -278,7 +289,9 @@ const ContestDetail = () => {
                           <PhotoCard
                             key={photo.id}
                             {...photo}
+                            onVote={handleVote}
                             onReport={handleReport}
+                            userVoted={votedPhotoId === photo.id}
                           />
                         ))}
                       </div>
@@ -360,7 +373,6 @@ const ContestDetail = () => {
               </Tabs>
             </div>
             
-            {/* Sidebar */}
             <div className="lg:col-span-2">
               <div className="bg-card rounded-xl border shadow-sm p-6 sticky top-24">
                 <h3 className="text-xl font-bold mb-4">Resumen del concurso</h3>
@@ -390,6 +402,12 @@ const ContestDetail = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fecha fin</span>
+                    <span className="font-medium">
+                      {new Date(contest.dateEnd).toLocaleDateString('es-ES')}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Fin votaciones</span>
                     <span className="font-medium">
                       {new Date(contest.dateEnd).toLocaleDateString('es-ES')}
                     </span>
