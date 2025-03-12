@@ -515,7 +515,7 @@ const Dashboard = () => {
             <CardDescription>Total de usuarios registrados</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{mockUsers.length}</p>
+            <p className="text-4xl font-bold">{users.length}</p>
           </CardContent>
         </Card>
         
@@ -528,7 +528,7 @@ const Dashboard = () => {
             <CardDescription>Total de concursos creados</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{mockEvents.length}</p>
+            <p className="text-4xl font-bold">{events.length}</p>
           </CardContent>
         </Card>
         
@@ -541,7 +541,7 @@ const Dashboard = () => {
             <CardDescription>Entidades activas</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">{mockOrganizers.filter(o => o.status === "active").length}</p>
+            <p className="text-4xl font-bold">{organizers.filter(o => o.status === "active").length}</p>
           </CardContent>
         </Card>
         
@@ -909,7 +909,7 @@ const Dashboard = () => {
                       <TableCell className="font-medium">{photo.title}</TableCell>
                       <TableCell>{photo.photographer}</TableCell>
                       <TableCell>
-                        {mockEvents.find(e => e.id === photo.contestId)?.name || "Desconocido"}
+                        {events.find(e => e.id === photo.contestId)?.name || "Desconocido"}
                       </TableCell>
                       <TableCell>{photo.uploadDate}</TableCell>
                       <TableCell>{photo.votes}</TableCell>
@@ -1257,7 +1257,7 @@ const Dashboard = () => {
                 className="w-full rounded-md border border-input p-2"
               >
                 <option value="">Seleccionar organizador...</option>
-                {mockOrganizers.filter(o => o.status === "active").map(org => (
+                {organizers.filter(o => o.status === "active").map(org => (
                   <option key={org.id} value={org.name}>{org.name}</option>
                 ))}
               </select>
