@@ -15,7 +15,9 @@ import {
   CreditCard,
   DollarSign,
   Edit,
-  Trash2
+  Trash2,
+  Image,
+  PlusCircle
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -33,6 +35,11 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, FormField } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data - would be replaced with actual API calls
 const mockUsers = [
@@ -48,6 +55,13 @@ const mockEvents = [
   { id: 103, name: "Retratos de Primavera", organizer: "Galería Moderna", status: "pending", participants: 0, maxVotes: 2, endDate: "2023-11-20" },
 ];
 
+const mockPhotos = [
+  { id: 201, title: "Atardecer en la playa", photographer: "Ana García", contestId: 101, uploadDate: "2023-09-10", votes: 15 },
+  { id: 202, title: "Calles de Barcelona", photographer: "Pablo Sánchez", contestId: 101, uploadDate: "2023-09-12", votes: 8 },
+  { id: 203, title: "Montañas al amanecer", photographer: "Elena Martínez", contestId: 102, uploadDate: "2023-08-05", votes: 23 },
+  { id: 204, title: "Retrato familiar", photographer: "Carlos Rodríguez", contestId: 103, uploadDate: "2023-10-01", votes: 0 },
+];
+
 const mockSubscriptions = [
   { id: 1, name: "Plan Básico", price: "29.99", billing: "monthly", features: ["1 concurso/mes", "50 participantes máx.", "10 días de duración"], active: true },
   { id: 2, name: "Plan Profesional", price: "99.99", billing: "monthly", features: ["5 concursos/mes", "200 participantes máx.", "30 días de duración"], active: true },
@@ -58,7 +72,33 @@ const mockSubscriptions = [
 const Dashboard = () => {
   const [searchUser, setSearchUser] = useState("");
   const [searchEvent, setSearchEvent] = useState("");
+  const [searchPhoto, setSearchPhoto] = useState("");
   const [searchSubscription, setSearchSubscription] = useState("");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
+  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{id: number, type: string} | null>(null);
+  const { toast } = useToast();
+
+  const userForm = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      status: "active",
+      plan: "Basic"
+    }
+  });
+
+  const eventForm = useForm({
+    defaultValues: {
+      name: "",
+      organizer: "",
+      maxVotes: 1,
+      endDate: ""
+    }
+  });
 
   const filteredUsers = mockUsers.filter(user => 
     user.name.toLowerCase().includes(searchUser.toLowerCase()) || 
@@ -68,6 +108,11 @@ const Dashboard = () => {
   const filteredEvents = mockEvents.filter(event => 
     event.name.toLowerCase().includes(searchEvent.toLowerCase()) || 
     event.organizer.toLowerCase().includes(searchEvent.toLowerCase())
+  );
+
+  const filteredPhotos = mockPhotos.filter(photo => 
+    photo.title.toLowerCase().includes(searchPhoto.toLowerCase()) || 
+    photo.photographer.toLowerCase().includes(searchPhoto.toLowerCase())
   );
 
   const filteredSubscriptions = mockSubscriptions.filter(sub => 
@@ -87,6 +132,104 @@ const Dashboard = () => {
       default:
         return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100";
     }
+  };
+
+  const handleEditUser = (user: any) => {
+    setSelectedUser(user);
+    userForm.reset({
+      name: user.name,
+      email: user.email,
+      status: user.status,
+      plan: user.plan
+    });
+    setIsUserDialogOpen(true);
+  };
+
+  const handleAddUser = () => {
+    setSelectedUser(null);
+    userForm.reset({
+      name: "",
+      email: "",
+      status: "active",
+      plan: "Basic"
+    });
+    setIsUserDialogOpen(true);
+  };
+
+  const handleEditEvent = (event: any) => {
+    setSelectedEvent(event);
+    eventForm.reset({
+      name: event.name,
+      organizer: event.organizer,
+      maxVotes: event.maxVotes,
+      endDate: event.endDate
+    });
+    setIsEventDialogOpen(true);
+  };
+
+  const handleAddEvent = () => {
+    setSelectedEvent(null);
+    eventForm.reset({
+      name: "",
+      organizer: "",
+      maxVotes: 1,
+      endDate: ""
+    });
+    setIsEventDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (itemToDelete) {
+      const { id, type } = itemToDelete;
+      if (type === 'user') {
+        toast({
+          title: "Usuario eliminado",
+          description: `El usuario ${mockUsers.find(u => u.id === id)?.name} ha sido eliminado correctamente.`
+        });
+      } else if (type === 'event') {
+        toast({
+          title: "Concurso eliminado",
+          description: `El concurso ${mockEvents.find(e => e.id === id)?.name} ha sido eliminado correctamente.`
+        });
+      } else if (type === 'photo') {
+        toast({
+          title: "Foto eliminada",
+          description: `La foto ${mockPhotos.find(p => p.id === id)?.title} ha sido eliminada correctamente.`
+        });
+      }
+      setIsDeleteDialogOpen(false);
+      setItemToDelete(null);
+    }
+  };
+
+  const handleConfirmUserForm = (data: any) => {
+    if (selectedUser) {
+      toast({
+        title: "Usuario actualizado",
+        description: `Los datos de ${data.name} han sido actualizados correctamente.`
+      });
+    } else {
+      toast({
+        title: "Usuario creado",
+        description: `El usuario ${data.name} ha sido creado correctamente.`
+      });
+    }
+    setIsUserDialogOpen(false);
+  };
+
+  const handleConfirmEventForm = (data: any) => {
+    if (selectedEvent) {
+      toast({
+        title: "Concurso actualizado",
+        description: `El concurso ${data.name} ha sido actualizado correctamente.`
+      });
+    } else {
+      toast({
+        title: "Concurso creado",
+        description: `El concurso ${data.name} ha sido creado correctamente.`
+      });
+    }
+    setIsEventDialogOpen(false);
   };
 
   return (
@@ -168,6 +311,10 @@ const Dashboard = () => {
             <List size={16} />
             Concursos
           </TabsTrigger>
+          <TabsTrigger value="photos" className="flex gap-2 items-center">
+            <Image size={16} />
+            Fotos
+          </TabsTrigger>
           <TabsTrigger value="subscriptions" className="flex gap-2 items-center">
             <CreditCard size={16} />
             Suscripciones
@@ -183,7 +330,7 @@ const Dashboard = () => {
                 onChange={(e) => setSearchUser(e.target.value)}
               />
             </div>
-            <Button className="flex items-center gap-1">
+            <Button className="flex items-center gap-1" onClick={handleAddUser}>
               <UserPlus size={16} />
               Añadir Usuario
             </Button>
@@ -217,12 +364,18 @@ const Dashboard = () => {
                       <TableCell>{user.joinDate}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link to={`/profile/${user.id}`}>
-                              <Edit size={16} />
-                            </Link>
+                          <Button variant="outline" size="sm" onClick={() => handleEditUser(user)}>
+                            <Edit size={16} />
                           </Button>
-                          <Button variant="outline" size="sm" className="text-red-500">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-500"
+                            onClick={() => {
+                              setItemToDelete({ id: user.id, type: 'user' });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
                             <UserMinus size={16} />
                           </Button>
                         </div>
@@ -250,12 +403,10 @@ const Dashboard = () => {
                 onChange={(e) => setSearchEvent(e.target.value)}
               />
             </div>
-            <Link to="/organizers">
-              <Button className="flex items-center gap-1">
-                <UserPlus size={16} />
-                Crear Concurso
-              </Button>
-            </Link>
+            <Button className="flex items-center gap-1" onClick={handleAddEvent}>
+              <PlusCircle size={16} />
+              Crear Concurso
+            </Button>
           </div>
           
           <div className="rounded-md border overflow-hidden">
@@ -288,15 +439,18 @@ const Dashboard = () => {
                       <TableCell>{event.endDate}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link to={`/contests/${event.id}`}>
-                              <Check size={16} />
-                            </Link>
-                          </Button>
-                          <Button variant="outline" size="sm" className="text-amber-500">
+                          <Button variant="outline" size="sm" onClick={() => handleEditEvent(event)}>
                             <Edit size={16} />
                           </Button>
-                          <Button variant="outline" size="sm" className="text-red-500">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-500"
+                            onClick={() => {
+                              setItemToDelete({ id: event.id, type: 'event' });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
                             <X size={16} />
                           </Button>
                         </div>
@@ -307,6 +461,79 @@ const Dashboard = () => {
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-4">
                       No se encontraron concursos
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="photos" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="md:w-1/3">
+              <Input
+                placeholder="Buscar fotos..."
+                value={searchPhoto}
+                onChange={(e) => setSearchPhoto(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <div className="rounded-md border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Título</TableHead>
+                  <TableHead>Fotógrafo</TableHead>
+                  <TableHead>Concurso</TableHead>
+                  <TableHead>Fecha de subida</TableHead>
+                  <TableHead>Votos</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredPhotos.length > 0 ? (
+                  filteredPhotos.map((photo) => (
+                    <TableRow key={photo.id}>
+                      <TableCell className="font-medium">{photo.title}</TableCell>
+                      <TableCell>{photo.photographer}</TableCell>
+                      <TableCell>
+                        {mockEvents.find(e => e.id === photo.contestId)?.name || "Desconocido"}
+                      </TableCell>
+                      <TableCell>{photo.uploadDate}</TableCell>
+                      <TableCell>{photo.votes}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-amber-500"
+                            asChild
+                          >
+                            <Link to={`/contests/${photo.contestId}`}>
+                              <Check size={16} />
+                            </Link>
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-500"
+                            onClick={() => {
+                              setItemToDelete({ id: photo.id, type: 'photo' });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4">
+                      No se encontraron fotos
                     </TableCell>
                   </TableRow>
                 )}
@@ -422,6 +649,166 @@ const Dashboard = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Diálogo para editar/crear usuario */}
+      <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selectedUser ? "Editar Usuario" : "Crear Nuevo Usuario"}</DialogTitle>
+            <DialogDescription>
+              {selectedUser 
+                ? "Modifica los datos del usuario seleccionado" 
+                : "Introduce los datos para el nuevo usuario"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={userForm.handleSubmit(handleConfirmUserForm)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre completo</Label>
+              <Input 
+                id="name" 
+                {...userForm.register("name")}
+                placeholder="Nombre del usuario"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo electrónico</Label>
+              <Input 
+                id="email" 
+                type="email"
+                {...userForm.register("email")}
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado</Label>
+              <select 
+                id="status"
+                {...userForm.register("status")}
+                className="w-full rounded-md border border-input p-2"
+              >
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+                <option value="pending">Pendiente</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="plan">Plan</Label>
+              <select 
+                id="plan"
+                {...userForm.register("plan")}
+                className="w-full rounded-md border border-input p-2"
+              >
+                <option value="Basic">Básico</option>
+                <option value="Premium">Premium</option>
+                <option value="Pro">Profesional</option>
+              </select>
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsUserDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {selectedUser ? "Guardar Cambios" : "Crear Usuario"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo para editar/crear concurso */}
+      <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selectedEvent ? "Editar Concurso" : "Crear Nuevo Concurso"}</DialogTitle>
+            <DialogDescription>
+              {selectedEvent 
+                ? "Modifica los datos del concurso seleccionado" 
+                : "Introduce los datos para el nuevo concurso"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={eventForm.handleSubmit(handleConfirmEventForm)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre del concurso</Label>
+              <Input 
+                id="name" 
+                {...eventForm.register("name")}
+                placeholder="Nombre del concurso"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="organizer">Organizador</Label>
+              <Input 
+                id="organizer" 
+                {...eventForm.register("organizer")}
+                placeholder="Nombre del organizador"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="maxVotes">Número máximo de votos por usuario</Label>
+              <Input 
+                id="maxVotes" 
+                type="number"
+                min="1"
+                max="10"
+                {...eventForm.register("maxVotes", { valueAsNumber: true })}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="endDate">Fecha de finalización</Label>
+              <Input 
+                id="endDate" 
+                type="date"
+                {...eventForm.register("endDate")}
+              />
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEventDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {selectedEvent ? "Guardar Cambios" : "Crear Concurso"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo de confirmación para eliminar */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmar eliminación</DialogTitle>
+            <DialogDescription>
+              {itemToDelete?.type === 'user' && "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."}
+              {itemToDelete?.type === 'event' && "¿Estás seguro de que deseas eliminar este concurso? Se eliminarán también todas sus fotos asociadas."}
+              {itemToDelete?.type === 'photo' && "¿Estás seguro de que deseas eliminar esta foto? Esta acción no se puede deshacer."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              type="button" 
+              variant="destructive" 
+              onClick={handleDeleteConfirm}
+            >
+              Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Alert className="mt-8">
         <AlertTitle>¿Necesitas ayuda con el panel de control?</AlertTitle>
