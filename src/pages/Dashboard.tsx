@@ -10,10 +10,15 @@ import {
   Check, 
   X, 
   List, 
-  Settings
+  Settings,
+  Share2,
+  CreditCard,
+  DollarSign,
+  Edit,
+  Trash2
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -25,6 +30,9 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 // Mock data - would be replaced with actual API calls
 const mockUsers = [
@@ -35,14 +43,22 @@ const mockUsers = [
 ];
 
 const mockEvents = [
-  { id: 101, name: "Festival de Fotografía Urbana", organizer: "Ayuntamiento de Barcelona", status: "active", participants: 57, endDate: "2023-10-30" },
-  { id: 102, name: "Concurso Nacional de Paisajes", organizer: "Asociación Fotográfica", status: "ended", participants: 132, endDate: "2023-09-15" },
-  { id: 103, name: "Retratos de Primavera", organizer: "Galería Moderna", status: "pending", participants: 0, endDate: "2023-11-20" },
+  { id: 101, name: "Festival de Fotografía Urbana", organizer: "Ayuntamiento de Barcelona", status: "active", participants: 57, maxVotes: 1, endDate: "2023-10-30" },
+  { id: 102, name: "Concurso Nacional de Paisajes", organizer: "Asociación Fotográfica", status: "ended", participants: 132, maxVotes: 3, endDate: "2023-09-15" },
+  { id: 103, name: "Retratos de Primavera", organizer: "Galería Moderna", status: "pending", participants: 0, maxVotes: 2, endDate: "2023-11-20" },
+];
+
+const mockSubscriptions = [
+  { id: 1, name: "Plan Básico", price: "29.99", billing: "monthly", features: ["1 concurso/mes", "50 participantes máx.", "10 días de duración"], active: true },
+  { id: 2, name: "Plan Profesional", price: "99.99", billing: "monthly", features: ["5 concursos/mes", "200 participantes máx.", "30 días de duración"], active: true },
+  { id: 3, name: "Plan Empresarial", price: "199.99", billing: "monthly", features: ["Concursos ilimitados", "Participantes ilimitados", "Duración personalizable"], active: false },
+  { id: 4, name: "Plan Anual Básico", price: "299.99", billing: "yearly", features: ["12 concursos/año", "50 participantes máx.", "10 días de duración"], active: true },
 ];
 
 const Dashboard = () => {
   const [searchUser, setSearchUser] = useState("");
   const [searchEvent, setSearchEvent] = useState("");
+  const [searchSubscription, setSearchSubscription] = useState("");
 
   const filteredUsers = mockUsers.filter(user => 
     user.name.toLowerCase().includes(searchUser.toLowerCase()) || 
@@ -52,6 +68,10 @@ const Dashboard = () => {
   const filteredEvents = mockEvents.filter(event => 
     event.name.toLowerCase().includes(searchEvent.toLowerCase()) || 
     event.organizer.toLowerCase().includes(searchEvent.toLowerCase())
+  );
+
+  const filteredSubscriptions = mockSubscriptions.filter(sub => 
+    sub.name.toLowerCase().includes(searchSubscription.toLowerCase())
   );
 
   const getStatusStyle = (status: string) => {
@@ -84,7 +104,7 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xl flex items-center gap-2">
@@ -123,6 +143,19 @@ const Dashboard = () => {
             <p className="text-4xl font-bold">12</p>
           </CardContent>
         </Card>
+        
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-xl flex items-center gap-2">
+              <DollarSign className="text-primary" />
+              Ingresos
+            </CardTitle>
+            <CardDescription>Este mes</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-4xl font-bold">€1,299</p>
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="users" className="mt-6">
@@ -134,6 +167,10 @@ const Dashboard = () => {
           <TabsTrigger value="events" className="flex gap-2 items-center">
             <List size={16} />
             Concursos
+          </TabsTrigger>
+          <TabsTrigger value="subscriptions" className="flex gap-2 items-center">
+            <CreditCard size={16} />
+            Suscripciones
           </TabsTrigger>
         </TabsList>
         
@@ -180,8 +217,10 @@ const Dashboard = () => {
                       <TableCell>{user.joinDate}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
-                            <Settings size={16} />
+                          <Button variant="outline" size="sm" asChild>
+                            <Link to={`/profile/${user.id}`}>
+                              <Edit size={16} />
+                            </Link>
                           </Button>
                           <Button variant="outline" size="sm" className="text-red-500">
                             <UserMinus size={16} />
@@ -227,6 +266,7 @@ const Dashboard = () => {
                   <TableHead>Organizador</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Participantes</TableHead>
+                  <TableHead>Votos Máx.</TableHead>
                   <TableHead>Fecha Fin</TableHead>
                   <TableHead>Acciones</TableHead>
                 </TableRow>
@@ -244,6 +284,7 @@ const Dashboard = () => {
                         </span>
                       </TableCell>
                       <TableCell>{event.participants}</TableCell>
+                      <TableCell>{event.maxVotes}</TableCell>
                       <TableCell>{event.endDate}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
@@ -251,6 +292,9 @@ const Dashboard = () => {
                             <Link to={`/contests/${event.id}`}>
                               <Check size={16} />
                             </Link>
+                          </Button>
+                          <Button variant="outline" size="sm" className="text-amber-500">
+                            <Edit size={16} />
                           </Button>
                           <Button variant="outline" size="sm" className="text-red-500">
                             <X size={16} />
@@ -261,7 +305,7 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-4">
+                    <TableCell colSpan={7} className="text-center py-4">
                       No se encontraron concursos
                     </TableCell>
                   </TableRow>
@@ -269,6 +313,113 @@ const Dashboard = () => {
               </TableBody>
             </Table>
           </div>
+        </TabsContent>
+        
+        <TabsContent value="subscriptions" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="md:w-1/3">
+              <Input
+                placeholder="Buscar planes..."
+                value={searchSubscription}
+                onChange={(e) => setSearchSubscription(e.target.value)}
+              />
+            </div>
+            <Button className="flex items-center gap-1">
+              <CreditCard size={16} />
+              Nuevo Plan
+            </Button>
+          </div>
+          
+          <div className="rounded-md border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre del Plan</TableHead>
+                  <TableHead>Precio</TableHead>
+                  <TableHead>Facturación</TableHead>
+                  <TableHead>Características</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredSubscriptions.length > 0 ? (
+                  filteredSubscriptions.map((sub) => (
+                    <TableRow key={sub.id}>
+                      <TableCell className="font-medium">{sub.name}</TableCell>
+                      <TableCell>€{sub.price}</TableCell>
+                      <TableCell>
+                        {sub.billing === "monthly" ? "Mensual" : "Anual"}
+                      </TableCell>
+                      <TableCell>
+                        <ul className="list-disc list-inside text-xs text-muted-foreground">
+                          {sub.features.map((feature, idx) => (
+                            <li key={idx}>{feature}</li>
+                          ))}
+                        </ul>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <Switch id={`sub-${sub.id}`} checked={sub.active} />
+                          <Label htmlFor={`sub-${sub.id}`} className="ml-2">
+                            {sub.active ? (
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Activo</Badge>
+                            ) : (
+                              <Badge variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">Inactivo</Badge>
+                            )}
+                          </Label>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Edit size={16} />
+                          </Button>
+                          <Button variant="outline" size="sm" className="text-red-500">
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4">
+                      No se encontraron planes de suscripción
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+          
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Configuración de Pagos</CardTitle>
+              <CardDescription>
+                Conecta tu cuenta de Stripe para procesar pagos de suscripciones
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="stripe-key">Clave API de Stripe</Label>
+                  <Input id="stripe-key" type="password" placeholder="sk_live_..." />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="webhook-url">URL de Webhook</Label>
+                  <Input id="webhook-url" type="text" placeholder="https://..." />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch id="test-mode" />
+                  <Label htmlFor="test-mode">Modo de prueba</Label>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">Guardar Configuración</Button>
+            </CardFooter>
+          </Card>
         </TabsContent>
       </Tabs>
 

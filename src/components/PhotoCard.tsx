@@ -1,9 +1,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { User, Heart, Flag, ThumbsUp, ThumbsDown } from "lucide-react";
+import { User, Heart, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 type PhotoCardProps = {
   id: string;
@@ -14,6 +15,7 @@ type PhotoCardProps = {
   mode?: "grid" | "swipe";
   onVote?: (id: string, vote: boolean) => void;
   onReport?: (id: string) => void;
+  onShare?: (id: string) => void;
   userVoted?: boolean;
 };
 
@@ -26,6 +28,7 @@ const PhotoCard = ({
   mode = "grid",
   onVote,
   onReport,
+  onShare,
   userVoted = false,
 }: PhotoCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -189,13 +192,22 @@ const PhotoCard = ({
               <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
               <span className="text-sm">{localVotes}</span>
             </button>
-            <button
-              onClick={() => onReport?.(id)}
-              className="text-white/80 hover:text-white transition-colors"
-              aria-label="Report photo"
-            >
-              <Flag className="w-4 h-4" />
-            </button>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => onShare?.(id)}
+                className="text-white/80 hover:text-white transition-colors"
+                aria-label="Share photo"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => onReport?.(id)}
+                className="text-white/80 hover:text-white transition-colors"
+                aria-label="Report photo"
+              >
+                <Flag className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -247,14 +259,16 @@ const PhotoCard = ({
             <span className="text-sm font-medium">{photographer}</span>
           </div>
           
-          <button 
-            className="flex items-center space-x-1 group"
-            onClick={handleVoteToggle}
-            aria-label="Vote for this photo"
-          >
-            <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
-            <span className="text-xs text-muted-foreground">{localVotes}</span>
-          </button>
+          <div className="flex items-center space-x-2">
+            <button 
+              className="flex items-center space-x-1 group"
+              onClick={handleVoteToggle}
+              aria-label="Vote for this photo"
+            >
+              <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
+              <span className="text-xs text-muted-foreground">{localVotes}</span>
+            </button>
+          </div>
         </div>
       </div>
     </motion.div>
