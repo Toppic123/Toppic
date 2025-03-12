@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { 
@@ -44,40 +43,39 @@ import { Form, FormItem, FormLabel, FormControl, FormDescription, FormMessage, F
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock data - would be replaced with actual API calls
-const mockUsers = [
+const initialUsers = [
   { id: 1, name: "Ana García", email: "ana@example.com", status: "active", joinDate: "2023-05-12" },
   { id: 2, name: "Carlos Rodríguez", email: "carlos@example.com", status: "inactive", joinDate: "2023-07-21" },
   { id: 3, name: "Elena Martínez", email: "elena@example.com", status: "active", joinDate: "2023-04-02" },
   { id: 4, name: "Pablo Sánchez", email: "pablo@example.com", status: "pending", joinDate: "2023-08-15" },
 ];
 
-const mockOrganizers = [
+const initialOrganizers = [
   { id: 1, name: "Ayuntamiento de Barcelona", email: "eventos@bcn.cat", status: "active", type: "organizer", joinDate: "2023-03-10" },
   { id: 2, name: "Asociación Fotográfica", email: "info@asocfoto.es", status: "active", type: "organizer", joinDate: "2023-04-15" },
   { id: 3, name: "Galería Moderna", email: "contacto@galeriamoderna.com", status: "inactive", type: "organizer", joinDate: "2023-06-22" },
 ];
 
-const mockCollaborators = [
+const initialCollaborators = [
   { id: 1, name: "Café Central", email: "info@cafecentral.es", status: "active", type: "collaborator", joinDate: "2023-05-05" },
   { id: 2, name: "Librería Cervantes", email: "contacto@cervantes.com", status: "active", type: "collaborator", joinDate: "2023-06-10" },
   { id: 3, name: "Hotel Plaza", email: "reservas@hotelplaza.es", status: "inactive", type: "collaborator", joinDate: "2023-07-20" },
 ];
 
-const mockEvents = [
+const initialEvents = [
   { id: 101, name: "Festival de Fotografía Urbana", organizer: "Ayuntamiento de Barcelona", status: "active", participants: 57, maxVotes: 1, endDate: "2023-10-30", location: { lat: 41.3851, lng: 2.1734, address: "Plaza Cataluña, Barcelona" }, maxDistance: 1 },
   { id: 102, name: "Concurso Nacional de Paisajes", organizer: "Asociación Fotográfica", status: "ended", participants: 132, maxVotes: 3, endDate: "2023-09-15", location: { lat: 40.4168, lng: -3.7038, address: "Parque del Retiro, Madrid" }, maxDistance: 2 },
   { id: 103, name: "Retratos de Primavera", organizer: "Galería Moderna", status: "pending", participants: 0, maxVotes: 2, endDate: "2023-11-20", location: { lat: 39.4699, lng: -0.3763, address: "Ciudad de las Artes, Valencia" }, maxDistance: 0.5 },
 ];
 
-const mockPhotos = [
+const initialPhotos = [
   { id: 201, title: "Atardecer en la playa", photographer: "Ana García", contestId: 101, uploadDate: "2023-09-10", votes: 15 },
   { id: 202, title: "Calles de Barcelona", photographer: "Pablo Sánchez", contestId: 101, uploadDate: "2023-09-12", votes: 8 },
   { id: 203, title: "Montañas al amanecer", photographer: "Elena Martínez", contestId: 102, uploadDate: "2023-08-05", votes: 23 },
   { id: 204, title: "Retrato familiar", photographer: "Carlos Rodríguez", contestId: 103, uploadDate: "2023-10-01", votes: 0 },
 ];
 
-const mockSubscriptions = [
+const initialSubscriptions = [
   { id: 1, name: "Plan Básico", price: "29.99", billing: "monthly", features: ["1 concurso/mes", "50 participantes máx.", "10 días de duración"], active: true },
   { id: 2, name: "Plan Profesional", price: "99.99", billing: "monthly", features: ["5 concursos/mes", "200 participantes máx.", "30 días de duración"], active: true },
   { id: 3, name: "Plan Empresarial", price: "199.99", billing: "monthly", features: ["Concursos ilimitados", "Participantes ilimitados", "Duración personalizable"], active: false },
@@ -85,6 +83,45 @@ const mockSubscriptions = [
 ];
 
 const Dashboard = () => {
+  const [users, setUsers] = useState(() => {
+    const savedUsers = localStorage.getItem('dashboard_users');
+    return savedUsers ? JSON.parse(savedUsers) : initialUsers;
+  });
+  
+  const [organizers, setOrganizers] = useState(() => {
+    const savedOrganizers = localStorage.getItem('dashboard_organizers');
+    return savedOrganizers ? JSON.parse(savedOrganizers) : initialOrganizers;
+  });
+  
+  const [collaborators, setCollaborators] = useState(() => {
+    const savedCollaborators = localStorage.getItem('dashboard_collaborators');
+    return savedCollaborators ? JSON.parse(savedCollaborators) : initialCollaborators;
+  });
+  
+  const [events, setEvents] = useState(() => {
+    const savedEvents = localStorage.getItem('dashboard_events');
+    return savedEvents ? JSON.parse(savedEvents) : initialEvents;
+  });
+  
+  const [photos, setPhotos] = useState(() => {
+    const savedPhotos = localStorage.getItem('dashboard_photos');
+    return savedPhotos ? JSON.parse(savedPhotos) : initialPhotos;
+  });
+  
+  const [subscriptions, setSubscriptions] = useState(() => {
+    const savedSubscriptions = localStorage.getItem('dashboard_subscriptions');
+    return savedSubscriptions ? JSON.parse(savedSubscriptions) : initialSubscriptions;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('dashboard_users', JSON.stringify(users));
+    localStorage.setItem('dashboard_organizers', JSON.stringify(organizers));
+    localStorage.setItem('dashboard_collaborators', JSON.stringify(collaborators));
+    localStorage.setItem('dashboard_events', JSON.stringify(events));
+    localStorage.setItem('dashboard_photos', JSON.stringify(photos));
+    localStorage.setItem('dashboard_subscriptions', JSON.stringify(subscriptions));
+  }, [users, organizers, collaborators, events, photos, subscriptions]);
+
   const [searchUser, setSearchUser] = useState("");
   const [searchEvent, setSearchEvent] = useState("");
   const [searchPhoto, setSearchPhoto] = useState("");
@@ -142,32 +179,32 @@ const Dashboard = () => {
     }
   });
 
-  const filteredUsers = mockUsers.filter(user => 
+  const filteredUsers = users.filter(user => 
     user.name.toLowerCase().includes(searchUser.toLowerCase()) || 
     user.email.toLowerCase().includes(searchUser.toLowerCase())
   );
 
-  const filteredOrganizers = mockOrganizers.filter(org => 
+  const filteredOrganizers = organizers.filter(org => 
     org.name.toLowerCase().includes(searchOrganizer.toLowerCase()) || 
     org.email.toLowerCase().includes(searchOrganizer.toLowerCase())
   );
 
-  const filteredCollaborators = mockCollaborators.filter(collab => 
+  const filteredCollaborators = collaborators.filter(collab => 
     collab.name.toLowerCase().includes(searchCollaborator.toLowerCase()) || 
     collab.email.toLowerCase().includes(searchCollaborator.toLowerCase())
   );
 
-  const filteredEvents = mockEvents.filter(event => 
+  const filteredEvents = events.filter(event => 
     event.name.toLowerCase().includes(searchEvent.toLowerCase()) || 
     event.organizer.toLowerCase().includes(searchEvent.toLowerCase())
   );
 
-  const filteredPhotos = mockPhotos.filter(photo => 
+  const filteredPhotos = photos.filter(photo => 
     photo.title.toLowerCase().includes(searchPhoto.toLowerCase()) || 
     photo.photographer.toLowerCase().includes(searchPhoto.toLowerCase())
   );
 
-  const filteredSubscriptions = mockSubscriptions.filter(sub => 
+  const filteredSubscriptions = subscriptions.filter(sub => 
     sub.name.toLowerCase().includes(searchSubscription.toLowerCase())
   );
 
@@ -283,32 +320,39 @@ const Dashboard = () => {
   const handleDeleteConfirm = () => {
     if (itemToDelete) {
       const { id, type } = itemToDelete;
+      let deletedName = "";
+      
       if (type === 'user') {
-        toast({
-          title: "Usuario eliminado",
-          description: `El usuario ${mockUsers.find(u => u.id === id)?.name} ha sido eliminado correctamente.`
-        });
+        const userToDelete = users.find(u => u.id === id);
+        deletedName = userToDelete?.name || "";
+        setUsers(users.filter(u => u.id !== id));
       } else if (type === 'organizer') {
-        toast({
-          title: "Organizador eliminado",
-          description: `El organizador ${mockOrganizers.find(o => o.id === id)?.name} ha sido eliminado correctamente.`
-        });
+        const organizerToDelete = organizers.find(o => o.id === id);
+        deletedName = organizerToDelete?.name || "";
+        setOrganizers(organizers.filter(o => o.id !== id));
       } else if (type === 'collaborator') {
-        toast({
-          title: "Colaborador eliminado",
-          description: `El colaborador ${mockCollaborators.find(c => c.id === id)?.name} ha sido eliminado correctamente.`
-        });
+        const collaboratorToDelete = collaborators.find(c => c.id === id);
+        deletedName = collaboratorToDelete?.name || "";
+        setCollaborators(collaborators.filter(c => c.id !== id));
       } else if (type === 'event') {
-        toast({
-          title: "Concurso eliminado",
-          description: `El concurso ${mockEvents.find(e => e.id === id)?.name} ha sido eliminado correctamente.`
-        });
+        const eventToDelete = events.find(e => e.id === id);
+        deletedName = eventToDelete?.name || "";
+        setEvents(events.filter(e => e.id !== id));
+        setPhotos(photos.filter(p => p.contestId !== id));
       } else if (type === 'photo') {
-        toast({
-          title: "Foto eliminada",
-          description: `La foto ${mockPhotos.find(p => p.id === id)?.title} ha sido eliminada correctamente.`
-        });
+        const photoToDelete = photos.find(p => p.id === id);
+        deletedName = photoToDelete?.title || "";
+        setPhotos(photos.filter(p => p.id !== id));
       }
+      
+      toast({
+        title: `${type === 'user' ? 'Usuario' : 
+                type === 'organizer' ? 'Organizador' : 
+                type === 'collaborator' ? 'Colaborador' : 
+                type === 'event' ? 'Concurso' : 'Foto'} eliminado`,
+        description: `${deletedName} ha sido eliminado correctamente.`
+      });
+      
       setIsDeleteDialogOpen(false);
       setItemToDelete(null);
     }
@@ -316,11 +360,22 @@ const Dashboard = () => {
 
   const handleConfirmUserForm = (data: any) => {
     if (selectedUser) {
+      setUsers(users.map(user => 
+        user.id === selectedUser.id 
+          ? { ...user, ...data }
+          : user
+      ));
       toast({
         title: "Usuario actualizado",
         description: `Los datos de ${data.name} han sido actualizados correctamente.`
       });
     } else {
+      const newUser = {
+        id: Math.max(0, ...users.map(u => u.id)) + 1,
+        ...data,
+        joinDate: new Date().toISOString().split('T')[0]
+      };
+      setUsers([...users, newUser]);
       toast({
         title: "Usuario creado",
         description: `El usuario ${data.name} ha sido creado correctamente.`
@@ -331,11 +386,23 @@ const Dashboard = () => {
 
   const handleConfirmOrganizerForm = (data: any) => {
     if (selectedOrganizer) {
+      setOrganizers(organizers.map(org => 
+        org.id === selectedOrganizer.id 
+          ? { ...org, ...data }
+          : org
+      ));
       toast({
         title: "Organizador actualizado",
         description: `Los datos de ${data.name} han sido actualizados correctamente.`
       });
     } else {
+      const newOrganizer = {
+        id: Math.max(0, ...organizers.map(o => o.id)) + 1,
+        ...data,
+        type: "organizer",
+        joinDate: new Date().toISOString().split('T')[0]
+      };
+      setOrganizers([...organizers, newOrganizer]);
       toast({
         title: "Organizador creado",
         description: `El organizador ${data.name} ha sido creado correctamente.`
@@ -346,11 +413,23 @@ const Dashboard = () => {
 
   const handleConfirmCollaboratorForm = (data: any) => {
     if (selectedCollaborator) {
+      setCollaborators(collaborators.map(collab => 
+        collab.id === selectedCollaborator.id 
+          ? { ...collab, ...data }
+          : collab
+      ));
       toast({
         title: "Colaborador actualizado",
         description: `Los datos de ${data.name} han sido actualizados correctamente.`
       });
     } else {
+      const newCollaborator = {
+        id: Math.max(0, ...collaborators.map(c => c.id)) + 1,
+        ...data,
+        type: "collaborator",
+        joinDate: new Date().toISOString().split('T')[0]
+      };
+      setCollaborators([...collaborators, newCollaborator]);
       toast({
         title: "Colaborador creado",
         description: `El colaborador ${data.name} ha sido creado correctamente.`
@@ -361,11 +440,23 @@ const Dashboard = () => {
 
   const handleConfirmEventForm = (data: any) => {
     if (selectedEvent) {
+      setEvents(events.map(event => 
+        event.id === selectedEvent.id 
+          ? { ...event, ...data, participants: event.participants }
+          : event
+      ));
       toast({
         title: "Concurso actualizado",
         description: `El concurso ${data.name} ha sido actualizado correctamente.`
       });
     } else {
+      const newEvent = {
+        id: Math.max(0, ...events.map(e => e.id)) + 1,
+        ...data,
+        status: "active",
+        participants: 0
+      };
+      setEvents([...events, newEvent]);
       toast({
         title: "Concurso creado",
         description: `El concurso ${data.name} ha sido creado correctamente.`
@@ -375,23 +466,27 @@ const Dashboard = () => {
   };
 
   const handleLocationSearch = (address: string) => {
-    // This would connect to a geocoding API in production
-    // For now, we'll mock a found location
+    if (!address.trim()) {
+      toast({
+        title: "Error",
+        description: "Por favor, introduce una dirección para buscar"
+      });
+      return;
+    }
+    
     console.log("Searching for location:", address);
     
-    // Mock geocoding response
     const mockLocation = {
       address: address,
-      lat: 41.3851, // Barcelona coordinates as placeholder
-      lng: 2.1734
+      lat: 41.3851 + (Math.random() * 0.1 - 0.05),
+      lng: 2.1734 + (Math.random() * 0.1 - 0.05)
     };
     
-    // Update form with found location
     eventForm.setValue("location", mockLocation);
     
     toast({
       title: "Ubicación encontrada",
-      description: `Coordenadas para ${address}: Lat ${mockLocation.lat}, Lng ${mockLocation.lng}`
+      description: `Coordenadas para ${address}: Lat ${mockLocation.lat.toFixed(4)}, Lng ${mockLocation.lng.toFixed(4)}`
     });
   };
 
@@ -965,7 +1060,6 @@ const Dashboard = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Diálogo para editar/crear usuario */}
       <Dialog open={isUserDialogOpen} onOpenChange={setIsUserDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -1022,7 +1116,6 @@ const Dashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Diálogo para editar/crear organizador */}
       <Dialog open={isOrganizerDialogOpen} onOpenChange={setIsOrganizerDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -1079,7 +1172,6 @@ const Dashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Diálogo para editar/crear colaborador */}
       <Dialog open={isCollaboratorDialogOpen} onOpenChange={setIsCollaboratorDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -1136,7 +1228,6 @@ const Dashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Diálogo para editar/crear concurso */}
       <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -1242,7 +1333,6 @@ const Dashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Diálogo de confirmación para eliminar */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -1282,4 +1372,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
