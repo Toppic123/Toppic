@@ -16,6 +16,8 @@ const allContests = [
     title: "Festival de Fotografía Urbana",
     imageUrl: "https://images.unsplash.com/photo-1514565131-fce0801e5785?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80",
     location: "Barcelona",
+    locationCoords: { lat: 41.3851, lng: 2.1734 },
+    maxDistance: 1,
     dateStart: "2023-06-15",
     dateEnd: "2023-06-30",
     participantsCount: 124,
@@ -27,6 +29,8 @@ const allContests = [
     title: "Naturaleza Salvaje",
     imageUrl: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Parque Nacional de Doñana",
+    locationCoords: { lat: 37.0559, lng: -6.4408 },
+    maxDistance: 2,
     dateStart: "2023-07-01",
     dateEnd: "2023-07-10",
     participantsCount: 78,
@@ -38,6 +42,8 @@ const allContests = [
     title: "Gastronomía Local",
     imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Madrid",
+    locationCoords: { lat: 40.4168, lng: -3.7038 },
+    maxDistance: 1,
     dateStart: "2023-07-15",
     dateEnd: "2023-07-20",
     participantsCount: 56,
@@ -49,6 +55,8 @@ const allContests = [
     title: "Arquitectura Moderna",
     imageUrl: "https://images.unsplash.com/photo-1496564203457-11bb12075d90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2276&q=80",
     location: "Valencia",
+    locationCoords: { lat: 39.4699, lng: -0.3763 },
+    maxDistance: 0.5,
     dateStart: "2023-08-01",
     dateEnd: "2023-08-10",
     participantsCount: 42,
@@ -60,6 +68,8 @@ const allContests = [
     title: "Retratos Creativos",
     imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Sevilla",
+    locationCoords: { lat: 37.3891, lng: -5.9845 },
+    maxDistance: 1,
     dateStart: "2023-08-15",
     dateEnd: "2023-08-25",
     participantsCount: 89,
@@ -71,6 +81,8 @@ const allContests = [
     title: "Paisajes Costeros",
     imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2273&q=80",
     location: "Málaga",
+    locationCoords: { lat: 36.7213, lng: -4.4214 },
+    maxDistance: 1.5,
     dateStart: "2023-09-01",
     dateEnd: "2023-09-10",
     participantsCount: 67,
@@ -90,13 +102,42 @@ const categories = [
   { id: "paisajes", name: "Paisajes" },
 ];
 
+// Locations for filtering
+const locations = [
+  { id: "all", name: "Todos" },
+  { id: "barcelona", name: "Barcelona" },
+  { id: "madrid", name: "Madrid" },
+  { id: "valencia", name: "Valencia" },
+  { id: "sevilla", name: "Sevilla" },
+  { id: "malaga", name: "Málaga" },
+];
+
 const Contests = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeLocation, setActiveLocation] = useState("all");
   const [displayedContests, setDisplayedContests] = useState(allContests);
   const [viewMode, setViewMode] = useState("grid");
+  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   
-  // Filter contests based on search query and active category
+  // Get user location for distance calculations
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+        }
+      );
+    }
+  }, []);
+  
+  // Filter contests based on search query, active category, and location
   useEffect(() => {
     let filtered = allContests;
     
@@ -115,13 +156,39 @@ const Contests = () => {
       filtered = filtered.filter((contest) => contest.category === activeCategory);
     }
     
+    // Filter by location
+    if (activeLocation !== "all") {
+      filtered = filtered.filter((contest) => 
+        contest.location.toLowerCase().includes(activeLocation.toLowerCase())
+      );
+    }
+    
     setDisplayedContests(filtered);
-  }, [searchQuery, activeCategory]);
+  }, [searchQuery, activeCategory, activeLocation]);
+  
+  // Calculate distance between two coordinates in km
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1); 
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c; // Distance in km
+    return d;
+  };
+  
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI/180);
+  };
   
   // Clear all filters
   const clearFilters = () => {
     setSearchQuery("");
     setActiveCategory("all");
+    setActiveLocation("all");
   };
   
   return (
@@ -158,7 +225,7 @@ const Contests = () => {
               )}
             </div>
             
-            {(searchQuery || activeCategory !== "all") && (
+            {(searchQuery || activeCategory !== "all" || activeLocation !== "all") && (
               <Button
                 variant="outline"
                 size="sm"
@@ -171,18 +238,38 @@ const Contests = () => {
             )}
           </div>
           
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 max-w-full">
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant={activeCategory === category.id ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCategory(category.id)}
-                className="rounded-full whitespace-nowrap"
-              >
-                {category.name}
-              </Button>
-            ))}
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 max-w-full">
+              <p className="text-sm text-muted-foreground whitespace-nowrap">Categoría:</p>
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={activeCategory === category.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveCategory(category.id)}
+                  className="rounded-full whitespace-nowrap"
+                >
+                  {category.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 max-w-full">
+              <p className="text-sm text-muted-foreground whitespace-nowrap">Ubicación:</p>
+              {locations.map((location) => (
+                <Button
+                  key={location.id}
+                  variant={activeLocation === location.id ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setActiveLocation(location.id)}
+                  className="rounded-full whitespace-nowrap"
+                >
+                  {location.name}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
         
@@ -206,7 +293,27 @@ const Contests = () => {
             {displayedContests.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {displayedContests.map((contest) => (
-                  <ContestCard key={contest.id} {...contest} />
+                  <div key={contest.id} className="relative">
+                    <ContestCard key={contest.id} {...contest} />
+                    {userLocation && (
+                      <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+                        <div className="flex items-center">
+                          <MapPin size={12} className="mr-1" />
+                          <span>
+                            {calculateDistance(
+                              userLocation.lat,
+                              userLocation.lng,
+                              contest.locationCoords.lat,
+                              contest.locationCoords.lng
+                            ).toFixed(1)} km
+                          </span>
+                        </div>
+                        <div className="text-xs text-gray-300">
+                          Máx: {contest.maxDistance} km
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
@@ -224,6 +331,12 @@ const Contests = () => {
           <TabsContent value="map">
             <div className="mt-6">
               <Map />
+              <div className="mt-4 p-4 border rounded-md bg-muted/50">
+                <h3 className="text-sm font-medium mb-2">Restricciones de ubicación:</h3>
+                <p className="text-sm text-muted-foreground">
+                  Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
+                </p>
+              </div>
             </div>
           </TabsContent>
         </Tabs>

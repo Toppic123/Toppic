@@ -17,7 +17,10 @@ import {
   Edit,
   Trash2,
   Image,
-  PlusCircle
+  PlusCircle,
+  MapPin,
+  Building,
+  Briefcase
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -43,16 +46,28 @@ import { useToast } from "@/hooks/use-toast";
 
 // Mock data - would be replaced with actual API calls
 const mockUsers = [
-  { id: 1, name: "Ana García", email: "ana@example.com", status: "active", plan: "Premium", joinDate: "2023-05-12" },
-  { id: 2, name: "Carlos Rodríguez", email: "carlos@example.com", status: "inactive", plan: "Basic", joinDate: "2023-07-21" },
-  { id: 3, name: "Elena Martínez", email: "elena@example.com", status: "active", plan: "Pro", joinDate: "2023-04-02" },
-  { id: 4, name: "Pablo Sánchez", email: "pablo@example.com", status: "pending", plan: "Basic", joinDate: "2023-08-15" },
+  { id: 1, name: "Ana García", email: "ana@example.com", status: "active", joinDate: "2023-05-12" },
+  { id: 2, name: "Carlos Rodríguez", email: "carlos@example.com", status: "inactive", joinDate: "2023-07-21" },
+  { id: 3, name: "Elena Martínez", email: "elena@example.com", status: "active", joinDate: "2023-04-02" },
+  { id: 4, name: "Pablo Sánchez", email: "pablo@example.com", status: "pending", joinDate: "2023-08-15" },
+];
+
+const mockOrganizers = [
+  { id: 1, name: "Ayuntamiento de Barcelona", email: "eventos@bcn.cat", status: "active", type: "organizer", joinDate: "2023-03-10" },
+  { id: 2, name: "Asociación Fotográfica", email: "info@asocfoto.es", status: "active", type: "organizer", joinDate: "2023-04-15" },
+  { id: 3, name: "Galería Moderna", email: "contacto@galeriamoderna.com", status: "inactive", type: "organizer", joinDate: "2023-06-22" },
+];
+
+const mockCollaborators = [
+  { id: 1, name: "Café Central", email: "info@cafecentral.es", status: "active", type: "collaborator", joinDate: "2023-05-05" },
+  { id: 2, name: "Librería Cervantes", email: "contacto@cervantes.com", status: "active", type: "collaborator", joinDate: "2023-06-10" },
+  { id: 3, name: "Hotel Plaza", email: "reservas@hotelplaza.es", status: "inactive", type: "collaborator", joinDate: "2023-07-20" },
 ];
 
 const mockEvents = [
-  { id: 101, name: "Festival de Fotografía Urbana", organizer: "Ayuntamiento de Barcelona", status: "active", participants: 57, maxVotes: 1, endDate: "2023-10-30" },
-  { id: 102, name: "Concurso Nacional de Paisajes", organizer: "Asociación Fotográfica", status: "ended", participants: 132, maxVotes: 3, endDate: "2023-09-15" },
-  { id: 103, name: "Retratos de Primavera", organizer: "Galería Moderna", status: "pending", participants: 0, maxVotes: 2, endDate: "2023-11-20" },
+  { id: 101, name: "Festival de Fotografía Urbana", organizer: "Ayuntamiento de Barcelona", status: "active", participants: 57, maxVotes: 1, endDate: "2023-10-30", location: { lat: 41.3851, lng: 2.1734, address: "Plaza Cataluña, Barcelona" }, maxDistance: 1 },
+  { id: 102, name: "Concurso Nacional de Paisajes", organizer: "Asociación Fotográfica", status: "ended", participants: 132, maxVotes: 3, endDate: "2023-09-15", location: { lat: 40.4168, lng: -3.7038, address: "Parque del Retiro, Madrid" }, maxDistance: 2 },
+  { id: 103, name: "Retratos de Primavera", organizer: "Galería Moderna", status: "pending", participants: 0, maxVotes: 2, endDate: "2023-11-20", location: { lat: 39.4699, lng: -0.3763, address: "Ciudad de las Artes, Valencia" }, maxDistance: 0.5 },
 ];
 
 const mockPhotos = [
@@ -74,10 +89,16 @@ const Dashboard = () => {
   const [searchEvent, setSearchEvent] = useState("");
   const [searchPhoto, setSearchPhoto] = useState("");
   const [searchSubscription, setSearchSubscription] = useState("");
+  const [searchOrganizer, setSearchOrganizer] = useState("");
+  const [searchCollaborator, setSearchCollaborator] = useState("");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [selectedOrganizer, setSelectedOrganizer] = useState<any>(null);
+  const [selectedCollaborator, setSelectedCollaborator] = useState<any>(null);
   const [isUserDialogOpen, setIsUserDialogOpen] = useState(false);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  const [isOrganizerDialogOpen, setIsOrganizerDialogOpen] = useState(false);
+  const [isCollaboratorDialogOpen, setIsCollaboratorDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{id: number, type: string} | null>(null);
   const { toast } = useToast();
@@ -86,8 +107,7 @@ const Dashboard = () => {
     defaultValues: {
       name: "",
       email: "",
-      status: "active",
-      plan: "Basic"
+      status: "active"
     }
   });
 
@@ -96,13 +116,45 @@ const Dashboard = () => {
       name: "",
       organizer: "",
       maxVotes: 1,
-      endDate: ""
+      endDate: "",
+      location: {
+        address: "",
+        lat: 0,
+        lng: 0
+      },
+      maxDistance: 1
+    }
+  });
+
+  const organizerForm = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      status: "active"
+    }
+  });
+
+  const collaboratorForm = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      status: "active"
     }
   });
 
   const filteredUsers = mockUsers.filter(user => 
     user.name.toLowerCase().includes(searchUser.toLowerCase()) || 
     user.email.toLowerCase().includes(searchUser.toLowerCase())
+  );
+
+  const filteredOrganizers = mockOrganizers.filter(org => 
+    org.name.toLowerCase().includes(searchOrganizer.toLowerCase()) || 
+    org.email.toLowerCase().includes(searchOrganizer.toLowerCase())
+  );
+
+  const filteredCollaborators = mockCollaborators.filter(collab => 
+    collab.name.toLowerCase().includes(searchCollaborator.toLowerCase()) || 
+    collab.email.toLowerCase().includes(searchCollaborator.toLowerCase())
   );
 
   const filteredEvents = mockEvents.filter(event => 
@@ -139,8 +191,7 @@ const Dashboard = () => {
     userForm.reset({
       name: user.name,
       email: user.email,
-      status: user.status,
-      plan: user.plan
+      status: user.status
     });
     setIsUserDialogOpen(true);
   };
@@ -150,10 +201,49 @@ const Dashboard = () => {
     userForm.reset({
       name: "",
       email: "",
-      status: "active",
-      plan: "Basic"
+      status: "active"
     });
     setIsUserDialogOpen(true);
+  };
+
+  const handleEditOrganizer = (organizer: any) => {
+    setSelectedOrganizer(organizer);
+    organizerForm.reset({
+      name: organizer.name,
+      email: organizer.email,
+      status: organizer.status
+    });
+    setIsOrganizerDialogOpen(true);
+  };
+
+  const handleAddOrganizer = () => {
+    setSelectedOrganizer(null);
+    organizerForm.reset({
+      name: "",
+      email: "",
+      status: "active"
+    });
+    setIsOrganizerDialogOpen(true);
+  };
+
+  const handleEditCollaborator = (collaborator: any) => {
+    setSelectedCollaborator(collaborator);
+    collaboratorForm.reset({
+      name: collaborator.name,
+      email: collaborator.email,
+      status: collaborator.status
+    });
+    setIsCollaboratorDialogOpen(true);
+  };
+
+  const handleAddCollaborator = () => {
+    setSelectedCollaborator(null);
+    collaboratorForm.reset({
+      name: "",
+      email: "",
+      status: "active"
+    });
+    setIsCollaboratorDialogOpen(true);
   };
 
   const handleEditEvent = (event: any) => {
@@ -162,7 +252,13 @@ const Dashboard = () => {
       name: event.name,
       organizer: event.organizer,
       maxVotes: event.maxVotes,
-      endDate: event.endDate
+      endDate: event.endDate,
+      location: {
+        address: event.location.address,
+        lat: event.location.lat,
+        lng: event.location.lng
+      },
+      maxDistance: event.maxDistance
     });
     setIsEventDialogOpen(true);
   };
@@ -173,7 +269,13 @@ const Dashboard = () => {
       name: "",
       organizer: "",
       maxVotes: 1,
-      endDate: ""
+      endDate: "",
+      location: {
+        address: "",
+        lat: 0,
+        lng: 0
+      },
+      maxDistance: 1
     });
     setIsEventDialogOpen(true);
   };
@@ -185,6 +287,16 @@ const Dashboard = () => {
         toast({
           title: "Usuario eliminado",
           description: `El usuario ${mockUsers.find(u => u.id === id)?.name} ha sido eliminado correctamente.`
+        });
+      } else if (type === 'organizer') {
+        toast({
+          title: "Organizador eliminado",
+          description: `El organizador ${mockOrganizers.find(o => o.id === id)?.name} ha sido eliminado correctamente.`
+        });
+      } else if (type === 'collaborator') {
+        toast({
+          title: "Colaborador eliminado",
+          description: `El colaborador ${mockCollaborators.find(c => c.id === id)?.name} ha sido eliminado correctamente.`
         });
       } else if (type === 'event') {
         toast({
@@ -217,6 +329,36 @@ const Dashboard = () => {
     setIsUserDialogOpen(false);
   };
 
+  const handleConfirmOrganizerForm = (data: any) => {
+    if (selectedOrganizer) {
+      toast({
+        title: "Organizador actualizado",
+        description: `Los datos de ${data.name} han sido actualizados correctamente.`
+      });
+    } else {
+      toast({
+        title: "Organizador creado",
+        description: `El organizador ${data.name} ha sido creado correctamente.`
+      });
+    }
+    setIsOrganizerDialogOpen(false);
+  };
+
+  const handleConfirmCollaboratorForm = (data: any) => {
+    if (selectedCollaborator) {
+      toast({
+        title: "Colaborador actualizado",
+        description: `Los datos de ${data.name} han sido actualizados correctamente.`
+      });
+    } else {
+      toast({
+        title: "Colaborador creado",
+        description: `El colaborador ${data.name} ha sido creado correctamente.`
+      });
+    }
+    setIsCollaboratorDialogOpen(false);
+  };
+
   const handleConfirmEventForm = (data: any) => {
     if (selectedEvent) {
       toast({
@@ -230,6 +372,27 @@ const Dashboard = () => {
       });
     }
     setIsEventDialogOpen(false);
+  };
+
+  const handleLocationSearch = (address: string) => {
+    // This would connect to a geocoding API in production
+    // For now, we'll mock a found location
+    console.log("Searching for location:", address);
+    
+    // Mock geocoding response
+    const mockLocation = {
+      address: address,
+      lat: 41.3851, // Barcelona coordinates as placeholder
+      lng: 2.1734
+    };
+    
+    // Update form with found location
+    eventForm.setValue("location", mockLocation);
+    
+    toast({
+      title: "Ubicación encontrada",
+      description: `Coordenadas para ${address}: Lat ${mockLocation.lat}, Lng ${mockLocation.lng}`
+    });
   };
 
   return (
@@ -277,13 +440,13 @@ const Dashboard = () => {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-xl flex items-center gap-2">
-              <UserPlus className="text-primary" />
-              Registros Nuevos
+              <Building className="text-primary" />
+              Organizadores
             </CardTitle>
-            <CardDescription>Últimos 30 días</CardDescription>
+            <CardDescription>Entidades activas</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold">12</p>
+            <p className="text-4xl font-bold">{mockOrganizers.filter(o => o.status === "active").length}</p>
           </CardContent>
         </Card>
         
@@ -306,6 +469,14 @@ const Dashboard = () => {
           <TabsTrigger value="users" className="flex gap-2 items-center">
             <User size={16} />
             Usuarios
+          </TabsTrigger>
+          <TabsTrigger value="organizers" className="flex gap-2 items-center">
+            <Building size={16} />
+            Organizadores
+          </TabsTrigger>
+          <TabsTrigger value="collaborators" className="flex gap-2 items-center">
+            <Briefcase size={16} />
+            Colaboradores
           </TabsTrigger>
           <TabsTrigger value="events" className="flex gap-2 items-center">
             <List size={16} />
@@ -343,7 +514,6 @@ const Dashboard = () => {
                   <TableHead>Nombre</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Estado</TableHead>
-                  <TableHead>Plan</TableHead>
                   <TableHead>Fecha Registro</TableHead>
                   <TableHead>Acciones</TableHead>
                 </TableRow>
@@ -360,7 +530,6 @@ const Dashboard = () => {
                            user.status === "inactive" ? "Inactivo" : "Pendiente"}
                         </span>
                       </TableCell>
-                      <TableCell>{user.plan}</TableCell>
                       <TableCell>{user.joinDate}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
@@ -384,8 +553,150 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-4">
+                    <TableCell colSpan={5} className="text-center py-4">
                       No se encontraron usuarios
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="organizers" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="md:w-1/3">
+              <Input
+                placeholder="Buscar organizadores..."
+                value={searchOrganizer}
+                onChange={(e) => setSearchOrganizer(e.target.value)}
+              />
+            </div>
+            <Button className="flex items-center gap-1" onClick={handleAddOrganizer}>
+              <Building size={16} />
+              Añadir Organizador
+            </Button>
+          </div>
+          
+          <div className="rounded-md border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Fecha Registro</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredOrganizers.length > 0 ? (
+                  filteredOrganizers.map((organizer) => (
+                    <TableRow key={organizer.id}>
+                      <TableCell className="font-medium">{organizer.name}</TableCell>
+                      <TableCell>{organizer.email}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(organizer.status)}`}>
+                          {organizer.status === "active" ? "Activo" : 
+                           organizer.status === "inactive" ? "Inactivo" : "Pendiente"}
+                        </span>
+                      </TableCell>
+                      <TableCell>{organizer.joinDate}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm" onClick={() => handleEditOrganizer(organizer)}>
+                            <Edit size={16} />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-500"
+                            onClick={() => {
+                              setItemToDelete({ id: organizer.id, type: 'organizer' });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <UserMinus size={16} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-4">
+                      No se encontraron organizadores
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="collaborators" className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="md:w-1/3">
+              <Input
+                placeholder="Buscar colaboradores..."
+                value={searchCollaborator}
+                onChange={(e) => setSearchCollaborator(e.target.value)}
+              />
+            </div>
+            <Button className="flex items-center gap-1" onClick={handleAddCollaborator}>
+              <Briefcase size={16} />
+              Añadir Colaborador
+            </Button>
+          </div>
+          
+          <div className="rounded-md border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Estado</TableHead>
+                  <TableHead>Fecha Registro</TableHead>
+                  <TableHead>Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCollaborators.length > 0 ? (
+                  filteredCollaborators.map((collaborator) => (
+                    <TableRow key={collaborator.id}>
+                      <TableCell className="font-medium">{collaborator.name}</TableCell>
+                      <TableCell>{collaborator.email}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(collaborator.status)}`}>
+                          {collaborator.status === "active" ? "Activo" : 
+                           collaborator.status === "inactive" ? "Inactivo" : "Pendiente"}
+                        </span>
+                      </TableCell>
+                      <TableCell>{collaborator.joinDate}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm" onClick={() => handleEditCollaborator(collaborator)}>
+                            <Edit size={16} />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-500"
+                            onClick={() => {
+                              setItemToDelete({ id: collaborator.id, type: 'collaborator' });
+                              setIsDeleteDialogOpen(true);
+                            }}
+                          >
+                            <UserMinus size={16} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-4">
+                      No se encontraron colaboradores
                     </TableCell>
                   </TableRow>
                 )}
@@ -417,6 +728,7 @@ const Dashboard = () => {
                   <TableHead>Organizador</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Participantes</TableHead>
+                  <TableHead>Ubicación</TableHead>
                   <TableHead>Votos Máx.</TableHead>
                   <TableHead>Fecha Fin</TableHead>
                   <TableHead>Acciones</TableHead>
@@ -435,6 +747,9 @@ const Dashboard = () => {
                         </span>
                       </TableCell>
                       <TableCell>{event.participants}</TableCell>
+                      <TableCell className="max-w-[150px] truncate" title={event.location.address}>
+                        {event.location.address}
+                      </TableCell>
                       <TableCell>{event.maxVotes}</TableCell>
                       <TableCell>{event.endDate}</TableCell>
                       <TableCell>
@@ -459,7 +774,7 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-4">
+                    <TableCell colSpan={8} className="text-center py-4">
                       No se encontraron concursos
                     </TableCell>
                   </TableRow>
@@ -695,25 +1010,126 @@ const Dashboard = () => {
               </select>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="plan">Plan</Label>
-              <select 
-                id="plan"
-                {...userForm.register("plan")}
-                className="w-full rounded-md border border-input p-2"
-              >
-                <option value="Basic">Básico</option>
-                <option value="Premium">Premium</option>
-                <option value="Pro">Profesional</option>
-              </select>
-            </div>
-            
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsUserDialogOpen(false)}>
                 Cancelar
               </Button>
               <Button type="submit">
                 {selectedUser ? "Guardar Cambios" : "Crear Usuario"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo para editar/crear organizador */}
+      <Dialog open={isOrganizerDialogOpen} onOpenChange={setIsOrganizerDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selectedOrganizer ? "Editar Organizador" : "Crear Nuevo Organizador"}</DialogTitle>
+            <DialogDescription>
+              {selectedOrganizer 
+                ? "Modifica los datos del organizador seleccionado" 
+                : "Introduce los datos para el nuevo organizador"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={organizerForm.handleSubmit(handleConfirmOrganizerForm)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre de la organización</Label>
+              <Input 
+                id="name" 
+                {...organizerForm.register("name")}
+                placeholder="Nombre de la organización"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo electrónico</Label>
+              <Input 
+                id="email" 
+                type="email"
+                {...organizerForm.register("email")}
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado</Label>
+              <select 
+                id="status"
+                {...organizerForm.register("status")}
+                className="w-full rounded-md border border-input p-2"
+              >
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+                <option value="pending">Pendiente</option>
+              </select>
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsOrganizerDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {selectedOrganizer ? "Guardar Cambios" : "Crear Organizador"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo para editar/crear colaborador */}
+      <Dialog open={isCollaboratorDialogOpen} onOpenChange={setIsCollaboratorDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selectedCollaborator ? "Editar Colaborador" : "Crear Nuevo Colaborador"}</DialogTitle>
+            <DialogDescription>
+              {selectedCollaborator 
+                ? "Modifica los datos del colaborador seleccionado" 
+                : "Introduce los datos para el nuevo colaborador"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={collaboratorForm.handleSubmit(handleConfirmCollaboratorForm)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre del negocio</Label>
+              <Input 
+                id="name" 
+                {...collaboratorForm.register("name")}
+                placeholder="Nombre del negocio o empresa"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo electrónico</Label>
+              <Input 
+                id="email" 
+                type="email"
+                {...collaboratorForm.register("email")}
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="status">Estado</Label>
+              <select 
+                id="status"
+                {...collaboratorForm.register("status")}
+                className="w-full rounded-md border border-input p-2"
+              >
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+                <option value="pending">Pendiente</option>
+              </select>
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsCollaboratorDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit">
+                {selectedCollaborator ? "Guardar Cambios" : "Crear Colaborador"}
               </Button>
             </DialogFooter>
           </form>
@@ -744,11 +1160,54 @@ const Dashboard = () => {
             
             <div className="space-y-2">
               <Label htmlFor="organizer">Organizador</Label>
-              <Input 
-                id="organizer" 
+              <select
+                id="organizer"
                 {...eventForm.register("organizer")}
-                placeholder="Nombre del organizador"
+                className="w-full rounded-md border border-input p-2"
+              >
+                <option value="">Seleccionar organizador...</option>
+                {mockOrganizers.filter(o => o.status === "active").map(org => (
+                  <option key={org.id} value={org.name}>{org.name}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="location">Ubicación</Label>
+              <div className="flex gap-2">
+                <Input 
+                  id="location"
+                  placeholder="Dirección del evento"
+                  value={eventForm.watch("location.address")}
+                  onChange={(e) => eventForm.setValue("location.address", e.target.value)}
+                />
+                <Button 
+                  type="button" 
+                  size="sm"
+                  onClick={() => handleLocationSearch(eventForm.watch("location.address"))}
+                >
+                  <MapPin size={16} />
+                </Button>
+              </div>
+              {eventForm.watch("location.lat") !== 0 && (
+                <div className="text-xs text-muted-foreground mt-1">
+                  Lat: {eventForm.watch("location.lat")}, Lng: {eventForm.watch("location.lng")}
+                </div>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="maxDistance">Distancia máxima (km) para participar</Label>
+              <Input 
+                id="maxDistance" 
+                type="number"
+                min="0.1"
+                step="0.1"
+                {...eventForm.register("maxDistance", { valueAsNumber: true })}
               />
+              <p className="text-xs text-muted-foreground">
+                Los usuarios solo podrán subir fotos si están dentro de esta distancia del lugar del concurso.
+              </p>
             </div>
             
             <div className="space-y-2">
@@ -790,6 +1249,8 @@ const Dashboard = () => {
             <DialogTitle>Confirmar eliminación</DialogTitle>
             <DialogDescription>
               {itemToDelete?.type === 'user' && "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."}
+              {itemToDelete?.type === 'organizer' && "¿Estás seguro de que deseas eliminar este organizador? Esta acción no se puede deshacer."}
+              {itemToDelete?.type === 'collaborator' && "¿Estás seguro de que deseas eliminar este colaborador? Esta acción no se puede deshacer."}
               {itemToDelete?.type === 'event' && "¿Estás seguro de que deseas eliminar este concurso? Se eliminarán también todas sus fotos asociadas."}
               {itemToDelete?.type === 'photo' && "¿Estás seguro de que deseas eliminar esta foto? Esta acción no se puede deshacer."}
             </DialogDescription>
@@ -821,3 +1282,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
