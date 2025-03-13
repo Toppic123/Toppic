@@ -1,7 +1,128 @@
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const Terms = () => {
+  const [language, setLanguage] = useState<"es" | "en">("es");
+
+  useEffect(() => {
+    // Detectar el idioma basado en la localización del navegador
+    const userLanguage = navigator.language || navigator.languages[0];
+    const isSpanish = /^es\b/.test(userLanguage) || 
+                     ["ES", "MX", "AR", "CO", "PE", "CL", "EC", "GT", "CU", 
+                      "BO", "DO", "HN", "PY", "SV", "NI", "CR", "PA", "UY", "VE"].includes(
+                        userLanguage.split("-")[1]?.toUpperCase() || ""
+                      );
+    
+    setLanguage(isSpanish ? "es" : "en");
+  }, []);
+
+  // Contenido localizado
+  const content = {
+    es: {
+      title: "Términos y Condiciones",
+      lastUpdated: "Última actualización",
+      sections: [
+        {
+          title: "1. Aceptación de Términos",
+          content: "Al acceder o utilizar Snap Contest, aceptas cumplir con estos Términos y Condiciones y todas las leyes y regulaciones aplicables. Si no estás de acuerdo con alguno de estos términos, no debes utilizar nuestros servicios."
+        },
+        {
+          title: "2. Cambios en los Términos",
+          content: "Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación. Es tu responsabilidad revisar periódicamente estos términos."
+        },
+        {
+          title: "3. Uso del Servicio",
+          content: "Snap Contest proporciona una plataforma para participar en concursos fotográficos. Al utilizar nuestros servicios, aceptas:",
+          list: [
+            "No utilizar el servicio para fines ilegales o no autorizados",
+            "No infringir los derechos de propiedad intelectual",
+            "No subir contenido ofensivo, difamatorio o inapropiado",
+            "No intentar acceder a áreas restringidas del servicio"
+          ]
+        },
+        {
+          title: "4. Cuentas de Usuario",
+          content: "Al crear una cuenta en Snap Contest, eres responsable de:",
+          list: [
+            "Mantener la confidencialidad de tu contraseña",
+            "Restringir el acceso a tu cuenta",
+            "Todas las actividades que ocurran bajo tu cuenta",
+            "Notificarnos inmediatamente sobre cualquier uso no autorizado"
+          ]
+        },
+        {
+          title: "5. Derechos de Propiedad Intelectual",
+          content: "Al subir fotografías a Snap Contest, mantienes tus derechos de autor, pero nos otorgas una licencia para mostrar, promocionar y utilizar tu contenido en relación con los servicios de la plataforma. Además, otorgas a los organizadores del concurso los derechos especificados en las bases de cada concurso."
+        },
+        {
+          title: "6. Limitación de Responsabilidad",
+          content: "Snap Contest no será responsable por daños indirectos, incidentales, especiales, consecuentes o punitivos, incluyendo pérdida de ganancias, que surjan del uso de nuestros servicios."
+        },
+        {
+          title: "7. Ley Aplicable",
+          content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de Snap Contest, sin tener en cuenta sus principios de conflicto de leyes."
+        },
+        {
+          title: "8. Contacto",
+          content: "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en: terms@snapcontest.com"
+        }
+      ]
+    },
+    en: {
+      title: "Terms and Conditions",
+      lastUpdated: "Last updated",
+      sections: [
+        {
+          title: "1. Acceptance of Terms",
+          content: "By accessing or using Snap Contest, you agree to comply with these Terms and Conditions and all applicable laws and regulations. If you do not agree with any of these terms, you should not use our services."
+        },
+        {
+          title: "2. Changes to Terms",
+          content: "We reserve the right to modify these terms at any time. Changes will take effect immediately after posting. It is your responsibility to periodically review these terms."
+        },
+        {
+          title: "3. Use of Service",
+          content: "Snap Contest provides a platform to participate in photo contests. By using our services, you agree to:",
+          list: [
+            "Not use the service for illegal or unauthorized purposes",
+            "Not infringe intellectual property rights",
+            "Not upload offensive, defamatory, or inappropriate content",
+            "Not attempt to access restricted areas of the service"
+          ]
+        },
+        {
+          title: "4. User Accounts",
+          content: "When creating an account on Snap Contest, you are responsible for:",
+          list: [
+            "Maintaining the confidentiality of your password",
+            "Restricting access to your account",
+            "All activities that occur under your account",
+            "Notifying us immediately of any unauthorized use"
+          ]
+        },
+        {
+          title: "5. Intellectual Property Rights",
+          content: "When uploading photographs to Snap Contest, you retain your copyright, but you grant us a license to display, promote, and use your content in connection with the platform's services. Additionally, you grant the contest organizers the rights specified in the rules of each contest."
+        },
+        {
+          title: "6. Limitation of Liability",
+          content: "Snap Contest will not be liable for indirect, incidental, special, consequential, or punitive damages, including loss of profits, arising from the use of our services."
+        },
+        {
+          title: "7. Governing Law",
+          content: "These terms will be governed and interpreted in accordance with the laws of Snap Contest's country of operation, without regard to its conflict of law principles."
+        },
+        {
+          title: "8. Contact",
+          content: "If you have questions about these Terms and Conditions, contact us at: terms@snapcontest.com"
+        }
+      ]
+    }
+  };
+
+  const t = content[language];
+
   return (
     <div className="pt-24 pb-16">
       <div className="container max-w-4xl mx-auto px-4">
@@ -11,76 +132,27 @@ const Terms = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Términos y Condiciones
+          {t.title}
         </motion.h1>
         
         <div className="prose prose-sm sm:prose lg:prose-lg mx-auto">
-          <p>Última actualización: {new Date().toLocaleDateString()}</p>
+          <p>{t.lastUpdated}: {new Date().toLocaleDateString()}</p>
           
-          <h2>1. Aceptación de los Términos</h2>
-          <p>
-            Al acceder o utilizar Snap Contest, aceptas estar sujeto a estos Términos y Condiciones y a nuestra Política de Privacidad. Si no estás de acuerdo con alguno de estos términos, no podrás utilizar nuestros servicios.
-          </p>
-          
-          <h2>2. Elegibilidad</h2>
-          <p>
-            Para utilizar nuestros servicios, debes tener al menos 18 años de edad o la mayoría de edad legal en tu jurisdicción, lo que sea mayor. Al usar nuestros servicios, confirmas que cumples con este requisito.
-          </p>
-          
-          <h2>3. Cuentas de Usuario</h2>
-          <p>
-            Al crear una cuenta, debes proporcionar información precisa y completa. Eres responsable de mantener la seguridad de tu contraseña y de todas las actividades que ocurran bajo tu cuenta.
-          </p>
-          
-          <h2>4. Concursos Fotográficos</h2>
-          <p>
-            Los concursos están sujetos a reglas específicas que se publicarán para cada evento. Al participar, aceptas cumplir con dichas reglas y reconoces que los organizadores y Snap Contest tienen la decisión final sobre los ganadores.
-          </p>
-          
-          <h2>5. Contenido del Usuario</h2>
-          <p>
-            Al subir fotografías u otro contenido a nuestra plataforma:
-          </p>
-          <ul>
-            <li>Garantizas que tienes todos los derechos necesarios sobre dicho contenido</li>
-            <li>Otorgas a Snap Contest y a los organizadores de concursos los derechos especificados en las reglas del concurso</li>
-            <li>Te comprometes a no subir contenido ilegal, ofensivo o que viole derechos de terceros</li>
-          </ul>
-          
-          <h2>6. Propiedad Intelectual</h2>
-          <p>
-            Conservas tus derechos sobre las fotografías que subas, pero otorgas licencias específicas a los organizadores según lo detallado en las reglas de cada concurso. Las marcas, logotipos y contenido de Snap Contest están protegidos por derechos de autor y otras leyes de propiedad intelectual.
-          </p>
-          
-          <h2>7. Limitación de Responsabilidad</h2>
-          <p>
-            Snap Contest proporciona la plataforma "tal cual" y "según disponibilidad" sin garantías de ningún tipo. No seremos responsables por daños indirectos, incidentales, especiales, consecuentes o punitivos relacionados con tu uso de nuestros servicios.
-          </p>
-          
-          <h2>8. Indemnización</h2>
-          <p>
-            Aceptas indemnizar y mantener indemne a Snap Contest, sus afiliados, empleados y agentes de cualquier reclamo, demanda, pérdida o responsabilidad derivada de tu uso de nuestros servicios o violación de estos términos.
-          </p>
-          
-          <h2>9. Modificaciones</h2>
-          <p>
-            Podemos modificar estos términos en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación. El uso continuado de nuestros servicios después de cualquier modificación constituye tu aceptación de los términos modificados.
-          </p>
-          
-          <h2>10. Terminación</h2>
-          <p>
-            Podemos suspender o terminar tu acceso a nuestros servicios en cualquier momento y por cualquier motivo, sin previo aviso ni responsabilidad.
-          </p>
-          
-          <h2>11. Ley Aplicable</h2>
-          <p>
-            Estos términos se regirán e interpretarán de acuerdo con las leyes de España, sin tener en cuenta sus conflictos de disposiciones legales.
-          </p>
-          
-          <h2>12. Contacto</h2>
-          <p>
-            Si tienes preguntas sobre estos términos, contáctanos en: <a href="mailto:legal@snapcontest.com">legal@snapcontest.com</a>
-          </p>
+          {t.sections.map((section, index) => (
+            <div key={index}>
+              <h2>{section.title}</h2>
+              <p>
+                {section.content}
+              </p>
+              {section.list && (
+                <ul>
+                  {section.list.map((item, idx) => (
+                    <li key={idx}>{item}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

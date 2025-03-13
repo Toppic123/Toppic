@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import FeaturedContest from "@/components/FeaturedContest";
 import ContestCard from "@/components/ContestCard";
 import Map from "@/components/Map";
+import { useEffect, useState } from "react";
 
 // Mock data for featured contest
 const featuredContest = {
@@ -55,6 +56,80 @@ const popularContests = [
 ];
 
 const Index = () => {
+  const [language, setLanguage] = useState<"es" | "en">("es");
+
+  useEffect(() => {
+    // Detectar el idioma basado en la localización del navegador
+    const userLanguage = navigator.language || navigator.languages[0];
+    const isSpanish = /^es\b/.test(userLanguage) || 
+                     ["ES", "MX", "AR", "CO", "PE", "CL", "EC", "GT", "CU", 
+                      "BO", "DO", "HN", "PY", "SV", "NI", "CR", "PA", "UY", "VE"].includes(
+                        userLanguage.split("-")[1]?.toUpperCase() || ""
+                      );
+    
+    setLanguage(isSpanish ? "es" : "en");
+  }, []);
+
+  // Textos localizados
+  const texts = {
+    es: {
+      featuredContest: "Concursos populares",
+      seeAll: "Ver todos",
+      eventTypes: "Fotografía cualquier tipo de evento",
+      eventTypesDesc: "Desde eventos musicales y competiciones deportivas hasta monumentos históricos y plazas emblemáticas.",
+      musicEvents: "Eventos Musicales",
+      musicEventsDesc: "Conciertos, festivales y actuaciones en vivo",
+      sportsEvents: "Eventos Deportivos",
+      sportsEventsDesc: "Competiciones, carreras y torneos",
+      touristPlaces: "Lugares Turísticos",
+      touristPlacesDesc: "Monumentos, plazas y atracciones",
+      thematicContests: "Concursos Temáticos",
+      thematicContestsDesc: "Gastronomía, naturaleza y arte",
+      nearbyContests: "Concursos cerca de ti",
+      nearbyContestsDesc: "Explora el mapa para encontrar concursos en tu área y participar fácilmente.",
+      howItWorks: "¿Cómo funciona?",
+      participate: "1. Participa",
+      participateDesc: "Regístrate y sube tus mejores fotos a los concursos activos cerca de tu ubicación.",
+      vote: "2. Vota",
+      voteDesc: "Explora las fotos de otros participantes y vota por tus favoritas utilizando nuestro sistema de votación.",
+      win: "3. Gana",
+      winDesc: "Los ganadores reciben recompensas especiales y reconocimiento por parte de los organizadores.",
+      startNow: "Empieza ahora",
+      organizerTitle: "¿Eres organizador?",
+      organizerDesc: "Crea concursos fotográficos para tus eventos o promociona tu negocio con la mejor plataforma para concursos de fotografía geolocalizada.",
+      discoverPlans: "Descubre nuestros planes"
+    },
+    en: {
+      featuredContest: "Popular Contests",
+      seeAll: "See all",
+      eventTypes: "Photograph any type of event",
+      eventTypesDesc: "From music events and sports competitions to historical monuments and emblematic squares.",
+      musicEvents: "Music Events",
+      musicEventsDesc: "Concerts, festivals and live performances",
+      sportsEvents: "Sports Events",
+      sportsEventsDesc: "Competitions, races and tournaments",
+      touristPlaces: "Tourist Places",
+      touristPlacesDesc: "Monuments, squares and attractions",
+      thematicContests: "Thematic Contests",
+      thematicContestsDesc: "Gastronomy, nature and art",
+      nearbyContests: "Contests near you",
+      nearbyContestsDesc: "Explore the map to find contests in your area and easily participate.",
+      howItWorks: "How it works?",
+      participate: "1. Participate",
+      participateDesc: "Register and upload your best photos to active contests near your location.",
+      vote: "2. Vote",
+      voteDesc: "Explore photos from other participants and vote for your favorites using our voting system.",
+      win: "3. Win",
+      winDesc: "Winners receive special rewards and recognition from organizers.",
+      startNow: "Start now",
+      organizerTitle: "Are you an organizer?",
+      organizerDesc: "Create photo contests for your events or promote your business with the best platform for geolocated photo contests.",
+      discoverPlans: "Discover our plans"
+    }
+  };
+
+  const t = texts[language];
+
   return (
     <div className="pt-16">
       {/* Hero Section with Featured Contest */}
@@ -65,14 +140,16 @@ const Index = () => {
         <div className="container max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Concursos populares</h2>
+              <h2 className="text-3xl font-bold mb-2">{t.featuredContest}</h2>
               <p className="text-muted-foreground max-w-2xl">
-                Descubre los concursos más populares en este momento y participa con tus mejores fotografías.
+                {language === "es" ? 
+                  "Descubre los concursos más populares en este momento y participa con tus mejores fotografías." : 
+                  "Discover the most popular contests right now and participate with your best photographs."}
               </p>
             </div>
             <Button asChild variant="ghost" className="mt-4 md:mt-0">
               <Link to="/contests">
-                <span>Ver todos</span>
+                <span>{t.seeAll}</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -90,9 +167,9 @@ const Index = () => {
       <section className="py-16 px-4 bg-muted/30">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Fotografía cualquier tipo de evento</h2>
+            <h2 className="text-3xl font-bold mb-4">{t.eventTypes}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Desde eventos musicales y competiciones deportivas hasta monumentos históricos y plazas emblemáticas.
+              {t.eventTypesDesc}
             </p>
           </div>
           
@@ -101,32 +178,32 @@ const Index = () => {
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Music className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Eventos Musicales</h3>
-              <p className="text-muted-foreground text-sm">Conciertos, festivales y actuaciones en vivo</p>
+              <h3 className="font-bold text-lg mb-2">{t.musicEvents}</h3>
+              <p className="text-muted-foreground text-sm">{t.musicEventsDesc}</p>
             </div>
             
             <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Trophy className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Eventos Deportivos</h3>
-              <p className="text-muted-foreground text-sm">Competiciones, carreras y torneos</p>
+              <h3 className="font-bold text-lg mb-2">{t.sportsEvents}</h3>
+              <p className="text-muted-foreground text-sm">{t.sportsEventsDesc}</p>
             </div>
             
             <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Landmark className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Lugares Turísticos</h3>
-              <p className="text-muted-foreground text-sm">Monumentos, plazas y atracciones</p>
+              <h3 className="font-bold text-lg mb-2">{t.touristPlaces}</h3>
+              <p className="text-muted-foreground text-sm">{t.touristPlacesDesc}</p>
             </div>
             
             <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">Concursos Temáticos</h3>
-              <p className="text-muted-foreground text-sm">Gastronomía, naturaleza y arte</p>
+              <h3 className="font-bold text-lg mb-2">{t.thematicContests}</h3>
+              <p className="text-muted-foreground text-sm">{t.thematicContestsDesc}</p>
             </div>
           </div>
         </div>
@@ -137,9 +214,9 @@ const Index = () => {
         <div className="container max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Concursos cerca de ti</h2>
+              <h2 className="text-3xl font-bold mb-2">{t.nearbyContests}</h2>
               <p className="text-muted-foreground max-w-2xl">
-                Explora el mapa para encontrar concursos en tu área y participar fácilmente.
+                {t.nearbyContestsDesc}
               </p>
             </div>
           </div>
@@ -151,7 +228,7 @@ const Index = () => {
       {/* How It Works Section */}
       <section className="py-16 px-4">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-center">¿Cómo funciona?</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">{t.howItWorks}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
@@ -164,9 +241,9 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">1. Participa</h3>
+              <h3 className="text-xl font-bold mb-2">{t.participate}</h3>
               <p className="text-muted-foreground">
-                Regístrate y sube tus mejores fotos a los concursos activos cerca de tu ubicación.
+                {t.participateDesc}
               </p>
             </motion.div>
             
@@ -180,9 +257,9 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <MapIcon className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">2. Vota</h3>
+              <h3 className="text-xl font-bold mb-2">{t.vote}</h3>
               <p className="text-muted-foreground">
-                Explora las fotos de otros participantes y vota por tus favoritas utilizando nuestro sistema de votación.
+                {t.voteDesc}
               </p>
             </motion.div>
             
@@ -196,9 +273,9 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Award className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">3. Gana</h3>
+              <h3 className="text-xl font-bold mb-2">{t.win}</h3>
               <p className="text-muted-foreground">
-                Los ganadores reciben recompensas especiales y reconocimiento por parte de los organizadores.
+                {t.winDesc}
               </p>
             </motion.div>
           </div>
@@ -206,7 +283,7 @@ const Index = () => {
           <div className="text-center mt-12">
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/register">
-                <span>Empieza ahora</span>
+                <span>{t.startNow}</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -214,19 +291,18 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Organizer Section */}
+      {/* Organizer Section - Eliminada la referencia a "colaborador" */}
       <section className="py-16 px-4 bg-muted/30">
         <div className="container max-w-7xl mx-auto">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">¿Eres organizador o colaborador?</h2>
+            <h2 className="text-3xl font-bold mb-4">{t.organizerTitle}</h2>
             <p className="text-muted-foreground mb-8">
-              Crea concursos fotográficos para tus eventos o promociona tu negocio con la mejor plataforma para
-              concursos de fotografía geolocalizada.
+              {t.organizerDesc}
             </p>
             <Button asChild size="lg">
               <Link to="/organizers">
                 <Building className="mr-2 h-5 w-5" />
-                <span>Descubre nuestros planes</span>
+                <span>{t.discoverPlans}</span>
               </Link>
             </Button>
           </div>
