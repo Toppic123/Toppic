@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,7 +7,6 @@ import {
   LogIn, 
   Menu, 
   X, 
-  Map, 
   Award, 
   PlusCircle,
   Building
@@ -38,7 +36,6 @@ const Header = () => {
   
   const navItems = [
     { name: "Concursos", path: "/contests", icon: Award },
-    { name: "Mapa", path: "/contests", icon: Map },
     { name: "Organizar", path: "/organizers", icon: Building },
     { name: "Perfil", path: "/profile", icon: User },
   ];

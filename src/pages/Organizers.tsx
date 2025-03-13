@@ -115,32 +115,32 @@ const Organizers = () => {
     {
       id: "basic",
       name: "Básico",
-      price: "99€",
+      price: "29€",
       description: "Ideal para eventos pequeños y locales",
       features: [
         "Hasta 200 participantes",
         "1 concurso fotográfico",
         "Publicidad básica en la app",
-        "Derechos sobre 3 fotos ganadoras"
+        "Derechos sobre 1 foto ganadora"
       ]
     },
     {
       id: "pro",
       name: "Profesional",
-      price: "299€",
+      price: "79€",
       description: "Perfecto para eventos medianos y empresas",
       features: [
         "Hasta 1000 participantes",
         "3 concursos fotográficos",
         "Publicidad destacada en la app",
-        "Derechos sobre 10 fotos ganadoras",
+        "Derechos sobre 5 fotos ganadoras",
         "Banner promocional en la app"
       ]
     },
     {
       id: "premium",
       name: "Premium",
-      price: "599€",
+      price: "149€",
       description: "Para grandes eventos y marcas reconocidas",
       features: [
         "Participantes ilimitados",
@@ -169,7 +169,7 @@ const Organizers = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Organizadores y Colaboradores
+            Organizadores
           </motion.h1>
           <motion.p 
             className="text-xl text-muted-foreground max-w-3xl mx-auto"
