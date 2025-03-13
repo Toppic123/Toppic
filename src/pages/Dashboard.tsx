@@ -6,8 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Table, 
   TableBody, 
@@ -25,7 +23,7 @@ import {
   DialogFooter,
   DialogClose
 } from "@/components/ui/dialog";
-import { Calendar, Clock, MapPin, Users, Award, Camera, FileText, Image as ImageIcon } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Award, Camera, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
@@ -33,15 +31,12 @@ const Dashboard = () => {
   const [newContest, setNewContest] = useState({
     id: "",
     title: "",
-    description: "",
     location: "",
     startDate: "",
     endDate: "",
     participants: 0,
     votes: 0,
-    status: "active",
-    photoType: "",
-    coverImage: ""
+    status: "active"
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -59,29 +54,9 @@ const Dashboard = () => {
     localStorage.setItem("contests", JSON.stringify(contests));
   }, [contests]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewContest({ ...newContest, [name]: value });
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setNewContest({ ...newContest, [name]: value });
-  };
-
-  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      
-      reader.onloadend = () => {
-        setNewContest({ 
-          ...newContest, 
-          coverImage: reader.result as string 
-        });
-      };
-      
-      reader.readAsDataURL(file);
-    }
   };
 
   const handleAddContest = () => {
@@ -92,15 +67,12 @@ const Dashboard = () => {
     setNewContest({
       id: "",
       title: "",
-      description: "",
       location: "",
       startDate: "",
       endDate: "",
       participants: 0,
       votes: 0,
-      status: "active",
-      photoType: "",
-      coverImage: ""
+      status: "active"
     });
     
     setIsDialogOpen(false);
@@ -149,7 +121,7 @@ const Dashboard = () => {
                     <DialogTrigger asChild>
                       <Button>Crear Concurso</Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="sm:max-w-[600px]">
                       <DialogHeader>
                         <DialogTitle>Crear Nuevo Concurso</DialogTitle>
                       </DialogHeader>
@@ -164,62 +136,6 @@ const Dashboard = () => {
                             value={newContest.title}
                             onChange={handleInputChange}
                           />
-                        </div>
-                        
-                        <div className="grid w-full gap-3">
-                          <Label htmlFor="description">Descripción del Evento</Label>
-                          <Textarea
-                            id="description"
-                            name="description"
-                            placeholder="Describe los detalles del evento y concurso..."
-                            value={newContest.description}
-                            onChange={handleInputChange}
-                            className="min-h-32"
-                          />
-                        </div>
-                        
-                        <div className="grid w-full gap-3">
-                          <Label htmlFor="photoType">Tipo de Fotografía</Label>
-                          <Select 
-                            name="photoType" 
-                            value={newContest.photoType} 
-                            onValueChange={(value) => handleSelectChange("photoType", value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecciona el tipo de fotografía" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="location">Lugares/Monumentos</SelectItem>
-                              <SelectItem value="people">Personas/Eventos</SelectItem>
-                              <SelectItem value="product">Productos/Servicios</SelectItem>
-                              <SelectItem value="activity">Actividades/Actuaciones</SelectItem>
-                              <SelectItem value="nature">Naturaleza/Paisajes</SelectItem>
-                              <SelectItem value="other">Otro tipo</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <div className="grid w-full gap-3">
-                          <Label htmlFor="coverImage">Imagen de Portada</Label>
-                          <div className="flex items-center gap-4">
-                            <Input
-                              id="coverImage"
-                              name="coverImage"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleCoverImageChange}
-                              className="flex-1"
-                            />
-                            {newContest.coverImage && (
-                              <div className="w-16 h-16 relative rounded overflow-hidden">
-                                <img 
-                                  src={newContest.coverImage} 
-                                  alt="Vista previa" 
-                                  className="object-cover w-full h-full"
-                                />
-                              </div>
-                            )}
-                          </div>
                         </div>
                         
                         <div className="grid w-full gap-3">
@@ -274,7 +190,6 @@ const Dashboard = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Concurso</TableHead>
-                          <TableHead>Tipo</TableHead>
                           <TableHead>Ubicación</TableHead>
                           <TableHead>Fechas</TableHead>
                           <TableHead>Participantes</TableHead>
@@ -285,41 +200,7 @@ const Dashboard = () => {
                       <TableBody>
                         {contests.map((contest) => (
                           <TableRow key={contest.id}>
-                            <TableCell className="font-medium">
-                              <div className="flex items-center gap-3">
-                                {contest.coverImage && (
-                                  <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0">
-                                    <img 
-                                      src={contest.coverImage} 
-                                      alt={contest.title} 
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                )}
-                                {!contest.coverImage && (
-                                  <div className="w-10 h-10 bg-muted rounded flex items-center justify-center flex-shrink-0">
-                                    <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                                  </div>
-                                )}
-                                <div>
-                                  {contest.title}
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {contest.photoType ? (
-                                <>
-                                  {contest.photoType === "location" && "Lugares/Monumentos"}
-                                  {contest.photoType === "people" && "Personas/Eventos"}
-                                  {contest.photoType === "product" && "Productos/Servicios"}
-                                  {contest.photoType === "activity" && "Actividades/Actuaciones"}
-                                  {contest.photoType === "nature" && "Naturaleza/Paisajes"}
-                                  {contest.photoType === "other" && "Otro tipo"}
-                                </>
-                              ) : (
-                                <span className="text-muted-foreground">No especificado</span>
-                              )}
-                            </TableCell>
+                            <TableCell className="font-medium">{contest.title}</TableCell>
                             <TableCell>{contest.location}</TableCell>
                             <TableCell>
                               <div className="flex items-center">
