@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -10,8 +9,7 @@ import {
   X, 
   Award, 
   PlusCircle,
-  Building,
-  HelpCircle
+  Building
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -82,12 +80,6 @@ const Header = () => {
             </Link>
           ))}
           
-          {/* Support Button */}
-          <Button variant="outline" size="sm" className="rounded-full">
-            <HelpCircle className="mr-2 h-4 w-4" />
-            <span>Soporte</span>
-          </Button>
-          
           {isLoggedIn ? (
             <Button asChild size="sm" className="rounded-full">
               <Link to="/upload">
@@ -141,12 +133,6 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              
-              {/* Support Button for Mobile */}
-              <Button variant="outline" size="sm" className="w-full justify-start rounded-full">
-                <HelpCircle className="mr-2 h-4 w-4" />
-                <span>Soporte</span>
-              </Button>
               
               {isLoggedIn ? (
                 <Button asChild size="sm" className="w-full justify-start rounded-full">
