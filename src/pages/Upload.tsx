@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload as UploadIcon, MapPin, Image } from "lucide-react";
+import { Camera, Upload as UploadIcon, MapPin, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Upload = () => {
@@ -22,7 +22,7 @@ const Upload = () => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = (event) => {
-        const img = new Image();
+        const img = document.createElement('img');
         img.src = event.target?.result as string;
         img.onload = () => {
           const canvas = document.createElement('canvas');
