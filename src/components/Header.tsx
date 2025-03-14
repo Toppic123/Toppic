@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -9,7 +10,8 @@ import {
   X, 
   Award, 
   PlusCircle,
-  Building
+  Building,
+  HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -63,7 +65,7 @@ const Header = () => {
         </Link>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6">
           {navItems.map((item) => (
             <Link
               key={item.name}
@@ -79,6 +81,14 @@ const Header = () => {
               {item.name}
             </Link>
           ))}
+
+          {/* Support Button */}
+          <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-transparent">
+            <Link to="/support">
+              <HelpCircle className="mr-2 h-4 w-4" />
+              <span>Soporte</span>
+            </Link>
+          </Button>
           
           {isLoggedIn ? (
             <Button asChild size="sm" className="rounded-full">
@@ -133,6 +143,15 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
+
+              {/* Support Button in Mobile Menu */}
+              <Link
+                to="/support"
+                className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <HelpCircle className="mr-2 w-5 h-5" />
+                <span>Soporte</span>
+              </Link>
               
               {isLoggedIn ? (
                 <Button asChild size="sm" className="w-full justify-start rounded-full">

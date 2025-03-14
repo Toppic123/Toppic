@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const Terms = () => {
-  const [language, setLanguage] = useState<"es" | "en">("es");
+  const [language, setLanguage] = useState<"en">("en");
 
   useEffect(() => {
-    // Detectar el idioma basado en la localización del navegador
+    // Detect language based on browser's locale
     const userLanguage = navigator.language || navigator.languages[0];
     const isSpanish = /^es\b/.test(userLanguage) || 
                      ["ES", "MX", "AR", "CO", "PE", "CL", "EC", "GT", "CU", 
@@ -14,10 +14,11 @@ const Terms = () => {
                         userLanguage.split("-")[1]?.toUpperCase() || ""
                       );
     
-    setLanguage(isSpanish ? "es" : "en");
+    // Always default to English as per the user's instruction
+    setLanguage("en");
   }, []);
 
-  // Contenido localizado
+  // Localized content
   const content = {
     es: {
       title: "Términos y Condiciones",
@@ -56,15 +57,36 @@ const Terms = () => {
           content: "Al subir fotografías a Snap Contest, mantienes tus derechos de autor, pero nos otorgas una licencia para mostrar, promocionar y utilizar tu contenido en relación con los servicios de la plataforma. Además, otorgas a los organizadores del concurso los derechos especificados en las bases de cada concurso."
         },
         {
-          title: "6. Limitación de Responsabilidad",
+          title: "6. Sistema de Votación y Selección",
+          content: "El sistema de votación y selección de Snap Contest funciona de la siguiente manera:",
+          list: [
+            "Inicialmente, nuestra inteligencia artificial realiza un primer filtrado de las fotografías según criterios de calidad técnica y estética.",
+            "Este filtrado garantiza que los participantes solo vean un máximo de 100 fotografías de la más alta calidad para su votación.",
+            "Los participantes votan por las fotografías que consideren mejores, determinando así los ganadores del concurso.",
+            "El número de fotografías ganadoras dependerá del tipo de evento y la suscripción del organizador.",
+            "Las fotografías ganadoras pasarán a ser propiedad del organizador según los términos especificados en cada concurso."
+          ]
+        },
+        {
+          title: "7. Almacenamiento y Calidad de Imágenes",
+          content: "Para garantizar la mejor experiencia posible en la plataforma:",
+          list: [
+            "Las fotografías subidas se comprimen para optimizar el rendimiento de la aplicación durante la visualización y votación.",
+            "Sin embargo, almacenamos la versión original en alta calidad para preservar todos los detalles de la imagen.",
+            "Al finalizar el concurso, solo se conservan en alta calidad las fotografías ganadoras que serán entregadas al organizador.",
+            "Las demás fotografías se mantienen en su versión comprimida para visualización en la plataforma."
+          ]
+        },
+        {
+          title: "8. Limitación de Responsabilidad",
           content: "Snap Contest no será responsable por daños indirectos, incidentales, especiales, consecuentes o punitivos, incluyendo pérdida de ganancias, que surjan del uso de nuestros servicios."
         },
         {
-          title: "7. Ley Aplicable",
+          title: "9. Ley Aplicable",
           content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de Snap Contest, sin tener en cuenta sus principios de conflicto de leyes."
         },
         {
-          title: "8. Contacto",
+          title: "10. Contacto",
           content: "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en: terms@snapcontest.com"
         }
       ]
@@ -106,15 +128,36 @@ const Terms = () => {
           content: "When uploading photographs to Snap Contest, you retain your copyright, but you grant us a license to display, promote, and use your content in connection with the platform's services. Additionally, you grant the contest organizers the rights specified in the rules of each contest."
         },
         {
-          title: "6. Limitation of Liability",
+          title: "6. Voting and Selection System",
+          content: "The Snap Contest voting and selection system works as follows:",
+          list: [
+            "Initially, our artificial intelligence performs a first filtering of photographs based on technical and aesthetic quality criteria.",
+            "This filtering ensures that participants only see a maximum of 100 highest-quality photographs for voting.",
+            "Participants vote for the photographs they consider best, thus determining the winners of the contest.",
+            "The number of winning photographs will depend on the type of event and the organizer's subscription.",
+            "The winning photographs will become the property of the organizer according to the terms specified in each contest."
+          ]
+        },
+        {
+          title: "7. Image Storage and Quality",
+          content: "To ensure the best possible experience on the platform:",
+          list: [
+            "Uploaded photographs are compressed to optimize application performance during viewing and voting.",
+            "However, we store the original high-quality version to preserve all image details.",
+            "At the end of the contest, only the winning photographs that will be delivered to the organizer are kept in high quality.",
+            "The other photographs are maintained in their compressed version for platform visualization."
+          ]
+        },
+        {
+          title: "8. Limitation of Liability",
           content: "Snap Contest will not be liable for indirect, incidental, special, consequential, or punitive damages, including loss of profits, arising from the use of our services."
         },
         {
-          title: "7. Governing Law",
+          title: "9. Governing Law",
           content: "These terms will be governed and interpreted in accordance with the laws of Snap Contest's country of operation, without regard to its conflict of law principles."
         },
         {
-          title: "8. Contact",
+          title: "10. Contact",
           content: "If you have questions about these Terms and Conditions, contact us at: terms@snapcontest.com"
         }
       ]
