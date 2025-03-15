@@ -154,6 +154,18 @@
   .section-transition {
     @apply relative before:absolute before:inset-0 before:bg-gradient-to-b before:from-background before:to-transparent before:h-32 before:-top-32 before:z-10;
   }
+  
+  .hero-image {
+    @apply w-full h-full object-cover transition-opacity duration-1000 ease-in-out;
+  }
+  
+  .hero-image-container {
+    @apply absolute inset-0 overflow-hidden;
+  }
+  
+  .hero-image-overlay {
+    @apply absolute inset-0 bg-black/40;
+  }
 }
 
 /* Custom scrollbar */

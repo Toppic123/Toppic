@@ -1,10 +1,35 @@
-
 import { motion } from "framer-motion";
 import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { 
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
+
+// Hero background images
+const heroImages = [
+  {
+    url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2400&q=80",
+    category: "landscapes"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1558370781-d6196949e317?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    category: "monuments"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    category: "gastronomy"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1530137073265-ac01e0a5ef2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    category: "events"
+  }
+];
 
 // Mock data for popular contests
 const popularContests = [
@@ -42,6 +67,7 @@ const popularContests = [
 
 const Index = () => {
   const [language, setLanguage] = useState<"es" | "en">("es");
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     // Detectar el idioma basado en la localización del navegador
@@ -53,6 +79,14 @@ const Index = () => {
                       );
     
     setLanguage(isSpanish ? "es" : "en");
+  }, []);
+
+  // Auto-rotate carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   // Textos localizados
@@ -125,37 +159,47 @@ const Index = () => {
 
   return (
     <div className="pt-0">
-      {/* Hero Section with abstract shapes background */}
-      <section className="relative min-h-[90vh] hero-gradient overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-10" />
-          <div className="absolute w-full h-full opacity-20">
-            {/* Abstract shapes */}
-            <div className="absolute top-20 left-[10%] w-64 h-64 rounded-full bg-primary/10 animate-pulse" style={{ animationDuration: '8s' }} />
-            <div className="absolute top-40 right-[15%] w-80 h-80 rounded-full bg-primary/5 animate-pulse" style={{ animationDuration: '12s' }} />
-            <div className="absolute bottom-[20%] left-[20%] w-72 h-72 rounded-full bg-primary/10 animate-pulse" style={{ animationDuration: '10s' }} />
-          </div>
+      {/* Hero Section with carousel background */}
+      <section className="relative min-h-[90vh] overflow-hidden">
+        {/* Background Image Carousel */}
+        <div className="absolute inset-0 z-0">
+          {heroImages.map((image, index) => (
+            <div 
+              key={image.category}
+              className={cn(
+                "absolute inset-0 transition-opacity duration-1000",
+                activeIndex === index ? "opacity-100" : "opacity-0"
+              )}
+            >
+              <img 
+                src={image.url} 
+                alt={`Photography ${image.category}`}
+                className="absolute w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-black/40" />
+            </div>
+          ))}
         </div>
         
-        <div className="relative z-20 container max-w-7xl mx-auto h-[90vh] flex items-center px-4">
+        <div className="relative z-10 container max-w-7xl mx-auto h-[90vh] flex items-center px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
             className="max-w-3xl"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">{t.heroTitle}</h1>
-            <p className="text-xl md:text-2xl mb-6 text-muted-foreground">{t.heroSubtitle}</p>
-            <p className="text-lg mb-8 max-w-xl text-muted-foreground/80">{t.heroDescription}</p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">{t.heroTitle}</h1>
+            <p className="text-xl md:text-2xl mb-6 text-white/90">{t.heroSubtitle}</p>
+            <p className="text-lg mb-8 max-w-xl text-white/80">{t.heroDescription}</p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="rounded-full px-8">
+              <Button asChild size="lg" className="rounded-full px-8 bg-white text-primary hover:bg-white/90">
                 <Link to="/contests">
                   <Camera className="mr-2 h-5 w-5" />
                   <span>{t.exploreContests}</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full px-8">
+              <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-white text-white hover:bg-white/10">
                 <Link to="/register">
                   <span>{t.startNow}</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
