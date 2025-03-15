@@ -11,23 +11,27 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 
-// Hero background images
+// Hero background images - updated with darker images
 const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2400&q=80",
     category: "landscapes"
   },
   {
-    url: "https://images.unsplash.com/photo-1558370781-d6196949e317?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1577554105754-720c7f128dbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "monuments"
   },
   {
-    url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
-    category: "gastronomy"
+    url: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    category: "music events"
   },
   {
-    url: "https://images.unsplash.com/photo-1530137073265-ac01e0a5ef2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
-    category: "events"
+    url: "https://images.unsplash.com/photo-1517466787929-bc90951d0974?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    category: "sport events"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1519741347686-c1e331fcb994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    category: "weddings"
   }
 ];
 
@@ -176,7 +180,7 @@ const Index = () => {
                 alt={`Photography ${image.category}`}
                 className="absolute w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-black/50" />
             </div>
           ))}
         </div>
@@ -199,7 +203,7 @@ const Index = () => {
                   <span>{t.exploreContests}</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-white text-white hover:bg-white/10">
+              <Button asChild variant="outline" size="lg" className="rounded-full px-8 bg-primary/80 border-white text-white hover:bg-primary/90 hover:border-white">
                 <Link to="/register">
                   <span>{t.startNow}</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
