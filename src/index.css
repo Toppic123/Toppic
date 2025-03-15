@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     
-    --primary: 240 5.9% 10%;
+    --primary: 222 89% 46%;
     --primary-foreground: 0 0% 98%;
     
     --secondary: 240 4.8% 95.9%;
@@ -31,7 +30,7 @@
     
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+    --ring: 222 89% 46%;
     
     --radius: 0.5rem;
   }
@@ -142,6 +141,18 @@
   
   .page-transition-exit-active {
     @apply opacity-0 transition-opacity duration-300;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/30 shadow-lg;
+  }
+  
+  .hero-gradient {
+    @apply bg-gradient-to-b from-primary/5 via-background/50 to-background;
+  }
+  
+  .section-transition {
+    @apply relative before:absolute before:inset-0 before:bg-gradient-to-b before:from-background before:to-transparent before:h-32 before:-top-32 before:z-10;
   }
 }
 

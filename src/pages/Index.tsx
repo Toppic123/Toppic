@@ -1,25 +1,10 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Map as MapIcon, Camera, Award, Music, Trophy, Landmark, Building, Globe } from "lucide-react";
+import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import FeaturedContest from "@/components/FeaturedContest";
 import ContestCard from "@/components/ContestCard";
-import Map from "@/components/Map";
 import { useEffect, useState } from "react";
-
-// Mock data for featured contest
-const featuredContest = {
-  id: "1",
-  title: "Festival de Música Rock",
-  description: "Captura los mejores momentos del festival más importante del año. Buscamos fotos que transmitan la energía, emoción y ambiente único de este evento musical.",
-  imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80",
-  location: "Madrid",
-  dateStart: "2023-06-15",
-  dateEnd: "2023-06-30",
-  participantsCount: 124,
-  photosCount: 348,
-};
 
 // Mock data for popular contests
 const popularContests = [
@@ -140,12 +125,15 @@ const Index = () => {
 
   return (
     <div className="pt-0">
-      {/* Hero Section with Globe */}
-      <section className="relative min-h-[90vh] overflow-hidden bg-gradient-to-b from-primary/5 to-background">
+      {/* Hero Section with abstract shapes background */}
+      <section className="relative min-h-[90vh] hero-gradient overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-10" />
-          <div className="h-full w-full">
-            <Map />
+          <div className="absolute w-full h-full opacity-20">
+            {/* Abstract shapes */}
+            <div className="absolute top-20 left-[10%] w-64 h-64 rounded-full bg-primary/10 animate-pulse" style={{ animationDuration: '8s' }} />
+            <div className="absolute top-40 right-[15%] w-80 h-80 rounded-full bg-primary/5 animate-pulse" style={{ animationDuration: '12s' }} />
+            <div className="absolute bottom-[20%] left-[20%] w-72 h-72 rounded-full bg-primary/10 animate-pulse" style={{ animationDuration: '10s' }} />
           </div>
         </div>
         
@@ -163,7 +151,7 @@ const Index = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="rounded-full px-8">
                 <Link to="/contests">
-                  <Globe className="mr-2 h-5 w-5" />
+                  <Camera className="mr-2 h-5 w-5" />
                   <span>{t.exploreContests}</span>
                 </Link>
               </Button>
@@ -218,37 +206,61 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="glass-card rounded-xl p-6 text-center hover:shadow-elevated transition-all duration-300"
+            >
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Music className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t.musicEvents}</h3>
               <p className="text-muted-foreground text-sm">{t.musicEventsDesc}</p>
-            </div>
+            </motion.div>
             
-            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="glass-card rounded-xl p-6 text-center hover:shadow-elevated transition-all duration-300"
+            >
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Trophy className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t.sportsEvents}</h3>
               <p className="text-muted-foreground text-sm">{t.sportsEventsDesc}</p>
-            </div>
+            </motion.div>
             
-            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="glass-card rounded-xl p-6 text-center hover:shadow-elevated transition-all duration-300"
+            >
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Landmark className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t.touristPlaces}</h3>
               <p className="text-muted-foreground text-sm">{t.touristPlacesDesc}</p>
-            </div>
+            </motion.div>
             
-            <div className="bg-card border rounded-xl p-6 text-center hover:shadow-md transition-all">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="glass-card rounded-xl p-6 text-center hover:shadow-elevated transition-all duration-300"
+            >
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
               </div>
               <h3 className="font-bold text-lg mb-2">{t.thematicContests}</h3>
               <p className="text-muted-foreground text-sm">{t.thematicContestsDesc}</p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -264,7 +276,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="bg-card p-6 rounded-xl border"
+              className="glass-card p-6 rounded-xl"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
@@ -280,10 +292,10 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="bg-card p-6 rounded-xl border"
+              className="glass-card p-6 rounded-xl"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <MapIcon className="h-6 w-6 text-primary" />
+                <MapPin className="h-6 w-6 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-2">{t.vote}</h3>
               <p className="text-muted-foreground">
@@ -296,7 +308,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="bg-card p-6 rounded-xl border"
+              className="glass-card p-6 rounded-xl"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Award className="h-6 w-6 text-primary" />
@@ -327,9 +339,8 @@ const Index = () => {
             <p className="text-muted-foreground mb-8">
               {t.organizerDesc}
             </p>
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/organizers">
-                <Building className="mr-2 h-5 w-5" />
                 <span>{t.discoverPlans}</span>
               </Link>
             </Button>
