@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -58,6 +57,12 @@ const Index = () => {
   // Textos localizados
   const texts = {
     es: {
+      discoverWorld: "Descubre el mundo a través de la fotografía",
+      mainHeading: "Comparte lugares hermosos, gana concursos increíbles",
+      subHeading: "Únete a una comunidad de fotógrafos compartiendo los lugares más impresionantes del mundo. Participa en concursos y obtén reconocimiento por tu talento.",
+      explorePhotos: "Explorar fotos",
+      uploadPhoto: "Sube tu foto",
+      scrollToExplore: "Desplázate para explorar",
       featuredContest: "Concursos populares",
       seeAll: "Ver todos",
       eventTypes: "Fotografía cualquier tipo de evento",
@@ -89,6 +94,12 @@ const Index = () => {
       exploreContests: "Explorar concursos"
     },
     en: {
+      discoverWorld: "Discover the world through photography",
+      mainHeading: "Share beautiful places, win amazing contests",
+      subHeading: "Join a community of photographers sharing the most breathtaking locations around the world. Participate in contests and get recognized for your talent.",
+      explorePhotos: "Explore photos",
+      uploadPhoto: "Upload your photo",
+      scrollToExplore: "Scroll to explore",
       featuredContest: "Popular Contests",
       seeAll: "See all",
       eventTypes: "Photograph any type of event",
@@ -125,44 +136,64 @@ const Index = () => {
 
   return (
     <div className="pt-0">
-      {/* Hero Section with abstract shapes background */}
-      <section className="relative min-h-[90vh] hero-gradient overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-10" />
-          <div className="absolute w-full h-full opacity-20">
-            {/* Abstract shapes */}
-            <div className="absolute top-20 left-[10%] w-64 h-64 rounded-full bg-primary/10 animate-pulse" style={{ animationDuration: '8s' }} />
-            <div className="absolute top-40 right-[15%] w-80 h-80 rounded-full bg-primary/5 animate-pulse" style={{ animationDuration: '12s' }} />
-            <div className="absolute bottom-[20%] left-[20%] w-72 h-72 rounded-full bg-primary/10 animate-pulse" style={{ animationDuration: '10s' }} />
-          </div>
+      {/* Hero Section with landscape image background */}
+      <section className="relative min-h-[100vh] overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src="/lovable-uploads/102587e2-44d7-4fb5-a049-89e846d1154b.png" 
+            alt="Landscape photography" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20" /> {/* Subtle overlay */}
         </div>
         
-        <div className="relative z-20 container max-w-7xl mx-auto h-[90vh] flex items-center px-4">
+        <div className="relative z-20 container max-w-7xl mx-auto min-h-[100vh] flex flex-col items-start justify-center px-6 md:px-8">
+          {/* Pill badge */}
+          <div className="bg-white/80 backdrop-blur-sm text-black py-2 px-4 rounded-full inline-flex items-center mb-8">
+            <span className="mr-2 text-blue-500">⊕</span>
+            <span className="text-sm font-medium">{t.discoverWorld}</span>
+          </div>
+          
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
             className="max-w-3xl"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">{t.heroTitle}</h1>
-            <p className="text-xl md:text-2xl mb-6 text-muted-foreground">{t.heroSubtitle}</p>
-            <p className="text-lg mb-8 max-w-xl text-muted-foreground/80">{t.heroDescription}</p>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight">
+              {t.mainHeading}
+            </h1>
+            <p className="text-lg md:text-xl mb-10 max-w-2xl text-white/90">
+              {t.subHeading}
+            </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="rounded-full px-8">
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-8 py-6">
                 <Link to="/contests">
-                  <Camera className="mr-2 h-5 w-5" />
-                  <span>{t.exploreContests}</span>
+                  <span>{t.explorePhotos}</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full px-8">
-                <Link to="/register">
-                  <span>{t.startNow}</span>
-                  <ArrowRight className="ml-2 h-4 w-4" />
+              <Button asChild variant="outline" size="lg" className="bg-white/90 text-black hover:bg-white rounded-md px-8 py-6">
+                <Link to="/upload">
+                  <Camera className="mr-2 h-5 w-5" />
+                  <span>{t.uploadPhoto}</span>
                 </Link>
               </Button>
             </div>
           </motion.div>
+
+          {/* Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/80 text-sm flex flex-col items-center">
+            <span className="mb-2">{t.scrollToExplore}</span>
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+            >
+              <ArrowRight className="h-5 w-5 transform rotate-90" />
+            </motion.div>
+          </div>
         </div>
       </section>
       
