@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Map as MapIcon, Camera, Award, Music, Trophy, Landmark, Building } from "lucide-react";
+import { ArrowRight, Map as MapIcon, Camera, Award, Music, Trophy, Landmark, Building, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import FeaturedContest from "@/components/FeaturedContest";
@@ -97,7 +97,11 @@ const Index = () => {
       startNow: "Empieza ahora",
       organizerTitle: "¿Eres organizador?",
       organizerDesc: "Crea concursos fotográficos para tus eventos o promociona tu negocio con la mejor plataforma para concursos de fotografía geolocalizada.",
-      discoverPlans: "Descubre nuestros planes"
+      discoverPlans: "Descubre nuestros planes",
+      heroTitle: "Concursos fotográficos geolocalizados",
+      heroSubtitle: "Participa, vota y gana en concursos de fotografía cerca de ti",
+      heroDescription: "Descubre concursos fotográficos en cualquier parte del mundo. Sube tus mejores fotos y gana premios increíbles.",
+      exploreContests: "Explorar concursos"
     },
     en: {
       featuredContest: "Popular Contests",
@@ -124,35 +128,66 @@ const Index = () => {
       startNow: "Start now",
       organizerTitle: "Are you an organizer?",
       organizerDesc: "Create photo contests for your events or promote your business with the best platform for geolocated photo contests.",
-      discoverPlans: "Discover our plans"
+      discoverPlans: "Discover our plans",
+      heroTitle: "Geolocated Photo Contests",
+      heroSubtitle: "Participate, vote and win in photo contests near you",
+      heroDescription: "Discover photo contests anywhere in the world. Upload your best photos and win amazing prizes.",
+      exploreContests: "Explore contests"
     }
   };
 
   const t = texts[language];
 
   return (
-    <div className="pt-16">
-      {/* Hero Section with Featured Contest */}
-      <FeaturedContest {...featuredContest} />
-      
-      {/* Popular Contests Section */}
-      <section className="py-16 px-4">
-        <div className="container max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">{t.featuredContest}</h2>
-              <p className="text-muted-foreground max-w-2xl">
-                {language === "es" ? 
-                  "Descubre los concursos más populares en este momento y participa con tus mejores fotografías." : 
-                  "Discover the most popular contests right now and participate with your best photographs."}
-              </p>
+    <div className="pt-0">
+      {/* Hero Section with Globe */}
+      <section className="relative min-h-[90vh] overflow-hidden bg-gradient-to-b from-primary/5 to-background">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background z-10" />
+          <div className="h-full w-full">
+            <Map />
+          </div>
+        </div>
+        
+        <div className="relative z-20 container max-w-7xl mx-auto h-[90vh] flex items-center px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="max-w-3xl"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">{t.heroTitle}</h1>
+            <p className="text-xl md:text-2xl mb-6 text-muted-foreground">{t.heroSubtitle}</p>
+            <p className="text-lg mb-8 max-w-xl text-muted-foreground/80">{t.heroDescription}</p>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button asChild size="lg" className="rounded-full px-8">
+                <Link to="/contests">
+                  <Globe className="mr-2 h-5 w-5" />
+                  <span>{t.exploreContests}</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="rounded-full px-8">
+                <Link to="/register">
+                  <span>{t.startNow}</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
             </div>
-            <Button asChild variant="ghost" className="mt-4 md:mt-0">
-              <Link to="/contests">
-                <span>{t.seeAll}</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+          </motion.div>
+        </div>
+      </section>
+      
+      {/* Featured Contest Section */}
+      <section className="py-16 px-4 bg-muted/30">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">{t.featuredContest}</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {language === "es" ? 
+                "Descubre los concursos más populares en este momento y participa con tus mejores fotografías." : 
+                "Discover the most popular contests right now and participate with your best photographs."}
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,11 +195,20 @@ const Index = () => {
               <ContestCard key={contest.id} {...contest} />
             ))}
           </div>
+          
+          <div className="text-center mt-10">
+            <Button asChild variant="outline" className="rounded-full px-8">
+              <Link to="/contests">
+                <span>{t.seeAll}</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
       
       {/* Event Types Section */}
-      <section className="py-16 px-4 bg-muted/30">
+      <section className="py-16 px-4">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{t.eventTypes}</h2>
@@ -209,24 +253,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Map Section */}
-      <section className="py-16 px-4">
-        <div className="container max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">{t.nearbyContests}</h2>
-              <p className="text-muted-foreground max-w-2xl">
-                {t.nearbyContestsDesc}
-              </p>
-            </div>
-          </div>
-          
-          <Map />
-        </div>
-      </section>
-      
       {/* How It Works Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-muted/30">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">{t.howItWorks}</h2>
           
@@ -291,8 +319,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Organizer Section - Eliminada la referencia a "colaborador" */}
-      <section className="py-16 px-4 bg-muted/30">
+      {/* Organizer Section */}
+      <section className="py-16 px-4">
         <div className="container max-w-7xl mx-auto">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-4">{t.organizerTitle}</h2>
