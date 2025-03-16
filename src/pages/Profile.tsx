@@ -1,14 +1,23 @@
 
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Camera, Trophy, MapPin } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage, AvatarUpload } from "@/components/ui/avatar";
+import { Camera, Trophy, MapPin, MessageCircle, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Separator } from "@/components/ui/separator";
+import PhotoComments from "@/components/PhotoComments";
 
 const Profile = () => {
   const { username } = useParams<{ username?: string }>();
+  const { toast } = useToast();
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   
   // Mock user data - in a real app this would come from an API
   const user = {
@@ -34,6 +43,24 @@ const Profile = () => {
     contestName: `Concurso de Fotografía ${i % 3 === 0 ? 'Urbana' : 'Natural'}`
   }));
 
+  const handleProfileImageSelect = (file: File) => {
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      if (e.target?.result) {
+        setProfileImagePreview(e.target.result as string);
+        
+        // In a real app, this would upload the file to a server
+        toast({
+          title: "Profile picture updated",
+          description: "Your profile picture has been updated successfully."
+        });
+      }
+    };
+    fileReader.readAsDataURL(file);
+  };
+
+  const isCurrentUser = !username || username === "usuario"; // In a real app, this would check if the profile belongs to the logged-in user
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -44,10 +71,19 @@ const Profile = () => {
       <Card className="mb-8">
         <CardContent className="pt-6">
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
+            {isCurrentUser ? (
+              <AvatarUpload
+                size="md"
+                previewUrl={profileImagePreview || user.avatar}
+                onImageSelect={handleProfileImageSelect}
+                className="h-24 w-24"
+              />
+            ) : (
+              <Avatar className="h-24 w-24">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback>{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+            )}
             
             <div className="flex-1 text-center md:text-left">
               <h1 className="text-2xl font-bold">{user.name}</h1>
@@ -93,16 +129,35 @@ const Profile = () => {
         <TabsContent value="photos">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {photos.map((photo) => (
-              <div key={photo.id} className="group relative overflow-hidden rounded-lg">
-                <img 
-                  src={photo.imageUrl} 
-                  alt={photo.title} 
-                  className="w-full h-52 object-cover transition-transform duration-300 group-hover:scale-105" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
-                  <h3 className="text-white font-medium truncate">{photo.title}</h3>
-                  <p className="text-white/80 text-sm truncate">{photo.contestName}</p>
+              <div key={photo.id} className="space-y-3">
+                <div className="group relative overflow-hidden rounded-lg">
+                  <img 
+                    src={photo.imageUrl} 
+                    alt={photo.title} 
+                    className="w-full h-52 object-cover transition-transform duration-300 group-hover:scale-105" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                    <h3 className="text-white font-medium truncate">{photo.title}</h3>
+                    <p className="text-white/80 text-sm truncate">{photo.contestName}</p>
+                  </div>
                 </div>
+                
+                {selectedPhotoId === photo.id ? (
+                  <PhotoComments 
+                    photoId={photo.id} 
+                    onClose={() => setSelectedPhotoId(null)} 
+                  />
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full"
+                    onClick={() => setSelectedPhotoId(photo.id)}
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Ver comentarios
+                  </Button>
+                )}
               </div>
             ))}
           </div>

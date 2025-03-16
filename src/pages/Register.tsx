@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { AvatarUpload } from "@/components/ui/avatar";
 import {
   Form,
   FormControl,
@@ -32,6 +33,8 @@ const formSchema = z.object({
 const Register = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,11 +48,22 @@ const Register = () => {
     },
   });
 
+  const handleProfileImageSelect = (file: File) => {
+    setProfileImage(file);
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      if (e.target?.result) {
+        setProfileImagePreview(e.target.result as string);
+      }
+    };
+    fileReader.readAsDataURL(file);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     
     // Log form submission (for testing)
-    console.info("Form submitted:", values);
+    console.info("Form submitted:", values, "Profile Image:", profileImage);
     
     // Simulate API call
     setTimeout(() => {
@@ -75,6 +89,14 @@ const Register = () => {
           <p className="text-muted-foreground">
             Register to participate in photo contests and share your best shots
           </p>
+        </div>
+
+        <div className="flex justify-center mb-6">
+          <AvatarUpload 
+            size="lg"
+            previewUrl={profileImagePreview || undefined}
+            onImageSelect={handleProfileImageSelect}
+          />
         </div>
 
         <Form {...form}>
