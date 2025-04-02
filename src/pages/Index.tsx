@@ -1,15 +1,20 @@
+
 import { motion } from "framer-motion";
-import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music } from "lucide-react";
+import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
-import { useEffect, useState, useCallback } from "react";
+import VotingRules from "@/components/VotingRules";
 import { 
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Hero background images - updated with darker images
 const heroImages = [
@@ -39,7 +44,7 @@ const heroImages = [
 const popularContests = [
   {
     id: "2",
-    title: "Maratón de la Ciudad",
+    title: "City Marathon",
     imageUrl: "https://images.unsplash.com/photo-1530137073265-ac01e0a5ef2c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Barcelona",
     dateStart: "2023-07-01",
@@ -49,7 +54,7 @@ const popularContests = [
   },
   {
     id: "3",
-    title: "Plaza Mayor - Monumentos Históricos",
+    title: "Plaza Mayor - Historical Monuments",
     imageUrl: "https://images.unsplash.com/photo-1558370781-d6196949e317?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Salamanca",
     dateStart: "2023-07-15",
@@ -59,7 +64,7 @@ const popularContests = [
   },
   {
     id: "4",
-    title: "Festival Gastronómico",
+    title: "Gastronomic Festival",
     imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Valencia",
     dateStart: "2023-08-01",
@@ -69,21 +74,84 @@ const popularContests = [
   }
 ];
 
-const Index = () => {
-  const [language, setLanguage] = useState<"es" | "en">("es");
-  const [activeIndex, setActiveIndex] = useState(0);
+// Winning photos for the featured gallery
+const winningPhotos = [
+  {
+    id: 1,
+    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Valley of Dawn",
+    photographer: "Carlos Montoya",
+    photographerAvatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    likes: 542
+  },
+  {
+    id: 2,
+    imageUrl: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Urban Reflections",
+    photographer: "Maria Sanchez",
+    photographerAvatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    likes: 478
+  },
+  {
+    id: 3,
+    imageUrl: "https://images.unsplash.com/photo-1576377999785-cf30a129e0da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Human Connection",
+    photographer: "Javier Rodriguez",
+    photographerAvatar: "https://randomuser.me/api/portraits/men/67.jpg",
+    likes: 396
+  },
+  {
+    id: 4,
+    imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Park Concert",
+    photographer: "Ana Martin",
+    photographerAvatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    likes: 412
+  },
+  {
+    id: 5,
+    imageUrl: "https://images.unsplash.com/photo-1549576490-b0b4831ef60a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Curious Cat",
+    photographer: "Elena Torres",
+    photographerAvatar: "https://randomuser.me/api/portraits/women/54.jpg",
+    likes: 521
+  },
+  {
+    id: 6,
+    imageUrl: "https://images.unsplash.com/photo-1533105079780-92b9be482077?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80",
+    title: "Modern Architecture",
+    photographer: "David Garcia",
+    photographerAvatar: "https://randomuser.me/api/portraits/men/22.jpg",
+    likes: 387
+  },
+  {
+    id: 7,
+    imageUrl: "https://images.unsplash.com/photo-1494783367193-149034c05e8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Secret Waterfall",
+    photographer: "Laura Ruiz",
+    photographerAvatar: "https://randomuser.me/api/portraits/women/15.jpg",
+    likes: 489
+  },
+  {
+    id: 8,
+    imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80",
+    title: "Cultural Celebration",
+    photographer: "Miguel Fernandez",
+    photographerAvatar: "https://randomuser.me/api/portraits/men/34.jpg",
+    likes: 356
+  },
+  {
+    id: 9,
+    imageUrl: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Mountain Sunrise",
+    photographer: "Pablo Jimenez",
+    photographerAvatar: "https://randomuser.me/api/portraits/men/45.jpg",
+    likes: 412
+  }
+];
 
-  useEffect(() => {
-    // Detectar el idioma basado en la localización del navegador
-    const userLanguage = navigator.language || navigator.languages[0];
-    const isSpanish = /^es\b/.test(userLanguage) || 
-                     ["ES", "MX", "AR", "CO", "PE", "CL", "EC", "GT", "CU", 
-                      "BO", "DO", "HN", "PY", "SV", "NI", "CR", "PA", "UY", "VE"].includes(
-                        userLanguage.split("-")[1]?.toUpperCase() || ""
-                      );
-    
-    setLanguage(isSpanish ? "es" : "en");
-  }, []);
+const Index = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
 
   // Auto-rotate carousel
   useEffect(() => {
@@ -93,73 +161,41 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Textos localizados
+  // Texts in English as requested
   const texts = {
-    es: {
-      featuredContest: "Concursos populares",
-      seeAll: "Ver todos",
-      eventTypes: "Fotografía cualquier tipo de evento",
-      eventTypesDesc: "Desde eventos musicales y competiciones deportivas hasta monumentos históricos y plazas emblemáticas.",
-      musicEvents: "Eventos Musicales",
-      musicEventsDesc: "Conciertos, festivales y actuaciones en vivo",
-      sportsEvents: "Eventos Deportivos",
-      sportsEventsDesc: "Competiciones, carreras y torneos",
-      touristPlaces: "Lugares Turísticos",
-      touristPlacesDesc: "Monumentos, plazas y atracciones",
-      thematicContests: "Concursos Temáticos",
-      thematicContestsDesc: "Gastronomía, naturaleza y arte",
-      nearbyContests: "Concursos cerca de ti",
-      nearbyContestsDesc: "Explora el mapa para encontrar concursos en tu área y participar fácilmente.",
-      howItWorks: "¿Cómo funciona?",
-      participate: "1. Participa",
-      participateDesc: "Regístrate y sube tus mejores fotos a los concursos activos cerca de tu ubicación.",
-      vote: "2. Vota",
-      voteDesc: "Explora las fotos de otros participantes y vota por tus favoritas utilizando nuestro sistema de votación.",
-      win: "3. Gana",
-      winDesc: "Los ganadores reciben recompensas especiales y reconocimiento por parte de los organizadores.",
-      startNow: "Empieza ahora",
-      organizerTitle: "¿Eres organizador?",
-      organizerDesc: "Crea concursos fotográficos para tus eventos o promociona tu negocio con la mejor plataforma para concursos de fotografía geolocalizada.",
-      discoverPlans: "Descubre nuestros planes",
-      heroTitle: "Concursos fotográficos geolocalizados",
-      heroSubtitle: "Participa, vota y gana en concursos de fotografía cerca de ti",
-      heroDescription: "Descubre concursos fotográficos en cualquier parte del mundo. Sube tus mejores fotos y gana premios increíbles.",
-      exploreContests: "Explorar concursos"
-    },
-    en: {
-      featuredContest: "Popular Contests",
-      seeAll: "See all",
-      eventTypes: "Photograph any type of event",
-      eventTypesDesc: "From music events and sports competitions to historical monuments and emblematic squares.",
-      musicEvents: "Music Events",
-      musicEventsDesc: "Concerts, festivals and live performances",
-      sportsEvents: "Sports Events",
-      sportsEventsDesc: "Competitions, races and tournaments",
-      touristPlaces: "Tourist Places",
-      touristPlacesDesc: "Monuments, squares and attractions",
-      thematicContests: "Thematic Contests",
-      thematicContestsDesc: "Gastronomy, nature and art",
-      nearbyContests: "Contests near you",
-      nearbyContestsDesc: "Explore the map to find contests in your area and easily participate.",
-      howItWorks: "How it works?",
-      participate: "1. Participate",
-      participateDesc: "Register and upload your best photos to active contests near your location.",
-      vote: "2. Vote",
-      voteDesc: "Explore photos from other participants and vote for your favorites using our voting system.",
-      win: "3. Win",
-      winDesc: "Winners receive special rewards and recognition from organizers.",
-      startNow: "Start now",
-      organizerTitle: "Are you an organizer?",
-      organizerDesc: "Create photo contests for your events or promote your business with the best platform for geolocated photo contests.",
-      discoverPlans: "Discover our plans",
-      heroTitle: "Geolocated Photo Contests",
-      heroSubtitle: "Participate, vote and win in photo contests near you",
-      heroDescription: "Discover photo contests anywhere in the world. Upload your best photos and win amazing prizes.",
-      exploreContests: "Explore contests"
-    }
+    featuredContest: "Popular Contests",
+    seeAll: "See all",
+    eventTypes: "Photograph any type of event",
+    eventTypesDesc: "From music events and sports competitions to historical monuments and emblematic squares.",
+    musicEvents: "Music Events",
+    musicEventsDesc: "Concerts, festivals and live performances",
+    sportsEvents: "Sports Events",
+    sportsEventsDesc: "Competitions, races and tournaments",
+    touristPlaces: "Tourist Places",
+    touristPlacesDesc: "Monuments, squares and attractions",
+    thematicContests: "Thematic Contests",
+    thematicContestsDesc: "Gastronomy, nature and art",
+    nearbyContests: "Contests near you",
+    nearbyContestsDesc: "Explore the map to find contests in your area and easily participate.",
+    howItWorks: "How it works?",
+    participate: "1. Participate",
+    participateDesc: "Register and upload your best photos to active contests near your location.",
+    vote: "2. Vote",
+    voteDesc: "Explore photos from other participants and vote for your favorites using our voting system.",
+    win: "3. Win",
+    winDesc: "Winners receive special rewards and recognition from organizers.",
+    startNow: "Start now",
+    organizerTitle: "Are you an organizer?",
+    organizerDesc: "Create photo contests for your events or promote your business with the best platform for geolocated photo contests.",
+    discoverPlans: "Discover our plans",
+    heroTitle: "Geolocated Photo Contests",
+    heroSubtitle: "Participate, vote and win in photo contests near you",
+    heroDescription: "Discover photo contests anywhere in the world. Upload your best photos and win amazing prizes.",
+    exploreContests: "Explore contests",
+    winningGallery: "Winning Photos Gallery",
+    winningGalleryDesc: "Explore the best photos from our contests - a showcase of the finest photography talent.",
+    viewGallery: "View Full Gallery"
   };
-
-  const t = texts[language];
 
   return (
     <div className="pt-0">
@@ -192,20 +228,20 @@ const Index = () => {
             transition={{ duration: 0.7 }}
             className="max-w-3xl"
           >
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">{t.heroTitle}</h1>
-            <p className="text-xl md:text-2xl mb-6 text-white/90">{t.heroSubtitle}</p>
-            <p className="text-lg mb-8 max-w-xl text-white/80">{t.heroDescription}</p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white">{texts.heroTitle}</h1>
+            <p className="text-xl md:text-2xl mb-6 text-white/90">{texts.heroSubtitle}</p>
+            <p className="text-lg mb-8 max-w-xl text-white/80">{texts.heroDescription}</p>
             
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="rounded-full px-8 bg-white text-primary hover:bg-white/90">
                 <Link to="/contests">
                   <Camera className="mr-2 h-5 w-5" />
-                  <span>{t.exploreContests}</span>
+                  <span>{texts.exploreContests}</span>
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full px-8 bg-primary/80 border-white text-white hover:bg-primary/90 hover:border-white">
                 <Link to="/register">
-                  <span>{t.startNow}</span>
+                  <span>{texts.startNow}</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -214,15 +250,67 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Featured Contest Section */}
-      <section className="py-16 px-4 bg-muted/30">
+      {/* Winning Photos Gallery Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-slate-900 to-background">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">{t.featuredContest}</h2>
+            <h2 className="text-3xl font-bold mb-4 text-white">{texts.winningGallery}</h2>
+            <p className="text-slate-300 max-w-2xl mx-auto">
+              {texts.winningGalleryDesc}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
+            {winningPhotos.slice(0, 9).map((photo) => (
+              <motion.div 
+                key={photo.id}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.2 }}
+                className="aspect-square overflow-hidden relative group"
+              >
+                <img 
+                  src={photo.imageUrl} 
+                  alt={photo.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                  <p className="text-white font-medium text-sm md:text-base truncate">{photo.title}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center">
+                      <Avatar className="h-5 w-5 md:h-6 md:w-6 mr-1.5">
+                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
+                        <AvatarFallback>{photo.photographer.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-white/90 text-xs md:text-sm">{photo.photographer}</span>
+                    </div>
+                    <div className="flex items-center text-white/90">
+                      <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 fill-white text-white" />
+                      <span className="text-xs">{photo.likes}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-white/80 text-white hover:bg-white/10">
+              <Link to="/gallery">
+                <span>{texts.viewGallery}</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Featured Contest Section */}
+      <section className="py-16 px-4 bg-muted/40">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">{texts.featuredContest}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              {language === "es" ? 
-                "Descubre los concursos más populares en este momento y participa con tus mejores fotografías." : 
-                "Discover the most popular contests right now and participate with your best photographs."}
+              Discover the most popular contests right now and participate with your best photographs.
             </p>
           </div>
           
@@ -235,7 +323,7 @@ const Index = () => {
           <div className="text-center mt-10">
             <Button asChild variant="outline" className="rounded-full px-8">
               <Link to="/contests">
-                <span>{t.seeAll}</span>
+                <span>{texts.seeAll}</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -244,12 +332,12 @@ const Index = () => {
       </section>
       
       {/* Event Types Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">{t.eventTypes}</h2>
+            <h2 className="text-3xl font-bold mb-4">{texts.eventTypes}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              {t.eventTypesDesc}
+              {texts.eventTypesDesc}
             </p>
           </div>
           
@@ -264,8 +352,8 @@ const Index = () => {
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Music className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">{t.musicEvents}</h3>
-              <p className="text-muted-foreground text-sm">{t.musicEventsDesc}</p>
+              <h3 className="font-bold text-lg mb-2">{texts.musicEvents}</h3>
+              <p className="text-muted-foreground text-sm">{texts.musicEventsDesc}</p>
             </motion.div>
             
             <motion.div 
@@ -278,8 +366,8 @@ const Index = () => {
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Trophy className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">{t.sportsEvents}</h3>
-              <p className="text-muted-foreground text-sm">{t.sportsEventsDesc}</p>
+              <h3 className="font-bold text-lg mb-2">{texts.sportsEvents}</h3>
+              <p className="text-muted-foreground text-sm">{texts.sportsEventsDesc}</p>
             </motion.div>
             
             <motion.div 
@@ -292,8 +380,8 @@ const Index = () => {
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Landmark className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">{t.touristPlaces}</h3>
-              <p className="text-muted-foreground text-sm">{t.touristPlacesDesc}</p>
+              <h3 className="font-bold text-lg mb-2">{texts.touristPlaces}</h3>
+              <p className="text-muted-foreground text-sm">{texts.touristPlacesDesc}</p>
             </motion.div>
             
             <motion.div 
@@ -306,17 +394,39 @@ const Index = () => {
               <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-bold text-lg mb-2">{t.thematicContests}</h3>
-              <p className="text-muted-foreground text-sm">{t.thematicContestsDesc}</p>
+              <h3 className="font-bold text-lg mb-2">{texts.thematicContests}</h3>
+              <p className="text-muted-foreground text-sm">{texts.thematicContestsDesc}</p>
             </motion.div>
           </div>
         </div>
       </section>
       
-      {/* How It Works Section */}
-      <section className="py-16 px-4 bg-muted/30">
+      {/* Voting System Section */}
+      <section className="py-16 px-4 bg-slate-50">
         <div className="container max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-center">{t.howItWorks}</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Our Voting System</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              We use a combination of AI preselection and user voting to ensure the best photos win.
+            </p>
+          </div>
+          
+          <VotingRules 
+            aiPreSelection={true} 
+            finalUserVoting={true} 
+            maxPhotos={50} 
+            voterReward={{
+              enabled: true,
+              description: "Organizers can offer rewards for voters randomly selected from those who participated in the voting."
+            }}
+          />
+        </div>
+      </section>
+      
+      {/* How It Works Section */}
+      <section className="py-16 px-4 bg-muted/40">
+        <div className="container max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">{texts.howItWorks}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
@@ -329,9 +439,9 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">{t.participate}</h3>
+              <h3 className="text-xl font-bold mb-2">{texts.participate}</h3>
               <p className="text-muted-foreground">
-                {t.participateDesc}
+                {texts.participateDesc}
               </p>
             </motion.div>
             
@@ -345,9 +455,9 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <MapPin className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">{t.vote}</h3>
+              <h3 className="text-xl font-bold mb-2">{texts.vote}</h3>
               <p className="text-muted-foreground">
-                {t.voteDesc}
+                {texts.voteDesc}
               </p>
             </motion.div>
             
@@ -361,9 +471,9 @@ const Index = () => {
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Award className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">{t.win}</h3>
+              <h3 className="text-xl font-bold mb-2">{texts.win}</h3>
               <p className="text-muted-foreground">
-                {t.winDesc}
+                {texts.winDesc}
               </p>
             </motion.div>
           </div>
@@ -371,7 +481,7 @@ const Index = () => {
           <div className="text-center mt-12">
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/register">
-                <span>{t.startNow}</span>
+                <span>{texts.startNow}</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -380,16 +490,16 @@ const Index = () => {
       </section>
       
       {/* Organizer Section */}
-      <section className="py-16 px-4">
+      <section className="py-16 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">{t.organizerTitle}</h2>
+            <h2 className="text-3xl font-bold mb-4">{texts.organizerTitle}</h2>
             <p className="text-muted-foreground mb-8">
-              {t.organizerDesc}
+              {texts.organizerDesc}
             </p>
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/organizers">
-                <span>{t.discoverPlans}</span>
+                <span>{texts.discoverPlans}</span>
               </Link>
             </Button>
           </div>

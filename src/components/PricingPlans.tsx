@@ -22,46 +22,46 @@ interface PricingPlansProps {
 
 const defaultPlans: PricingPlan[] = [
   {
-    name: "Básico",
+    name: "Basic",
     price: "29€",
-    description: "Ideal para eventos pequeños y locales",
+    description: "Ideal for small, local events",
     features: [
-      "Hasta 300 participantes",
-      "1 concurso fotográfico",
-      "Publicidad básica en la app",
-      "Derechos sobre 1 foto ganadora"
+      "Up to 300 participants",
+      "1 photo contest",
+      "Basic app advertising",
+      "Rights to 1 winning photo"
     ],
-    buttonText: "Empezar",
+    buttonText: "Get Started",
     buttonVariant: "outline"
   },
   {
-    name: "Profesional",
+    name: "Professional",
     price: "79€",
-    description: "Perfecto para eventos medianos y empresas",
+    description: "Perfect for medium events and businesses",
     features: [
-      "Hasta 1000 participantes",
-      "3 concursos fotográficos",
-      "Publicidad destacada en la app",
-      "Derechos sobre 3 fotos ganadoras de cada concurso",
-      "Banner promocional en la app"
+      "Up to 1000 participants",
+      "3 photo contests",
+      "Featured app advertising",
+      "Rights to 3 winning photos from each contest",
+      "Promotional banner in the app"
     ],
     recommended: true,
-    buttonText: "Seleccionar plan",
+    buttonText: "Select Plan",
     buttonVariant: "default"
   },
   {
     name: "Premium",
     price: "149€",
-    description: "Para grandes eventos y marcas reconocidas",
+    description: "For large events and recognized brands",
     features: [
-      "Participantes ilimitados",
-      "5 concursos fotográficos",
-      "Publicidad premium en toda la app",
-      "Derechos sobre las 9 mejores fotos",
-      "Banner destacado en página principal",
-      "Notificaciones push personalizadas"
+      "Unlimited participants",
+      "5 photo contests",
+      "Premium advertising throughout the app",
+      "Rights to the 9 best photos",
+      "Featured banner on the main page",
+      "Customized push notifications"
     ],
-    buttonText: "Contactar",
+    buttonText: "Contact Us",
     buttonVariant: "secondary"
   }
 ];
@@ -70,9 +70,9 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4">Nuestros planes</h2>
+        <h2 className="text-3xl font-bold mb-4">Our Plans</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Elige el plan que mejor se adapte a tus necesidades. Todos incluyen acceso a nuestro sistema de votación con IA.
+          Choose the plan that best fits your needs. All include access to our AI-powered voting system.
         </p>
       </div>
       
@@ -84,7 +84,7 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
           >
             {plan.recommended && (
               <Badge className="absolute -top-2 right-4 bg-primary">
-                Recomendado
+                Recommended
               </Badge>
             )}
             
@@ -93,7 +93,7 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
               <CardDescription>{plan.description}</CardDescription>
               <div className="mt-4">
                 <span className="text-3xl font-bold">{plan.price}</span>
-                <span className="text-muted-foreground ml-1">/ evento</span>
+                <span className="text-muted-foreground ml-1">/ event</span>
               </div>
             </CardHeader>
             
@@ -114,7 +114,7 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
                 className="w-full"
                 onClick={() => onSelectPlan && onSelectPlan(plan)}
               >
-                {plan.buttonText || "Seleccionar"}
+                {plan.buttonText || "Select"}
               </Button>
             </CardFooter>
           </Card>
@@ -127,12 +127,12 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
             <TooltipTrigger asChild>
               <Button variant="link" className="text-sm text-muted-foreground">
                 <Info className="h-4 w-4 mr-1" />
-                ¿Necesitas un plan personalizado?
+                Need a custom plan?
               </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p className="max-w-xs text-sm">
-                Contacta con nosotros para crear un plan personalizado para tus necesidades específicas.
+                Contact us to create a customized plan for your specific needs.
               </p>
             </TooltipContent>
           </Tooltip>

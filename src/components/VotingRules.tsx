@@ -28,26 +28,26 @@ const VotingRules = ({
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center">
             <Award className="h-4 w-4 mr-2 text-primary" />
-            Sistema de votación
+            Voting System
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 pt-0 text-sm">
           <div className="flex items-start gap-2">
             <FolderCheck className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-            <p>La IA preselecciona las {maxPhotos} mejores fotos.</p>
+            <p>AI preselects the best {maxPhotos} photos.</p>
           </div>
           
           {finalUserVoting && (
             <div className="flex items-start gap-2">
               <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <p>Los usuarios votan por su foto favorita.</p>
+              <p>Users vote for their favorite photo.</p>
             </div>
           )}
           
           {voterReward?.enabled && (
             <div className="flex items-start gap-2">
               <Award className="h-4 w-4 text-amber-500 flex-shrink-0" />
-              <p>¡Los votantes también pueden ganar premios!</p>
+              <p>Voters can also win prizes!</p>
             </div>
           )}
         </CardContent>
@@ -60,7 +60,7 @@ const VotingRules = ({
       <div className="bg-muted/30 p-6 rounded-xl space-y-6">
         <h3 className="text-xl font-bold flex items-center">
           <Award className="h-5 w-5 mr-2 text-primary" />
-          Sistema de votación
+          Voting System
         </h3>
         
         <div className="space-y-6">
@@ -68,18 +68,18 @@ const VotingRules = ({
             <div className="bg-card border rounded-lg p-4 shadow-sm">
               <h4 className="font-medium text-lg mb-3 flex items-center">
                 <ImageIcon className="h-5 w-5 mr-2 text-primary" />
-                Fase 1: Preselección con IA
+                Phase 1: AI Preselection
               </h4>
               
               <p className="text-muted-foreground mb-4">
-                Antes de la votación, nuestro sistema de IA selecciona las mejores fotografías 
-                basándose en diversos parámetros de calidad.
+                Before voting begins, our AI system selects the best photographs 
+                based on various quality parameters.
               </p>
               
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="detail-1">
                   <AccordionTrigger className="text-sm font-medium">
-                    ¿Cómo funciona la preselección?
+                    How does preselection work?
                   </AccordionTrigger>
                   <AccordionContent className="text-sm">
                     <div className="space-y-3">
@@ -88,9 +88,9 @@ const VotingRules = ({
                           1
                         </div>
                         <div>
-                          <p className="font-medium">Análisis de calidad de imagen</p>
+                          <p className="font-medium">Image Quality Analysis</p>
                           <p className="text-muted-foreground">
-                            Detecta y descarta fotos borrosas, mal iluminadas o de baja resolución.
+                            Detects and discards blurry, poorly lit, or low-resolution photos.
                           </p>
                         </div>
                       </div>
@@ -100,9 +100,9 @@ const VotingRules = ({
                           2
                         </div>
                         <div>
-                          <p className="font-medium">Algoritmo de ranking</p>
+                          <p className="font-medium">Ranking Algorithm</p>
                           <p className="text-muted-foreground">
-                            Usa técnicas como Elo Rating o TrueSkill para comparar y clasificar las fotografías.
+                            Uses techniques like Elo Rating or TrueSkill to compare and rank photographs.
                           </p>
                         </div>
                       </div>
@@ -112,9 +112,9 @@ const VotingRules = ({
                           3
                         </div>
                         <div>
-                          <p className="font-medium">Selección final</p>
+                          <p className="font-medium">Final Selection</p>
                           <p className="text-muted-foreground">
-                            Se obtienen las {maxPhotos} mejores fotografías para la fase de votación.
+                            Obtains the top {maxPhotos} photographs for the voting phase.
                           </p>
                         </div>
                       </div>
@@ -129,18 +129,18 @@ const VotingRules = ({
             <div className="bg-card border rounded-lg p-4 shadow-sm">
               <h4 className="font-medium text-lg mb-3 flex items-center">
                 <Users className="h-5 w-5 mr-2 text-primary" />
-                Fase 2: Votación de los usuarios
+                Phase 2: User Voting
               </h4>
               
               <p className="text-muted-foreground mb-2">
-                Tras la preselección, comienza la fase de votación donde todos los usuarios registrados pueden participar.
+                After preselection, the voting phase begins where all registered users can participate.
               </p>
               
               <div className="space-y-3 mb-4">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
                   <p className="text-sm">
-                    Cada usuario puede votar por 1 sola foto. Los votos son finales, aunque pueden cambiarse durante el periodo de votación.
+                    Each user can vote for only 1 photo. Votes are final, but can be changed during the voting period.
                   </p>
                 </div>
                 
@@ -148,7 +148,7 @@ const VotingRules = ({
                   <div className="flex items-start gap-2">
                     <Award className="h-5 w-5 text-amber-500 flex-shrink-0" />
                     <div>
-                      <p className="font-medium text-sm">¡Los votantes también pueden ganar!</p>
+                      <p className="font-medium text-sm">Voters can also win!</p>
                       <p className="text-sm text-muted-foreground">{voterReward.description}</p>
                     </div>
                   </div>
@@ -158,7 +158,7 @@ const VotingRules = ({
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="detail-2">
                   <AccordionTrigger className="text-sm font-medium">
-                    ¿Cómo funciona la votación?
+                    How does voting work?
                   </AccordionTrigger>
                   <AccordionContent className="text-sm">
                     <div className="space-y-3">
@@ -167,9 +167,9 @@ const VotingRules = ({
                           1
                         </div>
                         <div>
-                          <p className="font-medium">Navegación por fotografías</p>
+                          <p className="font-medium">Browse photographs</p>
                           <p className="text-muted-foreground">
-                            Los usuarios pueden explorar todas las fotografías preseleccionadas.
+                            Users can explore all preselected photographs.
                           </p>
                         </div>
                       </div>
@@ -179,9 +179,9 @@ const VotingRules = ({
                           2
                         </div>
                         <div>
-                          <p className="font-medium">Votación simple</p>
+                          <p className="font-medium">Simple voting</p>
                           <p className="text-muted-foreground">
-                            Se puede votar haciendo clic en el botón de corazón o con doble tap en la foto.
+                            Vote by clicking the heart button or double-tapping the photo.
                           </p>
                         </div>
                       </div>
@@ -191,9 +191,9 @@ const VotingRules = ({
                           3
                         </div>
                         <div>
-                          <p className="font-medium">Resultados</p>
+                          <p className="font-medium">Results</p>
                           <p className="text-muted-foreground">
-                            La fotografía con más votos gana al finalizar el periodo de votación.
+                            The photo with the most votes wins when the voting period ends.
                           </p>
                         </div>
                       </div>

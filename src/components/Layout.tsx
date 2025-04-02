@@ -8,35 +8,14 @@ import { useEffect, useState } from "react";
 
 const Layout = () => {
   const location = useLocation();
-  const [language, setLanguage] = useState<"es" | "en">("es");
+  const [language, setLanguage] = useState<"en">("en");
 
-  useEffect(() => {
-    // Detectar el idioma basado en la localización del navegador
-    const userLanguage = navigator.language || navigator.languages[0];
-    const isSpanish = /^es\b/.test(userLanguage) || 
-                     ["ES", "MX", "AR", "CO", "PE", "CL", "EC", "GT", "CU", 
-                      "BO", "DO", "HN", "PY", "SV", "NI", "CR", "PA", "UY", "VE"].includes(
-                        userLanguage.split("-")[1]?.toUpperCase() || ""
-                      );
-    
-    setLanguage(isSpanish ? "es" : "en");
-  }, []);
-  
-  // Textos localizados para el footer
+  // Footer texts (Only in English as requested)
   const footerTexts = {
-    es: {
-      rights: "© Snap Contest Hub. Todos los derechos reservados.",
-      privacy: "Política de Privacidad",
-      terms: "Términos y Condiciones"
-    },
-    en: {
-      rights: "© Snap Contest Hub. All rights reserved.",
-      privacy: "Privacy Policy",
-      terms: "Terms and Conditions"
-    }
+    rights: "© Snap Contest Hub. All rights reserved.",
+    privacy: "Privacy Policy",
+    terms: "Terms and Conditions"
   };
-
-  const t = footerTexts[language];
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -55,14 +34,14 @@ const Layout = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">
-              {t.rights} {new Date().getFullYear()}
+              {footerTexts.rights} {new Date().getFullYear()}
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {t.privacy}
+                {footerTexts.privacy}
               </Link>
               <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {t.terms}
+                {footerTexts.terms}
               </Link>
             </div>
           </div>
