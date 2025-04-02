@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -15,7 +14,8 @@ import {
   ArrowLeft,
   Upload,
   Share2,
-  ImageIcon
+  ImageIcon,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -28,6 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PhotoCard from "@/components/PhotoCard";
 import PhotoComments from "@/components/PhotoComments";
 import { useToast } from "@/hooks/use-toast";
