@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
 import VotingRules from "@/components/VotingRules";
+import { useState, useEffect } from "react"; 
 import { 
   Carousel,
   CarouselContent,
