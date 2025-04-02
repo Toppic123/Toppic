@@ -14,7 +14,8 @@ const Layout = () => {
   const footerTexts = {
     rights: "© Snap Contest Hub. All rights reserved.",
     privacy: "Privacy Policy",
-    terms: "Terms and Conditions"
+    terms: "Terms and Conditions",
+    votingSystem: "Voting System"
   };
   
   return (
@@ -42,6 +43,9 @@ const Layout = () => {
               </Link>
               <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 {footerTexts.terms}
+              </Link>
+              <Link to="/voting-system" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                {footerTexts.votingSystem}
               </Link>
             </div>
           </div>

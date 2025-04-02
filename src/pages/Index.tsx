@@ -1,10 +1,8 @@
-
 import { motion } from "framer-motion";
 import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
-import VotingRules from "@/components/VotingRules";
 import { useState, useEffect } from "react"; 
 import { 
   Carousel,
@@ -251,60 +249,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Winning Photos Gallery Section */}
-      <section className="py-16 px-4 bg-gradient-to-b from-slate-900 to-background">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-white">{texts.winningGallery}</h2>
-            <p className="text-slate-300 max-w-2xl mx-auto">
-              {texts.winningGalleryDesc}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
-            {winningPhotos.slice(0, 9).map((photo) => (
-              <motion.div 
-                key={photo.id}
-                whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.2 }}
-                className="aspect-square overflow-hidden relative group"
-              >
-                <img 
-                  src={photo.imageUrl} 
-                  alt={photo.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
-                  <p className="text-white font-medium text-sm md:text-base truncate">{photo.title}</p>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center">
-                      <Avatar className="h-5 w-5 md:h-6 md:w-6 mr-1.5">
-                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
-                        <AvatarFallback>{photo.photographer.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-white/90 text-xs md:text-sm">{photo.photographer}</span>
-                    </div>
-                    <div className="flex items-center text-white/90">
-                      <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 fill-white text-white" />
-                      <span className="text-xs">{photo.likes}</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          
-          <div className="text-center">
-            <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-white/80 text-white hover:bg-white/10">
-              <Link to="/gallery">
-                <span>{texts.viewGallery}</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-      
       {/* Featured Contest Section */}
       <section className="py-16 px-4 bg-muted/40">
         <div className="container max-w-7xl mx-auto">
@@ -402,28 +346,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Voting System Section */}
-      <section className="py-16 px-4 bg-slate-50">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Our Voting System</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              We use a combination of AI preselection and user voting to ensure the best photos win.
-            </p>
-          </div>
-          
-          <VotingRules 
-            aiPreSelection={true} 
-            finalUserVoting={true} 
-            maxPhotos={50} 
-            voterReward={{
-              enabled: true,
-              description: "Organizers can offer rewards for voters randomly selected from those who participated in the voting."
-            }}
-          />
-        </div>
-      </section>
-      
       {/* How It Works Section */}
       <section className="py-16 px-4 bg-muted/40">
         <div className="container max-w-7xl mx-auto">
@@ -501,6 +423,60 @@ const Index = () => {
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/organizers">
                 <span>{texts.discoverPlans}</span>
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* Winning Photos Gallery Section - Now moved down and with white background */}
+      <section className="py-16 px-4 bg-white">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              {texts.winningGalleryDesc}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
+            {winningPhotos.slice(0, 9).map((photo) => (
+              <motion.div 
+                key={photo.id}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.2 }}
+                className="aspect-square overflow-hidden relative group"
+              >
+                <img 
+                  src={photo.imageUrl} 
+                  alt={photo.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                  <p className="text-white font-medium text-sm md:text-base truncate">{photo.title}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center">
+                      <Avatar className="h-5 w-5 md:h-6 md:w-6 mr-1.5">
+                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
+                        <AvatarFallback>{photo.photographer.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-white/90 text-xs md:text-sm">{photo.photographer}</span>
+                    </div>
+                    <div className="flex items-center text-white/90">
+                      <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 fill-white text-white" />
+                      <span className="text-xs">{photo.likes}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-primary/80 text-primary hover:bg-primary/10">
+              <Link to="/gallery">
+                <span>{texts.viewGallery}</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
