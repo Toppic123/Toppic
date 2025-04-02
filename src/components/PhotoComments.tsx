@@ -19,10 +19,11 @@ interface Comment {
 
 interface PhotoCommentsProps {
   photoId: string;
-  onClose: () => void;
+  onClose?: () => void;
+  isEmbedded?: boolean;
 }
 
-const PhotoComments = ({ photoId, onClose }: PhotoCommentsProps) => {
+const PhotoComments = ({ photoId, onClose, isEmbedded = false }: PhotoCommentsProps) => {
   const { toast } = useToast();
   const [comment, setComment] = useState("");
   
@@ -82,16 +83,27 @@ const PhotoComments = ({ photoId, onClose }: PhotoCommentsProps) => {
     });
   };
 
+  // Different styling for embedded vs modal view
+  const commentBoxClasses = isEmbedded 
+    ? "border-t border-gray-200 dark:border-gray-800 bg-background" 
+    : "border shadow-sm";
+
   return (
-    <Card className="border shadow-sm">
-      <CardHeader className="py-3 px-4 flex flex-row items-center justify-between">
-        <h3 className="text-sm font-medium">Comentarios ({comments.length})</h3>
-        <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
-          <X className="h-4 w-4" />
-        </Button>
-      </CardHeader>
-      <Separator />
-      <ScrollArea className="h-[250px]">
+    <Card className={commentBoxClasses}>
+      {!isEmbedded && (
+        <>
+          <CardHeader className="py-3 px-4 flex flex-row items-center justify-between">
+            <h3 className="text-sm font-medium">Comentarios ({comments.length})</h3>
+            {onClose && (
+              <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </CardHeader>
+          <Separator />
+        </>
+      )}
+      <ScrollArea className={isEmbedded ? "h-[200px]" : "h-[250px]"}>
         <CardContent className="p-4 space-y-4">
           {comments.length > 0 ? (
             comments.map((comment) => (
