@@ -1,9 +1,10 @@
+
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
-import { useState, useEffect } from "react"; 
 import { 
   Carousel,
   CarouselContent,
@@ -15,26 +16,26 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Hero background images - updated with darker images
+// Hero background images - updated with better working images
 const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "landscapes"
   },
   {
-    url: "https://images.unsplash.com/photo-1577554105754-720c7f128dbc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1461696114087-397271a7aedc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "monuments"
   },
   {
-    url: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "music events"
   },
   {
-    url: "https://images.unsplash.com/photo-1517466787929-bc90951d0974?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1459865264687-595d652de67e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "sport events"
   },
   {
-    url: "https://images.unsplash.com/photo-1519741347686-c1e331fcb994?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "weddings"
   }
 ];
@@ -250,7 +251,7 @@ const Index = () => {
       </section>
       
       {/* Featured Contest Section */}
-      <section className="py-16 px-4 bg-muted/40">
+      <section className="py-16 px-4 bg-blue-50">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{texts.featuredContest}</h2>
@@ -346,8 +347,62 @@ const Index = () => {
         </div>
       </section>
       
+      {/* Winning Photos Gallery Section - MOVED between event types and how it works */}
+      <section className="py-16 px-4 bg-white">
+        <div className="container max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              {texts.winningGalleryDesc}
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2 md:gap-3 mb-6">
+            {winningPhotos.slice(0, 9).map((photo) => (
+              <motion.div 
+                key={photo.id}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.2 }}
+                className="aspect-square overflow-hidden relative group max-h-[180px] md:max-h-[220px]"
+              >
+                <img 
+                  src={photo.imageUrl} 
+                  alt={photo.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 md:p-3">
+                  <p className="text-white font-medium text-xs md:text-sm truncate">{photo.title}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center">
+                      <Avatar className="h-4 w-4 md:h-5 md:w-5 mr-1">
+                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
+                        <AvatarFallback>{photo.photographer.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-white/90 text-xs truncate max-w-[70px]">{photo.photographer}</span>
+                    </div>
+                    <div className="flex items-center text-white/90">
+                      <Heart className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1 fill-white text-white" />
+                      <span className="text-xs">{photo.likes}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Button asChild variant="outline" className="rounded-full px-8 border-primary/80 text-primary hover:bg-primary/10">
+              <Link to="/gallery">
+                <span>{texts.viewGallery}</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+      
       {/* How It Works Section */}
-      <section className="py-16 px-4 bg-muted/40">
+      <section className="py-16 px-4 bg-blue-50">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">{texts.howItWorks}</h2>
           
@@ -357,7 +412,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="glass-card p-6 rounded-xl"
+              className="glass-card p-6 rounded-xl bg-white shadow-sm"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Camera className="h-6 w-6 text-primary" />
@@ -373,7 +428,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="glass-card p-6 rounded-xl"
+              className="glass-card p-6 rounded-xl bg-white shadow-sm"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <MapPin className="h-6 w-6 text-primary" />
@@ -389,7 +444,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="glass-card p-6 rounded-xl"
+              className="glass-card p-6 rounded-xl bg-white shadow-sm"
             >
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                 <Award className="h-6 w-6 text-primary" />
@@ -401,13 +456,23 @@ const Index = () => {
             </motion.div>
           </div>
           
-          <div className="text-center mt-12">
+          <div className="text-center mt-10 space-y-4">
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/register">
                 <span>{texts.startNow}</span>
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
+            
+            {/* Added "Voting System" button */}
+            <div>
+              <Button asChild variant="outline" className="rounded-full px-8">
+                <Link to="/voting-system">
+                  <span>Learn about our Voting System</span>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -423,60 +488,6 @@ const Index = () => {
             <Button asChild size="lg" className="rounded-full px-8">
               <Link to="/organizers">
                 <span>{texts.discoverPlans}</span>
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-      
-      {/* Winning Photos Gallery Section - Now moved down and with white background */}
-      <section className="py-16 px-4 bg-white">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">
-              {texts.winningGalleryDesc}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8">
-            {winningPhotos.slice(0, 9).map((photo) => (
-              <motion.div 
-                key={photo.id}
-                whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.2 }}
-                className="aspect-square overflow-hidden relative group"
-              >
-                <img 
-                  src={photo.imageUrl} 
-                  alt={photo.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
-                  <p className="text-white font-medium text-sm md:text-base truncate">{photo.title}</p>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center">
-                      <Avatar className="h-5 w-5 md:h-6 md:w-6 mr-1.5">
-                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
-                        <AvatarFallback>{photo.photographer.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-white/90 text-xs md:text-sm">{photo.photographer}</span>
-                    </div>
-                    <div className="flex items-center text-white/90">
-                      <Heart className="h-3 w-3 md:h-4 md:w-4 mr-1 fill-white text-white" />
-                      <span className="text-xs">{photo.likes}</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          
-          <div className="text-center">
-            <Button asChild variant="outline" size="lg" className="rounded-full px-8 border-primary/80 text-primary hover:bg-primary/10">
-              <Link to="/gallery">
-                <span>{texts.viewGallery}</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
           </div>
