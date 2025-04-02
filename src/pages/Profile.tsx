@@ -5,20 +5,41 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage, AvatarUpload } from "@/components/ui/avatar";
-import { Camera, Trophy, MapPin, MessageCircle, Send } from "lucide-react";
+import { Camera, Trophy, MapPin, MessageCircle, Send, Trash2, AlertTriangle, ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import PhotoComments from "@/components/PhotoComments";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Profile = () => {
   const { username } = useParams<{ username?: string }>();
   const { toast } = useToast();
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
-  
+  const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+
   // Mock user data - in a real app this would come from an API
   const user = {
     id: "1",
@@ -51,12 +72,30 @@ const Profile = () => {
         
         // In a real app, this would upload the file to a server
         toast({
-          title: "Profile picture updated",
-          description: "Your profile picture has been updated successfully."
+          title: "Foto de perfil actualizada",
+          description: "Tu foto de perfil ha sido actualizada correctamente."
         });
       }
     };
     fileReader.readAsDataURL(file);
+  };
+
+  const handleDeleteAccount = () => {
+    // In a real app, this would make an API call to delete the account
+    toast({
+      title: "Cuenta eliminada",
+      description: "Tu cuenta ha sido eliminada correctamente.",
+      variant: "destructive"
+    });
+    
+    // In a real app, this would redirect to home page or login page
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+  };
+
+  const handlePhotoClick = (photo: any) => {
+    setSelectedPhoto(photo);
   };
 
   const isCurrentUser = !username || username === "usuario"; // In a real app, this would check if the profile belongs to the logged-in user
@@ -110,6 +149,33 @@ const Profile = () => {
                   <div className="text-xs text-muted-foreground">Fotos</div>
                 </div>
               </div>
+              
+              {isCurrentUser && (
+                <div className="mt-6 flex justify-center md:justify-start">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm" className="text-destructive border-destructive/20 hover:bg-destructive/10">
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Eliminar cuenta
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Esta acción no se puede deshacer. Se eliminará permanentemente tu cuenta y todos tus datos asociados.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                          Eliminar cuenta
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
@@ -130,7 +196,10 @@ const Profile = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {photos.map((photo) => (
               <div key={photo.id} className="space-y-3">
-                <div className="group relative overflow-hidden rounded-lg">
+                <div 
+                  className="group relative overflow-hidden rounded-lg cursor-pointer" 
+                  onClick={() => handlePhotoClick(photo)}
+                >
                   <img 
                     src={photo.imageUrl} 
                     alt={photo.title} 
@@ -141,23 +210,6 @@ const Profile = () => {
                     <p className="text-white/80 text-sm truncate">{photo.contestName}</p>
                   </div>
                 </div>
-                
-                {selectedPhotoId === photo.id ? (
-                  <PhotoComments 
-                    photoId={photo.id} 
-                    onClose={() => setSelectedPhotoId(null)} 
-                  />
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full"
-                    onClick={() => setSelectedPhotoId(photo.id)}
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Ver comentarios
-                  </Button>
-                )}
               </div>
             ))}
           </div>
@@ -202,6 +254,37 @@ const Profile = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Photo Detail Dialog with Comments */}
+      <Dialog 
+        open={selectedPhoto !== null} 
+        onOpenChange={(open) => !open && setSelectedPhoto(null)}
+      >
+        <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-4 py-2 border-b">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-base">{selectedPhoto?.title}</DialogTitle>
+              <div className="text-sm text-muted-foreground">
+                {selectedPhoto?.contestName}
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full">
+            <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
+              <img 
+                src={selectedPhoto?.imageUrl} 
+                alt={selectedPhoto?.title}
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+            
+            <div className="col-span-2 flex flex-col border-l">
+              {selectedPhoto && <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 };

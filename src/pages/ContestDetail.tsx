@@ -14,7 +14,8 @@ import {
   AlertTriangle,
   ArrowLeft,
   Upload,
-  Share2
+  Share2,
+  ImageIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -28,6 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import PhotoCard from "@/components/PhotoCard";
+import PhotoComments from "@/components/PhotoComments";
 import { useToast } from "@/hooks/use-toast";
 
 const contestData = {
@@ -48,7 +50,11 @@ const contestData = {
     "Solo se permite una fotografía por participante.",
     "Las imágenes deben ser originales y tomadas durante el evento.",
     "No se permiten ediciones excesivas ni manipulaciones que alteren la realidad de la imagen.",
-    "Al participar, aceptas que tu fotografía ganadora pueda ser utilizada por los organizadores con fines promocionales."
+    "Al participar, aceptas que tu fotografía ganadora pueda ser utilizada por los organizadores con fines promocionales.",
+    "No se aceptan imágenes creadas por inteligencia artificial.",
+    "No se aceptan imágenes que no sean tomadas por el usuario que las suba.",
+    "Las fotografías pueden ser tomadas con teléfonos móviles o cámaras fotográficas.",
+    "Los organizadores indican en las bases si las fotos pueden haber sido editadas."
   ],
   organizer: {
     name: "Asociación Cultural Fotográfica",
@@ -57,6 +63,15 @@ const contestData = {
   reward: {
     forAll: true,
     description: "Todos los participantes recibirán un descuento del 15% en la tienda de fotografía oficial del festival."
+  },
+  voterReward: {
+    enabled: true,
+    description: "Un votante será seleccionado al azar para recibir una entrada VIP para el próximo festival."
+  },
+  votingSystem: {
+    aiPreSelection: true,
+    finalUserVoting: true,
+    maxPhotos: 50
   }
 };
 
@@ -111,6 +126,7 @@ const ContestDetail = () => {
   const [activeTab, setActiveTab] = useState("photos");
   const [votedPhotoId, setVotedPhotoId] = useState<string | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+  const [viewPhotoMode, setViewPhotoMode] = useState<string | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -183,6 +199,11 @@ const ContestDetail = () => {
   
   const handleShare = (photo: any) => {
     setSelectedPhoto(photo);
+  };
+  
+  const handleViewPhoto = (photo: any, mode: string) => {
+    setSelectedPhoto(photo);
+    setViewPhotoMode(mode);
   };
   
   const shareToSocialMedia = (platform: string) => {
@@ -286,12 +307,14 @@ const ContestDetail = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                       {photos.map((photo) => (
                         <div key={photo.id} className="relative group">
-                          <PhotoCard
-                            {...photo}
-                            onVote={handleVote}
-                            onReport={handleReport}
-                            userVoted={votedPhotoId === photo.id}
-                          />
+                          <div className="cursor-pointer" onClick={() => handleViewPhoto(photo, 'view')}>
+                            <PhotoCard
+                              {...photo}
+                              onVote={handleVote}
+                              onReport={handleReport}
+                              userVoted={votedPhotoId === photo.id}
+                            />
+                          </div>
                           <Button 
                             variant="outline"
                             size="sm"
@@ -327,8 +350,46 @@ const ContestDetail = () => {
                                 <p>{contest.reward.description}</p>
                               </div>
                             )}
+                            
+                            {contest.voterReward?.enabled && (
+                              <div className="mt-2 text-sm text-muted-foreground border-t pt-2 border-dashed border-muted">
+                                <p className="font-medium mb-1">Recompensa para votantes:</p>
+                                <p>{contest.voterReward.description}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xl font-bold mb-2">Sistema de votación</h3>
+                      <div className="bg-muted/30 p-4 rounded-xl space-y-2">
+                        <div className="flex items-start gap-3">
+                          <div className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            1
+                          </div>
+                          <div>
+                            <p className="font-medium">Fase de preselección con IA</p>
+                            <p className="text-sm text-muted-foreground">
+                              La inteligencia artificial filtra las fotos para seleccionar las mejores {contest.votingSystem.maxPhotos} basándose en calidad y composición.
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {contest.votingSystem.finalUserVoting && (
+                          <div className="flex items-start gap-3">
+                            <div className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+                              2
+                            </div>
+                            <div>
+                              <p className="font-medium">Fase de votación final</p>
+                              <p className="text-sm text-muted-foreground">
+                                Todos los usuarios registrados pueden votar por su foto favorita. Cada usuario tiene 1 voto.
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     
@@ -430,6 +491,13 @@ const ContestDetail = () => {
                       {new Date(contest.dateEnd).toLocaleDateString('es-ES')}
                     </span>
                   </div>
+                  
+                  {contest.votingSystem && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Fotos preseleccionadas</span>
+                      <span className="font-medium">{contest.votingSystem.maxPhotos}</span>
+                    </div>
+                  )}
                 </div>
                 
                 <Alert className="mb-6">
@@ -453,7 +521,8 @@ const ContestDetail = () => {
         </div>
       </div>
       
-      <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
+      {/* Share Dialog */}
+      <Dialog open={!!selectedPhoto && !viewPhotoMode} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Compartir fotografía</DialogTitle>
@@ -516,6 +585,69 @@ const ContestDetail = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* View Photo Dialog */}
+      <Dialog open={!!selectedPhoto && viewPhotoMode === 'view'} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedPhoto(null);
+          setViewPhotoMode(null);
+        }
+      }}>
+        <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-4 py-2 border-b">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={selectedPhoto?.photographerAvatar} alt={selectedPhoto?.photographer} />
+                  <AvatarFallback>
+                    <ImageIcon className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <DialogTitle className="text-base">Foto de {selectedPhoto?.photographer}</DialogTitle>
+              </div>
+              <div className="flex items-center gap-2">
+                {votedPhotoId !== selectedPhoto?.id ? (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleVote(selectedPhoto?.id, true)}
+                    disabled={!!votedPhotoId}
+                  >
+                    <Heart className={`h-4 w-4 mr-2 ${votedPhotoId === selectedPhoto?.id ? "fill-red-500 text-red-500" : "text-red-500"}`} />
+                    Votar ({selectedPhoto?.votes})
+                  </Button>
+                ) : (
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Heart className="h-4 w-4 mr-2 fill-red-500 text-red-500" />
+                    Votada ({selectedPhoto?.votes})
+                  </div>
+                )}
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => handleShare(selectedPhoto)}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full">
+            <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
+              <img 
+                src={selectedPhoto?.imageUrl} 
+                alt={`Foto de ${selectedPhoto?.photographer}`}
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+            
+            <div className="col-span-2 flex flex-col border-l">
+              <PhotoComments photoId={selectedPhoto?.id} isEmbedded={true} />
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
