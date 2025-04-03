@@ -214,15 +214,13 @@ const PhotoCard = ({
               <span className="text-sm">{localVotes}</span>
             </button>
             <div className="flex space-x-2">
-              {!expanded && (
-                <button
-                  onClick={handleShare}
-                  className="text-white/80 hover:text-white transition-colors"
-                  aria-label="Share photo"
-                >
-                  <Share2 className="w-4 h-4" />
-                </button>
-              )}
+              <button
+                onClick={handleShare}
+                className="text-white/80 hover:text-white transition-colors"
+                aria-label="Share photo"
+              >
+                <Share2 className="w-4 h-4" />
+              </button>
               <button
                 onClick={() => onReport?.(id)}
                 className="text-white/80 hover:text-white transition-colors"
@@ -292,15 +290,13 @@ const PhotoCard = ({
               <span className="text-xs text-muted-foreground">{localVotes}</span>
             </button>
             
-            {!expanded && (
-              <button
-                onClick={handleShare}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Share photo"
-              >
-                <Share2 className="w-3.5 h-3.5" />
-              </button>
-            )}
+            <button
+              onClick={handleShare}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Share photo"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
       </div>

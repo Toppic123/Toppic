@@ -61,7 +61,7 @@ const Header = () => {
           className="flex items-center space-x-2 text-foreground"
         >
           <Camera className="w-6 h-6" />
-          <span className="font-medium text-lg">Snap Contest</span>
+          <span className="font-medium text-lg">Pix On Air</span>
         </Link>
         
         {/* Desktop Navigation */}

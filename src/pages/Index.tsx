@@ -37,7 +37,7 @@ const heroImages = [
     category: "sport events"
   },
   {
-    url: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "weddings"
   }
 ];
@@ -163,10 +163,25 @@ const Index = () => {
   }, []);
 
   const handleSharePhoto = (photo: any) => {
-    toast({
-      title: "Share option",
-      description: "Sharing functionality would open here"
-    });
+    if (navigator.share) {
+      navigator.share({
+        title: `Photo by ${photo.photographer}`,
+        text: `Check out this amazing photo by ${photo.photographer}`,
+        url: window.location.href
+      }).catch(err => {
+        console.error('Error sharing:', err);
+        toast({
+          title: "Couldn't share",
+          description: "There was an error sharing this photo."
+        });
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied",
+        description: "Photo link copied to clipboard"
+      });
+    }
   };
 
   const texts = {
@@ -281,7 +296,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-16 px-4 bg-blue-50">
+      <section className="py-16 px-4 bg-gray-100">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{texts.eventTypes}</h2>
@@ -431,35 +446,15 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2 px-4">
+                  <div className="flex items-center px-4">
                     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                    <span className="text-sm">{selectedPhoto?.likes} likes</span>
+                    <span className="text-sm ml-1">{selectedPhoto?.likes} likes</span>
                     
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       className="ml-auto"
-                      onClick={() => {
-                        if (navigator.share) {
-                          navigator.share({
-                            title: selectedPhoto?.title,
-                            text: `Check out this amazing photo by ${selectedPhoto?.photographer}`,
-                            url: window.location.href
-                          }).catch(err => {
-                            console.error('Error sharing:', err);
-                            toast({
-                              title: "Couldn't share",
-                              description: "There was an error sharing this photo."
-                            });
-                          });
-                        } else {
-                          navigator.clipboard.writeText(window.location.href);
-                          toast({
-                            title: "Link copied",
-                            description: "Photo link copied to clipboard"
-                          });
-                        }
-                      }}
+                      onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
                     >
                       <Share2 className="h-4 w-4 mr-1" />
                       Share
@@ -480,7 +475,7 @@ const Index = () => {
         </Dialog>
       </section>
       
-      <section className="py-16 px-4 bg-blue-50">
+      <section className="py-16 px-4 bg-gray-100">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">{texts.howItWorks}</h2>
           
