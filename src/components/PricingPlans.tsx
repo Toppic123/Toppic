@@ -22,28 +22,28 @@ interface PricingPlansProps {
 
 const defaultPlans: PricingPlan[] = [
   {
-    name: "Basic",
+    name: "Básico",
     price: "29€",
-    description: "Ideal for small, local events",
+    description: "Ideal para eventos pequeños y locales",
     features: [
-      "Up to 300 participants",
-      "1 photo contest",
-      "Basic app advertising",
-      "Rights to 1 winning photo"
+      "Hasta 300 participantes",
+      "1 concurso fotográfico",
+      "Publicidad básica en la app",
+      "Derechos sobre 1 foto ganadora"
     ],
     buttonText: "Get Started",
     buttonVariant: "outline"
   },
   {
-    name: "Professional",
+    name: "Profesional",
     price: "79€",
-    description: "Perfect for medium events and businesses",
+    description: "Perfecto para eventos medianos y empresas",
     features: [
-      "Up to 1000 participants",
-      "3 photo contests",
-      "Featured app advertising",
-      "Rights to 3 winning photos from each contest",
-      "Promotional banner in the app"
+      "Hasta 1000 participantes",
+      "3 concursos fotográficos",
+      "Publicidad destacada en la app",
+      "Derechos sobre 3 fotos ganadoras de cada concurso",
+      "Banner promocional en la app"
     ],
     recommended: true,
     buttonText: "Select Plan",
@@ -52,14 +52,14 @@ const defaultPlans: PricingPlan[] = [
   {
     name: "Premium",
     price: "149€",
-    description: "For large events and recognized brands",
+    description: "Para grandes eventos y marcas reconocidas",
     features: [
-      "Unlimited participants",
-      "5 photo contests",
-      "Premium advertising throughout the app",
-      "Rights to the 9 best photos",
-      "Featured banner on the main page",
-      "Customized push notifications"
+      "Participantes ilimitados",
+      "5 concursos fotográficos",
+      "Publicidad premium en toda la app",
+      "Derechos sobre las 9 mejores fotos",
+      "Banner destacado en página principal",
+      "Notificaciones push personalizadas"
     ],
     buttonText: "Contact Us",
     buttonVariant: "secondary"

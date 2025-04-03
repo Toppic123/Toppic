@@ -1,7 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music, Heart } from "lucide-react";
+import { ArrowRight, Camera, Award, MapPin, Trophy, Landmark, Music, Heart, X, Share2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
@@ -15,32 +14,32 @@ import {
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
-// Hero background images - updated with better working images
 const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1477322524744-0eece9e79640?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "landscapes"
   },
   {
-    url: "https://images.unsplash.com/photo-1461696114087-397271a7aedc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1431274172761-fca41d930114?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "monuments"
   },
   {
-    url: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "music events"
   },
   {
-    url: "https://images.unsplash.com/photo-1459865264687-595d652de67e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "sport events"
   },
   {
-    url: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
+    url: "https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2400&q=80",
     category: "weddings"
   }
 ];
 
-// Mock data for popular contests
 const popularContests = [
   {
     id: "2",
@@ -74,7 +73,6 @@ const popularContests = [
   }
 ];
 
-// Winning photos for the featured gallery
 const winningPhotos = [
   {
     id: 1,
@@ -152,8 +150,9 @@ const winningPhotos = [
 
 const Index = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
+  const { toast } = useToast();
 
-  // Auto-rotate carousel
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((current) => (current + 1) % heroImages.length);
@@ -161,7 +160,13 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Texts in English as requested
+  const handleSharePhoto = (photo: any) => {
+    toast({
+      title: "Share option",
+      description: "Sharing functionality would open here"
+    });
+  };
+
   const texts = {
     featuredContest: "Popular Contests",
     seeAll: "See all",
@@ -199,9 +204,7 @@ const Index = () => {
 
   return (
     <div className="pt-0">
-      {/* Hero Section with carousel background */}
       <section className="relative min-h-[90vh] overflow-hidden">
-        {/* Background Image Carousel */}
         <div className="absolute inset-0 z-0">
           {heroImages.map((image, index) => (
             <div 
@@ -250,7 +253,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Featured Contest Section */}
       <section className="py-16 px-4 bg-blue-50">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -277,7 +279,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Event Types Section */}
       <section className="py-16 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
@@ -347,9 +348,8 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Winning Photos Gallery Section - MOVED between event types and how it works */}
       <section className="py-16 px-4 bg-white">
-        <div className="container max-w-6xl mx-auto">
+        <div className="container max-w-5xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
             <p className="text-slate-600 max-w-2xl mx-auto">
@@ -357,13 +357,14 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-3 gap-2 md:gap-3 mb-6">
+          <div className="grid grid-cols-3 gap-1.5 md:gap-2 mb-6">
             {winningPhotos.slice(0, 9).map((photo) => (
               <motion.div 
                 key={photo.id}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.2 }}
-                className="aspect-square overflow-hidden relative group max-h-[180px] md:max-h-[220px]"
+                className="aspect-square overflow-hidden relative group max-h-[190px] md:max-h-[230px] cursor-pointer"
+                onClick={() => setSelectedPhoto(photo)}
               >
                 <img 
                   src={photo.imageUrl} 
@@ -399,9 +400,60 @@ const Index = () => {
             </Button>
           </div>
         </div>
+
+        <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
+          <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-0 shadow-none">
+            <div className="relative bg-black rounded-lg overflow-hidden">
+              <DialogClose className="absolute top-2 right-2 z-50 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80">
+                <X className="h-5 w-5" />
+              </DialogClose>
+              
+              <div className="flex flex-col md:flex-row max-h-[90vh]">
+                <div className="relative flex-1 flex items-center justify-center bg-black min-h-[300px] md:min-h-[400px]">
+                  <img 
+                    src={selectedPhoto?.imageUrl} 
+                    alt={selectedPhoto?.title} 
+                    className="max-w-full max-h-[70vh] object-contain"
+                  />
+                </div>
+                
+                <div className="w-full md:w-80 bg-white p-4 flex flex-col">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-bold">{selectedPhoto?.title}</h3>
+                    <div className="flex items-center mt-2">
+                      <Avatar className="h-6 w-6 mr-2">
+                        <AvatarImage src={selectedPhoto?.photographerAvatar} alt={selectedPhoto?.photographer} />
+                        <AvatarFallback>{selectedPhoto?.photographer?.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">{selectedPhoto?.photographer}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                    <span className="text-sm">{selectedPhoto?.likes} likes</span>
+                  </div>
+                  
+                  <Separator className="my-2" />
+                  
+                  <div className="flex items-center justify-between">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-2"
+                      onClick={() => handleSharePhoto(selectedPhoto)}
+                    >
+                      <Share2 className="h-4 w-4 mr-1" />
+                      Share
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </section>
       
-      {/* How It Works Section */}
       <section className="py-16 px-4 bg-blue-50">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">{texts.howItWorks}</h2>
@@ -464,7 +516,6 @@ const Index = () => {
               </Link>
             </Button>
             
-            {/* Added "Voting System" button */}
             <div>
               <Button asChild variant="outline" className="rounded-full px-8">
                 <Link to="/voting-system">
@@ -477,7 +528,6 @@ const Index = () => {
         </div>
       </section>
       
-      {/* Organizer Section */}
       <section className="py-16 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
           <div className="max-w-3xl mx-auto text-center">

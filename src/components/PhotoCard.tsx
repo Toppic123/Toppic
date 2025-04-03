@@ -17,6 +17,7 @@ type PhotoCardProps = {
   onReport?: (id: string) => void;
   onShare?: (id: string) => void;
   userVoted?: boolean;
+  expanded?: boolean;
 };
 
 const PhotoCard = ({
@@ -30,6 +31,7 @@ const PhotoCard = ({
   onReport,
   onShare,
   userVoted = false,
+  expanded = false,
 }: PhotoCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [direction, setDirection] = useState<number>(0);
@@ -193,13 +195,15 @@ const PhotoCard = ({
               <span className="text-sm">{localVotes}</span>
             </button>
             <div className="flex space-x-2">
-              <button
-                onClick={() => onShare?.(id)}
-                className="text-white/80 hover:text-white transition-colors"
-                aria-label="Share photo"
-              >
-                <Share2 className="w-4 h-4" />
-              </button>
+              {!expanded && (
+                <button
+                  onClick={() => onShare?.(id)}
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="Share photo"
+                >
+                  <Share2 className="w-4 h-4" />
+                </button>
+              )}
               <button
                 onClick={() => onReport?.(id)}
                 className="text-white/80 hover:text-white transition-colors"
@@ -268,6 +272,16 @@ const PhotoCard = ({
               <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
               <span className="text-xs text-muted-foreground">{localVotes}</span>
             </button>
+            
+            {!expanded && (
+              <button
+                onClick={() => onShare?.(id)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Share photo"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

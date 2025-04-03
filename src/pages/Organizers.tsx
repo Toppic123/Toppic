@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Calendar, 
@@ -11,7 +10,8 @@ import {
   FileText,
   Check,
   Tag,
-  Info
+  Info,
+  Gift
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -40,9 +40,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
-// Define the form schema
 const formSchema = z.object({
   fullName: z.string().min(2, {
     message: "El nombre debe tener al menos 2 caracteres.",
@@ -74,6 +74,7 @@ const formSchema = z.object({
   planType: z.string({
     required_error: "Por favor, selecciona un plan.",
   }),
+  rewardVoters: z.boolean().default(false),
 });
 
 const Organizers = () => {
@@ -81,7 +82,6 @@ const Organizers = () => {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const { toast } = useToast();
   
-  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -95,10 +95,10 @@ const Organizers = () => {
       eventEndDate: "",
       votingEndDate: "",
       planType: "",
+      rewardVoters: false,
     },
   });
   
-  // Handle form submission
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
     
@@ -107,7 +107,6 @@ const Organizers = () => {
       description: "Hemos recibido tu solicitud y nos pondremos en contacto contigo pronto.",
     });
     
-    // Reset form after submission
     form.reset();
   }
   
@@ -118,7 +117,7 @@ const Organizers = () => {
       price: "29€",
       description: "Ideal para eventos pequeños y locales",
       features: [
-        "Hasta 200 participantes",
+        "Hasta 300 participantes",
         "1 concurso fotográfico",
         "Publicidad básica en la app",
         "Derechos sobre 1 foto ganadora"
@@ -133,7 +132,7 @@ const Organizers = () => {
         "Hasta 1000 participantes",
         "3 concursos fotográficos",
         "Publicidad destacada en la app",
-        "Derechos sobre 5 fotos ganadoras",
+        "Derechos sobre 3 fotos ganadoras de cada concurso",
         "Banner promocional en la app"
       ]
     },
@@ -146,7 +145,7 @@ const Organizers = () => {
         "Participantes ilimitados",
         "5 concursos fotográficos",
         "Publicidad premium en toda la app",
-        "Derechos sobre todas las fotos enviadas",
+        "Derechos sobre las 9 mejores fotos",
         "Banner destacado en página principal",
         "Notificaciones push personalizadas"
       ]
@@ -440,6 +439,36 @@ const Organizers = () => {
                             )}
                           />
                         </div>
+                      </div>
+                      
+                      <Separator />
+                      
+                      <div className="space-y-4">
+                        <h3 className="font-semibold flex items-center text-lg">
+                          <Gift className="mr-2 h-5 w-5" />
+                          Configuración de premios
+                        </h3>
+                        
+                        <FormField
+                          control={form.control}
+                          name="rewardVoters"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <div className="space-y-1 leading-none">
+                                <FormLabel>Premiar a votantes</FormLabel>
+                                <FormDescription>
+                                  Además de premiar a la mejor foto, se premiará al azar a uno de los votantes que participaron en el concurso.
+                                </FormDescription>
+                              </div>
+                            </FormItem>
+                          )}
+                        />
                       </div>
                       
                       <Separator />
