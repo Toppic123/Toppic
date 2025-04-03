@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import PhotoComments from "@/components/PhotoComments";
 
 const heroImages = [
   {
@@ -254,7 +255,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-16 px-4 bg-blue-50">
+      <section className="py-16 px-4 bg-white">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{texts.featuredContest}</h2>
@@ -280,7 +281,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-16 px-4 bg-white">
+      <section className="py-16 px-4 bg-blue-50">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{texts.eventTypes}</h2>
@@ -358,13 +359,13 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-3 gap-1.5 md:gap-2 mb-6">
+          <div className="grid grid-cols-3 gap-1 md:gap-1.5 mb-6">
             {winningPhotos.slice(0, 9).map((photo) => (
               <motion.div 
                 key={photo.id}
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.2 }}
-                className="aspect-square overflow-hidden relative group max-h-[190px] md:max-h-[230px] cursor-pointer"
+                className="aspect-square overflow-hidden relative group max-h-[200px] md:max-h-[250px] cursor-pointer"
                 onClick={() => setSelectedPhoto(photo)}
               >
                 <img 
@@ -418,8 +419,8 @@ const Index = () => {
                   />
                 </div>
                 
-                <div className="w-full md:w-80 bg-white p-4 flex flex-col">
-                  <div className="mb-4">
+                <div className="w-full md:w-80 bg-white flex flex-col">
+                  <div className="mb-4 p-4">
                     <h3 className="text-lg font-bold">{selectedPhoto?.title}</h3>
                     <div className="flex items-center mt-2">
                       <Avatar className="h-6 w-6 mr-2">
@@ -430,24 +431,48 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2 mb-4">
+                  <div className="flex items-center space-x-2 px-4">
                     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
                     <span className="text-sm">{selectedPhoto?.likes} likes</span>
-                  </div>
-                  
-                  <Separator className="my-2" />
-                  
-                  <div className="flex items-center justify-between">
+                    
                     <Button 
-                      variant="outline" 
+                      variant="ghost" 
                       size="sm" 
-                      className="mt-2"
-                      onClick={() => handleSharePhoto(selectedPhoto)}
+                      className="ml-auto"
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: selectedPhoto?.title,
+                            text: `Check out this amazing photo by ${selectedPhoto?.photographer}`,
+                            url: window.location.href
+                          }).catch(err => {
+                            console.error('Error sharing:', err);
+                            toast({
+                              title: "Couldn't share",
+                              description: "There was an error sharing this photo."
+                            });
+                          });
+                        } else {
+                          navigator.clipboard.writeText(window.location.href);
+                          toast({
+                            title: "Link copied",
+                            description: "Photo link copied to clipboard"
+                          });
+                        }
+                      }}
                     >
                       <Share2 className="h-4 w-4 mr-1" />
                       Share
                     </Button>
                   </div>
+                  
+                  <Separator className="my-2" />
+                  
+                  {selectedPhoto && (
+                    <div className="flex-1 overflow-hidden">
+                      <PhotoComments photoId={selectedPhoto.id.toString()} isEmbedded={true} />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

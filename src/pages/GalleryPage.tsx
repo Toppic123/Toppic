@@ -1,16 +1,15 @@
-
 import { useState, useEffect } from "react";
-import { Camera, Trophy, User, Heart, Filter } from "lucide-react";
+import { Camera, Trophy, User, Heart, Filter, Share2, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogClose } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import PhotoComments from "@/components/PhotoComments";
 
-// Mock data for winning photos
 const winningPhotos = [
   {
     id: "w1",
@@ -69,7 +68,7 @@ const winningPhotos = [
   },
   {
     id: "w6",
-    imageUrl: "https://images.unsplash.com/photo-1533105079780-92b9be482077?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1533105079780-92b9be482077?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=768&q=80",
     title: "Arquitectura Moderna",
     photographer: "David García",
     photographerAvatar: "https://randomuser.me/api/portraits/men/22.jpg",
@@ -106,6 +105,7 @@ const GalleryPage = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [filteredPhotos, setFilteredPhotos] = useState(winningPhotos);
+  const { toast } = useToast();
   
   useEffect(() => {
     if (activeCategory === "all") {
@@ -119,6 +119,28 @@ const GalleryPage = () => {
     setSelectedPhoto(photo);
   };
   
+  const handleSharePhoto = (photo: any) => {
+    if (navigator.share) {
+      navigator.share({
+        title: photo.title,
+        text: `Check out this amazing photo by ${photo.photographer}`,
+        url: window.location.href
+      }).catch(err => {
+        console.error('Error sharing:', err);
+        toast({
+          title: "Couldn't share",
+          description: "There was an error sharing this photo."
+        });
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied",
+        description: "Photo link copied to clipboard"
+      });
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -223,18 +245,27 @@ const GalleryPage = () => {
         ))}
       </motion.div>
       
-      {/* Photo Detail Dialog with Comments */}
       <Dialog 
         open={selectedPhoto !== null} 
         onOpenChange={(open) => !open && setSelectedPhoto(null)}
       >
         <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
-          <DialogHeader className="px-4 py-2 border-b">
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-base">{selectedPhoto?.title}</DialogTitle>
-              <div className="text-sm text-muted-foreground">
-                {selectedPhoto?.contestName}
-              </div>
+          <DialogHeader className="px-4 py-2 border-b flex flex-row items-center justify-between">
+            <DialogTitle className="text-base">{selectedPhoto?.title}</DialogTitle>
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
+                className="h-8 w-8 p-0"
+              >
+                <Share2 className="h-4 w-4" />
+                <span className="sr-only">Share</span>
+              </Button>
+              <DialogClose className="h-8 w-8 p-0">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </DialogClose>
             </div>
           </DialogHeader>
           

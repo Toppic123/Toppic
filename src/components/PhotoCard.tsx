@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Heart, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
@@ -43,12 +42,10 @@ const PhotoCard = ({
   const { toast } = useToast();
   
   useEffect(() => {
-    // Update local state when userVoted prop changes
     setIsVoted(userVoted);
   }, [userVoted]);
 
   useEffect(() => {
-    // Update local votes count when votes prop changes
     setLocalVotes(votes);
   }, [votes]);
   
@@ -81,6 +78,28 @@ const PhotoCard = ({
       title: "Voto registrado",
       description: "Has votado a favor de esta foto",
     });
+  };
+  
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (navigator.share) {
+      navigator.share({
+        title: `Photo by ${photographer}`,
+        text: `Check out this amazing photo by ${photographer}`,
+        url: window.location.href
+      }).catch(err => {
+        console.error('Error sharing:', err);
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied",
+        description: "Photo link copied to clipboard"
+      });
+    }
+    
+    onShare?.(id);
   };
   
   useEffect(() => {
@@ -197,7 +216,7 @@ const PhotoCard = ({
             <div className="flex space-x-2">
               {!expanded && (
                 <button
-                  onClick={() => onShare?.(id)}
+                  onClick={handleShare}
                   className="text-white/80 hover:text-white transition-colors"
                   aria-label="Share photo"
                 >
@@ -275,7 +294,7 @@ const PhotoCard = ({
             
             {!expanded && (
               <button
-                onClick={() => onShare?.(id)}
+                onClick={handleShare}
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Share photo"
               >
