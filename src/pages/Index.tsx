@@ -296,7 +296,7 @@ const Index = () => {
         </div>
       </section>
       
-      <section className="py-16 px-4 bg-gray-100">
+      <section className="py-16 px-4 bg-gray-200">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">{texts.eventTypes}</h2>
@@ -400,7 +400,7 @@ const Index = () => {
                     </div>
                     <div className="flex items-center text-white/90">
                       <Heart className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1 fill-white text-white" />
-                      <span className="text-xs">{photo.likes}</span>
+                      <span className="text-sm">{photo.likes}</span>
                     </div>
                   </div>
                 </div>
@@ -446,14 +446,15 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center px-4">
-                    <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                    <span className="text-sm ml-1">{selectedPhoto?.likes} likes</span>
+                  <div className="flex items-center justify-between px-4">
+                    <div className="flex items-center">
+                      <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                      <span className="text-sm ml-1">{selectedPhoto?.likes} likes</span>
+                    </div>
                     
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="ml-auto"
                       onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
                     >
                       <Share2 className="h-4 w-4 mr-1" />
@@ -475,7 +476,7 @@ const Index = () => {
         </Dialog>
       </section>
       
-      <section className="py-16 px-4 bg-gray-100">
+      <section className="py-16 px-4 bg-gray-200">
         <div className="container max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">{texts.howItWorks}</h2>
           

@@ -40,27 +40,24 @@ const mockContests = [
   },
 ];
 
+// Default Mapbox token - this should be replaced with a proper token in production
+// This is a placeholder token to make the map work without user input
+const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1IjoicGl4b25haXIiLCJhIjoiY2xuM28zYTBnMDIxajJpcG5lZDNrZzY0dyJ9.ZjsrZ01oWLc-nttT5KIMLQ';
+
 const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [selectedContest, setSelectedContest] = useState<(typeof mockContests)[0] | null>(null);
   const [isMapLoading, setIsMapLoading] = useState(true);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
   const navigate = useNavigate();
   const { toast } = useToast();
   
   useEffect(() => {
     if (!mapContainer.current) return;
     
-    // If we don't have a token yet, show token input
-    if (!mapboxToken) {
-      setIsMapLoading(false);
-      return;
-    }
-    
     try {
-      // Initialize map with the provided token
-      mapboxgl.accessToken = mapboxToken;
+      // Initialize map with the default token
+      mapboxgl.accessToken = DEFAULT_MAPBOX_TOKEN;
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -110,19 +107,10 @@ const Map = () => {
       });
       setIsMapLoading(false);
     }
-  }, [mapboxToken, toast]);
+  }, [toast]);
   
   const handleMarkerClick = (contest: typeof mockContests[0]) => {
     setSelectedContest(contest);
-  };
-  
-  const handleTokenSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const token = new FormData(e.currentTarget).get('mapboxToken') as string;
-    if (token) {
-      setMapboxToken(token);
-      localStorage.setItem('mapboxToken', token); // Save token for later use
-    }
   };
   
   return (
@@ -136,66 +124,34 @@ const Map = () => {
         </div>
       )}
       
-      {!mapboxToken ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
-          <div className="w-full max-w-md p-6 bg-card rounded-lg shadow-lg">
-            <h3 className="text-lg font-medium mb-4">Configuración del mapa</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Para mostrar el mapa de concursos, necesitas proporcionar un token de Mapbox.
-              Puedes obtener uno gratuito en <a href="https://mapbox.com/" target="_blank" rel="noreferrer" className="text-primary underline">mapbox.com</a>.
-            </p>
-            <form onSubmit={handleTokenSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="mapboxToken" className="text-sm font-medium">
-                  Token público de Mapbox
-                </label>
-                <input
-                  id="mapboxToken"
-                  name="mapboxToken"
-                  type="text"
-                  placeholder="pk.eyJ1Ijoi..."
-                  className="w-full p-2 mt-1 border rounded-md"
-                  required
-                />
+      <div ref={mapContainer} className="w-full h-full" />
+      
+      {/* Contest info overlay when marker is clicked */}
+      {selectedContest && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg"
+        >
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="font-medium text-lg">{selectedContest.title}</h3>
+              <div className="flex items-center text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4 mr-1" />
+                <span>{selectedContest.location}</span>
               </div>
-              <Button type="submit" className="w-full">
-                Guardar y mostrar mapa
-              </Button>
-            </form>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div ref={mapContainer} className="w-full h-full" />
-          
-          {/* Contest info overlay when marker is clicked */}
-          {selectedContest && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg"
+              <div className="mt-1 text-sm text-muted-foreground">
+                <span>{selectedContest.photosCount} fotos</span>
+              </div>
+            </div>
+            <Button
+              onClick={() => navigate(`/contests/${selectedContest.id}`)}
+              size="sm"
             >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-medium text-lg">{selectedContest.title}</h3>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    <span>{selectedContest.location}</span>
-                  </div>
-                  <div className="mt-1 text-sm text-muted-foreground">
-                    <span>{selectedContest.photosCount} fotos</span>
-                  </div>
-                </div>
-                <Button
-                  onClick={() => navigate(`/contests/${selectedContest.id}`)}
-                  size="sm"
-                >
-                  Ver concurso
-                </Button>
-              </div>
-            </motion.div>
-          )}
-        </>
+              Ver concurso
+            </Button>
+          </div>
+        </motion.div>
       )}
     </div>
   );

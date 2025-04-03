@@ -50,7 +50,7 @@ const Header = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 border-b",
         isScrolled 
-          ? "bg-background/80 backdrop-blur-lg border-border/40"
+          ? "bg-white border-border/40"
           : "bg-transparent border-transparent"
       )}
     >
@@ -58,7 +58,10 @@ const Header = () => {
         {/* Logo */}
         <Link 
           to="/" 
-          className="flex items-center space-x-2 text-foreground"
+          className={cn(
+            "flex items-center space-x-2",
+            isScrolled ? "text-foreground" : "text-white"
+          )}
         >
           <Camera className="w-6 h-6" />
           <span className="font-medium text-lg">Pix On Air</span>
@@ -72,9 +75,11 @@ const Header = () => {
               to={item.path}
               className={cn(
                 "flex items-center text-sm font-medium transition-colors",
-                location.pathname === item.path
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                isScrolled
+                  ? (location.pathname === item.path
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground")
+                  : "text-white hover:text-white/80"
               )}
             >
               <item.icon className="mr-2 w-4 h-4" />
@@ -83,7 +88,11 @@ const Header = () => {
           ))}
 
           {/* Support Button */}
-          <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-transparent">
+          <Button asChild variant="ghost" size="sm" className={cn(
+            isScrolled 
+              ? "text-muted-foreground hover:text-foreground hover:bg-transparent" 
+              : "text-white hover:text-white/80 hover:bg-transparent"
+          )}>
             <Link to="/support">
               <HelpCircle className="mr-2 h-4 w-4" />
               <span>Soporte</span>
@@ -98,7 +107,15 @@ const Header = () => {
               </Link>
             </Button>
           ) : (
-            <Button asChild size="sm" variant="outline" className="rounded-full">
+            <Button 
+              asChild 
+              size="sm" 
+              variant={isScrolled ? "outline" : "secondary"} 
+              className={cn(
+                "rounded-full",
+                !isScrolled && "bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
+              )}
+            >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
                 <span>Iniciar sesión</span>
@@ -109,7 +126,10 @@ const Header = () => {
         
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-foreground"
+          className={cn(
+            "md:hidden",
+            isScrolled ? "text-foreground" : "text-white"
+          )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         >
@@ -161,7 +181,12 @@ const Header = () => {
                   </Link>
                 </Button>
               ) : (
-                <Button asChild size="sm" variant="outline" className="w-full justify-start rounded-full">
+                <Button 
+                  asChild 
+                  size="sm" 
+                  variant="outline" 
+                  className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
+                >
                   <Link to="/login">
                     <LogIn className="mr-2 h-4 w-4" />
                     <span>Iniciar sesión</span>
