@@ -16,7 +16,9 @@ import {
   FileText,
   Camera,
   Save,
-  Gift
+  Gift,
+  Lock,
+  Unlock
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -73,6 +75,10 @@ const contestFormSchema = z.object({
   eventLocation: z.string().min(2, { message: "Location must be at least 2 characters." }),
   eventType: z.string(),
   
+  // Contest Privacy Setting
+  isPrivate: z.boolean().default(false),
+  privateAccessCode: z.string().optional(),
+  
   // Dates
   startDate: z.date({ required_error: "Start date is required." }),
   endDate: z.date({ required_error: "End date is required." }),
@@ -104,6 +110,8 @@ const defaultValues: Partial<ContestFormValues> = {
   eventDescription: "",
   eventLocation: "",
   eventType: "general",
+  isPrivate: false,
+  privateAccessCode: "",
   hasPrizes: false,
   firstPlacePrize: "",
   secondPlacePrize: "",
@@ -132,6 +140,7 @@ const Dashboard = () => {
   
   const hasPrizes = form.watch("hasPrizes");
   const hasVoterRewards = form.watch("hasVoterRewards");
+  const isPrivate = form.watch("isPrivate");
   
   return (
     <div className="container max-w-6xl mx-auto py-12 px-4">
@@ -143,7 +152,7 @@ const Dashboard = () => {
           </p>
         </div>
         
-        <Button>
+        <Button className="bg-[#4891AA] hover:bg-[#3a7a8b] text-white">
           <Settings className="w-4 h-4 mr-2" />
           <span>Settings</span>
         </Button>
@@ -221,7 +230,7 @@ const Dashboard = () => {
                 onValueChange={setActiveTab}
                 className="space-y-6"
               >
-                <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full">
+                <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full">
                   <TabsTrigger value="general">
                     <Info className="w-4 h-4 mr-2" />
                     <span>General</span>
@@ -233,6 +242,10 @@ const Dashboard = () => {
                   <TabsTrigger value="event">
                     <FileText className="w-4 h-4 mr-2" />
                     <span>Event</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="access">
+                    <Lock className="w-4 h-4 mr-2" />
+                    <span>Access</span>
                   </TabsTrigger>
                   <TabsTrigger value="dates">
                     <Calendar className="w-4 h-4 mr-2" />
@@ -410,6 +423,78 @@ const Dashboard = () => {
                             </FormItem>
                           )}
                         />
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="access" className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-medium">Contest Access Settings</h3>
+                        
+                        <FormField
+                          control={form.control}
+                          name="isPrivate"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Private Contest
+                                </FormLabel>
+                                <FormDescription>
+                                  Restrict access to this contest with a private code
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        {isPrivate && (
+                          <FormField
+                            control={form.control}
+                            name="privateAccessCode"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Access Code</FormLabel>
+                                <FormControl>
+                                  <Input 
+                                    placeholder="Enter a code for participants to access this contest"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  Share this code only with the people you want to participate in the contest
+                                </FormDescription>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        )}
+                        
+                        <div className="bg-muted p-4 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            {isPrivate ? (
+                              <>
+                                <Lock className="h-5 w-5 text-amber-500" />
+                                <span className="font-medium text-amber-700">Private Contest</span>
+                              </>
+                            ) : (
+                              <>
+                                <Unlock className="h-5 w-5 text-green-500" />
+                                <span className="font-medium text-green-700">Public Contest</span>
+                              </>
+                            )}
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {isPrivate 
+                              ? "This contest will only be accessible to users with the access code. It will still appear on the map, but participation will require the code."
+                              : "This contest is open to all users. Anyone can view and participate in this contest."}
+                          </p>
+                        </div>
                       </div>
                     </TabsContent>
                     
@@ -627,7 +712,7 @@ const Dashboard = () => {
                     </TabsContent>
                     
                     <div className="flex justify-end">
-                      <Button type="submit">
+                      <Button type="submit" className="bg-[#4891AA] hover:bg-[#3a7a8b] text-white">
                         <Save className="w-4 h-4 mr-2" />
                         <span>Save Contest Settings</span>
                       </Button>

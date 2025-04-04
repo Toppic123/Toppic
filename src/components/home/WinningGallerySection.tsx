@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, X, Share2, ArrowRight } from "lucide-react";
+import { Heart, X, Share2, ArrowRight, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,7 +33,14 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
   const [selectedPhoto, setSelectedPhoto] = useState<WinningPhoto | null>(null);
   const { toast } = useToast();
 
-  const handleSharePhoto = (photo: WinningPhoto) => {
+  const handleSharePhoto = (photo: WinningPhoto, platform: 'native' | 'instagram' = 'native') => {
+    if (platform === 'instagram') {
+      // Open Instagram share intent
+      const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
+      window.open(instagramUrl, '_blank');
+      return;
+    }
+
     if (navigator.share) {
       navigator.share({
         title: `Photo by ${photo.photographer}`,
@@ -56,11 +63,11 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
   };
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-gray-900 text-white">
       <div className="container max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
-          <p className="text-slate-600 max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             {texts.winningGalleryDesc}
           </p>
         </div>
@@ -78,6 +85,14 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                 src={photo.imageUrl} 
                 alt={photo.title} 
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Display fallback for broken images
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                  toast({
+                    title: "Image not available",
+                    description: "Using a placeholder image instead"
+                  });
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 md:p-3">
                 <p className="text-white font-medium text-xs md:text-sm truncate">{photo.title}</p>
@@ -122,35 +137,47 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                   src={selectedPhoto?.imageUrl} 
                   alt={selectedPhoto?.title} 
                   className="max-w-full max-h-[70vh] object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                  }}
                 />
               </div>
               
               <div className="w-full md:w-80 bg-white flex flex-col">
                 <div className="mb-4 p-4">
-                  <h3 className="text-lg font-bold">{selectedPhoto?.title}</h3>
+                  <h3 className="text-lg font-bold text-black">{selectedPhoto?.title}</h3>
                   <div className="flex items-center mt-2">
                     <Avatar className="h-6 w-6 mr-2">
                       <AvatarImage src={selectedPhoto?.photographerAvatar} alt={selectedPhoto?.photographer} />
                       <AvatarFallback>{selectedPhoto?.photographer?.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <span className="text-sm">{selectedPhoto?.photographer}</span>
+                    <span className="text-sm text-black">{selectedPhoto?.photographer}</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between px-4">
                   <div className="flex items-center">
                     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                    <span className="text-sm ml-1">{selectedPhoto?.likes} likes</span>
+                    <span className="text-sm ml-1 text-black">{selectedPhoto?.likes} likes</span>
                   </div>
                   
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
-                  >
-                    <Share2 className="h-4 w-4 mr-1" />
-                    Share
-                  </Button>
+                  <div className="flex items-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto, 'instagram')}
+                      className="mr-1"
+                    >
+                      <Instagram className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
                 
                 <Separator className="my-2" />

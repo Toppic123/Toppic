@@ -10,10 +10,10 @@ const VotingSystem = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold mb-6">Our Voting System</h1>
+        <h1 className="text-3xl font-bold mb-6">Nuestro Sistema de Votación</h1>
         <p className="text-muted-foreground mb-8">
-          We use a combination of AI preselection and user voting to ensure the best photos win in our contests. 
-          Below is a detailed explanation of how our voting system works.
+          Utilizamos una combinación de preselección mediante IA y votación por comparación para garantizar que las mejores fotografías ganen en nuestros concursos.
+          A continuación se explica en detalle cómo funciona nuestro sistema de votación.
         </p>
         
         <VotingRules 
@@ -22,7 +22,7 @@ const VotingSystem = () => {
           maxPhotos={50} 
           voterReward={{
             enabled: true,
-            description: "Organizers can offer rewards for voters randomly selected from those who participated in the voting."
+            description: "Los organizadores pueden ofrecer recompensas para votantes seleccionados aleatoriamente entre quienes participaron activamente en la votación."
           }}
         />
       </motion.div>

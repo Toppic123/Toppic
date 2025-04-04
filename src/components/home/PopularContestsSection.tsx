@@ -25,11 +25,11 @@ interface PopularContestsSectionProps {
 
 const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps) => {
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-gray-900 text-white">
       <div className="container max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">{texts.featuredContest}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-gray-300 max-w-2xl mx-auto">
             Discover the most popular contests right now and participate with your best photographs.
           </p>
         </div>
@@ -41,7 +41,7 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
         </div>
         
         <div className="text-center mt-10">
-          <Button asChild variant="outline" className="rounded-full px-8">
+          <Button asChild variant="outline" className="rounded-full px-8 border-white/80 text-white hover:bg-white/10">
             <Link to="/contests">
               <span>{texts.seeAll}</span>
               <ArrowRight className="ml-2 h-4 w-4" />

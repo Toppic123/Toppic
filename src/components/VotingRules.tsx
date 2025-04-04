@@ -39,15 +39,9 @@ const VotingRules = ({
       enabled: aiPreSelection
     },
     {
-      title: "Selección final",
-      icon: CheckCircle,
-      description: `Obtiene las ${maxPhotos} mejores fotografías para la fase de votación.`,
-      enabled: aiPreSelection
-    },
-    {
-      title: "Votación de usuarios",
+      title: "Votación por comparación",
       icon: Users,
-      description: "Los usuarios registrados pueden votar por sus fotos favoritas durante el período de votación.",
+      description: "Los usuarios comparan y votan entre pares de fotografías para determinar las mejores.",
       enabled: finalUserVoting
     },
     {

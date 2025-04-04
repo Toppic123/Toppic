@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Camera, Trophy, User, Heart, Filter, Share2, X } from "lucide-react";
+import { Camera, Trophy, User, Heart, Filter, Share2, X, Instagram } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -119,7 +120,14 @@ const GalleryPage = () => {
     setSelectedPhoto(photo);
   };
   
-  const handleSharePhoto = (photo: any) => {
+  const handleSharePhoto = (photo: any, platform: 'native' | 'instagram' = 'native') => {
+    if (platform === 'instagram') {
+      // Open Instagram share intent
+      const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
+      window.open(instagramUrl, '_blank');
+      return;
+    }
+
     if (navigator.share) {
       navigator.share({
         title: photo.title,
@@ -204,7 +212,11 @@ const GalleryPage = () => {
                 <img 
                   src={photo.imageUrl} 
                   alt={photo.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  onError={(e) => {
+                    // Display fallback for broken images
+                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -256,6 +268,15 @@ const GalleryPage = () => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto, 'instagram')}
+                className="h-8 w-8 p-0"
+              >
+                <Instagram className="h-4 w-4" />
+                <span className="sr-only">Share on Instagram</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
                 className="h-8 w-8 p-0"
               >
@@ -275,6 +296,9 @@ const GalleryPage = () => {
                 src={selectedPhoto?.imageUrl} 
                 alt={selectedPhoto?.title}
                 className="max-w-full max-h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                }}
               />
             </div>
             
