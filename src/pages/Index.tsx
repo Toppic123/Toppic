@@ -3,8 +3,8 @@ import { homeTexts } from "@/components/home/HomeTexts";
 import { heroImages, popularContests, winningPhotos } from "@/components/home/HomeData";
 import HeroSection from "@/components/home/HeroSection";
 import PopularContestsSection from "@/components/home/PopularContestsSection";
-import EventTypesSection from "@/components/home/EventTypesSection";
 import WinningGallerySection from "@/components/home/WinningGallerySection";
+import NearbyContestsSection from "@/components/home/NearbyContestsSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
 
@@ -23,25 +23,17 @@ const Index = () => {
       />
       
       <PopularContestsSection 
-        contests={popularContests}
+        contests={popularContests.slice(0, 2)} // Only show 2 contests for mobile view
         texts={{
           featuredContest: homeTexts.featuredContest,
           seeAll: homeTexts.seeAll
         }}
       />
       
-      <EventTypesSection 
+      <NearbyContestsSection
         texts={{
-          eventTypes: homeTexts.eventTypes,
-          eventTypesDesc: homeTexts.eventTypesDesc,
-          musicEvents: homeTexts.musicEvents,
-          musicEventsDesc: homeTexts.musicEventsDesc,
-          sportsEvents: homeTexts.sportsEvents,
-          sportsEventsDesc: homeTexts.sportsEventsDesc,
-          touristPlaces: homeTexts.touristPlaces,
-          touristPlacesDesc: homeTexts.touristPlacesDesc,
-          thematicContests: homeTexts.thematicContests,
-          thematicContestsDesc: homeTexts.thematicContestsDesc
+          nearbyContests: homeTexts.nearbyContests,
+          nearbyContestsDesc: homeTexts.nearbyContestsDesc
         }}
       />
       

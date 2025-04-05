@@ -45,9 +45,8 @@ const mockContests = [
   },
 ];
 
-// Default Mapbox token - this should be replaced with a proper token in production
-// This is a placeholder token to make the map work without user input
-const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1IjoicGl4b25haXIiLCJhIjoiY2xuM28zYTBnMDIxajJpcG5lZDNrZzY0dyJ9.ZjsrZ01oWLc-nttT5KIMLQ';
+// Default Mapbox token - this is a temporary public token that works for development
+const MAPBOX_TOKEN = 'pk.eyJ1IjoicGl4b25haXIiLCJhIjoiY2xuM28zYTBnMDIxajJpcG5lZDNrZzY0dyJ9.ZjsrZ01oWLc-nttT5KIMLQ';
 
 const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -168,8 +167,8 @@ const Map = () => {
     if (!mapContainer.current) return;
     
     try {
-      // Initialize map with the default token
-      mapboxgl.accessToken = DEFAULT_MAPBOX_TOKEN;
+      // Initialize map with the token
+      mapboxgl.accessToken = MAPBOX_TOKEN;
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,

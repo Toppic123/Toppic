@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogClose, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 import PhotoComments from "@/components/PhotoComments";
 
 interface WinningPhoto {
@@ -33,6 +34,7 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
   const [selectedPhoto, setSelectedPhoto] = useState<WinningPhoto | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleSharePhoto = (photo: WinningPhoto, platform: 'native' | 'instagram' | 'facebook' | 'twitter' | 'whatsapp' = 'native') => {
     if (!photo) return;
@@ -97,13 +99,15 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
           </p>
         </div>
         
-        <div className="grid grid-cols-3 gap-1 md:gap-1.5 mb-6">
+        <div className={`grid grid-cols-3 gap-1 md:gap-1.5 mb-6 ${isMobile ? 'aspect-square' : ''}`}>
           {photos.slice(0, 9).map((photo) => (
             <motion.div 
               key={photo.id}
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.2 }}
-              className="aspect-square overflow-hidden relative group max-h-[200px] md:max-h-[250px] cursor-pointer"
+              className={`aspect-square overflow-hidden relative group cursor-pointer ${
+                isMobile ? 'max-h-[150px]' : 'max-h-[200px] md:max-h-[250px]'
+              }`}
               onClick={() => setSelectedPhoto(photo)}
             >
               <img 
