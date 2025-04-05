@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, X, Share2, ArrowRight, Instagram } from "lucide-react";
@@ -38,6 +37,10 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
       // Open Instagram share intent
       const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
       window.open(instagramUrl, '_blank');
+      toast({
+        title: "Opening Instagram",
+        description: "Redirecting to Instagram to share this photo"
+      });
       return;
     }
 
@@ -63,11 +66,11 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
   };
 
   return (
-    <section className="py-16 px-4 bg-gray-900 text-white">
+    <section className="py-16 px-4 bg-white text-black">
       <div className="container max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
-          <p className="text-gray-300 max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             {texts.winningGalleryDesc}
           </p>
         </div>
@@ -161,21 +164,23 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                     <span className="text-sm ml-1 text-black">{selectedPhoto?.likes} likes</span>
                   </div>
                   
-                  <div className="flex items-center">
+                  <div className="flex items-center space-x-2">
                     <Button 
-                      variant="ghost" 
+                      variant="outline"
                       size="sm" 
                       onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto, 'instagram')}
-                      className="mr-1"
+                      className="flex items-center gap-1"
                     >
                       <Instagram className="h-4 w-4" />
+                      <span className="hidden sm:inline">Instagram</span>
                     </Button>
                     <Button 
-                      variant="ghost" 
+                      variant="outline" 
                       size="sm" 
                       onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
                     >
                       <Share2 className="h-4 w-4" />
+                      <span className="ml-1">Share</span>
                     </Button>
                   </div>
                 </div>

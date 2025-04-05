@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Camera, MapPin, Award, ArrowRight } from "lucide-react";
+import { Camera, Vote, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -19,76 +19,62 @@ interface HowItWorksSectionProps {
 
 const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
   return (
-    <section className="py-16 px-4 bg-gray-300">
+    <section className="py-16 px-4 bg-white">
       <div className="container max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold mb-8 text-center">{texts.howItWorks}</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">{texts.howItWorks}</h2>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            className="glass-card p-6 rounded-xl bg-white shadow-sm"
+            viewport={{ once: true }}
+            className="text-center"
           >
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Camera className="h-6 w-6 text-primary" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <Camera className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2">{texts.participate}</h3>
-            <p className="text-muted-foreground">
-              {texts.participateDesc}
-            </p>
+            <h3 className="text-xl font-medium mb-2">{texts.participate}</h3>
+            <p className="text-muted-foreground">{texts.participateDesc}</p>
           </motion.div>
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            viewport={{ once: true, amount: 0.3 }}
-            className="glass-card p-6 rounded-xl bg-white shadow-sm"
+            viewport={{ once: true }}
+            className="text-center"
           >
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <MapPin className="h-6 w-6 text-primary" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <Vote className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2">{texts.vote}</h3>
-            <p className="text-muted-foreground">
-              {texts.voteDesc}
-            </p>
+            <h3 className="text-xl font-medium mb-2">{texts.vote}</h3>
+            <p className="text-muted-foreground">{texts.voteDesc}</p>
           </motion.div>
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ once: true, amount: 0.3 }}
-            className="glass-card p-6 rounded-xl bg-white shadow-sm"
+            viewport={{ once: true }}
+            className="text-center"
           >
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Award className="h-6 w-6 text-primary" />
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+              <Award className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2">{texts.win}</h3>
-            <p className="text-muted-foreground">
-              {texts.winDesc}
-            </p>
+            <h3 className="text-xl font-medium mb-2">{texts.win}</h3>
+            <p className="text-muted-foreground">{texts.winDesc}</p>
           </motion.div>
         </div>
         
-        <div className="text-center mt-10 space-y-4">
-          <Button asChild size="lg" className="rounded-full px-8">
-            <Link to="/register">
+        <div className="text-center">
+          <Button asChild size="lg" className="rounded-full bg-[#4891AA] hover:bg-[#3a7a8b] text-white">
+            <Link to="/contests">
               <span>{texts.startNow}</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
-          
-          <div>
-            <Button asChild variant="outline" className="rounded-full px-8">
-              <Link to="/voting-system">
-                <span>Learn about our Voting System</span>
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
         </div>
       </div>
     </section>

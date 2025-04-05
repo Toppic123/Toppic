@@ -55,16 +55,19 @@ const Header = () => {
       )}
     >
       <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo - Always visible */}
         <Link 
           to="/" 
-          className={cn(
-            "flex items-center space-x-2",
-            isScrolled ? "text-foreground" : "text-white"
-          )}
+          className="flex items-center space-x-2 z-10"
         >
-          <Camera className="w-6 h-6" />
-          <span className="font-medium text-lg">Pix On Air</span>
+          <Camera className={cn(
+            "w-6 h-6",
+            isScrolled ? "text-[#4891AA]" : "text-white"
+          )} />
+          <span className={cn(
+            "font-medium text-lg",
+            isScrolled ? "text-[#4891AA]" : "text-white"
+          )}>Pix On Air</span>
         </Link>
         
         {/* Desktop Navigation */}
@@ -77,8 +80,8 @@ const Header = () => {
                 "flex items-center text-sm font-medium transition-colors",
                 isScrolled
                   ? (location.pathname === item.path
-                    ? "text-foreground"
-                    : "text-muted-foreground hover:text-foreground")
+                    ? "text-[#4891AA]"
+                    : "text-muted-foreground hover:text-[#4891AA]")
                   : "text-white hover:text-white/80"
               )}
             >
@@ -90,7 +93,7 @@ const Header = () => {
           {/* Support Button */}
           <Button asChild variant="ghost" size="sm" className={cn(
             isScrolled 
-              ? "text-muted-foreground hover:text-foreground hover:bg-transparent" 
+              ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
               : "text-white hover:text-white/80 hover:bg-transparent"
           )}>
             <Link to="/support">
@@ -100,7 +103,7 @@ const Header = () => {
           </Button>
           
           {isLoggedIn ? (
-            <Button asChild size="sm" className="rounded-full">
+            <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
               <Link to="/upload">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 <span>Subir foto</span>
@@ -110,11 +113,7 @@ const Header = () => {
             <Button 
               asChild 
               size="sm" 
-              variant={isScrolled ? "outline" : "secondary"} 
-              className={cn(
-                "rounded-full",
-                !isScrolled && "bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
-              )}
+              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
@@ -128,7 +127,7 @@ const Header = () => {
         <button
           className={cn(
             "md:hidden",
-            isScrolled ? "text-foreground" : "text-white"
+            isScrolled ? "text-[#4891AA]" : "text-white"
           )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -155,8 +154,8 @@ const Header = () => {
                   className={cn(
                     "flex items-center py-2 text-sm font-medium transition-colors",
                     location.pathname === item.path
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground",
+                      ? "text-[#4891AA]"
+                      : "text-muted-foreground hover:text-[#4891AA]",
                   )}
                 >
                   <item.icon className="mr-2 w-5 h-5" />
@@ -167,14 +166,14 @@ const Header = () => {
               {/* Support Button in Mobile Menu */}
               <Link
                 to="/support"
-                className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-[#4891AA] transition-colors"
               >
                 <HelpCircle className="mr-2 w-5 h-5" />
                 <span>Soporte</span>
               </Link>
               
               {isLoggedIn ? (
-                <Button asChild size="sm" className="w-full justify-start rounded-full">
+                <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
                   <Link to="/upload">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     <span>Subir foto</span>
@@ -183,8 +182,7 @@ const Header = () => {
               ) : (
                 <Button 
                   asChild 
-                  size="sm" 
-                  variant="outline" 
+                  size="sm"  
                   className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
                 >
                   <Link to="/login">

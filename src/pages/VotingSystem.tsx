@@ -22,9 +22,19 @@ const VotingSystem = () => {
           maxPhotos={50} 
           voterReward={{
             enabled: true,
-            description: "Los organizadores pueden ofrecer recompensas para votantes seleccionados aleatoriamente entre quienes participaron activamente en la votación."
+            description: "Los organizadores pueden ofrecer recompensas para votantes seleccionados aleatoriamente entre quienes participaron activamente en la votación por comparación."
           }}
         />
+        
+        <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-100">
+          <h3 className="font-medium text-lg text-blue-800 mb-2">Sistema de votación por comparación</h3>
+          <p className="text-blue-700">
+            En nuestro sistema de votación, los usuarios comparan pares de fotografías y seleccionan la que consideran mejor. 
+            Este método permite una evaluación más objetiva y justa de las imágenes, ya que cada foto se evalúa múltiples veces 
+            en diferentes combinaciones. Ya no utilizamos el sistema tradicional de un voto por usuario, sino un algoritmo de 
+            clasificación basado en comparaciones sucesivas que determina las mejores fotografías.
+          </p>
+        </div>
       </motion.div>
     </div>
   );
