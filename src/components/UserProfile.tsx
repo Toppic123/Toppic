@@ -1,5 +1,8 @@
 
+import { useState } from "react";
 import { Trophy, Camera, Calendar } from "lucide-react";
+import { AvatarUpload } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
 
 type UserProfileProps = {
   username: string;
@@ -9,6 +12,7 @@ type UserProfileProps = {
   contestsWon: number;
   photosUploaded: number;
   joinDate: string;
+  onUpdateAvatar?: (imageUrl: string) => void;
 };
 
 const UserProfile = ({
@@ -19,23 +23,41 @@ const UserProfile = ({
   contestsWon,
   photosUploaded,
   joinDate,
+  onUpdateAvatar,
 }: UserProfileProps) => {
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(avatarUrl);
+  const { toast } = useToast();
+
+  const handleImageSelect = (file: File) => {
+    // Create a preview of the selected image
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+    
+    // In a real application, we would upload the file to a server here
+    // For demo purposes, we'll just use the local preview
+    if (onUpdateAvatar) {
+      // Simulating an upload delay
+      setTimeout(() => {
+        onUpdateAvatar(objectUrl);
+        toast({
+          title: "Foto actualizada",
+          description: "Tu foto de perfil ha sido actualizada exitosamente."
+        });
+      }, 1000);
+    }
+  };
+
   return (
     <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
       <div className="p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <div className="relative">
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={fullName}
-                className="w-24 h-24 rounded-full object-cover border-2 border-background"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center text-2xl font-medium text-muted-foreground">
-                {fullName.charAt(0).toUpperCase()}
-              </div>
-            )}
+            <AvatarUpload 
+              previewUrl={previewUrl}
+              onImageSelect={handleImageSelect}
+              size="lg"
+              className="cursor-pointer"
+            />
           </div>
           
           <div className="text-center sm:text-left">

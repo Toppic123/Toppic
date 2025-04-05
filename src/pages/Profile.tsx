@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,6 +29,7 @@ const Profile = () => {
     contestResults: true,
     votesAndComments: true,
   });
+  const [userAvatar, setUserAvatar] = useState(userData.avatarUrl);
   const { toast } = useToast();
   
   const handleLanguageChange = (value: string) => {
@@ -61,6 +61,10 @@ const Profile = () => {
     });
   };
 
+  const handleUpdateAvatar = (imageUrl: string) => {
+    setUserAvatar(imageUrl);
+  };
+
   return (
     <div className="container max-w-4xl mx-auto py-16 px-4">
       <motion.div
@@ -71,7 +75,11 @@ const Profile = () => {
         <h1 className="text-3xl font-bold mb-8">Mi Perfil</h1>
         
         <div className="mb-8">
-          <UserProfile {...userData} />
+          <UserProfile 
+            {...userData} 
+            avatarUrl={userAvatar}
+            onUpdateAvatar={handleUpdateAvatar}
+          />
         </div>
         
         <Tabs defaultValue="gallery" className="mb-8">
