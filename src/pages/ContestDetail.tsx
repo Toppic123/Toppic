@@ -224,8 +224,9 @@ const ContestDetail = () => {
       case "whatsapp":
         shareUrl = `https://wa.me/?text=${encodeURIComponent(message + " " + contestUrl)}`;
         break;
-      case "telegram":
-        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(contestUrl)}&text=${encodeURIComponent(message)}`;
+      case "instagram":
+        // Open Instagram share intent
+        shareUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(contestUrl)}`;
         break;
     }
     
@@ -384,9 +385,9 @@ const ContestDetail = () => {
                               2
                             </div>
                             <div>
-                              <p className="font-medium">Fase de votación final</p>
+                              <p className="font-medium">Fase de votación por comparación</p>
                               <p className="text-sm text-muted-foreground">
-                                Todos los usuarios registrados pueden votar por su foto favorita. Cada usuario tiene 1 voto.
+                                Las fotos se comparan entre sí para determinar las mejores, mediante un sistema de votación por comparación directa.
                               </p>
                             </div>
                           </div>
@@ -567,92 +568,4 @@ const ContestDetail = () => {
                 >
                   <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-green-500">
                     <path d="M17.507 14.307L20.308 17.108L17.507 14.307ZM3.7 22.3L6.45 21.9C7.71139 22.4172 9.0747 22.6879 10.459 22.7L10.959 22.7C17.929 22.7 21.659 16.707 21.659 10.207C21.659 7.16997 20.509 5.01997 18.507 3.01797C16.507 1.01997 14.357 -0.100029 11.307 -3.05176e-05C4.32997 -3.05176e-05 0.657975 5.99997 0.657975 12.5C0.657975 14.092 0.947975 15.625 1.50698 17.05L2.00698 18.35L0.957975 20.95L3.7 22.3Z"></path>
-                    <path d="M11.55 6C11.302 6 11.108 6.193 11.109 6.442C11.109 6.69 11.303 6.883 11.551 6.883C12.486 6.886 13.389 7.256 14.06 7.926C14.733 8.596 15.103 9.496 15.106 10.428C15.106 10.676 15.3 10.869 15.548 10.869C15.796 10.869 15.989 10.675 15.989 10.428C15.986 9.248 15.518 8.119 14.687 7.289C13.856 6.458 12.73 5.992 11.55 5.999V6Z" />
-                    <path d="M11.55 8.40002C11.302 8.40002 11.108 8.59302 11.109 8.84202C11.109 9.09002 11.303 9.28302 11.551 9.28302C11.964 9.28302 12.363 9.44702 12.664 9.74702C12.964 10.048 13.127 10.447 13.127 10.861C13.127 11.108 13.321 11.301 13.569 11.301C13.817 11.301 14.01 11.108 14.01 10.861C14.01 10.201 13.747 9.56702 13.277 9.09602C12.805 8.62602 12.172 8.36102 11.55 8.40002Z" />
-                    <path d="M13.5 14.5L12.5 14C9.9 12.7 8.7 10.1 8.5 9.7L8.3 9.3C8.1 8.9 8.3 8.4 8.7 8.2L9.7 7.7C10.1 7.5 10.2 7 10 6.6L8.5 4.1C8.3 3.7 7.8 3.6 7.4 3.8L6.4 4.3C5.9 4.6 5.5 5 5.4 5.6C5.1 7.1 5.5 9.5 8.3 12.3C11.4 15.4 14.1 15.5 15.5 15.2C16.1 15.1 16.5 14.7 16.7 14.3L17.2 13.3C17.4 12.9 17.2 12.4 16.8 12.2L14.3 10.7C13.9 10.5 13.4 10.6 13.2 11L12.7 12C12.6 12.2 12.2 12.3 12 12.2L11.5 12C11.3 11.9 11.1 11.8 10.9 11.7L12.5 14.5C13 14.5 13.3 14.5 13.5 14.5Z" />
-                  </svg>
-                  WhatsApp
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex justify-center items-center gap-2"
-                  onClick={() => shareToSocialMedia("telegram")}
-                >
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-blue-500">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.9 8.1L15.08 15.93C15.03 16.15 14.88 16.33 14.66 16.43C14.55 16.47 14.42 16.5 14.3 16.5C14.17 16.5 14.04 16.47 13.93 16.41L11.67 15.22L10.42 16.41C10.3 16.53 10.14 16.6 9.97 16.6C9.86 16.6 9.76 16.58 9.66 16.53C9.35 16.38 9.15 16.05 9.15 15.7V14.08L13.96 9.68C14.09 9.56 14.16 9.37 14.13 9.19C14.11 9 14 8.86 13.83 8.79C13.67 8.72 13.5 8.73 13.35 8.82L7.2 12.36L5.25 11.46C5.1 11.39 4.99 11.26 4.96 11.11C4.93 10.95 4.97 10.79 5.07 10.66C5.18 10.53 5.34 10.45 5.52 10.45L16.18 8.02C16.33 7.99 16.48 8.01 16.61 8.08C16.75 8.15 16.85 8.27 16.91 8.41C16.94 8.57 16.94 8.71 16.9 8.85V8.1Z" />
-                  </svg>
-                  Telegram
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      {/* View Photo Dialog */}
-      <Dialog open={!!selectedPhoto && viewPhotoMode === 'view'} onOpenChange={(open) => {
-        if (!open) {
-          setSelectedPhoto(null);
-          setViewPhotoMode(null);
-        }
-      }}>
-        <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
-          <DialogHeader className="px-4 py-2 border-b">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={selectedPhoto?.photographerAvatar} alt={selectedPhoto?.photographer} />
-                  <AvatarFallback>
-                    <ImageIcon className="h-4 w-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <DialogTitle className="text-base">Foto de {selectedPhoto?.photographer}</DialogTitle>
-              </div>
-              <div className="flex items-center gap-2">
-                {votedPhotoId !== selectedPhoto?.id ? (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleVote(selectedPhoto?.id, true)}
-                    disabled={!!votedPhotoId}
-                  >
-                    <Heart className={`h-4 w-4 mr-2 ${votedPhotoId === selectedPhoto?.id ? "fill-red-500 text-red-500" : "text-red-500"}`} />
-                    Votar ({selectedPhoto?.votes})
-                  </Button>
-                ) : (
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Heart className="h-4 w-4 mr-2 fill-red-500 text-red-500" />
-                    Votada ({selectedPhoto?.votes})
-                  </div>
-                )}
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  onClick={() => handleShare(selectedPhoto)}
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full">
-            <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
-              <img 
-                src={selectedPhoto?.imageUrl} 
-                alt={`Foto de ${selectedPhoto?.photographer}`}
-                className="max-w-full max-h-full object-contain"
-              />
-            </div>
-            
-            <div className="col-span-2 flex flex-col border-l">
-              <PhotoComments photoId={selectedPhoto?.id} isEmbedded={true} />
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
-
-export default ContestDetail;
+                    <path d="M11.55 6C11.302 6 11.108 6.193 11.109 6.442C11.109 6.69 11.303 6.883 11.551 6.883C12.486 6.886 13.389 7.256 14.06 7.926C14.733 8.596 15.103 9.496 15.106 10.428C15.106 10.676 15.3 10.869 15.548 10.869C15.796
