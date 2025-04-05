@@ -8,6 +8,7 @@ import { Globe, Bell } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import UserProfile from "@/components/UserProfile";
 
@@ -24,6 +25,11 @@ const userData = {
 
 const Profile = () => {
   const [language, setLanguage] = useState("es");
+  const [notificationSettings, setNotificationSettings] = useState({
+    newContests: true,
+    contestResults: true,
+    votesAndComments: true,
+  });
   const { toast } = useToast();
   
   const handleLanguageChange = (value: string) => {
@@ -32,6 +38,26 @@ const Profile = () => {
     toast({
       title: "Idioma actualizado",
       description: "El idioma de la aplicación ha sido cambiado."
+    });
+  };
+
+  const handleNotificationToggle = (setting: keyof typeof notificationSettings) => {
+    setNotificationSettings(prev => {
+      const newSettings = {
+        ...prev,
+        [setting]: !prev[setting]
+      };
+      
+      toast({
+        title: newSettings[setting] ? "Notificaciones activadas" : "Notificaciones desactivadas",
+        description: `Has ${newSettings[setting] ? "activado" : "desactivado"} las notificaciones de ${
+          setting === "newContests" ? "concursos nuevos" : 
+          setting === "contestResults" ? "resultados de concursos" :
+          "votos y comentarios"
+        }.`
+      });
+      
+      return newSettings;
     });
   };
 
@@ -144,7 +170,10 @@ const Profile = () => {
                             Notificaciones sobre nuevos concursos disponibles
                           </p>
                         </div>
-                        <Button variant="outline" size="sm">Configurar</Button>
+                        <Switch 
+                          checked={notificationSettings.newContests}
+                          onCheckedChange={() => handleNotificationToggle("newContests")}
+                        />
                       </div>
                       
                       <Separator />
@@ -156,7 +185,10 @@ const Profile = () => {
                             Notificaciones sobre resultados de concursos en los que participas
                           </p>
                         </div>
-                        <Button variant="outline" size="sm">Configurar</Button>
+                        <Switch 
+                          checked={notificationSettings.contestResults}
+                          onCheckedChange={() => handleNotificationToggle("contestResults")}
+                        />
                       </div>
                       
                       <Separator />
@@ -168,7 +200,10 @@ const Profile = () => {
                             Notificaciones sobre interacciones en tus fotos
                           </p>
                         </div>
-                        <Button variant="outline" size="sm">Configurar</Button>
+                        <Switch 
+                          checked={notificationSettings.votesAndComments}
+                          onCheckedChange={() => handleNotificationToggle("votesAndComments")}
+                        />
                       </div>
                     </div>
                   </div>

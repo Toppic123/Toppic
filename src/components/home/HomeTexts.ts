@@ -3,7 +3,7 @@ export const homeTexts = {
   featuredContest: "Popular Contests",
   seeAll: "See all",
   nearbyContests: "Concursos Cercanos",
-  nearbyContestsDesc: "Explora el mapa para encontrar concursos en tu área y participar fácilmente.",
+  nearbyContestsDesc: "Descubre concursos de fotografía en tu área",
   howItWorks: "How it works?",
   participate: "1. Participate",
   participateDesc: "Register and upload your best photos to active contests near your location.",

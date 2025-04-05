@@ -117,7 +117,7 @@ const Contests = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLocation, setActiveLocation] = useState("all");
   const [displayedContests, setDisplayedContests] = useState(allContests);
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState("map");  // Changed default to map
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   
   // Get user location for distance calculations
@@ -274,7 +274,7 @@ const Contests = () => {
         </div>
         
         {/* View mode tabs */}
-        <Tabs defaultValue="grid" value={viewMode} onValueChange={setViewMode} className="mb-8">
+        <Tabs defaultValue="map" value={viewMode} onValueChange={setViewMode} className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <span className="text-sm text-muted-foreground mr-4">
@@ -282,12 +282,24 @@ const Contests = () => {
               </span>
             </div>
             <TabsList>
-              <TabsTrigger value="grid">Cuadrícula</TabsTrigger>
               <TabsTrigger value="map">Mapa</TabsTrigger>
+              <TabsTrigger value="grid">Cuadrícula</TabsTrigger>
             </TabsList>
           </div>
           
           <Separator className="my-4" />
+          
+          <TabsContent value="map">
+            <div className="mt-6">
+              <Map />
+              <div className="mt-4 p-4 border rounded-md bg-muted/50">
+                <h3 className="text-sm font-medium mb-2">Restricciones de ubicación:</h3>
+                <p className="text-sm text-muted-foreground">
+                  Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
+                </p>
+              </div>
+            </div>
+          </TabsContent>
           
           <TabsContent value="grid" className="mt-6">
             {displayedContests.length > 0 ? (
@@ -326,18 +338,6 @@ const Contests = () => {
                 </Button>
               </div>
             )}
-          </TabsContent>
-          
-          <TabsContent value="map">
-            <div className="mt-6">
-              <Map />
-              <div className="mt-4 p-4 border rounded-md bg-muted/50">
-                <h3 className="text-sm font-medium mb-2">Restricciones de ubicación:</h3>
-                <p className="text-sm text-muted-foreground">
-                  Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
-                </p>
-              </div>
-            </div>
           </TabsContent>
         </Tabs>
       </div>

@@ -45,7 +45,7 @@ const mockContests = [
   },
 ];
 
-// Default Mapbox token - this is a temporary public token that works for development
+// Default Mapbox token - replace with your own token
 const MAPBOX_TOKEN = 'pk.eyJ1IjoicGl4b25haXIiLCJhIjoiY2xuM28zYTBnMDIxajJpcG5lZDNrZzY0dyJ9.ZjsrZ01oWLc-nttT5KIMLQ';
 
 const Map = () => {
@@ -145,6 +145,12 @@ const Map = () => {
             .setLngLat([longitude, latitude])
             .addTo(map.current);
           
+          // Center map on user location
+          map.current.flyTo({
+            center: [longitude, latitude],
+            zoom: 13
+          });
+          
           // Find nearby contests
           findNearbyContests(latitude, longitude);
         }
@@ -180,7 +186,7 @@ const Map = () => {
       // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
       
-      // Add markers when map is loaded
+      // Automatically locate user when map loads
       map.current.on('load', () => {
         setIsMapLoading(false);
         
@@ -211,6 +217,11 @@ const Map = () => {
             .setLngLat([contest.coords.lng, contest.coords.lat])
             .addTo(map.current!);
         });
+        
+        // Try to automatically get user location
+        setTimeout(() => {
+          locateUser();
+        }, 1000);
       });
       
       // Cleanup
