@@ -13,7 +13,7 @@ interface NearbyContestsSectionProps {
 
 const NearbyContestsSection = ({ texts }: NearbyContestsSectionProps) => {
   return (
-    <section className="py-12 px-4 bg-white">
+    <section className="py-12 px-4 bg-white section-transition">
       <div className="container max-w-7xl mx-auto text-center">
         <h2 className="text-3xl font-bold mb-4">{texts.nearbyContests}</h2>
         

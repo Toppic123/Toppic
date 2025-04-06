@@ -22,13 +22,15 @@ const Index = () => {
         }}
       />
       
-      <PopularContestsSection 
-        contests={popularContests.slice(0, 2)} // Only show 2 contests
-        texts={{
-          featuredContest: homeTexts.featuredContest,
-          seeAll: homeTexts.seeAll
-        }}
-      />
+      <div className="section-transition">
+        <PopularContestsSection 
+          contests={popularContests.slice(0, 2)} // Only show 2 contests
+          texts={{
+            featuredContest: homeTexts.featuredContest,
+            seeAll: homeTexts.seeAll
+          }}
+        />
+      </div>
       
       <NearbyContestsSection
         texts={{

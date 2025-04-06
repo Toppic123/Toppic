@@ -26,12 +26,14 @@ const UserProfile = ({
   onUpdateAvatar,
 }: UserProfileProps) => {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(avatarUrl);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const { toast } = useToast();
 
   const handleImageSelect = (file: File) => {
     // Create a preview of the selected image
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
+    setIsUploading(true);
     
     // In a real application, we would upload the file to a server here
     // For demo purposes, we'll just use the local preview
@@ -39,6 +41,7 @@ const UserProfile = ({
       // Simulating an upload delay
       setTimeout(() => {
         onUpdateAvatar(objectUrl);
+        setIsUploading(false);
         toast({
           title: "Foto actualizada",
           description: "Tu foto de perfil ha sido actualizada exitosamente."
@@ -57,7 +60,13 @@ const UserProfile = ({
               onImageSelect={handleImageSelect}
               size="lg"
               className="cursor-pointer"
+              isUploading={isUploading}
             />
+            {isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
           </div>
           
           <div className="text-center sm:text-left">

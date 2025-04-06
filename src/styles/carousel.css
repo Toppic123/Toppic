@@ -9,3 +9,19 @@
   background: linear-gradient(to top, white, transparent);
   pointer-events: none;
 }
+
+.section-transition {
+  position: relative;
+}
+
+.section-transition::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -60px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, white);
+  z-index: 10;
+  pointer-events: none;
+}
