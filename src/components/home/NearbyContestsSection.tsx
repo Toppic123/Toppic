@@ -28,12 +28,12 @@ const NearbyContestsSection = ({ texts }: NearbyContestsSectionProps) => {
             <MapPin className="h-16 w-16 text-primary/30" />
             <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm">
               <div className="text-center p-6">
-                <p className="text-primary font-medium mb-2">Descubre concursos cerca de ti</p>
-                <p className="text-sm text-muted-foreground mb-4">Utiliza el mapa para encontrar concursos en tu ubicación actual</p>
+                <p className="text-primary font-medium mb-2">Discover contests near you</p>
+                <p className="text-sm text-muted-foreground mb-4">Use the map to find contests at your current location</p>
                 <Button asChild size="sm" variant="outline" className="rounded-full">
                   <Link to="/contests?view=map">
                     <MapPin className="mr-2 h-3 w-3" />
-                    <span>Explorar mapa</span>
+                    <span>Explore map</span>
                   </Link>
                 </Button>
               </div>

@@ -196,9 +196,9 @@ const Contests = () => {
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Explora concursos</h1>
+            <h1 className="text-3xl font-bold mb-2">Explore contests</h1>
             <p className="text-muted-foreground max-w-2xl">
-              Descubre y participa en concursos de fotografía cerca de ti.
+              Discover and participate in photography contests near you.
             </p>
           </div>
         </div>
@@ -278,12 +278,12 @@ const Contests = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <span className="text-sm text-muted-foreground mr-4">
-                {displayedContests.length} concursos encontrados
+                {displayedContests.length} contests found
               </span>
             </div>
             <TabsList>
-              <TabsTrigger value="map">Mapa</TabsTrigger>
-              <TabsTrigger value="grid">Cuadrícula</TabsTrigger>
+              <TabsTrigger value="map">Map</TabsTrigger>
+              <TabsTrigger value="grid">Contests</TabsTrigger>
             </TabsList>
           </div>
           

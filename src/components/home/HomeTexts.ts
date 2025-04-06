@@ -2,8 +2,8 @@
 export const homeTexts = {
   featuredContest: "Popular Contests",
   seeAll: "See all",
-  nearbyContests: "Concursos Cercanos",
-  nearbyContestsDesc: "Descubre concursos de fotografía en tu área",
+  nearbyContests: "Nearby Contests",
+  nearbyContestsDesc: "Discover photography contests in your area",
   howItWorks: "How it works?",
   participate: "1. Participate",
   participateDesc: "Register and upload your best photos to active contests near your location.",

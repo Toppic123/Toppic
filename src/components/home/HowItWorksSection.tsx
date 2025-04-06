@@ -19,7 +19,7 @@ interface HowItWorksSectionProps {
 
 const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-16 px-4 bg-gray-100">
       <div className="container max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">{texts.howItWorks}</h2>

@@ -19,8 +19,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: -60px;
-  height: 60px;
+  top: -100px; /* Increased from -60px to -100px for more gradual fade */
+  height: 100px; /* Increased from 60px to 100px for more gradual fade */
   background: linear-gradient(to bottom, transparent, white);
   z-index: 10;
   pointer-events: none;
