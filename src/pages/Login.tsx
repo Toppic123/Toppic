@@ -11,10 +11,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Correo electrónico inválido" }),
-  password: z.string().min(1, { message: "La contraseña es obligatoria" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(1, { message: "Password is required" }),
   rememberMe: z.boolean().optional(),
 });
 
@@ -23,7 +24,9 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -34,21 +37,37 @@ const Login = () => {
     },
   });
 
-  function onSubmit(data: LoginFormValues) {
+  async function onSubmit(data: LoginFormValues) {
     setIsSubmitting(true);
+    setAuthError(null);
     
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login submitted:", data);
-      setIsSubmitting(false);
+    try {
+      const { error } = await signIn(data.email, data.password);
       
+      if (error) {
+        setAuthError(error.message);
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Snap Contest Hub.",
+        });
+        navigate("/");
+      }
+    } catch (error: any) {
+      setAuthError(error.message);
       toast({
-        title: "Inicio de sesión exitoso",
-        description: "Bienvenido de nuevo a Snap Contest Hub.",
+        title: "Login failed",
+        description: error.message || "An unknown error occurred",
+        variant: "destructive",
       });
-      
-      navigate("/");
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -60,12 +79,17 @@ const Login = () => {
     >
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Iniciar sesión</CardTitle>
+          <CardTitle className="text-2xl font-bold">Log in</CardTitle>
           <CardDescription>
-            Introduce tus credenciales para acceder a tu cuenta
+            Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {authError && (
+            <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm mb-4">
+              {authError}
+            </div>
+          )}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -73,9 +97,9 @@ const Login = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Correo electrónico</FormLabel>
+                    <FormLabel>Email address</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="tu@email.com" {...field} />
+                      <Input type="email" placeholder="your@email.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -87,7 +111,7 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Contraseña</FormLabel>
+                    <FormLabel>Password</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
@@ -108,27 +132,27 @@ const Login = () => {
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="text-sm cursor-pointer">Recordarme</FormLabel>
+                      <FormLabel className="text-sm cursor-pointer">Remember me</FormLabel>
                     </FormItem>
                   )}
                 />
                 
                 <Link to="#" className="text-sm text-primary hover:underline">
-                  ¿Olvidaste tu contraseña?
+                  Forgot password?
                 </Link>
               </div>
               
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Procesando..." : "Iniciar sesión"}
+                {isSubmitting ? "Processing..." : "Log in"}
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-sm text-muted-foreground">
-            ¿No tienes una cuenta?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="text-primary hover:underline">
-              Regístrate
+              Register
             </Link>
           </p>
         </CardFooter>

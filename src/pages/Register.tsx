@@ -1,15 +1,16 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { AvatarUpload } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Form,
   FormControl,
@@ -32,9 +33,12 @@ const formSchema = z.object({
 
 const Register = () => {
   const { toast } = useToast();
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,19 +65,41 @@ const Register = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
+    setAuthError(null);
     
-    // Log form submission (for testing)
-    console.info("Form submitted:", values, "Profile Image:", profileImage);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const userData = {
+        first_name: values.firstName,
+        last_name: values.lastName,
+        username: values.username,
+      };
+      
+      const { error, user } = await signUp(values.email, values.password, userData);
+      
+      if (error) {
+        setAuthError(error.message);
+        toast({
+          title: "Registration failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else if (user) {
+        toast({
+          title: "Registration successful",
+          description: "Check your email to confirm your account.",
+        });
+        navigate("/login");
+      }
+    } catch (error: any) {
+      setAuthError(error.message);
       toast({
-        title: "Registration successful!",
-        description: "Check your email to verify your account.",
+        title: "Registration failed",
+        description: error.message || "An unknown error occurred",
+        variant: "destructive",
       });
-      // In a real app, we would redirect to login or home after successful registration
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -98,6 +124,12 @@ const Register = () => {
             onImageSelect={handleProfileImageSelect}
           />
         </div>
+
+        {authError && (
+          <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
+            {authError}
+          </div>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

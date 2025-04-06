@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Camera, 
@@ -11,15 +11,19 @@ import {
   Award, 
   PlusCircle,
   Building,
-  HelpCircle
+  HelpCircle,
+  LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   
   // Change header style on scroll
   useEffect(() => {
@@ -35,15 +39,17 @@ const Header = () => {
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
   
   const navItems = [
-    { name: "Concursos", path: "/contests", icon: Award },
-    { name: "Organizar", path: "/organizers", icon: Building },
-    { name: "Perfil", path: "/profile", icon: User },
+    { name: "Contests", path: "/contests", icon: Award },
+    { name: "Organizers", path: "/organizers", icon: Building },
+    ...(user ? [{ name: "Profile", path: "/profile", icon: User }] : []),
   ];
-  
-  // Simulate logged in state (replace with actual auth check)
-  const isLoggedIn = false;
   
   return (
     <header
@@ -98,17 +104,33 @@ const Header = () => {
           )}>
             <Link to="/support">
               <HelpCircle className="mr-2 h-4 w-4" />
-              <span>Soporte</span>
+              <span>Support</span>
             </Link>
           </Button>
           
-          {isLoggedIn ? (
-            <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
-              <Link to="/upload">
-                <PlusCircle className="mr-2 h-4 w-4" />
-                <span>Subir foto</span>
-              </Link>
-            </Button>
+          {user ? (
+            <>
+              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
+                <Link to="/upload">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  <span>Upload photo</span>
+                </Link>
+              </Button>
+              <Button 
+                onClick={handleSignOut}
+                variant="ghost" 
+                size="sm" 
+                className={cn(
+                  "rounded-full",
+                  isScrolled 
+                    ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
+                    : "text-white hover:text-white/80 hover:bg-transparent"
+                )}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sign out</span>
+              </Button>
+            </>
           ) : (
             <Button 
               asChild 
@@ -117,7 +139,7 @@ const Header = () => {
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
-                <span>Iniciar sesión</span>
+                <span>Log in</span>
               </Link>
             </Button>
           )}
@@ -169,16 +191,27 @@ const Header = () => {
                 className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-[#4891AA] transition-colors"
               >
                 <HelpCircle className="mr-2 w-5 h-5" />
-                <span>Soporte</span>
+                <span>Support</span>
               </Link>
               
-              {isLoggedIn ? (
-                <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
-                  <Link to="/upload">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    <span>Subir foto</span>
-                  </Link>
-                </Button>
+              {user ? (
+                <>
+                  <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
+                    <Link to="/upload">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      <span>Upload photo</span>
+                    </Link>
+                  </Button>
+                  <Button 
+                    onClick={handleSignOut}
+                    variant="ghost" 
+                    size="sm"
+                    className="w-full justify-start text-muted-foreground hover:text-[#4891AA]"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </Button>
+                </>
               ) : (
                 <Button 
                   asChild 
@@ -187,7 +220,7 @@ const Header = () => {
                 >
                   <Link to="/login">
                     <LogIn className="mr-2 h-4 w-4" />
-                    <span>Iniciar sesión</span>
+                    <span>Log in</span>
                   </Link>
                 </Button>
               )}
