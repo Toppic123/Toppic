@@ -1,11 +1,6 @@
 
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import "./index.css";
-import "./styles/carousel.css";
+import { createRoot } from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
 
-// Add performance optimizations
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <App />
-);
+createRoot(document.getElementById("root")!).render(<App />);

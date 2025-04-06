@@ -53,9 +53,8 @@ const AvatarUpload = React.forwardRef<
     onImageSelect?: (file: File) => void;
     previewUrl?: string;
     size?: "sm" | "md" | "lg";
-    isUploading?: boolean; // Added this property to match usage in UserProfile
   }
->(({ className, onImageSelect, previewUrl, size = "md", isUploading, ...props }, ref) => {
+>(({ className, onImageSelect, previewUrl, size = "md", ...props }, ref) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   const sizeClasses = {
@@ -106,7 +105,7 @@ const AvatarUpload = React.forwardRef<
       
       <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
         <span className="text-white text-xs font-medium">
-          Change photo
+          Cambiar foto
         </span>
       </div>
     </div>

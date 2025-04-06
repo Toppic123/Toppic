@@ -117,7 +117,7 @@ const Contests = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLocation, setActiveLocation] = useState("all");
   const [displayedContests, setDisplayedContests] = useState(allContests);
-  const [viewMode, setViewMode] = useState("map");  // Changed default to map
+  const [viewMode, setViewMode] = useState("grid");
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   
   // Get user location for distance calculations
@@ -196,9 +196,9 @@ const Contests = () => {
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Explore contests</h1>
+            <h1 className="text-3xl font-bold mb-2">Explora concursos</h1>
             <p className="text-muted-foreground max-w-2xl">
-              Discover and participate in photography contests near you.
+              Descubre y participa en concursos de fotografía cerca de ti.
             </p>
           </div>
         </div>
@@ -274,32 +274,20 @@ const Contests = () => {
         </div>
         
         {/* View mode tabs */}
-        <Tabs defaultValue="map" value={viewMode} onValueChange={setViewMode} className="mb-8">
+        <Tabs defaultValue="grid" value={viewMode} onValueChange={setViewMode} className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <span className="text-sm text-muted-foreground mr-4">
-                {displayedContests.length} contests found
+                {displayedContests.length} concursos encontrados
               </span>
             </div>
             <TabsList>
-              <TabsTrigger value="map">Map</TabsTrigger>
-              <TabsTrigger value="grid">Contests</TabsTrigger>
+              <TabsTrigger value="grid">Cuadrícula</TabsTrigger>
+              <TabsTrigger value="map">Mapa</TabsTrigger>
             </TabsList>
           </div>
           
           <Separator className="my-4" />
-          
-          <TabsContent value="map">
-            <div className="mt-6">
-              <Map />
-              <div className="mt-4 p-4 border rounded-md bg-muted/50">
-                <h3 className="text-sm font-medium mb-2">Restricciones de ubicación:</h3>
-                <p className="text-sm text-muted-foreground">
-                  Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
-                </p>
-              </div>
-            </div>
-          </TabsContent>
           
           <TabsContent value="grid" className="mt-6">
             {displayedContests.length > 0 ? (
@@ -338,6 +326,18 @@ const Contests = () => {
                 </Button>
               </div>
             )}
+          </TabsContent>
+          
+          <TabsContent value="map">
+            <div className="mt-6">
+              <Map />
+              <div className="mt-4 p-4 border rounded-md bg-muted/50">
+                <h3 className="text-sm font-medium mb-2">Restricciones de ubicación:</h3>
+                <p className="text-sm text-muted-foreground">
+                  Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
+                </p>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

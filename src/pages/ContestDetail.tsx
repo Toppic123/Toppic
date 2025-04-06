@@ -224,8 +224,8 @@ const ContestDetail = () => {
       case "whatsapp":
         shareUrl = `https://wa.me/?text=${encodeURIComponent(message + " " + contestUrl)}`;
         break;
-      case "instagram":
-        shareUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(contestUrl)}`;
+      case "telegram":
+        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(contestUrl)}&text=${encodeURIComponent(message)}`;
         break;
     }
     
@@ -384,9 +384,9 @@ const ContestDetail = () => {
                               2
                             </div>
                             <div>
-                              <p className="font-medium">Fase de votación por comparación</p>
+                              <p className="font-medium">Fase de votación final</p>
                               <p className="text-sm text-muted-foreground">
-                                Las fotos se comparan entre sí para determinar las mejores, mediante un sistema de votación por comparación directa.
+                                Todos los usuarios registrados pueden votar por su foto favorita. Cada usuario tiene 1 voto.
                               </p>
                             </div>
                           </div>
@@ -522,6 +522,7 @@ const ContestDetail = () => {
         </div>
       </div>
       
+      {/* Share Dialog */}
       <Dialog open={!!selectedPhoto && !viewPhotoMode} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -566,23 +567,88 @@ const ContestDetail = () => {
                 >
                   <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-green-500">
                     <path d="M17.507 14.307L20.308 17.108L17.507 14.307ZM3.7 22.3L6.45 21.9C7.71139 22.4172 9.0747 22.6879 10.459 22.7L10.959 22.7C17.929 22.7 21.659 16.707 21.659 10.207C21.659 7.16997 20.509 5.01997 18.507 3.01797C16.507 1.01997 14.357 -0.100029 11.307 -3.05176e-05C4.32997 -3.05176e-05 0.657975 5.99997 0.657975 12.5C0.657975 14.092 0.947975 15.625 1.50698 17.05L2.00698 18.35L0.957975 20.95L3.7 22.3Z"></path>
-                    <path d="M11.55 6C11.302 6 11.108 6.193 11.109 6.442C11.109 6.69 11.303 6.883 11.551 6.883C12.486 6.886 13.389 7.256 14.06 7.926C14.733 8.596 15.103 9.496 15.106 10.428C15.106 10.676 15.3 10.869 15.548 10.869C15.796 10.869 15.989 10.676 15.989 10.428C15.989 9.494 15.615 8.591 14.945 7.92C14.273 7.247 13.371 6.878 12.439 6.878C12.206 6.878 12.02 6.752 11.989 6.567C11.987 6.553 11.986 6.539 11.986 6.526C11.984 6.241 11.746 6 11.46 6H11.55Z"></path>
+                    <path d="M11.55 6C11.302 6 11.108 6.193 11.109 6.442C11.109 6.69 11.303 6.883 11.551 6.883C12.486 6.886 13.389 7.256 14.06 7.926C14.733 8.596 15.103 9.496 15.106 10.428C15.106 10.676 15.3 10.869 15.548 10.869C15.796 10.869 15.989 10.675 15.989 10.428C15.986 9.248 15.518 8.119 14.687 7.289C13.856 6.458 12.73 5.992 11.55 5.999V6Z" />
+                    <path d="M11.55 8.40002C11.302 8.40002 11.108 8.59302 11.109 8.84202C11.109 9.09002 11.303 9.28302 11.551 9.28302C11.964 9.28302 12.363 9.44702 12.664 9.74702C12.964 10.048 13.127 10.447 13.127 10.861C13.127 11.108 13.321 11.301 13.569 11.301C13.817 11.301 14.01 11.108 14.01 10.861C14.01 10.201 13.747 9.56702 13.277 9.09602C12.805 8.62602 12.172 8.36102 11.55 8.40002Z" />
+                    <path d="M13.5 14.5L12.5 14C9.9 12.7 8.7 10.1 8.5 9.7L8.3 9.3C8.1 8.9 8.3 8.4 8.7 8.2L9.7 7.7C10.1 7.5 10.2 7 10 6.6L8.5 4.1C8.3 3.7 7.8 3.6 7.4 3.8L6.4 4.3C5.9 4.6 5.5 5 5.4 5.6C5.1 7.1 5.5 9.5 8.3 12.3C11.4 15.4 14.1 15.5 15.5 15.2C16.1 15.1 16.5 14.7 16.7 14.3L17.2 13.3C17.4 12.9 17.2 12.4 16.8 12.2L14.3 10.7C13.9 10.5 13.4 10.6 13.2 11L12.7 12C12.6 12.2 12.2 12.3 12 12.2L11.5 12C11.3 11.9 11.1 11.8 10.9 11.7L12.5 14.5C13 14.5 13.3 14.5 13.5 14.5Z" />
                   </svg>
                   WhatsApp
                 </Button>
                 <Button 
                   variant="outline" 
                   className="flex justify-center items-center gap-2"
-                  onClick={() => shareToSocialMedia("instagram")}
+                  onClick={() => shareToSocialMedia("telegram")}
                 >
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-pink-600">
-                    <path d="M12 2C14.717 2 15.056 2.01 16.122 2.06C17.187 2.11 17.912 2.277 18.55 2.525C19.21 2.779 19.766 3.123 20.322 3.678C20.8305 4.1779 21.224 4.78259 21.475 5.45C21.722 6.087 21.89 6.813 21.94 7.878C21.987 8.944 22 9.283 22 12C22 14.717 21.99 15.056 21.94 16.122C21.89 17.187 21.722 17.912 21.475 18.55C21.2247 19.2178 20.8311 19.8226 20.322 20.322C19.822 20.8303 19.2173 21.2238 18.55 21.475C17.913 21.722 17.187 21.89 16.122 21.94C15.056 21.987 14.717 22 12 22C9.283 22 8.944 21.99 7.878 21.94C6.813 21.89 6.088 21.722 5.45 21.475C4.78233 21.2245 4.17753 20.8309 3.678 20.322C3.16941 19.8222 2.77593 19.2175 2.525 18.55C2.277 17.913 2.11 17.187 2.06 16.122C2.013 15.056 2 14.717 2 12C2 9.283 2.01 8.944 2.06 7.878C2.11 6.812 2.277 6.088 2.525 5.45C2.77524 4.78218 3.1688 4.17732 3.678 3.678C4.17767 3.16923 4.78243 2.77573 5.45 2.525C6.088 2.277 6.812 2.11 7.878 2.06C8.944 2.013 9.283 2 12 2ZM12 7C10.6739 7 9.40215 7.52678 8.46447 8.46447C7.52678 9.40215 7 10.6739 7 12C7 13.3261 7.52678 14.5979 8.46447 15.5355C9.40215 16.4732 10.6739 17 12 17C13.3261 17 14.5979 16.4732 15.5355 15.5355C16.4732 14.5979 17 13.3261 17 12C17 10.6739 16.4732 9.40215 15.5355 8.46447C14.5979 7.52678 13.3261 7 12 7ZM18.5 6.75C18.5 6.41848 18.3683 6.10054 18.1339 5.86612C17.8995 5.6317 17.5815 5.5 17.25 5.5C16.9185 5.5 16.6005 5.6317 16.3661 5.86612C16.1317 6.10054 16 6.41848 16 6.75C16 7.08152 16.1317 7.39946 16.3661 7.63388C16.6005 7.8683 16.9185 8 17.25 8C17.5815 8 17.8995 7.8683 18.1339 7.63388C18.3683 7.39946 18.5 7.08152 18.5 6.75ZM12 9C12.7956 9 13.5587 9.31607 14.1213 9.87868C14.6839 10.4413 15 11.2044 15 12C15 12.7956 14.6839 13.5587 14.1213 14.1213C13.5587 14.6839 12.7956 15 12 15C11.2044 15 10.4413 14.6839 9.87868 14.1213C9.31607 13.5587 9 12.7956 9 12C9 11.2044 9.31607 10.4413 9.87868 9.87868C10.4413 9.31607 11.2044 9 12 9Z"></path>
+                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-blue-500">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.9 8.1L15.08 15.93C15.03 16.15 14.88 16.33 14.66 16.43C14.55 16.47 14.42 16.5 14.3 16.5C14.17 16.5 14.04 16.47 13.93 16.41L11.67 15.22L10.42 16.41C10.3 16.53 10.14 16.6 9.97 16.6C9.86 16.6 9.76 16.58 9.66 16.53C9.35 16.38 9.15 16.05 9.15 15.7V14.08L13.96 9.68C14.09 9.56 14.16 9.37 14.13 9.19C14.11 9 14 8.86 13.83 8.79C13.67 8.72 13.5 8.73 13.35 8.82L7.2 12.36L5.25 11.46C5.1 11.39 4.99 11.26 4.96 11.11C4.93 10.95 4.97 10.79 5.07 10.66C5.18 10.53 5.34 10.45 5.52 10.45L16.18 8.02C16.33 7.99 16.48 8.01 16.61 8.08C16.75 8.15 16.85 8.27 16.91 8.41C16.94 8.57 16.94 8.71 16.9 8.85V8.1Z" />
                   </svg>
-                  Instagram
+                  Telegram
                 </Button>
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* View Photo Dialog */}
+      <Dialog open={!!selectedPhoto && viewPhotoMode === 'view'} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedPhoto(null);
+          setViewPhotoMode(null);
+        }
+      }}>
+        <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
+          <DialogHeader className="px-4 py-2 border-b">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={selectedPhoto?.photographerAvatar} alt={selectedPhoto?.photographer} />
+                  <AvatarFallback>
+                    <ImageIcon className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <DialogTitle className="text-base">Foto de {selectedPhoto?.photographer}</DialogTitle>
+              </div>
+              <div className="flex items-center gap-2">
+                {votedPhotoId !== selectedPhoto?.id ? (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleVote(selectedPhoto?.id, true)}
+                    disabled={!!votedPhotoId}
+                  >
+                    <Heart className={`h-4 w-4 mr-2 ${votedPhotoId === selectedPhoto?.id ? "fill-red-500 text-red-500" : "text-red-500"}`} />
+                    Votar ({selectedPhoto?.votes})
+                  </Button>
+                ) : (
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Heart className="h-4 w-4 mr-2 fill-red-500 text-red-500" />
+                    Votada ({selectedPhoto?.votes})
+                  </div>
+                )}
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => handleShare(selectedPhoto)}
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </DialogHeader>
+          
+          <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full">
+            <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
+              <img 
+                src={selectedPhoto?.imageUrl} 
+                alt={`Foto de ${selectedPhoto?.photographer}`}
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+            
+            <div className="col-span-2 flex flex-col border-l">
+              <PhotoComments photoId={selectedPhoto?.id} isEmbedded={true} />
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

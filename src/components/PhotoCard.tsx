@@ -1,12 +1,9 @@
-
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Heart, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 
 type PhotoCardProps = {
   id: string;
@@ -20,7 +17,6 @@ type PhotoCardProps = {
   onShare?: (id: string) => void;
   userVoted?: boolean;
   expanded?: boolean;
-  onClick?: () => void;
 };
 
 const PhotoCard = ({
@@ -35,7 +31,6 @@ const PhotoCard = ({
   onShare,
   userVoted = false,
   expanded = false,
-  onClick,
 }: PhotoCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [direction, setDirection] = useState<number>(0);
@@ -57,11 +52,6 @@ const PhotoCard = ({
   const handleTapOrClick = () => {
     const now = Date.now();
     const DOUBLE_TAP_DELAY = 300;
-    
-    if (onClick) {
-      onClick();
-      return;
-    }
     
     if (now - lastTap < DOUBLE_TAP_DELAY) {
       handleVoteToggle();
@@ -93,31 +83,23 @@ const PhotoCard = ({
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Create a share URL
-    const shareUrl = `${window.location.origin}/photo/${id}`;
-    
     if (navigator.share) {
       navigator.share({
         title: `Photo by ${photographer}`,
         text: `Check out this amazing photo by ${photographer}`,
-        url: shareUrl
+        url: window.location.href
       }).catch(err => {
         console.error('Error sharing:', err);
-        fallbackShare(shareUrl);
       });
     } else {
-      fallbackShare(shareUrl);
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied",
+        description: "Photo link copied to clipboard"
+      });
     }
     
     onShare?.(id);
-  };
-  
-  const fallbackShare = (url: string) => {
-    navigator.clipboard.writeText(url);
-    toast({
-      title: "Link copiado",
-      description: "El enlace de la foto ha sido copiado al portapapeles"
-    });
   };
   
   useEffect(() => {
@@ -182,17 +164,15 @@ const PhotoCard = ({
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <div className="absolute inset-0 bg-black/40 z-10" />
-        <LazyLoadImage
+        <img
           src={imageUrl}
           alt={`Photo by ${photographer}`}
-          effect="blur"
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
             imageLoaded ? "opacity-100" : "opacity-0"
           )}
-          afterLoad={() => setImageLoaded(true)}
+          onLoad={() => setImageLoaded(true)}
           onClick={handleTapOrClick}
-          wrapperClassName="absolute inset-0"
         />
         
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
@@ -215,7 +195,6 @@ const PhotoCard = ({
                 src={photographerAvatar}
                 alt={photographer}
                 className="w-8 h-8 rounded-full object-cover"
-                loading="lazy"
               />
             ) : (
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
@@ -259,23 +238,23 @@ const PhotoCard = ({
   return (
     <motion.div
       ref={cardRef}
-      className="contest-card cursor-pointer"
+      className="contest-card"
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      onClick={handleTapOrClick}
     >
-      <div className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative">
-        <LazyLoadImage
+      <div 
+        className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative"
+        onClick={handleTapOrClick}
+      >
+        <img
           src={imageUrl}
           alt={`Photo by ${photographer}`}
-          effect="blur"
           className={cn(
             "contest-card-image",
             imageLoaded ? "opacity-100" : "opacity-0"
           )}
-          afterLoad={() => setImageLoaded(true)}
-          wrapperClassName="h-full"
+          onLoad={() => setImageLoaded(true)}
         />
         {isVoted && (
           <div className="absolute top-2 right-2 bg-primary/90 text-white p-1.5 rounded-full">
@@ -292,7 +271,6 @@ const PhotoCard = ({
                 src={photographerAvatar}
                 alt={photographer}
                 className="w-6 h-6 rounded-full object-cover"
-                loading="lazy"
               />
             ) : (
               <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
@@ -305,10 +283,7 @@ const PhotoCard = ({
           <div className="flex items-center space-x-2">
             <button 
               className="flex items-center space-x-1 group"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleVoteToggle();
-              }}
+              onClick={handleVoteToggle}
               aria-label="Vote for this photo"
             >
               <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
@@ -316,10 +291,7 @@ const PhotoCard = ({
             </button>
             
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleShare(e);
-              }}
+              onClick={handleShare}
               className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Share photo"
             >

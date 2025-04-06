@@ -34,12 +34,10 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
           </p>
         </div>
         
-        <div className="flex justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {contests.map((contest) => (
-              <ContestCard key={contest.id} {...contest} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {contests.map((contest) => (
+            <ContestCard key={contest.id} {...contest} />
+          ))}
         </div>
         
         <div className="text-center mt-10">

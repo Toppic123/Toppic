@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
+import DashboardSettings from "./pages/DashboardSettings";
 import NotFound from "./pages/NotFound";
 import Contests from "./pages/Contests";
 import ContestDetail from "./pages/ContestDetail";
@@ -39,6 +40,7 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/settings" element={<DashboardSettings />} />
               <Route path="/contests" element={<Contests />} />
               <Route path="/contests/:id" element={<ContestDetail />} />
               <Route path="/upload" element={<Upload />} />
