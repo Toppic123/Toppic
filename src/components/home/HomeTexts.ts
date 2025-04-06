@@ -12,7 +12,7 @@ export const homeTexts = {
   touristPlacesDesc: "Monuments, squares and attractions",
   thematicContests: "Thematic Contests",
   thematicContestsDesc: "Gastronomy, nature and art",
-  nearbyContests: "Contests near you",
+  nearbyContests: "Discover contests near you",
   nearbyContestsDesc: "Explore the map to find contests in your area and easily participate.",
   howItWorks: "How it works?",
   participate: "1. Participate",

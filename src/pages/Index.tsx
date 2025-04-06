@@ -3,10 +3,10 @@ import { homeTexts } from "@/components/home/HomeTexts";
 import { heroImages, popularContests, winningPhotos } from "@/components/home/HomeData";
 import HeroSection from "@/components/home/HeroSection";
 import PopularContestsSection from "@/components/home/PopularContestsSection";
-import EventTypesSection from "@/components/home/EventTypesSection";
 import WinningGallerySection from "@/components/home/WinningGallerySection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
+import NearbyContestsSection from "@/components/home/NearbyContestsSection";
 
 const Index = () => {
   return (
@@ -30,18 +30,10 @@ const Index = () => {
         }}
       />
       
-      <EventTypesSection 
+      <NearbyContestsSection 
         texts={{
-          eventTypes: homeTexts.eventTypes,
-          eventTypesDesc: homeTexts.eventTypesDesc,
-          musicEvents: homeTexts.musicEvents,
-          musicEventsDesc: homeTexts.musicEventsDesc,
-          sportsEvents: homeTexts.sportsEvents,
-          sportsEventsDesc: homeTexts.sportsEventsDesc,
-          touristPlaces: homeTexts.touristPlaces,
-          touristPlacesDesc: homeTexts.touristPlacesDesc,
-          thematicContests: homeTexts.thematicContests,
-          thematicContestsDesc: homeTexts.thematicContestsDesc
+          nearbyContests: homeTexts.nearbyContests,
+          nearbyContestsDesc: homeTexts.nearbyContestsDesc
         }}
       />
       
