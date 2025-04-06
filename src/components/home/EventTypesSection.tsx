@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { MusicNote, Trophy, Mountain, Sparkles } from "lucide-react";
+import { Music, Trophy, Mountain, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface EventTypesSectionProps {
@@ -39,7 +39,7 @@ const EventTypesSection = ({ texts }: EventTypesSectionProps) => {
             <Card className="h-full">
               <CardContent className="p-6 flex flex-col h-full">
                 <div className="mb-4 bg-primary/10 p-3 rounded-full w-fit">
-                  <MusicNote className="w-6 h-6 text-primary" />
+                  <Music className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-medium mb-2">{texts.musicEvents}</h3>
                 <p className="text-muted-foreground flex-grow">{texts.musicEventsDesc}</p>
