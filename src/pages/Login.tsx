@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -12,6 +12,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -24,9 +26,47 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const location = useLocation();
+  const { signIn, user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [confirmSuccess, setConfirmSuccess] = useState(false);
+
+  // Extract query parameters
+  const queryParams = new URLSearchParams(location.search);
+  const error = queryParams.get('error');
+  const message = queryParams.get('message');
+
+  // Check for email confirmation success
+  useEffect(() => {
+    if (message && message.includes('confirmed')) {
+      setConfirmSuccess(true);
+      toast({
+        title: "Email confirmed",
+        description: "Your email has been confirmed. You can now sign in.",
+        variant: "default",
+      });
+    }
+  }, [message, toast]);
+
+  // Check for any error messages in URL
+  useEffect(() => {
+    if (error) {
+      setAuthError(error);
+      toast({
+        title: "Authentication error",
+        description: error,
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
+
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -79,17 +119,30 @@ const Login = () => {
     >
       <Card>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Log in</CardTitle>
+          <CardTitle className="text-2xl font-bold">Sign in</CardTitle>
           <CardDescription>
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {authError && (
-            <div className="bg-destructive/10 text-destructive p-3 rounded-md text-sm mb-4">
-              {authError}
-            </div>
+          {confirmSuccess && (
+            <Alert className="mb-4 bg-green-50 border-green-200">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <AlertDescription className="text-green-700">
+                Your email has been confirmed. You can now sign in.
+              </AlertDescription>
+            </Alert>
           )}
+          
+          {authError && (
+            <Alert className="mb-4 bg-destructive/10 text-destructive border-destructive/20">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                {authError}
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -143,7 +196,7 @@ const Login = () => {
               </div>
               
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Processing..." : "Log in"}
+                {isSubmitting ? "Processing..." : "Sign in"}
               </Button>
             </form>
           </Form>
