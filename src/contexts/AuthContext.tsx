@@ -4,13 +4,18 @@ import { Session, User } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
+// Define user roles
+export type UserRole = 'participant' | 'organizer';
+
 type AuthContextType = {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
+  userRole: UserRole | null;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string, userData: any) => Promise<{ error: any, user: User | null }>;
   signOut: () => Promise<{ error: any }>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,7 +24,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const { toast } = useToast();
+
+  // Function to fetch user role
+  const fetchUserRole = async (userId: string) => {
+    try {
+      // For now, we'll use a mock implementation since the database isn't set up yet
+      // In the real implementation, this would query a user_roles table
+      // This is a placeholder that randomly assigns roles for demonstration
+      const mockRole: UserRole = Math.random() > 0.5 ? 'organizer' : 'participant';
+      setUserRole(mockRole);
+      console.log('User role set:', mockRole);
+      
+      // TODO: Replace with actual Supabase query once user_roles table is created
+      // const { data, error } = await supabase
+      //   .from('user_roles')
+      //   .select('role')
+      //   .eq('user_id', userId)
+      //   .single();
+      
+      // if (error) {
+      //   console.error('Error fetching user role:', error);
+      //   return;
+      // }
+      
+      // if (data) {
+      //   setUserRole(data.role);
+      // } else {
+      //   // Default to participant if no role found
+      //   setUserRole('participant');
+      // }
+    } catch (err) {
+      console.error('Error in fetchUserRole:', err);
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -28,6 +67,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         setIsLoading(false);
+
+        // Fetch role when user changes
+        if (currentSession?.user) {
+          fetchUserRole(currentSession.user.id);
+        } else {
+          setUserRole(null);
+        }
 
         if (event === 'SIGNED_IN') {
           toast({
@@ -52,6 +98,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
+      
+      // Fetch role for existing session
+      if (currentSession?.user) {
+        fetchUserRole(currentSession.user.id);
+      }
+      
       setIsLoading(false);
       
       // Log session status for debugging
@@ -131,13 +183,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error };
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      console.log(`Attempting to send password reset email to: ${email}`);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password',
+      });
+      
+      if (error) {
+        console.error('Reset password error:', error.message);
+      } else {
+        console.log('Reset password email sent successfully');
+      }
+      
+      return { error };
+    } catch (err) {
+      console.error('Unexpected reset password error:', err);
+      return { error: err };
+    }
+  };
+
   const value = {
     user,
     session,
     isLoading,
+    userRole,
     signIn,
     signUp,
     signOut,
+    resetPassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

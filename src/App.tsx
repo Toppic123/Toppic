@@ -23,6 +23,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePushNotification } from "@/components/PushNotification";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import RoleBasedRoute from "@/components/RoleBasedRoute";
 
 // Create React Query client
 const queryClient = new QueryClient();
@@ -73,9 +74,9 @@ function App() {
                 <Route path="/contests" element={<Contests />} />
                 <Route path="/contests/:id" element={<ContestDetail />} />
                 <Route path="/upload" element={
-                  <ProtectedRoute>
+                  <RoleBasedRoute allowedRoles={['participant']}>
                     <Upload />
-                  </ProtectedRoute>
+                  </RoleBasedRoute>
                 } />
                 <Route path="/gallery" element={<GalleryPage />} />
                 <Route path="/gallery/manage" element={
@@ -83,7 +84,11 @@ function App() {
                     <GalleryManagement />
                   </ProtectedRoute>
                 } />
-                <Route path="/organizers" element={<Organizers />} />
+                <Route path="/organizers" element={
+                  <RoleBasedRoute allowedRoles={['organizer']}>
+                    <Organizers />
+                  </RoleBasedRoute>
+                } />
                 <Route path="/support" element={<Support />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
