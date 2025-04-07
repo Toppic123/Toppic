@@ -18,6 +18,7 @@ import Support from "./pages/Support";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import VotingSystem from "./pages/VotingSystem";
+import AdminDashboard from "./pages/AdminDashboard";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -71,6 +72,12 @@ function App() {
                     <DashboardSettings />
                   </ProtectedRoute>
                 } />
+                {/* Admin Dashboard Route */}
+                <Route path="/admin" element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <AdminDashboard />
+                  </RoleBasedRoute>
+                } />
                 <Route path="/contests" element={<Contests />} />
                 <Route path="/contests/:id" element={<ContestDetail />} />
                 <Route path="/upload" element={
@@ -84,7 +91,7 @@ function App() {
                     <GalleryManagement />
                   </ProtectedRoute>
                 } />
-                {/* Changed to be accessible to everyone, not just organizers */}
+                {/* Organizers page is accessible to everyone */}
                 <Route path="/organizers" element={<Organizers />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/terms" element={<Terms />} />

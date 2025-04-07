@@ -9,7 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
-// Mock data - replace with real API data later
+// Mock data with active and finished contests
 const mockContests = [
   {
     id: "1",
@@ -17,7 +17,9 @@ const mockContests = [
     location: "Barcelona",
     coords: { lat: 41.3851, lng: 2.1734 },
     photosCount: 24,
-    isPrivate: false
+    isPrivate: false,
+    isActive: true,
+    endDate: "2025-06-01"
   },
   {
     id: "2",
@@ -25,7 +27,9 @@ const mockContests = [
     location: "Madrid",
     coords: { lat: 40.4168, lng: -3.7038 },
     photosCount: 38,
-    isPrivate: true
+    isPrivate: true,
+    isActive: true,
+    endDate: "2025-05-15"
   },
   {
     id: "3",
@@ -33,7 +37,9 @@ const mockContests = [
     location: "Valencia",
     coords: { lat: 39.4699, lng: -0.3763 },
     photosCount: 17,
-    isPrivate: false
+    isPrivate: false,
+    isActive: false,
+    endDate: "2025-01-10"
   },
   {
     id: "4",
@@ -41,12 +47,14 @@ const mockContests = [
     location: "Ibiza",
     coords: { lat: 38.9067, lng: 1.4206 },
     photosCount: 42,
-    isPrivate: true
+    isPrivate: true,
+    isActive: false,
+    endDate: "2025-02-20"
   },
 ];
 
-// Default Mapbox token - this should be replaced with a proper token in production
-// This is a placeholder token to make the map work without user input
+// Use a reliable Mapbox token - this is still just a placeholder
+// In production, use proper environment variables or Supabase Edge Functions
 const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1IjoicGl4b25haXIiLCJhIjoiY2xuM28zYTBnMDIxajJpcG5lZDNrZzY0dyJ9.ZjsrZ01oWLc-nttT5KIMLQ';
 
 const Map = () => {
@@ -59,6 +67,10 @@ const Map = () => {
   const [nearbyContests, setNearbyContests] = useState<(typeof mockContests)>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [mapError, setMapError] = useState<string | null>(null);
+  
+  // Only show active contests on the map
+  const activeContests = mockContests.filter(contest => contest.isActive);
   
   // Function to find nearby contests
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
@@ -76,8 +88,8 @@ const Map = () => {
       return d;
     };
     
-    // Filter contests by distance
-    const nearby = mockContests.filter(contest => {
+    // Filter active contests by distance
+    const nearby = activeContests.filter(contest => {
       const distance = calculateDistance(
         userLat, 
         userLng, 
@@ -184,9 +196,10 @@ const Map = () => {
       // Add markers when map is loaded
       map.current.on('load', () => {
         setIsMapLoading(false);
+        console.log("Map loaded successfully");
         
-        // Add markers for each contest
-        mockContests.forEach(contest => {
+        // Add markers only for active contests
+        activeContests.forEach(contest => {
           // Create a marker element
           const el = document.createElement('div');
           el.className = 'custom-marker';
@@ -213,19 +226,29 @@ const Map = () => {
             .addTo(map.current!);
         });
       });
+
+      // Handle error events
+      map.current.on('error', (e) => {
+        console.error("Map error:", e);
+        setMapError("Error al cargar el mapa: " + e.error?.message || "Error desconocido");
+        setIsMapLoading(false);
+      });
       
       // Cleanup
       return () => {
-        map.current?.remove();
+        if (map.current) {
+          map.current.remove();
+        }
       };
     } catch (error) {
       console.error("Error initializing map:", error);
+      setMapError("Error al inicializar el mapa");
+      setIsMapLoading(false);
       toast({
         title: "Error al cargar el mapa",
         description: "Por favor, verifica tu conexión o inténtalo más tarde",
         variant: "destructive"
       });
-      setIsMapLoading(false);
     }
   }, [toast]);
   
@@ -240,13 +263,31 @@ const Map = () => {
         </div>
       )}
       
+      {mapError && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
+          <div className="flex flex-col items-center max-w-md text-center p-4">
+            <MapPin className="w-8 h-8 text-destructive mb-2" />
+            <p className="font-medium text-destructive">Error en el mapa</p>
+            <p className="mt-2 text-muted-foreground">{mapError}</p>
+            <p className="mt-4 text-sm">Verifica tu conexión a internet o prueba a recargar la página.</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              variant="outline" 
+              className="mt-4"
+            >
+              Recargar página
+            </Button>
+          </div>
+        </div>
+      )}
+      
       <div ref={mapContainer} className="w-full h-full" />
       
       {/* Locate me button */}
       <div className="absolute top-4 left-4 z-10">
         <Button 
           onClick={locateUser}
-          disabled={isLocating}
+          disabled={isLocating || isMapLoading || !!mapError}
           className="flex items-center gap-2 bg-white text-black hover:bg-gray-100 shadow-md"
         >
           {isLocating ? (

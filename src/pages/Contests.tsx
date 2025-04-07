@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import ContestCard from "@/components/ContestCard";
 import Map from "@/components/Map";
 
-// Mock data for contests
+// Mock data for contests with isActive flag
 const allContests = [
   {
     id: "1",
@@ -23,6 +23,7 @@ const allContests = [
     participantsCount: 124,
     photosCount: 348,
     category: "urbana",
+    isActive: true,
   },
   {
     id: "2",
@@ -36,6 +37,7 @@ const allContests = [
     participantsCount: 78,
     photosCount: 215,
     category: "naturaleza",
+    isActive: true,
   },
   {
     id: "3",
@@ -49,6 +51,7 @@ const allContests = [
     participantsCount: 56,
     photosCount: 189,
     category: "gastronomía",
+    isActive: false,
   },
   {
     id: "4",
@@ -62,6 +65,7 @@ const allContests = [
     participantsCount: 42,
     photosCount: 127,
     category: "arquitectura",
+    isActive: false,
   },
   {
     id: "5",
@@ -75,6 +79,7 @@ const allContests = [
     participantsCount: 89,
     photosCount: 203,
     category: "retratos",
+    isActive: true,
   },
   {
     id: "6",
@@ -88,10 +93,25 @@ const allContests = [
     participantsCount: 67,
     photosCount: 178,
     category: "paisajes",
+    isActive: false,
+  },
+  {
+    id: "7",
+    title: "Fotografía de Personas",
+    imageUrl: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2271&q=80",
+    location: "Barcelona",
+    locationCoords: { lat: 41.3851, lng: 2.1734 },
+    maxDistance: 1,
+    dateStart: "2023-10-01",
+    dateEnd: "2023-10-15",
+    participantsCount: 94,
+    photosCount: 267,
+    category: "people",
+    isActive: true,
   },
 ];
 
-// Categories for filtering
+// Categories for filtering - added "people" category
 const categories = [
   { id: "all", name: "Todos" },
   { id: "urbana", name: "Urbana" },
@@ -100,6 +120,7 @@ const categories = [
   { id: "arquitectura", name: "Arquitectura" },
   { id: "retratos", name: "Retratos" },
   { id: "paisajes", name: "Paisajes" },
+  { id: "people", name: "People" }, // Added "People" category
 ];
 
 // Locations for filtering
@@ -119,6 +140,7 @@ const Contests = () => {
   const [displayedContests, setDisplayedContests] = useState(allContests);
   const [viewMode, setViewMode] = useState("grid");
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
+  const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("all");
   
   // Get user location for distance calculations
   useEffect(() => {
@@ -137,9 +159,15 @@ const Contests = () => {
     }
   }, []);
   
-  // Filter contests based on search query, active category, and location
+  // Filter contests based on search query, active category, location and status
   useEffect(() => {
     let filtered = allContests;
+    
+    // Filter by contest status (active or finished)
+    if (contestStatus !== "all") {
+      const isActive = contestStatus === "active";
+      filtered = filtered.filter(contest => contest.isActive === isActive);
+    }
     
     // Filter by search query
     if (searchQuery.trim() !== "") {
@@ -163,8 +191,15 @@ const Contests = () => {
       );
     }
     
+    // Sort by status - active contests first, then finished contests
+    filtered = [...filtered].sort((a, b) => {
+      if (a.isActive && !b.isActive) return -1;
+      if (!a.isActive && b.isActive) return 1;
+      return 0;
+    });
+    
     setDisplayedContests(filtered);
-  }, [searchQuery, activeCategory, activeLocation]);
+  }, [searchQuery, activeCategory, activeLocation, contestStatus]);
   
   // Calculate distance between two coordinates in km
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -189,6 +224,7 @@ const Contests = () => {
     setSearchQuery("");
     setActiveCategory("all");
     setActiveLocation("all");
+    setContestStatus("all");
   };
   
   return (
@@ -225,7 +261,7 @@ const Contests = () => {
               )}
             </div>
             
-            {(searchQuery || activeCategory !== "all" || activeLocation !== "all") && (
+            {(searchQuery || activeCategory !== "all" || activeLocation !== "all" || contestStatus !== "all") && (
               <Button
                 variant="outline"
                 size="sm"
@@ -236,6 +272,37 @@ const Contests = () => {
                 Limpiar filtros
               </Button>
             )}
+          </div>
+          
+          {/* Contest status filter */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 max-w-full">
+              <p className="text-sm text-muted-foreground whitespace-nowrap">Estado:</p>
+              <Button
+                variant={contestStatus === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setContestStatus("all")}
+                className="rounded-full whitespace-nowrap"
+              >
+                Todos
+              </Button>
+              <Button
+                variant={contestStatus === "active" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setContestStatus("active")}
+                className="rounded-full whitespace-nowrap"
+              >
+                Activos
+              </Button>
+              <Button
+                variant={contestStatus === "finished" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setContestStatus("finished")}
+                className="rounded-full whitespace-nowrap"
+              >
+                Finalizados
+              </Button>
+            </div>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 mb-4">
@@ -294,7 +361,16 @@ const Contests = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {displayedContests.map((contest) => (
                   <div key={contest.id} className="relative">
-                    <ContestCard key={contest.id} {...contest} />
+                    {/* Apply grayscale filter for finished contests */}
+                    <div className={!contest.isActive ? "grayscale" : ""}>
+                      <ContestCard key={contest.id} {...contest} />
+                      {/* Badge to show contest status */}
+                      <div className="absolute top-2 left-2">
+                        <Badge variant={contest.isActive ? "default" : "secondary"} className="text-xs">
+                          {contest.isActive ? "Activo" : "Finalizado"}
+                        </Badge>
+                      </div>
+                    </div>
                     {userLocation && (
                       <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
                         <div className="flex items-center">
@@ -336,10 +412,24 @@ const Contests = () => {
                 <p className="text-sm text-muted-foreground">
                   Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
                 </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  <strong>Nota:</strong> Solo se muestran concursos activos en el mapa.
+                </p>
               </div>
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Add style for grayscale effect */}
+        <style jsx>{`
+          .grayscale {
+            filter: grayscale(100%);
+            transition: filter 0.3s ease;
+          }
+          .grayscale:hover {
+            filter: grayscale(50%);
+          }
+        `}</style>
       </div>
     </div>
   );
