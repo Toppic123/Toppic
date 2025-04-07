@@ -1,11 +1,10 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-// Define user roles
-export type UserRole = 'participant' | 'organizer';
+// Define user roles - adding 'admin' to the type
+export type UserRole = 'participant' | 'organizer' | 'admin';
 
 type AuthContextType = {
   user: User | null;
