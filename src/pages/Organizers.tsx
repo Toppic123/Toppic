@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   Calendar, 
   Clock, 
@@ -91,19 +91,8 @@ const Organizers = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  // Check if user is logged in and has organizer role
-  // For now, we'll redirect non-logged in users
-  useEffect(() => {
-    if (!user) {
-      toast({
-        title: "Access restricted",
-        description: "Please log in to access organizer features.",
-        variant: "destructive",
-      });
-      navigate("/login");
-    }
-    // Later we'll check for organizer role once implemented
-  }, [user, navigate, toast]);
+  // Removed the useEffect that checks for user and redirects
+  // This allows non-logged in users to view the page
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,6 +114,17 @@ const Organizers = () => {
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    
+    if (!user) {
+      // If not logged in, prompt user to log in before submitting
+      toast({
+        title: "Login required",
+        description: "Please log in to submit your request.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
     
     toast({
       title: "Request submitted",

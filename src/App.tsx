@@ -84,11 +84,8 @@ function App() {
                     <GalleryManagement />
                   </ProtectedRoute>
                 } />
-                <Route path="/organizers" element={
-                  <RoleBasedRoute allowedRoles={['organizer', 'admin']}>
-                    <Organizers />
-                  </RoleBasedRoute>
-                } />
+                {/* Changed to be accessible to everyone, not just organizers */}
+                <Route path="/organizers" element={<Organizers />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />

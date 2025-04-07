@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +20,9 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Admin email list - add the specific admin email here
+const ADMIN_EMAILS = ['pissillo@gmail.com'];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -27,11 +31,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   // Function to fetch user role
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRole = async (userId: string, email: string) => {
     try {
-      // For now, we'll use a mock implementation since the database isn't set up yet
-      // In the real implementation, this would query a user_roles table
-      // This is a placeholder that randomly assigns roles for demonstration
+      // Check if the user is an admin based on their email
+      if (ADMIN_EMAILS.includes(email.toLowerCase())) {
+        setUserRole('admin');
+        console.log('Admin role assigned to:', email);
+        return;
+      }
+      
+      // For other users, use the existing mock implementation
       const mockRole: UserRole = Math.random() > 0.5 ? 'organizer' : 'participant';
       setUserRole(mockRole);
       console.log('User role set:', mockRole);
@@ -69,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Fetch role when user changes
         if (currentSession?.user) {
-          fetchUserRole(currentSession.user.id);
+          fetchUserRole(currentSession.user.id, currentSession.user.email || '');
         } else {
           setUserRole(null);
         }
@@ -100,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Fetch role for existing session
       if (currentSession?.user) {
-        fetchUserRole(currentSession.user.id);
+        fetchUserRole(currentSession.user.id, currentSession.user.email || '');
       }
       
       setIsLoading(false);
