@@ -74,7 +74,7 @@ function App() {
                 <Route path="/contests" element={<Contests />} />
                 <Route path="/contests/:id" element={<ContestDetail />} />
                 <Route path="/upload" element={
-                  <RoleBasedRoute allowedRoles={['participant']}>
+                  <RoleBasedRoute allowedRoles={['participant', 'admin']}>
                     <Upload />
                   </RoleBasedRoute>
                 } />
@@ -85,7 +85,7 @@ function App() {
                   </ProtectedRoute>
                 } />
                 <Route path="/organizers" element={
-                  <RoleBasedRoute allowedRoles={['organizer']}>
+                  <RoleBasedRoute allowedRoles={['organizer', 'admin']}>
                     <Organizers />
                   </RoleBasedRoute>
                 } />

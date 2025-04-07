@@ -20,12 +20,17 @@ const RoleBasedRoute = ({
     return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
   
+  // If the user is an admin, allow access to all pages regardless of role restrictions
+  if (user && userRole === 'admin') {
+    return children ? <>{children}</> : <Outlet />;
+  }
+  
   // If not logged in or role doesn't match, redirect
   if (!user || !userRole || !allowedRoles.includes(userRole)) {
     return <Navigate to={redirectTo} replace />;
   }
   
-  // Render children or outlet
+  // Render children or outlet for other authorized users
   return children ? <>{children}</> : <Outlet />;
 };
 

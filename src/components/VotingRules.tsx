@@ -27,33 +27,33 @@ const VotingRules = ({
   // Define the steps in the voting process
   const steps = [
     {
-      title: "Análisis de calidad de imagen",
+      title: "Image Quality Analysis",
       icon: Image,
-      description: "Detecta y descarta fotos borrosas, mal iluminadas o de baja resolución.",
+      description: "Detects and discards blurry, poorly lit, or low-resolution photos.",
       enabled: aiPreSelection
     },
     {
-      title: "Algoritmo de clasificación",
+      title: "Ranking Algorithm",
       icon: Brain,
-      description: "Utiliza técnicas como Elo Rating o TrueSkill para comparar y clasificar fotografías.",
+      description: "Uses techniques like Elo Rating or TrueSkill to compare and rank photographs.",
       enabled: aiPreSelection
     },
     {
-      title: "Votación por comparación",
+      title: "Comparison Voting",
       icon: Users,
-      description: "Los usuarios comparan y votan entre pares de fotografías para determinar las mejores.",
+      description: "Users compare and vote between pairs of photographs to determine the best ones.",
       enabled: finalUserVoting
     },
     {
-      title: "Premiación",
+      title: "Awards",
       icon: Award,
-      description: "Las fotos con mayor puntuación son declaradas ganadoras y reciben los premios del concurso.",
+      description: "Photos with the highest scores are declared winners and receive contest prizes.",
       enabled: true
     },
     {
-      title: "Recompensas para votantes",
+      title: "Voter Rewards",
       icon: Gift,
-      description: voterReward.description || "Los votantes pueden recibir recompensas por participar activamente en la votación.",
+      description: voterReward.description || "Voters may receive rewards for actively participating in the voting process.",
       enabled: voterReward.enabled
     }
   ];
@@ -87,12 +87,12 @@ const VotingRules = ({
         <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
           <h4 className="font-medium flex items-center text-blue-700">
             <Brain className="h-5 w-5 mr-2" />
-            Inteligencia Artificial en la preselección
+            AI in Pre-selection
           </h4>
           <p className="mt-2 text-blue-600 text-sm">
-            Nuestra IA avanzada evalúa aspectos técnicos de cada fotografía como nitidez, exposición, 
-            composición y calidad general para garantizar que solo las mejores fotos lleguen a la fase de votación.
-            Este proceso es totalmente imparcial y se basa únicamente en criterios objetivos de calidad fotográfica.
+            Our advanced AI evaluates technical aspects of each photograph such as sharpness, exposure, 
+            composition, and overall quality to ensure only the best photos reach the voting phase.
+            This process is completely impartial and based solely on objective photographic quality criteria.
           </p>
         </div>
       )}

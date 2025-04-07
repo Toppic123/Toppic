@@ -7,7 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Support = () => {
   const [firstName, setFirstName] = useState("");
@@ -29,8 +30,8 @@ const Support = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: "Solicitud enviada",
-        description: "Hemos recibido tu mensaje. Te responderemos pronto.",
+        title: "Request Submitted",
+        description: "We've received your message. We'll respond soon.",
       });
       
       // Reset form
@@ -42,7 +43,7 @@ const Support = () => {
       console.error("Error submitting support request:", error);
       toast({
         title: "Error",
-        description: "No se pudo enviar tu mensaje. Por favor intenta de nuevo.",
+        description: "Could not send your message. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -59,29 +60,39 @@ const Support = () => {
     >
       <Card>
         <CardHeader>
-          <CardTitle>Soporte</CardTitle>
+          <CardTitle>Support</CardTitle>
           <CardDescription>
-            Estamos aquí para ayudarte. Envíanos tu consulta y te responderemos lo antes posible.
+            We're here to help. Send us your inquiry and we'll respond as soon as possible.
           </CardDescription>
         </CardHeader>
+        
         <CardContent>
+          <Alert className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Support messages are currently sent to the system administrator via email. To access these messages, 
+              you need to check the email account configured in the backend system. If you're the administrator and
+              not receiving these emails, please contact technical support to verify the email configuration.
+            </AlertDescription>
+          </Alert>
+          
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">Nombre</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <Input 
                   id="firstName" 
-                  placeholder="Tu nombre" 
+                  placeholder="Your first name" 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Apellido</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input 
                   id="lastName" 
-                  placeholder="Tu apellido" 
+                  placeholder="Your last name" 
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
@@ -90,11 +101,11 @@ const Support = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Correo electrónico</Label>
+              <Label htmlFor="email">Email</Label>
               <Input 
                 id="email" 
                 type="email"
-                placeholder="tu@email.com" 
+                placeholder="your@email.com" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -102,10 +113,10 @@ const Support = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message">Tu consulta</Label>
+              <Label htmlFor="message">Your inquiry</Label>
               <Textarea 
                 id="message" 
-                placeholder="Describe tu problema o pregunta..." 
+                placeholder="Describe your problem or question..." 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className="min-h-[120px]"
@@ -122,7 +133,7 @@ const Support = () => {
             onClick={handleSubmit}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            {isSubmitting ? "Enviando..." : "Enviar mensaje"}
+            {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
         </CardFooter>
       </Card>
