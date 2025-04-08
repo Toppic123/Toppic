@@ -20,8 +20,8 @@ const SocialShareButtons = ({ url, title }: SocialShareButtonsProps) => {
 
   // Function to share on Instagram
   const shareOnInstagram = () => {
-    // Instagram doesn't have a direct share URL like other platforms
-    // Instead, we'll open Instagram in a new window and let users manually share
+    // Instagram doesn't have a direct share URL API like other platforms
+    // Best practice is to open Instagram in a new window and let users manually share
     window.open('https://www.instagram.com/', '_blank');
   };
 
