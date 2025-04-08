@@ -32,6 +32,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PhotoCard from "@/components/PhotoCard";
 import PhotoComments from "@/components/PhotoComments";
 import { useToast } from "@/hooks/use-toast";
+import SocialShareButtons from "@/components/SocialShareButtons";
+import { useAuth } from "@/contexts/AuthContext";
 
 const contestData = {
   id: "1",
@@ -73,7 +75,8 @@ const contestData = {
     aiPreSelection: true,
     finalUserVoting: true,
     maxPhotos: 50
-  }
+  },
+  maxDistance: 1
 };
 
 const photosData = [
@@ -128,11 +131,57 @@ const ContestDetail = () => {
   const [votedPhotoId, setVotedPhotoId] = useState<string | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [viewPhotoMode, setViewPhotoMode] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
+  const [isInRange, setIsInRange] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
   
   useEffect(() => {
     console.log(`Fetching contest with id: ${id}`);
-  }, [id]);
+    
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userPos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          setUserLocation(userPos);
+          
+          if (contest.location) {
+            const contestCoords = { lat: 41.3851, lng: 2.1734 };
+            const distance = calculateDistance(
+              userPos.lat,
+              userPos.lng,
+              contestCoords.lat,
+              contestCoords.lng
+            );
+            setIsInRange(distance <= contest.maxDistance);
+          }
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+        }
+      );
+    }
+  }, [id, contest.location, contest.maxDistance]);
+  
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371;
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1); 
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c;
+    return d;
+  };
+  
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI/180);
+  };
   
   const getTimeRemaining = () => {
     const now = new Date();
@@ -152,6 +201,15 @@ const ContestDetail = () => {
   };
   
   const handleVote = (photoId: string, isUpvote: boolean) => {
+    if (!user) {
+      toast({
+        title: "Inicia sesión para votar",
+        description: "Solo los usuarios registrados pueden votar y optar a premios como votantes.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     if (votedPhotoId) {
       if (votedPhotoId !== photoId) {
         setPhotos(prevPhotos => 
@@ -207,34 +265,10 @@ const ContestDetail = () => {
     setViewPhotoMode(mode);
   };
   
-  const shareToSocialMedia = (platform: string) => {
-    if (!selectedPhoto) return;
-    
-    let shareUrl = "";
-    const contestUrl = `${window.location.origin}/contests/${id}`;
-    const message = `¡Mira esta increíble foto de ${selectedPhoto.photographer} en el concurso "${contest.title}"!`;
-    
-    switch(platform) {
-      case "facebook":
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(contestUrl)}&quote=${encodeURIComponent(message)}`;
-        break;
-      case "twitter":
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(contestUrl)}&text=${encodeURIComponent(message)}`;
-        break;
-      case "whatsapp":
-        shareUrl = `https://wa.me/?text=${encodeURIComponent(message + " " + contestUrl)}`;
-        break;
-      case "telegram":
-        shareUrl = `https://t.me/share/url?url=${encodeURIComponent(contestUrl)}&text=${encodeURIComponent(message)}`;
-        break;
-    }
-    
-    window.open(shareUrl, "_blank");
-    
-    toast({
-      title: "Compartido con éxito",
-      description: `Has compartido esta foto en ${platform}`,
-    });
+  const openGoogleMaps = () => {
+    const locationQuery = encodeURIComponent(contest.location);
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${locationQuery}`;
+    window.open(googleMapsUrl, '_blank');
   };
   
   return (
@@ -265,6 +299,14 @@ const ContestDetail = () => {
                 <div className="flex items-center text-sm">
                   <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
                   <span>{contest.location}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-1 p-1 h-auto"
+                    onClick={openGoogleMaps}
+                  >
+                    <span className="text-xs underline">Ver en Google Maps</span>
+                  </Button>
                 </div>
                 <div className="flex items-center text-sm">
                   <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
@@ -286,6 +328,17 @@ const ContestDetail = () => {
                 {contest.description}
               </p>
               
+              {isInRange && contest.status === "active" && (
+                <Alert className="mb-6 bg-green-50 border-green-200">
+                  <div className="flex items-center">
+                    <Camera className="h-4 w-4 text-green-600 mr-2" />
+                    <AlertDescription className="text-green-700">
+                      ¡Estás dentro del rango permitido para participar en este concurso!
+                    </AlertDescription>
+                  </div>
+                </Alert>
+              )}
+              
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="w-full justify-start mb-4">
                   <TabsTrigger value="photos">Fotografías</TabsTrigger>
@@ -297,13 +350,25 @@ const ContestDetail = () => {
                   <div>
                     <div className="flex justify-between items-center mb-6">
                       <h3 className="text-xl font-bold">Fotografías participantes</h3>
-                      <Button asChild variant="outline">
+                      <Button 
+                        asChild 
+                        variant={isInRange && contest.status === "active" ? "default" : "outline"}
+                        disabled={!isInRange || contest.status !== "active"}
+                      >
                         <Link to={`/upload/${id}`}>
                           <Upload className="mr-2 h-4 w-4" />
                           Subir foto
                         </Link>
                       </Button>
                     </div>
+                    
+                    {!user && (
+                      <Alert className="mb-4 bg-amber-50 border-amber-200">
+                        <AlertDescription className="text-amber-700">
+                          Solo los usuarios registrados pueden votar y optar a premios como votantes de fotos.
+                        </AlertDescription>
+                      </Alert>
+                    )}
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                       {photos.map((photo) => (
@@ -384,9 +449,9 @@ const ContestDetail = () => {
                               2
                             </div>
                             <div>
-                              <p className="font-medium">Fase de votación final</p>
+                              <p className="font-medium">Sistema de votación por comparación</p>
                               <p className="text-sm text-muted-foreground">
-                                Todos los usuarios registrados pueden votar por su foto favorita. Cada usuario tiene 1 voto.
+                                Los usuarios comparan pares de fotografías y seleccionan la que consideran mejor. Este método permite una evaluación más objetiva, ya que cada foto se evalúa múltiples veces en diferentes combinaciones.
                               </p>
                             </div>
                           </div>
@@ -504,15 +569,24 @@ const ContestDetail = () => {
                 <Alert className="mb-6">
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    Las fotografías deben tomarse dentro de un radio de 1km del evento.
+                    Las fotografías deben tomarse dentro de un radio de {contest.maxDistance}km del evento.
                   </AlertDescription>
                 </Alert>
                 
                 <div className="space-y-4">
-                  <Button asChild className="w-full">
+                  <Button 
+                    asChild 
+                    className="w-full"
+                    disabled={!isInRange || contest.status !== "active"}
+                  >
                     <Link to={`/upload/${id}`}>
                       <Camera className="mr-2 h-4 w-4" />
-                      Participar
+                      {isInRange && contest.status === "active" 
+                        ? "Participar" 
+                        : contest.status !== "active" 
+                          ? "Concurso finalizado" 
+                          : "Fuera de rango"
+                      }
                     </Link>
                   </Button>
                 </div>
@@ -539,51 +613,10 @@ const ContestDetail = () => {
                 />
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  variant="outline" 
-                  className="flex justify-center items-center gap-2" 
-                  onClick={() => shareToSocialMedia("facebook")}
-                >
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-blue-600">
-                    <path d="M9.19795 21.5H13.198V13.4901H16.8021L17.198 9.50977H13.198V7.5C13.198 6.94772 13.6457 6.5 14.198 6.5H17.198V2.5H14.198C11.4365 2.5 9.19795 4.73858 9.19795 7.5V9.50977H7.19795L6.80206 13.4901H9.19795V21.5Z"></path>
-                  </svg>
-                  Facebook
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex justify-center items-center gap-2"
-                  onClick={() => shareToSocialMedia("twitter")}
-                >
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-blue-400">
-                    <path d="M22.162 5.65593C21.3986 5.99362 20.589 6.2154 19.76 6.31393C20.6337 5.79136 21.2877 4.96894 21.6 3.99993C20.78 4.48793 19.881 4.82993 18.944 5.01493C18.3146 4.34151 17.4804 3.89489 16.5709 3.74451C15.6615 3.59413 14.7279 3.74842 13.9153 4.18338C13.1026 4.61834 12.4564 5.30961 12.0771 6.14972C11.6978 6.98983 11.6067 7.93171 11.818 8.82893C10.1551 8.74558 8.52883 8.31345 7.04329 7.56059C5.55774 6.80773 4.24791 5.75097 3.19799 4.45893C2.82628 5.09738 2.63095 5.82315 2.63199 6.56193C2.63199 8.01193 3.36999 9.29293 4.49199 10.0429C3.828 10.022 3.17862 9.84271 2.59799 9.51993V9.57193C2.59819 10.5376 2.93236 11.4735 3.54384 12.221C4.15532 12.9684 5.00647 13.4814 5.95299 13.6729C5.33661 13.84 4.6903 13.8646 4.06299 13.7449C4.32986 14.5762 4.85 15.3031 5.55058 15.824C6.25117 16.345 7.09712 16.6337 7.96999 16.6499C7.10247 17.3313 6.10917 17.8349 5.04687 18.1321C3.98458 18.4293 2.87412 18.5142 1.77899 18.3819C3.69069 19.6114 5.91609 20.2641 8.18899 20.2619C15.882 20.2619 20.089 13.8889 20.089 8.36193C20.089 8.18193 20.084 7.99993 20.076 7.82193C20.8949 7.23009 21.6016 6.49695 22.163 5.65693L22.162 5.65593Z"></path>
-                  </svg>
-                  Twitter
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex justify-center items-center gap-2"
-                  onClick={() => shareToSocialMedia("whatsapp")}
-                >
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-green-500">
-                    <path d="M17.507 14.307L20.308 17.108L17.507 14.307ZM3.7 22.3L6.45 21.9C7.71139 22.4172 9.0747 22.6879 10.459 22.7L10.959 22.7C17.929 22.7 21.659 16.707 21.659 10.207C21.659 7.16997 20.509 5.01997 18.507 3.01797C16.507 1.01997 14.357 -0.100029 11.307 -3.05176e-05C4.32997 -3.05176e-05 0.657975 5.99997 0.657975 12.5C0.657975 14.092 0.947975 15.625 1.50698 17.05L2.00698 18.35L0.957975 20.95L3.7 22.3Z"></path>
-                    <path d="M11.55 6C11.302 6 11.108 6.193 11.109 6.442C11.109 6.69 11.303 6.883 11.551 6.883C12.486 6.886 13.389 7.256 14.06 7.926C14.733 8.596 15.103 9.496 15.106 10.428C15.106 10.676 15.3 10.869 15.548 10.869C15.796 10.869 15.989 10.675 15.989 10.428C15.986 9.248 15.518 8.119 14.687 7.289C13.856 6.458 12.73 5.992 11.55 5.999V6Z" />
-                    <path d="M11.55 8.40002C11.302 8.40002 11.108 8.59302 11.109 8.84202C11.109 9.09002 11.303 9.28302 11.551 9.28302C11.964 9.28302 12.363 9.44702 12.664 9.74702C12.964 10.048 13.127 10.447 13.127 10.861C13.127 11.108 13.321 11.301 13.569 11.301C13.817 11.301 14.01 11.108 14.01 10.861C14.01 10.201 13.747 9.56702 13.277 9.09602C12.805 8.62602 12.172 8.36102 11.55 8.40002Z" />
-                    <path d="M13.5 14.5L12.5 14C9.9 12.7 8.7 10.1 8.5 9.7L8.3 9.3C8.1 8.9 8.3 8.4 8.7 8.2L9.7 7.7C10.1 7.5 10.2 7 10 6.6L8.5 4.1C8.3 3.7 7.8 3.6 7.4 3.8L6.4 4.3C5.9 4.6 5.5 5 5.4 5.6C5.1 7.1 5.5 9.5 8.3 12.3C11.4 15.4 14.1 15.5 15.5 15.2C16.1 15.1 16.5 14.7 16.7 14.3L17.2 13.3C17.4 12.9 17.2 12.4 16.8 12.2L14.3 10.7C13.9 10.5 13.4 10.6 13.2 11L12.7 12C12.6 12.2 12.2 12.3 12 12.2L11.5 12C11.3 11.9 11.1 11.8 10.9 11.7L12.5 14.5C13 14.5 13.3 14.5 13.5 14.5Z" />
-                  </svg>
-                  WhatsApp
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="flex justify-center items-center gap-2"
-                  onClick={() => shareToSocialMedia("telegram")}
-                >
-                  <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-blue-500">
-                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.9 8.1L15.08 15.93C15.03 16.15 14.88 16.33 14.66 16.43C14.55 16.47 14.42 16.5 14.3 16.5C14.17 16.5 14.04 16.47 13.93 16.41L11.67 15.22L10.42 16.41C10.3 16.53 10.14 16.6 9.97 16.6C9.86 16.6 9.76 16.58 9.66 16.53C9.35 16.38 9.15 16.05 9.15 15.7V14.08L13.96 9.68C14.09 9.56 14.16 9.37 14.13 9.19C14.11 9 14 8.86 13.83 8.79C13.67 8.72 13.5 8.73 13.35 8.82L7.2 12.36L5.25 11.46C5.1 11.39 4.99 11.26 4.96 11.11C4.93 10.95 4.97 10.79 5.07 10.66C5.18 10.53 5.34 10.45 5.52 10.45L16.18 8.02C16.33 7.99 16.48 8.01 16.61 8.08C16.75 8.15 16.85 8.27 16.91 8.41C16.94 8.57 16.94 8.71 16.9 8.85V8.1Z" />
-                  </svg>
-                  Telegram
-                </Button>
-              </div>
+              <SocialShareButtons 
+                url={window.location.href} 
+                title={`Mira esta increíble foto de ${selectedPhoto.photographer} en el concurso "${contest.title}"!`}
+              />
             </div>
           )}
         </DialogContent>
@@ -609,7 +642,18 @@ const ContestDetail = () => {
                 <DialogTitle className="text-base">Foto de {selectedPhoto?.photographer}</DialogTitle>
               </div>
               <div className="flex items-center gap-2">
-                {votedPhotoId !== selectedPhoto?.id ? (
+                {!user ? (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    asChild
+                  >
+                    <Link to="/login">
+                      <Heart className="h-4 w-4 mr-2 text-red-500" />
+                      Iniciar sesión para votar
+                    </Link>
+                  </Button>
+                ) : votedPhotoId !== selectedPhoto?.id ? (
                   <Button 
                     variant="outline" 
                     size="sm"

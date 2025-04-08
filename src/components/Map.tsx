@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Camera, MapPin, Lock, Unlock, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
@@ -53,13 +51,11 @@ const mockContests = [
   },
 ];
 
-// Use a reliable Mapbox token - this is still just a placeholder
-// In production, use proper environment variables or Supabase Edge Functions
-const DEFAULT_MAPBOX_TOKEN = 'pk.eyJ1IjoicGl4b25haXIiLCJhIjoiY2xuM28zYTBnMDIxajJpcG5lZDNrZzY0dyJ9.ZjsrZ01oWLc-nttT5KIMLQ';
+// Only show active contests on the map
+const activeContests = mockContests.filter(contest => contest.isActive);
 
 const Map = () => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const [selectedContest, setSelectedContest] = useState<(typeof mockContests)[0] | null>(null);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
@@ -68,13 +64,11 @@ const Map = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [mapError, setMapError] = useState<string | null>(null);
-  
-  // Only show active contests on the map
-  const activeContests = mockContests.filter(contest => contest.isActive);
+  const [googleMapURL, setGoogleMapURL] = useState<string>("");
   
   // Function to find nearby contests
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
-    // Simple distance calculation (in km) - could be replaced with more accurate calculation
+    // Simple distance calculation (in km)
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
       const R = 6371; // Radius of the earth in km
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -113,20 +107,21 @@ const Map = () => {
       });
     }
     
-    // If we have nearby contests, zoom to fit them
-    if (nearby.length > 0 && map.current) {
-      const bounds = new mapboxgl.LngLatBounds();
-      
-      // Add user location to bounds
-      bounds.extend([userLng, userLat]);
-      
-      // Add contest locations to bounds
-      nearby.forEach(contest => {
-        bounds.extend([contest.coords.lng, contest.coords.lat]);
-      });
-      
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 15 });
-    }
+    // Create Google Maps URL with markers for user and nearby contests
+    createGoogleMapsURL(userLat, userLng, nearby);
+  };
+  
+  // Function to create a Google Maps URL with markers
+  const createGoogleMapsURL = (userLat: number, userLng: number, contests: typeof nearbyContests) => {
+    // Base Google Maps URL
+    let url = `https://www.google.com/maps/search/?api=1&query=${userLat},${userLng}`;
+    
+    // For creating a map with multiple markers, we'd typically use the more complex URL format
+    // but for simplicity, we'll just create a link that opens Google Maps centered on the user's location
+    // In a real implementation, you might want to use the Google Maps JavaScript API
+    
+    setGoogleMapURL(url);
+    setIsMapLoading(false);
   };
   
   // Function to locate the user
@@ -148,20 +143,8 @@ const Map = () => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
         
-        if (map.current) {
-          // Add a marker for user location
-          const el = document.createElement('div');
-          el.className = 'current-location-marker';
-          el.innerHTML = '<div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center pulse-animation"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></div>';
-          
-          new mapboxgl.Marker(el)
-            .setLngLat([longitude, latitude])
-            .addTo(map.current);
-          
-          // Find nearby contests
-          findNearbyContests(latitude, longitude);
-        }
-        
+        // Find nearby contests and create Google Maps URL
+        findNearbyContests(latitude, longitude);
         setIsLocating(false);
       },
       (error) => {
@@ -176,81 +159,34 @@ const Map = () => {
     );
   };
   
+  // Open in Google Maps
+  const openInGoogleMaps = () => {
+    window.open(googleMapURL, '_blank');
+  };
+  
   useEffect(() => {
-    if (!mapContainer.current) return;
+    // Initial loading
+    setIsMapLoading(true);
     
-    try {
-      // Initialize map with the default token
-      mapboxgl.accessToken = DEFAULT_MAPBOX_TOKEN;
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [0, 40], // Center on Spain
-        zoom: 5,
-      });
-      
-      // Add navigation controls
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      // Add markers when map is loaded
-      map.current.on('load', () => {
-        setIsMapLoading(false);
-        console.log("Map loaded successfully");
-        
-        // Add markers only for active contests
-        activeContests.forEach(contest => {
-          // Create a marker element
-          const el = document.createElement('div');
-          el.className = 'custom-marker';
-          
-          // Different styling for private vs public contests
-          if (contest.isPrivate) {
-            el.innerHTML = `<div class="w-8 h-8 bg-gray-700 text-gray-100 rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            </div>`;
-          } else {
-            el.innerHTML = `<div class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-camera"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-            </div>`;
-          }
-          
-          // Add click event to marker
-          el.addEventListener('click', () => {
-            setSelectedContest(contest);
-          });
-          
-          // Add marker to map
-          new mapboxgl.Marker(el)
-            .setLngLat([contest.coords.lng, contest.coords.lat])
-            .addTo(map.current!);
-        });
-      });
-
-      // Handle error events
-      map.current.on('error', (e) => {
-        console.error("Map error:", e);
-        setMapError("Error al cargar el mapa: " + e.error?.message || "Error desconocido");
-        setIsMapLoading(false);
-      });
-      
-      // Cleanup
-      return () => {
-        if (map.current) {
-          map.current.remove();
-        }
-      };
-    } catch (error) {
-      console.error("Error initializing map:", error);
-      setMapError("Error al inicializar el mapa");
+    // Set a default center point for the map
+    const defaultLocation = {
+      lat: 40.4168,
+      lng: -3.7038
+    }; // Madrid, Spain
+    
+    // Create a URL for Google Maps centered on Spain
+    const url = `https://www.google.com/maps/search/?api=1&query=${defaultLocation.lat},${defaultLocation.lng}`;
+    setGoogleMapURL(url);
+    
+    // Set loading to false after a short delay
+    const timer = setTimeout(() => {
       setIsMapLoading(false);
-      toast({
-        title: "Error al cargar el mapa",
-        description: "Por favor, verifica tu conexión o inténtalo más tarde",
-        variant: "destructive"
-      });
-    }
-  }, [toast]);
+    }, 1000);
+    
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
   
   return (
     <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden">
@@ -281,7 +217,19 @@ const Map = () => {
         </div>
       )}
       
-      <div ref={mapContainer} className="w-full h-full" />
+      {/* Google Maps placeholder with embedded iframe */}
+      {!isMapLoading && !mapError && (
+        <div className="w-full h-full">
+          <iframe
+            title="Google Maps"
+            width="100%"
+            height="100%"
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${userLocation ? `${userLocation.lat},${userLocation.lng}` : 'Spain'}`}
+            allowFullScreen
+          ></iframe>
+        </div>
+      )}
       
       {/* Locate me button */}
       <div className="absolute top-4 left-4 z-10">
@@ -302,9 +250,57 @@ const Map = () => {
             </>
           )}
         </Button>
+        
+        {userLocation && (
+          <Button
+            onClick={openInGoogleMaps}
+            className="flex items-center gap-2 bg-white text-black hover:bg-gray-100 shadow-md mt-2"
+          >
+            <span>Abrir en Google Maps</span>
+          </Button>
+        )}
       </div>
       
-      {/* Contest info overlay when marker is clicked */}
+      {/* Contest list overlay when contests are found */}
+      {nearbyContests.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg max-h-[50%] overflow-auto"
+        >
+          <h3 className="text-lg font-medium mb-4">Concursos cercanos ({nearbyContests.length})</h3>
+          <div className="space-y-3">
+            {nearbyContests.map((contest) => (
+              <div 
+                key={contest.id} 
+                className="flex justify-between items-center p-3 bg-background/80 rounded-md hover:bg-background transition-colors cursor-pointer"
+                onClick={() => navigate(`/contests/${contest.id}`)}
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium">{contest.title}</h4>
+                    {contest.isPrivate && (
+                      <Badge variant="outline" className="flex items-center gap-1 border-amber-500 text-amber-700">
+                        <Lock className="w-3 h-3" />
+                        <span>Privado</span>
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                    <MapPin className="w-3 h-3 mr-1" />
+                    <span>{contest.location}</span>
+                  </div>
+                </div>
+                <Button size="sm">
+                  Ver
+                </Button>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+      
+      {/* Selected contest info overlay */}
       {selectedContest && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -340,39 +336,6 @@ const Map = () => {
           </div>
         </motion.div>
       )}
-      
-      {/* Add some CSS for the pulse animation */}
-      <style>{`
-        .pulse-animation {
-          position: relative;
-        }
-        .pulse-animation::after {
-          content: '';
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          background-color: rgba(59, 130, 246, 0.5);
-          border-radius: 50%;
-          z-index: -1;
-          animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-          0% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          70% {
-            transform: scale(2);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 };
