@@ -133,6 +133,7 @@ const ContestDetail = () => {
   const [viewPhotoMode, setViewPhotoMode] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [isInRange, setIsInRange] = useState(false);
+  const [showOutOfRangeDialog, setShowOutOfRangeDialog] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -269,6 +270,14 @@ const ContestDetail = () => {
     const locationQuery = encodeURIComponent(contest.location);
     const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${locationQuery}`;
     window.open(googleMapsUrl, '_blank');
+  };
+  
+  const handleParticipateClick = () => {
+    if (!isInRange && contest.status === "active") {
+      setShowOutOfRangeDialog(true);
+    } else if (isInRange && contest.status === "active") {
+      window.location.href = `/upload/${id}`;
+    }
   };
   
   return (
@@ -575,19 +584,15 @@ const ContestDetail = () => {
                 
                 <div className="space-y-4">
                   <Button 
-                    asChild 
                     className="w-full"
-                    disabled={!isInRange || contest.status !== "active"}
+                    onClick={handleParticipateClick}
+                    disabled={contest.status !== "active"}
                   >
-                    <Link to={`/upload/${id}`}>
-                      <Camera className="mr-2 h-4 w-4" />
-                      {isInRange && contest.status === "active" 
-                        ? "Participar" 
-                        : contest.status !== "active" 
-                          ? "Concurso finalizado" 
-                          : "Fuera de rango"
-                      }
-                    </Link>
+                    <Camera className="mr-2 h-4 w-4" />
+                    {contest.status !== "active" 
+                      ? "Concurso finalizado" 
+                      : "Participar"
+                    }
                   </Button>
                 </div>
               </div>
@@ -616,9 +621,36 @@ const ContestDetail = () => {
               <SocialShareButtons 
                 url={window.location.href} 
                 title={`Mira esta increíble foto de ${selectedPhoto.photographer} en el concurso "${contest.title}"!`}
+                imageUrl={selectedPhoto.imageUrl}
               />
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+      
+      {/* Out of Range Dialog */}
+      <Dialog open={showOutOfRangeDialog} onOpenChange={setShowOutOfRangeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Fuera de rango permitido</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p>
+              No puedes participar en este concurso porque te encuentras fuera del rango permitido.
+            </p>
+            <p>
+              Este concurso requiere que estés dentro de un radio de {contest.maxDistance} km del lugar del evento.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Las coordenadas geográficas son necesarias para verificar tu ubicación y asegurar que las fotografías se tomen en el lugar del evento.
+            </p>
+            <Button 
+              onClick={() => setShowOutOfRangeDialog(false)} 
+              className="w-full"
+            >
+              Entendido
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
       
