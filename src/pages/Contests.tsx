@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge"; // Import Badge component
 import ContestCard from "@/components/ContestCard";
 import Map from "@/components/Map";
 
@@ -421,18 +422,21 @@ const Contests = () => {
         </Tabs>
 
         {/* Add style for grayscale effect */}
-        <style jsx>{`
-          .grayscale {
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
-          }
-          .grayscale:hover {
-            filter: grayscale(50%);
-          }
-        `}</style>
+        <style>
+          {`
+            .grayscale {
+              filter: grayscale(100%);
+              transition: filter 0.3s ease;
+            }
+            .grayscale:hover {
+              filter: grayscale(50%);
+            }
+          `}
+        </style>
       </div>
     </div>
   );
 };
 
 export default Contests;
+
