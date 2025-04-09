@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Plus, Trash, Edit, X } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import OrganizerCard from "./OrganizerCard";
 
-// Mock data for organizers - we'll move this to a separate file in the future
+// Mock data for organizers - we'll simulate persistence with localStorage
 export const mockOrganizers = [
   { id: "1", name: "PictureThis", email: "contact@picturethis.com", plan: "pro", activeContests: 3, totalContests: 8 },
   { id: "2", name: "FoodLens", email: "hello@foodlens.org", plan: "basic", activeContests: 1, totalContests: 2 },
@@ -30,10 +30,30 @@ interface OrganizersListProps {
   onAddOrganizer?: () => void;
 }
 
+// Helper to persist organizers in localStorage (simulating a backend)
+const saveOrganizersToStorage = (organizers: Organizer[]) => {
+  try {
+    localStorage.setItem('app_organizers', JSON.stringify(organizers));
+  } catch (error) {
+    console.error('Error saving organizers to localStorage:', error);
+  }
+};
+
+// Helper to load organizers from localStorage
+const loadOrganizersFromStorage = (): Organizer[] => {
+  try {
+    const storedOrganizers = localStorage.getItem('app_organizers');
+    return storedOrganizers ? JSON.parse(storedOrganizers) : mockOrganizers;
+  } catch (error) {
+    console.error('Error loading organizers from localStorage:', error);
+    return mockOrganizers;
+  }
+};
+
 const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
   const { toast } = useToast();
-  const [organizers, setOrganizers] = useState<Organizer[]>(mockOrganizers);
-  const [filteredOrganizers, setFilteredOrganizers] = useState<Organizer[]>(mockOrganizers);
+  const [organizers, setOrganizers] = useState<Organizer[]>([]);
+  const [filteredOrganizers, setFilteredOrganizers] = useState<Organizer[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingOrganizer, setEditingOrganizer] = useState<Organizer | null>(null);
@@ -42,6 +62,13 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
     email: "",
     plan: "basic"
   });
+
+  // Load organizers on component mount
+  useEffect(() => {
+    const loadedOrganizers = loadOrganizersFromStorage();
+    setOrganizers(loadedOrganizers);
+    setFilteredOrganizers(loadedOrganizers);
+  }, []);
 
   // Handle organizer search
   const handleOrganizerSearch = (query: string) => {
@@ -87,13 +114,17 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
 
   // Handle delete organizer
   const handleDeleteOrganizer = (organizerId: string) => {
+    const updatedOrganizers = organizers.filter(o => o.id !== organizerId);
+    setOrganizers(updatedOrganizers);
+    setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
+    
+    // Persist changes
+    saveOrganizersToStorage(updatedOrganizers);
+    
     toast({
       title: "Organizador eliminado",
       description: `El organizador ha sido eliminado correctamente.`,
     });
-    const updatedOrganizers = organizers.filter(o => o.id !== organizerId);
-    setOrganizers(updatedOrganizers);
-    setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
   };
 
   // Filter organizers based on search query
@@ -118,9 +149,11 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
       return;
     }
 
+    let updatedOrganizers: Organizer[] = [];
+
     if (editingOrganizer) {
       // Update existing organizer
-      const updatedOrganizers = organizers.map(org => 
+      updatedOrganizers = organizers.map(org => 
         org.id === editingOrganizer.id 
           ? { 
               ...org, 
@@ -130,9 +163,6 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
             } 
           : org
       );
-      
-      setOrganizers(updatedOrganizers);
-      setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
       
       toast({
         title: "Organizador actualizado",
@@ -149,15 +179,19 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
         totalContests: 0
       };
       
-      const updatedOrganizers = [...organizers, newOrganizer];
-      setOrganizers(updatedOrganizers);
-      setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
+      updatedOrganizers = [...organizers, newOrganizer];
       
       toast({
         title: "Organizador añadido",
         description: `El organizador "${formData.name}" ha sido añadido correctamente.`,
       });
     }
+    
+    setOrganizers(updatedOrganizers);
+    setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
+    
+    // Persist changes
+    saveOrganizersToStorage(updatedOrganizers);
     
     setIsDialogOpen(false);
     resetFormData();

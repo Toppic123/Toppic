@@ -112,7 +112,7 @@ const Contests = () => {
           clearFilters={clearFilters}
         />
         
-        {/* View mode tabs */}
+        {/* View mode tabs - Updated Map button color */}
         <Tabs defaultValue="grid" value={viewMode} onValueChange={setViewMode} className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
@@ -122,7 +122,12 @@ const Contests = () => {
             </div>
             <TabsList>
               <TabsTrigger value="grid">Cuadrícula</TabsTrigger>
-              <TabsTrigger value="map">Mapa</TabsTrigger>
+              <TabsTrigger 
+                value="map"
+                className="bg-[#4891AA] text-white data-[state=active]:bg-[#3a7a8b] hover:bg-[#3a7a8b]"
+              >
+                Mapa
+              </TabsTrigger>
             </TabsList>
           </div>
           

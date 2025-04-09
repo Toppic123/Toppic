@@ -210,11 +210,12 @@ const Map = () => {
         </div>
       )}
 
-      <div className="absolute top-4 left-4 z-10">
+      {/* Repositioned button to center */}
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         <Button 
           onClick={locateUser}
           disabled={isLocating || isMapLoading || !!mapError}
-          className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e4] text-white shadow-lg transition-all pulse-animation"
+          className="flex items-center gap-2 bg-[#4891AA] hover:bg-[#3a7a8b] text-white shadow-lg transition-all pulse-animation"
           size="lg"
         >
           {isLocating ? (
@@ -229,16 +230,18 @@ const Map = () => {
             </>
           )}
         </Button>
+      </div>
 
-        {userLocation && (
+      {userLocation && (
+        <div className="absolute bottom-4 right-4 z-10">
           <Button
             onClick={openInGoogleMaps}
             className="flex items-center gap-2 bg-white text-black hover:bg-gray-100 shadow-md mt-2"
           >
             <span>Abrir en Google Maps</span>
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       {nearbyContests.length > 0 && (
         <motion.div
@@ -318,13 +321,13 @@ const Map = () => {
         {`
         @keyframes pulse {
           0% {
-            box-shadow: 0 0 0 0 rgba(155, 135, 245, 0.7);
+            box-shadow: 0 0 0 0 rgba(72, 145, 170, 0.7);
           }
           70% {
-            box-shadow: 0 0 0 10px rgba(155, 135, 245, 0);
+            box-shadow: 0 0 0 10px rgba(72, 145, 170, 0);
           }
           100% {
-            box-shadow: 0 0 0 0 rgba(155, 135, 245, 0);
+            box-shadow: 0 0 0 0 rgba(72, 145, 170, 0);
           }
         }
 
