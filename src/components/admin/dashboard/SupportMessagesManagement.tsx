@@ -1,0 +1,211 @@
+
+import { useState } from "react";
+import { Eye, CheckCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Dialog, DialogContent, DialogDescription, DialogFooter, 
+  DialogHeader, DialogTitle
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+
+// Mock data for support messages
+const mockSupportMessages = [
+  { 
+    id: "1",
+    name: "Javier Méndez",
+    email: "javier@example.com",
+    subject: "Problema con la subida de fotos",
+    message: "No puedo subir fotos desde mi móvil. Me aparece un error cada vez que intento participar en un concurso.",
+    date: new Date(2025, 3, 5),
+    status: "pending"
+  },
+  { 
+    id: "2",
+    name: "Laura Fernández",
+    email: "laura@example.com",
+    subject: "Consulta sobre premios",
+    message: "¿Cómo puedo reclamar mi premio después de ganar un concurso? No he recibido ninguna notificación.",
+    date: new Date(2025, 3, 2),
+    status: "resolved"
+  },
+  { 
+    id: "3",
+    name: "Miguel Ángel Rodríguez",
+    email: "miguel@example.com",
+    subject: "Solicitud de reembolso",
+    message: "Pagué por error la suscripción premium dos veces en el mismo mes. ¿Es posible obtener un reembolso?",
+    date: new Date(2025, 3, 1),
+    status: "pending"
+  }
+];
+
+const SupportMessagesManagement = () => {
+  const { toast } = useToast();
+  const [filteredMessages, setFilteredMessages] = useState(mockSupportMessages);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isViewMessageDialogOpen, setIsViewMessageDialogOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  
+  // Format date function
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+  
+  // Handle support message search
+  const handleMessageSearch = (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setFilteredMessages(mockSupportMessages);
+      return;
+    }
+    const filtered = mockSupportMessages.filter(message => 
+      message.name.toLowerCase().includes(query.toLowerCase()) ||
+      message.email.toLowerCase().includes(query.toLowerCase()) ||
+      message.subject.toLowerCase().includes(query.toLowerCase()) ||
+      message.message.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredMessages(filtered);
+  };
+
+  // Handle view support message
+  const handleViewMessage = (messageId: string) => {
+    setSelectedMessageId(messageId);
+    setIsViewMessageDialogOpen(true);
+  };
+
+  // Handle mark support message as resolved
+  const handleMarkAsResolved = (messageId: string) => {
+    setFilteredMessages(filteredMessages.map(m => 
+      m.id === messageId ? { ...m, status: "resolved" } : m
+    ));
+    toast({
+      title: "Mensaje marcado como resuelto",
+      description: "El mensaje de soporte ha sido marcado como resuelto.",
+    });
+    setIsViewMessageDialogOpen(false);
+  };
+  
+  // Get selected message details
+  const selectedMessage = mockSupportMessages.find(m => m.id === selectedMessageId);
+
+  return (
+    <>
+      <h2 className="text-xl font-semibold">Mensajes de Soporte</h2>
+      
+      <div className="relative w-full mb-4">
+        <Input 
+          placeholder="Buscar mensajes..." 
+          className="w-full"
+          value={searchQuery}
+          onChange={(e) => handleMessageSearch(e.target.value)}
+        />
+      </div>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-muted">
+              <th className="p-3 text-left">Remitente</th>
+              <th className="p-3 text-left">Asunto</th>
+              <th className="p-3 text-left">Fecha</th>
+              <th className="p-3 text-left">Estado</th>
+              <th className="p-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredMessages.map(message => (
+              <tr key={message.id} className="border-b hover:bg-muted/50">
+                <td className="p-3">
+                  <div>
+                    <p className="font-medium">{message.name}</p>
+                    <p className="text-xs text-muted-foreground">{message.email}</p>
+                  </div>
+                </td>
+                <td className="p-3">{message.subject}</td>
+                <td className="p-3">{formatDate(message.date)}</td>
+                <td className="p-3">
+                  <Badge variant={message.status === "pending" ? "outline" : "secondary"}>
+                    {message.status === "pending" ? "Pendiente" : "Resuelto"}
+                  </Badge>
+                </td>
+                <td className="p-3 text-center">
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => handleViewMessage(message.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Eye size={16} />
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* View Support Message Dialog */}
+      <Dialog open={isViewMessageDialogOpen} onOpenChange={setIsViewMessageDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Mensaje de Soporte</DialogTitle>
+            <DialogDescription>
+              Detalles del mensaje seleccionado.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedMessage && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm text-muted-foreground">Remitente</Label>
+                  <p className="font-medium">{selectedMessage.name}</p>
+                </div>
+                <div>
+                  <Label className="text-sm text-muted-foreground">Email</Label>
+                  <p className="font-medium">{selectedMessage.email}</p>
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Fecha</Label>
+                <p className="font-medium">{formatDate(selectedMessage.date)}</p>
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Asunto</Label>
+                <p className="font-medium">{selectedMessage.subject}</p>
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground">Mensaje</Label>
+                <div className="mt-1 p-3 bg-muted/30 rounded-md">
+                  <p>{selectedMessage.message}</p>
+                </div>
+              </div>
+              <div className="flex items-center">
+                <Label className="text-sm text-muted-foreground mr-2">Estado:</Label>
+                <Badge variant={selectedMessage.status === "pending" ? "outline" : "secondary"}>
+                  {selectedMessage.status === "pending" ? "Pendiente" : "Resuelto"}
+                </Badge>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsViewMessageDialogOpen(false)}>Cerrar</Button>
+            {selectedMessage && selectedMessage.status === "pending" && (
+              <Button onClick={() => handleMarkAsResolved(selectedMessage.id)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Marcar como resuelto
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
+export default SupportMessagesManagement;
