@@ -7,11 +7,21 @@ import { useToast } from "@/hooks/use-toast";
 interface UserRoleSwitchProps {
   initialRole?: "participant" | "organizer";
   onRoleChange?: (role: "participant" | "organizer") => void;
+  showInProfile?: boolean; // New prop to control visibility in Profile
 }
 
-const UserRoleSwitch = ({ initialRole = "participant", onRoleChange }: UserRoleSwitchProps) => {
+const UserRoleSwitch = ({ 
+  initialRole = "participant", 
+  onRoleChange,
+  showInProfile = false // Default to not showing in profile
+}: UserRoleSwitchProps) => {
   const [role, setRole] = useState<"participant" | "organizer">(initialRole);
   const { toast } = useToast();
+
+  // If we're in Profile and should hide this component, return null
+  if (showInProfile === false && window.location.pathname.includes("/profile")) {
+    return null;
+  }
 
   const handleRoleChange = (newRole: "participant" | "organizer") => {
     if (newRole !== role) {

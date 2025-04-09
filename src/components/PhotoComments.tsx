@@ -27,11 +27,15 @@ const PhotoComments = ({ photoId, onClose, isEmbedded = false }: PhotoCommentsPr
   const { toast } = useToast();
   const [comment, setComment] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [commentInputVisible, setCommentInputVisible] = useState(true);
   
   // Detect mobile devices
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const isMobileDevice = window.innerWidth < 768;
+      setIsMobile(isMobileDevice);
+      // Always show comment input regardless of device type
+      setCommentInputVisible(true);
     };
     
     checkIfMobile();
@@ -148,25 +152,27 @@ const PhotoComments = ({ photoId, onClose, isEmbedded = false }: PhotoCommentsPr
         </CardContent>
       </ScrollArea>
       <Separator />
-      <CardFooter className="p-3">
-        <div className="flex w-full items-center space-x-2">
-          <Input
-            placeholder="Escribe un comentario..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSubmitComment()}
-            className="flex-1 h-9"
-          />
-          <Button 
-            size="icon" 
-            onClick={handleSubmitComment} 
-            disabled={!comment.trim()}
-            className="h-9 w-9"
-          >
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardFooter>
+      {commentInputVisible && (
+        <CardFooter className="p-3">
+          <div className="flex w-full items-center space-x-2">
+            <Input
+              placeholder="Escribe un comentario..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSubmitComment()}
+              className="flex-1 h-9"
+            />
+            <Button 
+              size="icon" 
+              onClick={handleSubmitComment} 
+              disabled={!comment.trim()}
+              className="h-9 w-9"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardFooter>
+      )}
     </Card>
   );
 };
