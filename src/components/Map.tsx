@@ -1,13 +1,11 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MapPin, Lock, Unlock, Loader2 } from "lucide-react";
+import { Camera, MapPin, Lock, Unlock, Loader2, Navigation } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
-// Mock data with active and finished contests
 const mockContests = [
   {
     id: "1",
@@ -51,7 +49,6 @@ const mockContests = [
   },
 ];
 
-// Only show active contests on the map
 const activeContests = mockContests.filter(contest => contest.isActive);
 
 const Map = () => {
@@ -65,12 +62,10 @@ const Map = () => {
   const { toast } = useToast();
   const [mapError, setMapError] = useState<string | null>(null);
   const [googleMapURL, setGoogleMapURL] = useState<string>("");
-  
-  // Function to find nearby contests
+
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
-    // Simple distance calculation (in km)
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-      const R = 6371; // Radius of the earth in km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a = 
@@ -78,11 +73,10 @@ const Map = () => {
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
         Math.sin(dLon/2) * Math.sin(dLon/2); 
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-      const d = R * c; // Distance in km
+      const d = R * c;
       return d;
     };
-    
-    // Filter active contests by distance
+
     const nearby = activeContests.filter(contest => {
       const distance = calculateDistance(
         userLat, 
@@ -92,9 +86,9 @@ const Map = () => {
       );
       return distance <= maxDistance;
     });
-    
+
     setNearbyContests(nearby);
-    
+
     if (nearby.length === 0) {
       toast({
         title: "No se encontraron concursos cercanos",
@@ -106,28 +100,19 @@ const Map = () => {
         description: "Se muestran los concursos cercanos a tu ubicación.",
       });
     }
-    
-    // Create Google Maps URL with markers for user and nearby contests
+
     createGoogleMapsURL(userLat, userLng, nearby);
   };
-  
-  // Function to create a Google Maps URL with markers
+
   const createGoogleMapsURL = (userLat: number, userLng: number, contests: typeof nearbyContests) => {
-    // Base Google Maps URL
     let url = `https://www.google.com/maps/search/?api=1&query=${userLat},${userLng}`;
-    
-    // For creating a map with multiple markers, we'd typically use the more complex URL format
-    // but for simplicity, we'll just create a link that opens Google Maps centered on the user's location
-    // In a real implementation, you might want to use the Google Maps JavaScript API
-    
     setGoogleMapURL(url);
     setIsMapLoading(false);
   };
-  
-  // Function to locate the user
+
   const locateUser = () => {
     setIsLocating(true);
-    
+
     if (!navigator.geolocation) {
       toast({
         title: "Error de geolocalización",
@@ -137,13 +122,12 @@ const Map = () => {
       setIsLocating(false);
       return;
     }
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
-        
-        // Find nearby contests and create Google Maps URL
+
         findNearbyContests(latitude, longitude);
         setIsLocating(false);
       },
@@ -158,36 +142,31 @@ const Map = () => {
       }
     );
   };
-  
-  // Open in Google Maps
+
   const openInGoogleMaps = () => {
     window.open(googleMapURL, '_blank');
   };
-  
+
   useEffect(() => {
-    // Initial loading
     setIsMapLoading(true);
-    
-    // Set a default center point for the map
+
     const defaultLocation = {
       lat: 40.4168,
       lng: -3.7038
-    }; // Madrid, Spain
-    
-    // Create a URL for Google Maps centered on Spain
+    };
+
     const url = `https://www.google.com/maps/search/?api=1&query=${defaultLocation.lat},${defaultLocation.lng}`;
     setGoogleMapURL(url);
-    
-    // Set loading to false after a short delay
+
     const timer = setTimeout(() => {
       setIsMapLoading(false);
     }, 1000);
-    
+
     return () => {
       clearTimeout(timer);
     };
   }, []);
-  
+
   return (
     <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden">
       {isMapLoading && (
@@ -198,7 +177,7 @@ const Map = () => {
           </div>
         </div>
       )}
-      
+
       {mapError && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
           <div className="flex flex-col items-center max-w-md text-center p-4">
@@ -216,8 +195,7 @@ const Map = () => {
           </div>
         </div>
       )}
-      
-      {/* Google Maps placeholder with embedded iframe */}
+
       {!isMapLoading && !mapError && (
         <div className="w-full h-full">
           <iframe
@@ -230,27 +208,27 @@ const Map = () => {
           ></iframe>
         </div>
       )}
-      
-      {/* Locate me button */}
+
       <div className="absolute top-4 left-4 z-10">
         <Button 
           onClick={locateUser}
           disabled={isLocating || isMapLoading || !!mapError}
-          className="flex items-center gap-2 bg-white text-black hover:bg-gray-100 shadow-md"
+          className="flex items-center gap-2 bg-[#9b87f5] hover:bg-[#8a76e4] text-white shadow-lg transition-all pulse-animation"
+          size="lg"
         >
           {isLocating ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Localizando...</span>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="font-medium">Localizando...</span>
             </>
           ) : (
             <>
-              <MapPin className="w-4 h-4" />
-              <span>Concursos cercanos</span>
+              <Navigation className="w-5 h-5" />
+              <span className="font-medium">CONCURSOS CERCANOS</span>
             </>
           )}
         </Button>
-        
+
         {userLocation && (
           <Button
             onClick={openInGoogleMaps}
@@ -260,8 +238,7 @@ const Map = () => {
           </Button>
         )}
       </div>
-      
-      {/* Contest list overlay when contests are found */}
+
       {nearbyContests.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -299,8 +276,7 @@ const Map = () => {
           </div>
         </motion.div>
       )}
-      
-      {/* Selected contest info overlay */}
+
       {selectedContest && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -336,6 +312,24 @@ const Map = () => {
           </div>
         </motion.div>
       )}
+
+      <style jsx>{`
+        @keyframes pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(155, 135, 245, 0.7);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(155, 135, 245, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(155, 135, 245, 0);
+          }
+        }
+
+        .pulse-animation {
+          animation: pulse 2s infinite;
+        }
+      `}</style>
     </div>
   );
 };
