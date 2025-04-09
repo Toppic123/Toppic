@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Upload, Info, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -107,7 +106,7 @@ const BannerPreview = ({ file, type, onRemove }: BannerPreviewProps) => {
         </div>
       )}
       {!dimensionsMatch && dimensions && (
-        <Alert variant="warning" className="mt-2">
+        <Alert variant="destructive" className="mt-2">
           <AlertDescription>
             Las dimensiones de la imagen ({dimensions.width}×{dimensions.height}px) no coinciden con las recomendadas ({requirements.width}×{requirements.height}px).
           </AlertDescription>
