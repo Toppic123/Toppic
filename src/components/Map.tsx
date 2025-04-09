@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, MapPin, Lock, Unlock, Loader2, Navigation } from "lucide-react";
@@ -313,7 +314,8 @@ const Map = () => {
         </motion.div>
       )}
 
-      <style jsx>{`
+      <style>
+        {`
         @keyframes pulse {
           0% {
             box-shadow: 0 0 0 0 rgba(155, 135, 245, 0.7);
@@ -329,7 +331,8 @@ const Map = () => {
         .pulse-animation {
           animation: pulse 2s infinite;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
