@@ -1,10 +1,16 @@
-
 import { useState } from "react";
 import { Camera, Plus, Trash, Edit } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, 
+  DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 
 // Mock data for contests
 const mockContests = [
@@ -240,21 +246,6 @@ const ContestFormDialog = ({
   setContestFormData, 
   handleSaveChanges 
 }: ContestFormProps) => {
-  // Import necessary UI components
-  const { 
-    Dialog, DialogContent, DialogDescription, DialogFooter, 
-    DialogHeader, DialogTitle
-  } = require("@/components/ui/dialog");
-  const { Label } = require("@/components/ui/label");
-  const { Textarea } = require("@/components/ui/textarea");
-  const { 
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
-  } = require("@/components/ui/select");
-  const { Separator } = require("@/components/ui/separator");
-  const { Switch } = require("@/components/ui/switch");
-  const { Button } = require("@/components/ui/button");
-  const { Input } = require("@/components/ui/input");
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[600px]">
