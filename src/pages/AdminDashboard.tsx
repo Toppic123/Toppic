@@ -2,13 +2,14 @@
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Users, Camera, Flag } from "lucide-react";
+import { User, Users, Camera, Flag, Image } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
 import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
+import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 
 const AdminDashboard = () => {
   const { userRole } = useAuth();
@@ -44,7 +45,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs defaultValue="contests" className="mb-8">
-          <TabsList className="grid grid-cols-4 mb-8">
+          <TabsList className="grid grid-cols-5 mb-8">
             <TabsTrigger value="contests" className="flex items-center gap-2">
               <Camera size={16} />
               <span>Concursos</span>
@@ -60,6 +61,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="support" className="flex items-center gap-2">
               <Users size={16} />
               <span>Soporte</span>
+            </TabsTrigger>
+            <TabsTrigger value="banners" className="flex items-center gap-2">
+              <Image size={16} />
+              <span>Banners</span>
             </TabsTrigger>
           </TabsList>
 
@@ -81,6 +86,11 @@ const AdminDashboard = () => {
           {/* Support Messages Tab */}
           <TabsContent value="support" className="space-y-4">
             <SupportMessagesManagement />
+          </TabsContent>
+          
+          {/* Banners Tab */}
+          <TabsContent value="banners" className="space-y-4">
+            <BannerManagement isAdmin={true} />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,8 +11,8 @@ import { Contest, ContestFormData } from "./contests/types";
 
 export const ContestManagement = () => {
   const { toast } = useToast();
-  const [contests, setContests] = useState<Contest[]>(mockContests);
-  const [filteredContests, setFilteredContests] = useState<Contest[]>(mockContests);
+  const [contests, setContests] = useState<Contest[]>([]);
+  const [filteredContests, setFilteredContests] = useState<Contest[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditContestDialogOpen, setIsEditContestDialogOpen] = useState(false);
   const [contestFormData, setContestFormData] = useState<ContestFormData>({
@@ -25,8 +25,32 @@ export const ContestManagement = () => {
     status: "pending",
     maxParticipants: 100,
     photoOwnership: true,
-    commercialUse: true
+    commercialUse: true,
+    location: "",
+    latitude: "",
+    longitude: ""
   });
+  
+  // Load contests from localStorage on component mount
+  useEffect(() => {
+    const savedContests = localStorage.getItem('contests');
+    if (savedContests) {
+      const parsedContests = JSON.parse(savedContests);
+      setContests(parsedContests);
+      setFilteredContests(parsedContests);
+    } else {
+      // Initialize with mock data if no saved contests
+      setContests(mockContests);
+      setFilteredContests(mockContests);
+    }
+  }, []);
+  
+  // Save contests to localStorage whenever they change
+  useEffect(() => {
+    if (contests.length > 0) {
+      localStorage.setItem('contests', JSON.stringify(contests));
+    }
+  }, [contests]);
 
   // Handle contest search
   const handleContestSearch = (query: string) => {
@@ -48,7 +72,10 @@ export const ContestManagement = () => {
         status: contest.status,
         maxParticipants: contest.participants,
         photoOwnership: true,
-        commercialUse: true
+        commercialUse: true,
+        location: contest.location || "",
+        latitude: contest.latitude || "",
+        longitude: contest.longitude || ""
       });
       setIsEditContestDialogOpen(true);
     }
@@ -71,7 +98,10 @@ export const ContestManagement = () => {
           title: contestFormData.title,
           organizer: contestFormData.organizer,
           status: contestFormData.status,
-          participants: contestFormData.maxParticipants
+          participants: contestFormData.maxParticipants,
+          location: contestFormData.location || "",
+          latitude: contestFormData.latitude || "",
+          longitude: contestFormData.longitude || ""
         };
       } else {
         // Add new contest
@@ -80,7 +110,10 @@ export const ContestManagement = () => {
           title: contestFormData.title,
           organizer: contestFormData.organizer,
           status: contestFormData.status,
-          participants: contestFormData.maxParticipants
+          participants: contestFormData.maxParticipants,
+          location: contestFormData.location || "",
+          latitude: contestFormData.latitude || "",
+          longitude: contestFormData.longitude || ""
         });
       }
       
@@ -129,7 +162,10 @@ export const ContestManagement = () => {
             status: "pending",
             maxParticipants: 100,
             photoOwnership: true,
-            commercialUse: true
+            commercialUse: true,
+            location: "",
+            latitude: "",
+            longitude: ""
           });
           setIsEditContestDialogOpen(true);
         }} className="flex items-center gap-2">

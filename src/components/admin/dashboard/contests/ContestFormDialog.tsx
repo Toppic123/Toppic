@@ -64,6 +64,50 @@ export const ContestFormDialog = ({
                 className="mt-1"
               />
             </div>
+            
+            {/* Location fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="location">Ubicación</Label>
+                <Select 
+                  value={contestFormData.location || ""}
+                  onValueChange={(value) => setContestFormData({...contestFormData, location: value})}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Seleccionar ubicación" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Madrid">Madrid</SelectItem>
+                    <SelectItem value="Barcelona">Barcelona</SelectItem>
+                    <SelectItem value="Valencia">Valencia</SelectItem>
+                    <SelectItem value="Sevilla">Sevilla</SelectItem>
+                    <SelectItem value="Bilbao">Bilbao</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="coordinates">Coordenadas (Lat, Long)</Label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <Input
+                    id="latitude"
+                    type="number"
+                    placeholder="Latitud"
+                    value={contestFormData.latitude || ""}
+                    onChange={(e) => setContestFormData({...contestFormData, latitude: e.target.value})}
+                    step="0.000001"
+                  />
+                  <Input
+                    id="longitude"
+                    type="number"
+                    placeholder="Longitud"
+                    value={contestFormData.longitude || ""}
+                    onChange={(e) => setContestFormData({...contestFormData, longitude: e.target.value})}
+                    step="0.000001"
+                  />
+                </div>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="startDate">Fecha de inicio</Label>

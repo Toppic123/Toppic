@@ -7,9 +7,10 @@ import BannerInfoAlert from "./BannerInfoAlert";
 
 interface BannerUploaderProps {
   onBannerUpload?: (type: BannerType, file: File) => void;
+  allowedBannerTypes?: string[];
 }
 
-const BannerUploader = ({ onBannerUpload }: BannerUploaderProps) => {
+const BannerUploader = ({ onBannerUpload, allowedBannerTypes }: BannerUploaderProps) => {
   const [uploadedBanners, setUploadedBanners] = useState<Record<BannerType, File | null>>({
     homepage: null,
     sidebar: null,
@@ -43,16 +44,22 @@ const BannerUploader = ({ onBannerUpload }: BannerUploaderProps) => {
     }));
   };
 
+  // Filter banner types based on allowedBannerTypes prop
+  const bannerTypes = allowedBannerTypes 
+    ? (Object.keys(BANNER_SIZE_REQUIREMENTS) as BannerType[]).filter(type => 
+        allowedBannerTypes.includes(type)
+      )
+    : (Object.keys(BANNER_SIZE_REQUIREMENTS) as BannerType[]);
+
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">Subir Banners Publicitarios</h2>
       <p className="text-muted-foreground">
         Sube imágenes para tus banners publicitarios según las dimensiones requeridas. 
         Los banners aparecerán en diferentes secciones de la plataforma según tu plan de suscripción.
       </p>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {(Object.keys(BANNER_SIZE_REQUIREMENTS) as BannerType[]).map(type => (
+        {bannerTypes.map(type => (
           <BannerCard 
             key={type}
             type={type}

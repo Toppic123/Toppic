@@ -1,33 +1,38 @@
 
-// Types for contest management
-export type ContestStatus = "active" | "pending" | "finished";
-
+// Contest type definition
 export interface Contest {
   id: string;
   title: string;
   organizer: string;
-  status: ContestStatus;
+  status: "pending" | "active" | "finished";
   participants: number;
+  location?: string;
+  latitude?: string;
+  longitude?: string;
 }
 
-// Contest form state type
-export type ContestFormData = {
+// ContestFormData type definition (for the form)
+export interface ContestFormData {
   title: string;
   organizer: string;
   startDate: string;
   endDate: string;
   photoDeadline: string;
   description: string;
-  status: ContestStatus;
+  status: "pending" | "active" | "finished";
   maxParticipants: number;
   photoOwnership: boolean;
   commercialUse: boolean;
-};
+  location?: string;
+  latitude?: string;
+  longitude?: string;
+}
 
-export type ContestFormProps = {
+// Props for the contest form dialog
+export interface ContestFormProps {
   isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+  setIsOpen: (value: boolean) => void;
   contestFormData: ContestFormData;
-  setContestFormData: React.Dispatch<React.SetStateAction<ContestFormData>>;
+  setContestFormData: (data: ContestFormData) => void;
   handleSaveChanges: () => void;
-};
+}
