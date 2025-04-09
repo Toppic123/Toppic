@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { User, Plus, Trash, Edit, Image } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import BannerUploader from "./BannerUploader";
+import { BannerUploader } from "./banners";
 
 // Mock data for organizers
 const mockOrganizers = [
