@@ -28,6 +28,7 @@ export type ContestFormData = {
   organizer: string;
   startDate: string;
   endDate: string;
+  photoDeadline: string; // Added photo deadline
   description: string;
   status: "active" | "pending" | "finished";
   maxParticipants: number;
@@ -37,6 +38,7 @@ export type ContestFormData = {
 
 export const ContestManagement = () => {
   const { toast } = useToast();
+  const [contests, setContests] = useState(mockContests);
   const [filteredContests, setFilteredContests] = useState(mockContests);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditContestDialogOpen, setIsEditContestDialogOpen] = useState(false);
@@ -45,6 +47,7 @@ export const ContestManagement = () => {
     organizer: "",
     startDate: "",
     endDate: "",
+    photoDeadline: "", // Added photo deadline
     description: "",
     status: "pending",
     maxParticipants: 100,
@@ -56,10 +59,10 @@ export const ContestManagement = () => {
   const handleContestSearch = (query: string) => {
     setSearchQuery(query);
     if (!query.trim()) {
-      setFilteredContests(mockContests);
+      setFilteredContests(contests);
       return;
     }
-    const filtered = mockContests.filter(contest => 
+    const filtered = contests.filter(contest => 
       contest.title.toLowerCase().includes(query.toLowerCase()) ||
       contest.organizer.toLowerCase().includes(query.toLowerCase())
     );
@@ -68,13 +71,14 @@ export const ContestManagement = () => {
 
   // Handle edit contest
   const handleEditContest = (contestId: string) => {
-    const contest = mockContests.find(c => c.id === contestId);
+    const contest = contests.find(c => c.id === contestId);
     if (contest) {
       setContestFormData({
         title: contest.title,
         organizer: contest.organizer,
         startDate: "2024-04-15",
         endDate: "2024-05-15",
+        photoDeadline: "2024-05-10", // Added photo deadline
         description: "Contest description goes here...",
         status: contest.status as "active" | "pending" | "finished",
         maxParticipants: contest.participants,
@@ -87,11 +91,51 @@ export const ContestManagement = () => {
 
   // Handle save contest changes
   const handleSaveContestChanges = () => {
+    if (contestFormData.title && contestFormData.organizer) {
+      // Get the next ID for new contests
+      const nextId = String(Math.max(...contests.map(c => parseInt(c.id))) + 1);
+      
+      // If editing an existing contest, update it; otherwise add a new one
+      const updatedContests = [...contests];
+      const existingIndex = updatedContests.findIndex(c => c.title === contestFormData.title);
+      
+      if (existingIndex >= 0) {
+        // Update existing contest
+        updatedContests[existingIndex] = {
+          ...updatedContests[existingIndex],
+          title: contestFormData.title,
+          organizer: contestFormData.organizer,
+          status: contestFormData.status,
+          participants: contestFormData.maxParticipants
+        };
+      } else {
+        // Add new contest
+        updatedContests.push({
+          id: nextId,
+          title: contestFormData.title,
+          organizer: contestFormData.organizer,
+          status: contestFormData.status,
+          participants: contestFormData.maxParticipants
+        });
+      }
+      
+      // Update state
+      setContests(updatedContests);
+      setFilteredContests(updatedContests);
+      
+      toast({
+        title: "Cambios guardados",
+        description: `El concurso "${contestFormData.title}" ha sido ${existingIndex >= 0 ? 'actualizado' : 'creado'} correctamente.`,
+      });
+    } else {
+      toast({
+        title: "Error al guardar",
+        description: "El título y el organizador son campos obligatorios.",
+        variant: "destructive",
+      });
+    }
+    
     setIsEditContestDialogOpen(false);
-    toast({
-      title: "Cambios guardados",
-      description: "Los cambios en el concurso han sido guardados correctamente.",
-    });
   };
 
   // Handle delete contest
@@ -100,7 +144,9 @@ export const ContestManagement = () => {
       title: "Concurso eliminado",
       description: `El concurso ha sido eliminado correctamente.`,
     });
-    setFilteredContests(filteredContests.filter(c => c.id !== contestId));
+    const updatedContests = contests.filter(c => c.id !== contestId);
+    setContests(updatedContests);
+    setFilteredContests(updatedContests);
   };
 
   return (
@@ -113,6 +159,7 @@ export const ContestManagement = () => {
             organizer: "",
             startDate: "",
             endDate: "",
+            photoDeadline: "", // Added photo deadline
             description: "",
             status: "pending",
             maxParticipants: 100,
@@ -254,7 +301,7 @@ const ContestFormDialog = ({
                 className="mt-1"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="startDate">Fecha de inicio</Label>
                 <Input
@@ -262,6 +309,16 @@ const ContestFormDialog = ({
                   type="date"
                   value={contestFormData.startDate}
                   onChange={(e) => setContestFormData({...contestFormData, startDate: e.target.value})}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="photoDeadline">Fecha límite de fotos</Label>
+                <Input
+                  id="photoDeadline"
+                  type="date"
+                  value={contestFormData.photoDeadline}
+                  onChange={(e) => setContestFormData({...contestFormData, photoDeadline: e.target.value})}
                   className="mt-1"
                 />
               </div>
@@ -328,6 +385,10 @@ const ContestFormDialog = ({
               />
               <Label htmlFor="commercialUse">Permitir uso comercial de las fotos ganadoras</Label>
             </div>
+            <p className="text-sm text-muted-foreground italic">
+              Al activar esta opción, los participantes aceptan que las fotos ganadoras puedan ser utilizadas con fines comerciales
+              y otorgan su consentimiento de derechos de imagen para aparecer en ellas.
+            </p>
           </div>
         </div>
         <DialogFooter>
