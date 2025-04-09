@@ -6,7 +6,7 @@ import { User, Users, Camera, Flag } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
-import OrganizerManagement from "@/components/admin/dashboard/OrganizerManagement";
+import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
 
