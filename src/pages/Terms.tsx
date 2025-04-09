@@ -46,7 +46,18 @@ const Terms = () => {
         content: "When uploading photographs to Snap Contest, you retain your copyright, but you grant us a license to display, promote, and use your content in connection with the platform's services. Additionally, you grant the contest organizers the rights specified in the rules of each contest."
       },
       {
-        title: "6. Voting and Selection System",
+        title: "6. Photo Ownership and Commercial Rights",
+        content: "By participating in contests on Snap Contest:",
+        list: [
+          "You understand that winning photos may become the property of the contest organizer if specified in the contest rules.",
+          "You consent to your winning photographs being used for commercial purposes by the contest organizer if specified in the contest rules.",
+          "You confirm that you have obtained appropriate permissions from any identifiable individuals appearing in your photos.",
+          "You consent to appearing in photographs that may be used for commercial purposes if you are visible in winning photos.",
+          "You acknowledge that contest organizers may choose to not claim ownership of photos, and in those cases, you retain all rights to your images."
+        ]
+      },
+      {
+        title: "7. Voting and Selection System",
         content: "The Snap Contest voting and selection system works as follows:",
         list: [
           "Initially, our artificial intelligence performs a first filtering of photographs based on technical and aesthetic quality criteria.",
@@ -59,7 +70,7 @@ const Terms = () => {
         ]
       },
       {
-        title: "7. Image Storage and Quality",
+        title: "8. Image Storage and Quality",
         content: "To ensure the best possible experience on the platform:",
         list: [
           "Uploaded photographs are compressed to optimize application performance during viewing and voting.",
@@ -69,7 +80,7 @@ const Terms = () => {
         ]
       },
       {
-        title: "8. Photograph Requirements",
+        title: "9. Photograph Requirements",
         content: "Regarding photographs uploaded to the platform:",
         list: [
           "Photographs can be taken with mobile phones or cameras.",
@@ -81,7 +92,7 @@ const Terms = () => {
         ]
       },
       {
-        title: "9. Organizers and Collaborators",
+        title: "10. Organizers and Collaborators",
         content: "For contest organizers:",
         list: [
           "Organizers can choose whether to allow collaborators in their contest.",
@@ -91,15 +102,15 @@ const Terms = () => {
         ]
       },
       {
-        title: "10. Limitation of Liability",
+        title: "11. Limitation of Liability",
         content: "Snap Contest will not be liable for indirect, incidental, special, consequential, or punitive damages, including loss of profits, arising from the use of our services."
       },
       {
-        title: "11. Governing Law",
+        title: "12. Governing Law",
         content: "These terms will be governed and interpreted in accordance with the laws of Snap Contest's country of operation, without regard to its conflict of law principles."
       },
       {
-        title: "12. Contact",
+        title: "13. Contact",
         content: "If you have questions about these Terms and Conditions, contact us at: terms@snapcontest.com"
       }
     ]

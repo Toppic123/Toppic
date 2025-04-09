@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, X, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,21 @@ interface PhotoCommentsProps {
 const PhotoComments = ({ photoId, onClose, isEmbedded = false }: PhotoCommentsProps) => {
   const { toast } = useToast();
   const [comment, setComment] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect mobile devices
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    
+    return () => {
+      window.removeEventListener("resize", checkIfMobile);
+    };
+  }, []);
   
   // Mock comments - in a real app this would come from an API
   const [comments, setComments] = useState<Comment[]>([
@@ -103,7 +118,7 @@ const PhotoComments = ({ photoId, onClose, isEmbedded = false }: PhotoCommentsPr
           <Separator />
         </>
       )}
-      <ScrollArea className={isEmbedded ? "h-[200px]" : "h-[250px]"}>
+      <ScrollArea className={isEmbedded ? (isMobile ? "h-[150px]" : "h-[200px]") : "h-[250px]"}>
         <CardContent className="p-4 space-y-4">
           {comments.length > 0 ? (
             comments.map((comment) => (

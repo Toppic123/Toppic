@@ -18,7 +18,8 @@ import {
   Save,
   Gift,
   Lock,
-  Unlock
+  Unlock,
+  Copyright
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -79,6 +80,10 @@ const contestFormSchema = z.object({
   isPrivate: z.boolean().default(false),
   privateAccessCode: z.string().optional(),
   
+  // Photo Sharing Settings
+  disablePhotoSharing: z.boolean().default(false),
+  ownershipTransfer: z.boolean().default(true),
+  
   // Dates
   startDate: z.date({ required_error: "Start date is required." }),
   endDate: z.date({ required_error: "End date is required." }),
@@ -112,6 +117,8 @@ const defaultValues: Partial<ContestFormValues> = {
   eventType: "general",
   isPrivate: false,
   privateAccessCode: "",
+  disablePhotoSharing: false,
+  ownershipTransfer: true,
   hasPrizes: false,
   firstPlacePrize: "",
   secondPlacePrize: "",
@@ -141,6 +148,7 @@ const Dashboard = () => {
   const hasPrizes = form.watch("hasPrizes");
   const hasVoterRewards = form.watch("hasVoterRewards");
   const isPrivate = form.watch("isPrivate");
+  const ownershipTransfer = form.watch("ownershipTransfer");
   
   return (
     <div className="container max-w-6xl mx-auto py-12 px-4">
@@ -230,7 +238,7 @@ const Dashboard = () => {
                 onValueChange={setActiveTab}
                 className="space-y-6"
               >
-                <TabsList className="grid grid-cols-2 md:grid-cols-6 w-full">
+                <TabsList className="grid grid-cols-2 md:grid-cols-7 w-full">
                   <TabsTrigger value="general">
                     <Info className="w-4 h-4 mr-2" />
                     <span>General</span>
@@ -246,6 +254,10 @@ const Dashboard = () => {
                   <TabsTrigger value="access">
                     <Lock className="w-4 h-4 mr-2" />
                     <span>Access</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="sharing">
+                    <Camera className="w-4 h-4 mr-2" />
+                    <span>Sharing</span>
                   </TabsTrigger>
                   <TabsTrigger value="dates">
                     <Calendar className="w-4 h-4 mr-2" />
@@ -497,6 +509,79 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </TabsContent>
+
+                    <TabsContent value="sharing" className="space-y-6">
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-medium">Photo Sharing & Ownership Settings</h3>
+                        
+                        <FormField
+                          control={form.control}
+                          name="disablePhotoSharing"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Disable Photo Sharing
+                                </FormLabel>
+                                <FormDescription>
+                                  Prevent participants from sharing photos from this contest on social media
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="ownershipTransfer"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <div className="space-y-0.5">
+                                <FormLabel className="text-base">
+                                  Transfer Photo Ownership to Organizer
+                                </FormLabel>
+                                <FormDescription>
+                                  Winning photos become property of the contest organizer and can be used for commercial purposes
+                                </FormDescription>
+                              </div>
+                              <FormControl>
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <div className="bg-muted p-4 rounded-lg">
+                          <div className="flex items-center gap-2">
+                            {ownershipTransfer ? (
+                              <>
+                                <Copyright className="h-5 w-5 text-amber-500" />
+                                <span className="font-medium text-amber-700">Commercial Rights Transfer</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copyright className="h-5 w-5 text-green-500" />
+                                <span className="font-medium text-green-700">Participant Retains Rights</span>
+                              </>
+                            )}
+                          </div>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {ownershipTransfer 
+                              ? "Participants understand that winning photos become the property of the contest organizer and can be used for commercial purposes. By participating, they consent to appear in winning photos."
+                              : "Participants retain full rights to their photos. The organizer does not claim ownership of any submitted photos."}
+                          </p>
+                        </div>
+                      </div>
+                    </TabsContent>
                     
                     <TabsContent value="dates" className="space-y-6">
                       <div className="space-y-4">
@@ -733,9 +818,11 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Participants section content will be displayed here.
-              </p>
+              <div className="text-center py-10">
+                <p className="text-muted-foreground">
+                  This functionality is currently in development.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -749,9 +836,11 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Photo management content will be displayed here.
-              </p>
+              <div className="text-center py-10">
+                <p className="text-muted-foreground">
+                  This functionality is currently in development.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -765,9 +854,11 @@ const Dashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Contest results and statistics will be displayed here.
-              </p>
+              <div className="text-center py-10">
+                <p className="text-muted-foreground">
+                  This functionality is currently in development.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
