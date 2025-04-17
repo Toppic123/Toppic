@@ -15,7 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// User type definition
+// User type definition with strong typing for role
 interface User {
   id: string;
   name: string;
@@ -55,7 +55,7 @@ const UserManagement = () => {
       try {
         // Para una aplicación real, esto debería hacerse a través de una API o función de Supabase
         // Aquí simulamos la carga de usuarios
-        const mockUsers = [
+        const mockUsers: User[] = [
           { id: "1", name: "Ana García", email: "ana@example.com", role: "participant", photos: 12 },
           { id: "2", name: "Juan López", email: "juan@example.com", role: "participant", photos: 8 },
           { id: "3", name: "María Torres", email: "maria@example.com", role: "organizer", photos: 0 },

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,7 @@ const Support = () => {
       }
       
       // Guardar el mensaje en la base de datos
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('support_messages')
         .insert([
           { 
@@ -43,8 +42,6 @@ const Support = () => {
         ]);
         
       if (error) throw error;
-      
-      console.log("Message saved to database:", data);
       
       toast({
         title: "Mensaje Enviado",
