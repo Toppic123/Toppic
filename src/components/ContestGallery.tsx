@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { PhotoCard } from "@/components/PhotoCard";
-import { SocialShareButtons } from "@/components/SocialShareButtons";
+import PhotoCard from "@/components/PhotoCard";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
