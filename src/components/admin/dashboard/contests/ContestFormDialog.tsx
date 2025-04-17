@@ -66,7 +66,7 @@ export const ContestFormDialog = ({
               />
             </div>
             
-            {/* Location fields */}
+            {/* Location field with Google Maps predictive search */}
             <div>
               <Label htmlFor="location">Ubicación</Label>
               <div className="mt-1">
