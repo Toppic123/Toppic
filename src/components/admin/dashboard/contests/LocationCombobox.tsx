@@ -24,9 +24,12 @@ interface LocationComboboxProps {
 
 export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => {
   const [open, setOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const [locations, setLocations] = useState<{ name: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filteredLocations, setFilteredLocations] = useState<{ name: string }[]>([]);
 
+  // Fetch all locations once on component mount
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -39,14 +42,17 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
         if (error) {
           console.error("Error fetching locations:", error);
           setLocations([]);
+          setFilteredLocations([]);
           return;
         }
 
-        // Always ensure we have a valid array
-        setLocations(Array.isArray(data) ? data : []);
+        const locationsData = Array.isArray(data) ? data : [];
+        setLocations(locationsData);
+        setFilteredLocations(locationsData);
       } catch (error) {
         console.error("Error fetching locations:", error);
         setLocations([]);
+        setFilteredLocations([]);
       } finally {
         setIsLoading(false);
       }
@@ -54,6 +60,21 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
 
     fetchLocations();
   }, []);
+
+  // Filter locations based on search input
+  const handleSearchChange = (input: string) => {
+    setSearchValue(input);
+    
+    if (!input.trim()) {
+      setFilteredLocations(locations);
+      return;
+    }
+    
+    const filtered = locations.filter(location => 
+      location.name.toLowerCase().includes(input.toLowerCase())
+    );
+    setFilteredLocations(filtered);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -71,18 +92,24 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder="Buscar ubicación..." className="h-9" />
+          <CommandInput 
+            placeholder="Buscar ubicación..." 
+            value={searchValue}
+            onValueChange={handleSearchChange}
+            className="h-9" 
+          />
           <CommandEmpty>
             {isLoading ? "Cargando ubicaciones..." : "No se encontraron ubicaciones"}
           </CommandEmpty>
           <CommandGroup className="max-h-60 overflow-y-auto">
-            {locations.map((location) => (
+            {filteredLocations.map((location) => (
               <CommandItem
                 key={location.name}
                 value={location.name}
                 onSelect={(currentValue) => {
                   onChange(currentValue);
                   setOpen(false);
+                  setSearchValue("");
                 }}
               >
                 {location.name}
