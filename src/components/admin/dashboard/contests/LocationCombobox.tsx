@@ -41,9 +41,12 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
           return;
         }
 
+        // Asegurarse de que locations siempre es un array, incluso si data es null
         setLocations(data || []);
       } catch (error) {
         console.error("Error fetching locations:", error);
+        // En caso de error, establecer locations como un array vacío
+        setLocations([]);
       } finally {
         setIsLoading(false);
       }
@@ -72,7 +75,8 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
             {isLoading ? "Cargando ubicaciones..." : "No se encontraron ubicaciones"}
           </CommandEmpty>
           <CommandGroup className="max-h-60 overflow-y-auto">
-            {locations.map((location) => (
+            {/* Asegurarse de que locations es un array antes de mapearlo */}
+            {Array.isArray(locations) && locations.map((location) => (
               <CommandItem
                 key={location.name}
                 value={location.name}
