@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import { Search, Loader2, MapPin } from "lucide-react";
+import { Search, Loader2, MapPin, AlertCircle } from "lucide-react";
 import { 
   Command, 
   CommandInput, 
@@ -11,7 +11,7 @@ import {
   CommandItem 
 } from "@/components/ui/command";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LocationComboboxProps {
   value: string;
@@ -32,6 +32,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
   const [searchValue, setSearchValue] = useState("");
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [placesService, setPlacesService] = useState<google.maps.places.PlacesService | null>(null);
   const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(null);
@@ -46,46 +47,94 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
 
   // Initialize Google Maps and services
   useEffect(() => {
+    setApiError(null);
+    const apiKey = "AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"; // This is a placeholder key and should be replaced
+    
     // Load Google Maps API script dynamically
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
     script.async = true;
     script.defer = true;
     
+    // Handle script load errors
+    script.onerror = () => {
+      console.error("Failed to load Google Maps API");
+      setApiError("No se pudo cargar la API de Google Maps. Por favor, inténtelo de nuevo más tarde.");
+      setIsLoading(false);
+    };
+    
     script.onload = () => {
-      if (mapRef.current) {
-        // Create a simple map that will be used for PlacesService
-        const mapInstance = new google.maps.Map(mapRef.current, {
-          center: { lat: 40.416775, lng: -3.70379 }, // Madrid coordinates
-          zoom: 15,
-        });
-        setMap(mapInstance);
-        
-        // Initialize services
-        setPlacesService(new google.maps.places.PlacesService(mapInstance));
-        setAutocompleteService(new google.maps.places.AutocompleteService());
+      try {
+        if (mapRef.current) {
+          // Create a simple map that will be used for PlacesService
+          const mapInstance = new google.maps.Map(mapRef.current, {
+            center: { lat: 40.416775, lng: -3.70379 }, // Madrid coordinates
+            zoom: 15,
+          });
+          setMap(mapInstance);
+          
+          // Initialize services
+          setPlacesService(new google.maps.places.PlacesService(mapRef.current));
+          setAutocompleteService(new google.maps.places.AutocompleteService());
+          console.log("Google Maps services initialized successfully");
+        }
+      } catch (error) {
+        console.error("Error initializing Google Maps:", error);
+        setApiError("Error al inicializar los servicios de ubicación. Compruebe la conexión a internet.");
       }
     };
     
-    document.head.appendChild(script);
+    // Check if script is already loaded
+    if (!document.querySelector('script[src*="maps.googleapis.com/maps/api"]')) {
+      document.head.appendChild(script);
+    } else {
+      // Script already exists, try to initialize services
+      try {
+        if (window.google && window.google.maps && window.google.maps.places) {
+          if (mapRef.current) {
+            const mapInstance = new google.maps.Map(mapRef.current, {
+              center: { lat: 40.416775, lng: -3.70379 },
+              zoom: 15,
+            });
+            setMap(mapInstance);
+            
+            setPlacesService(new google.maps.places.PlacesService(mapRef.current));
+            setAutocompleteService(new google.maps.places.AutocompleteService());
+            console.log("Google Maps services initialized from existing script");
+          }
+        }
+      } catch (error) {
+        console.error("Error initializing Google Maps from existing script:", error);
+        setApiError("Error al inicializar los servicios de ubicación. La API podría no estar activada.");
+      }
+    }
     
     return () => {
-      // Clean up the script if component unmounts
-      if (document.head.contains(script)) {
-        document.head.removeChild(script);
+      // Clean up only if we added the script
+      const addedScript = document.querySelector(`script[src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places"]`);
+      if (addedScript && document.head.contains(addedScript)) {
+        document.head.removeChild(addedScript);
       }
     };
   }, []);
 
   // Search for locations using Google Places Autocomplete
   const searchLocations = (input: string) => {
-    if (!input.trim() || !autocompleteService) {
+    if (!input.trim()) {
       setPredictions([]);
       setIsLoading(false);
       return;
     }
 
+    if (!autocompleteService) {
+      console.error("Autocomplete service not available");
+      setApiError("El servicio de autocompletado no está disponible. Asegúrese de que su API key es válida.");
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
+    setApiError(null);
     
     autocompleteService.getPlacePredictions(
       {
@@ -99,8 +148,20 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
         if (status === google.maps.places.PlacesServiceStatus.OK && results) {
           setPredictions(results);
         } else {
-          setPredictions([]);
           console.error("Place prediction error:", status);
+          setPredictions([]);
+          
+          if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+            // No error, just no results
+          } else if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
+            setApiError("Se ha superado el límite de consultas a la API. Inténtelo de nuevo más tarde.");
+          } else if (status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED) {
+            setApiError("La API de Google Maps no está habilitada. Contacte con el administrador del sitio.");
+          } else if (status === google.maps.places.PlacesServiceStatus.INVALID_REQUEST) {
+            setApiError("Petición inválida. Por favor, inténtelo de nuevo.");
+          } else {
+            setApiError("Error desconocido al buscar ubicaciones. Por favor, inténtelo de nuevo más tarde.");
+          }
         }
       }
     );
@@ -109,12 +170,32 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
   // Handle search input change
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
+    // Reset error message when user types
+    if (apiError) setApiError(null);
     searchLocations(value);
+  };
+
+  // Handle manual location input (fallback when API fails)
+  const handleManualInput = () => {
+    if (searchValue.trim()) {
+      onChange(searchValue);
+      setPredictions([]);
+      toast({
+        title: "Ubicación guardada",
+        description: "La ubicación se ha guardado manualmente.",
+      });
+    }
   };
 
   // Handle location selection
   const handleLocationSelect = (placeId: string, description: string) => {
-    if (!placesService) return;
+    if (!placesService) {
+      // Fallback if places service is not available
+      onChange(description);
+      setSearchValue(description);
+      setPredictions([]);
+      return;
+    }
     
     placesService.getDetails(
       {
@@ -144,6 +225,12 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
 
   return (
     <div className="relative">
+      {apiError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{apiError}</AlertDescription>
+        </Alert>
+      )}
       <div className="space-y-2">
         <Command className="rounded-lg border shadow-md">
           <div className="flex items-center border-b px-3">
@@ -165,6 +252,14 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
               <CommandEmpty>
                 <div className="py-6 text-center text-sm">
                   <p>No se encontraron ubicaciones</p>
+                  {apiError ? (
+                    <button 
+                      onClick={handleManualInput}
+                      className="text-primary hover:underline mt-2 text-xs"
+                    >
+                      Usar texto ingresado como ubicación
+                    </button>
+                  ) : null}
                 </div>
               </CommandEmpty>
             ) : (
