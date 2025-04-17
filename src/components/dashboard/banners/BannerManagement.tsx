@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BannerUploader } from "@/components/admin/dashboard/banners";
-import { mockContests } from "@/components/admin/dashboard/contests/contestUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 // Types for banner subscription levels
 export type SubscriptionLevel = "basic" | "standard" | "premium";
@@ -30,7 +30,43 @@ const BannerManagement = ({
 }: BannerManagementProps) => {
   const [selectedContest, setSelectedContest] = useState<string>("all");
   const { toast } = useToast();
-  const [contests, setContests] = useState(mockContests);
+  const [contests, setContests] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch contests from the database
+  useEffect(() => {
+    async function fetchContests() {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('contests')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          console.error('Error fetching contests for banner management:', error);
+          toast({
+            title: "Error al cargar concursos",
+            description: "No se pudieron cargar los concursos. Inténtalo de nuevo más tarde.",
+            variant: "destructive",
+          });
+          const { mockContests } = await import('@/components/admin/dashboard/contests/contestUtils');
+          setContests(mockContests);
+        } else {
+          console.log('Fetched contests for banner management:', data);
+          setContests(data || []);
+        }
+      } catch (err) {
+        console.error('Exception fetching contests for banner management:', err);
+        const { mockContests } = await import('@/components/admin/dashboard/contests/contestUtils');
+        setContests(mockContests);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    fetchContests();
+  }, [toast]);
   
   // Filter contests by organizer if not admin and organizerId provided
   const filteredContests = isAdmin 
@@ -71,11 +107,17 @@ const BannerManagement = ({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos los concursos</SelectItem>
-                  {filteredContests.map(contest => (
-                    <SelectItem key={contest.id} value={contest.id}>
-                      {contest.title}
-                    </SelectItem>
-                  ))}
+                  {isLoading ? (
+                    <SelectItem value="loading" disabled>Cargando concursos...</SelectItem>
+                  ) : filteredContests.length > 0 ? (
+                    filteredContests.map(contest => (
+                      <SelectItem key={contest.id} value={contest.id}>
+                        {contest.title}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="no-contests" disabled>No hay concursos disponibles</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
