@@ -5,6 +5,7 @@ import ContestHeader from "./contests/ContestHeader";
 import ContestSearch from "./contests/ContestSearch";
 import ContestList from "./contests/ContestList";
 import ContestFormDialog from "./contests/ContestFormDialog";
+import { useEffect } from "react";
 
 export const ContestManagement = () => {
   const {
@@ -25,9 +26,14 @@ export const ContestManagement = () => {
     handleCreateNewContest,
     handleSaveContestChanges
   } = useContestForm(fetchContests);
+  
+  // Re-fetch contests when the component mounts
+  useEffect(() => {
+    fetchContests();
+  }, []);
 
   return (
-    <>
+    <div className="space-y-4">
       <ContestHeader onCreateNew={handleCreateNewContest} />
       
       <ContestSearch 
@@ -50,7 +56,7 @@ export const ContestManagement = () => {
         setContestFormData={setContestFormData}
         handleSaveChanges={handleSaveContestChanges}
       />
-    </>
+    </div>
   );
 };
 
