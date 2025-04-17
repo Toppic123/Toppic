@@ -9,75 +9,83 @@ export const useGoogleMapsServices = () => {
     autocompleteService: null
   });
   const [apiError, setApiError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setApiError(null);
-    const apiKey = "AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"; // This should be moved to env
+    setIsLoading(true);
+    
+    // Esta API key debería moverse a una variable de entorno
+    // o configuración central para facilitar su cambio
+    const apiKey = "AIzaSyBs3FCn7xQBxTUFMSNVc6SH1tSwbIXMT74"; 
     
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps`;
     script.async = true;
     script.defer = true;
     
-    script.onerror = () => {
-      console.error("Failed to load Google Maps API");
-      setApiError("No se pudo cargar la API de Google Maps. Por favor, inténtelo de nuevo más tarde.");
-    };
-    
-    script.onload = () => {
+    // Función global para callback de Google Maps
+    window.initGoogleMaps = () => {
       try {
         if (mapRef.current) {
           const mapInstance = new google.maps.Map(mapRef.current, {
-            center: { lat: 40.416775, lng: -3.70379 },
+            center: { lat: 40.416775, lng: -3.70379 }, // Centro en España
             zoom: 15,
           });
           
+          const placesService = new google.maps.places.PlacesService(mapRef.current);
+          const autocompleteService = new google.maps.places.AutocompleteService();
+          
           setServices({
             map: mapInstance,
-            placesService: new google.maps.places.PlacesService(mapRef.current),
-            autocompleteService: new google.maps.places.AutocompleteService()
+            placesService: placesService,
+            autocompleteService: autocompleteService
           });
           
           console.log("Google Maps services initialized successfully");
         }
+        setIsLoading(false);
       } catch (error) {
         console.error("Error initializing Google Maps:", error);
         setApiError("Error al inicializar los servicios de ubicación. Compruebe la conexión a internet.");
+        setIsLoading(false);
       }
     };
     
+    // Manejador de errores para la carga del script
+    script.onerror = () => {
+      console.error("Failed to load Google Maps API");
+      setApiError("No se pudo cargar la API de Google Maps. Por favor, inténtelo de nuevo más tarde.");
+      setIsLoading(false);
+    };
+    
+    // Evitar cargar el script múltiples veces
     if (!document.querySelector('script[src*="maps.googleapis.com/maps/api"]')) {
       document.head.appendChild(script);
-    } else {
-      try {
-        if (window.google && window.google.maps && window.google.maps.places && mapRef.current) {
-          const mapInstance = new google.maps.Map(mapRef.current, {
-            center: { lat: 40.416775, lng: -3.70379 },
-            zoom: 15,
-          });
-          
-          setServices({
-            map: mapInstance,
-            placesService: new google.maps.places.PlacesService(mapRef.current),
-            autocompleteService: new google.maps.places.AutocompleteService()
-          });
-          
-          console.log("Google Maps services initialized from existing script");
-        }
-      } catch (error) {
-        console.error("Error initializing Google Maps from existing script:", error);
-        setApiError("Error al inicializar los servicios de ubicación. La API podría no estar activada.");
-      }
+    } else if (window.google && window.google.maps && window.google.maps.places) {
+      // Si el script ya está cargado, inicializar directamente
+      window.initGoogleMaps();
     }
     
     return () => {
-      const addedScript = document.querySelector(`script[src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places"]`);
+      // Limpiar el callback global
+      delete window.initGoogleMaps;
+      
+      // Eliminar el script sólo si lo añadimos nosotros
+      const addedScript = document.querySelector(`script[src="https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&callback=initGoogleMaps"]`);
       if (addedScript && document.head.contains(addedScript)) {
         document.head.removeChild(addedScript);
       }
     };
   }, []);
 
-  return { services, apiError, mapRef };
+  return { services, apiError, isLoading, mapRef };
 };
+
+// Declaración global para TypeScript
+declare global {
+  interface Window {
+    initGoogleMaps: () => void;
+  }
+}

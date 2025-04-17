@@ -18,3 +18,20 @@ export interface GoogleMapsServices {
   placesService: google.maps.places.PlacesService | null;
   autocompleteService: google.maps.places.AutocompleteService | null;
 }
+
+export interface GeolocationResult {
+  address: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
+
+export interface LocationDetails {
+  address: string;
+  placeId: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+}
