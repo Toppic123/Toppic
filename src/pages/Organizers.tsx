@@ -46,6 +46,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import LocationCombobox from "@/components/admin/dashboard/contests/LocationCombobox";
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
@@ -65,6 +66,9 @@ const formSchema = z.object({
   }),
   photoType: z.string({
     required_error: "Please select the type of photography.",
+  }),
+  location: z.string().min(2, {
+    message: "Please enter a valid location.",
   }),
   eventStartDate: z.string({
     required_error: "Please select a start date.",
@@ -103,6 +107,7 @@ const Organizers = () => {
       companyName: "",
       eventDescription: "",
       photoType: "",
+      location: "",
       eventStartDate: "",
       eventEndDate: "",
       votingEndDate: "",
@@ -386,6 +391,30 @@ const Organizers = () => {
                                   {...field} 
                                 />
                               </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="location"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="flex items-center gap-1">
+                                <MapPin className="h-4 w-4" />
+                                Ubicación
+                                <span className="text-xs font-normal text-muted-foreground">(requerido)</span>
+                              </FormLabel>
+                              <FormControl>
+                                <LocationCombobox 
+                                  value={field.value} 
+                                  onChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                Especifica la ubicación exacta del evento o la zona para las fotografías
+                              </FormDescription>
                               <FormMessage />
                             </FormItem>
                           )}

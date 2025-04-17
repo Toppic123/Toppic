@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,28 @@ const Support = () => {
         ]);
         
       if (error) throw error;
+      
+      // Llamar a la función edge para enviar la notificación por email
+      const notificationResponse = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-support-notification`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            name: `${firstName} ${lastName}`,
+            email,
+            subject: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+            message
+          })
+        }
+      );
+      
+      if (!notificationResponse.ok) {
+        console.warn("No se pudo enviar la notificación al administrador, pero el mensaje se guardó correctamente.");
+      }
       
       toast({
         title: "Mensaje Enviado",
