@@ -10,6 +10,7 @@ import DashboardSettings from "./pages/DashboardSettings";
 import NotFound from "./pages/NotFound";
 import Contests from "./pages/Contests";
 import ContestDetail from "./pages/ContestDetail";
+import ContestGalleryPage from "./pages/ContestGalleryPage";
 import Upload from "./pages/Upload";
 import GalleryPage from "./pages/GalleryPage";
 import GalleryManagement from "./pages/GalleryManagement";
@@ -80,6 +81,8 @@ function App() {
                 } />
                 <Route path="/contests" element={<Contests />} />
                 <Route path="/contests/:id" element={<ContestDetail />} />
+                {/* New route for contest gallery */}
+                <Route path="/contests/:id/gallery" element={<ContestGalleryPage />} />
                 <Route path="/upload" element={
                   <RoleBasedRoute allowedRoles={['participant', 'admin']}>
                     <Upload />
