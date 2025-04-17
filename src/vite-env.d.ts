@@ -38,7 +38,8 @@ declare namespace google {
         };
       }
 
-      interface AutocompleteService {
+      class AutocompleteService {
+        constructor();
         getPlacePredictions(
           request: AutocompleteServiceOptions,
           callback: (
@@ -50,4 +51,3 @@ declare namespace google {
     }
   }
 }
-
