@@ -4,6 +4,31 @@
 // Google Maps API type definitions
 declare namespace google {
   namespace maps {
+    class Map {
+      constructor(mapDiv: Element, opts?: MapOptions);
+      setCenter(latLng: LatLng): void;
+      getCenter(): LatLng;
+      setZoom(zoom: number): void;
+      getZoom(): number;
+    }
+
+    interface MapOptions {
+      center?: LatLng | LatLngLiteral;
+      zoom?: number;
+      [key: string]: any;
+    }
+
+    class LatLng {
+      constructor(lat: number, lng: number);
+      lat(): number;
+      lng(): number;
+    }
+
+    interface LatLngLiteral {
+      lat: number;
+      lng: number;
+    }
+
     namespace places {
       interface PlacesServiceStatus {
         OK: string;
@@ -38,13 +63,33 @@ declare namespace google {
         };
       }
 
+      class PlacesService {
+        constructor(attrContainer: HTMLDivElement | Map);
+        getDetails(
+          request: {
+            placeId: string;
+            fields?: string[];
+          },
+          callback: (result: PlaceResult | null, status: string) => void
+        ): void;
+      }
+
+      interface PlaceResult {
+        name?: string;
+        formatted_address?: string;
+        geometry?: {
+          location?: LatLng;
+        };
+        [key: string]: any;
+      }
+
       class AutocompleteService {
         constructor();
         getPlacePredictions(
           request: AutocompleteServiceOptions,
           callback: (
             results: AutocompletePrediction[] | null,
-            status: keyof PlacesServiceStatus
+            status: string
           ) => void
         ): void;
       }
