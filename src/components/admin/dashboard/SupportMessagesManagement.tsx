@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { Eye, CheckCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Eye, CheckCircle, Bell, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,44 +10,116 @@ import {
   DialogHeader, DialogTitle
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-// Mock data for support messages
-const mockSupportMessages = [
-  { 
-    id: "1",
-    name: "Javier Méndez",
-    email: "javier@example.com",
-    subject: "Problema con la subida de fotos",
-    message: "No puedo subir fotos desde mi móvil. Me aparece un error cada vez que intento participar en un concurso.",
-    date: new Date(2025, 3, 5),
-    status: "pending"
-  },
-  { 
-    id: "2",
-    name: "Laura Fernández",
-    email: "laura@example.com",
-    subject: "Consulta sobre premios",
-    message: "¿Cómo puedo reclamar mi premio después de ganar un concurso? No he recibido ninguna notificación.",
-    date: new Date(2025, 3, 2),
-    status: "resolved"
-  },
-  { 
-    id: "3",
-    name: "Miguel Ángel Rodríguez",
-    email: "miguel@example.com",
-    subject: "Solicitud de reembolso",
-    message: "Pagué por error la suscripción premium dos veces en el mismo mes. ¿Es posible obtener un reembolso?",
-    date: new Date(2025, 3, 1),
-    status: "pending"
-  }
-];
+// Definición del tipo para los mensajes de soporte
+interface SupportMessage {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  date: Date;
+  status: "pending" | "resolved";
+}
 
 const SupportMessagesManagement = () => {
   const { toast } = useToast();
-  const [filteredMessages, setFilteredMessages] = useState(mockSupportMessages);
+  const [supportMessages, setSupportMessages] = useState<SupportMessage[]>([]);
+  const [filteredMessages, setFilteredMessages] = useState<SupportMessage[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isViewMessageDialogOpen, setIsViewMessageDialogOpen] = useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+  
+  // Cargar mensajes de soporte de la base de datos
+  useEffect(() => {
+    const fetchSupportMessages = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('support_messages')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        if (data) {
+          const formattedData = data.map(msg => ({
+            id: msg.id,
+            name: msg.name,
+            email: msg.email,
+            subject: msg.subject,
+            message: msg.message,
+            date: new Date(msg.created_at),
+            status: msg.status as "pending" | "resolved"
+          }));
+          
+          setSupportMessages(formattedData);
+          setFilteredMessages(formattedData);
+          
+          // Verificar si hay mensajes pendientes
+          const pendingMessages = formattedData.filter(msg => msg.status === 'pending');
+          setHasNewMessages(pendingMessages.length > 0);
+          
+          if (pendingMessages.length > 0) {
+            toast({
+              title: `${pendingMessages.length} mensajes pendientes`,
+              description: "Tienes mensajes de soporte sin resolver.",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching support messages:", error);
+        toast({
+          title: "Error al cargar mensajes",
+          description: "No se pudieron cargar los mensajes de soporte.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSupportMessages();
+    
+    // Configurar suscripción a cambios en tiempo real
+    const subscription = supabase
+      .channel('table-db-changes')
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'support_messages' 
+      }, (payload) => {
+        console.log('Nuevo mensaje recibido:', payload);
+        
+        const newMessage = {
+          id: payload.new.id,
+          name: payload.new.name,
+          email: payload.new.email,
+          subject: payload.new.subject,
+          message: payload.new.message,
+          date: new Date(payload.new.created_at),
+          status: payload.new.status as "pending" | "resolved"
+        };
+        
+        setSupportMessages(prev => [newMessage, ...prev]);
+        setFilteredMessages(prev => [newMessage, ...prev]);
+        setHasNewMessages(true);
+        
+        toast({
+          title: "Nuevo mensaje de soporte",
+          description: `De: ${payload.new.name}`,
+        });
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [toast]);
   
   // Format date function
   const formatDate = (date: Date) => {
@@ -62,10 +134,10 @@ const SupportMessagesManagement = () => {
   const handleMessageSearch = (query: string) => {
     setSearchQuery(query);
     if (!query.trim()) {
-      setFilteredMessages(mockSupportMessages);
+      setFilteredMessages(supportMessages);
       return;
     }
-    const filtered = mockSupportMessages.filter(message => 
+    const filtered = supportMessages.filter(message => 
       message.name.toLowerCase().includes(query.toLowerCase()) ||
       message.email.toLowerCase().includes(query.toLowerCase()) ||
       message.subject.toLowerCase().includes(query.toLowerCase()) ||
@@ -81,23 +153,56 @@ const SupportMessagesManagement = () => {
   };
 
   // Handle mark support message as resolved
-  const handleMarkAsResolved = (messageId: string) => {
-    setFilteredMessages(filteredMessages.map(m => 
-      m.id === messageId ? { ...m, status: "resolved" } : m
-    ));
-    toast({
-      title: "Mensaje marcado como resuelto",
-      description: "El mensaje de soporte ha sido marcado como resuelto.",
-    });
-    setIsViewMessageDialogOpen(false);
+  const handleMarkAsResolved = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('support_messages')
+        .update({ status: 'resolved' })
+        .eq('id', messageId);
+        
+      if (error) throw error;
+      
+      setSupportMessages(messages => 
+        messages.map(m => m.id === messageId ? { ...m, status: "resolved" } : m)
+      );
+      setFilteredMessages(messages => 
+        messages.map(m => m.id === messageId ? { ...m, status: "resolved" } : m)
+      );
+      
+      toast({
+        title: "Mensaje marcado como resuelto",
+        description: "El mensaje de soporte ha sido marcado como resuelto.",
+      });
+      
+      // Verificar si aún hay mensajes pendientes
+      const stillHasPending = supportMessages.some(m => m.id !== messageId && m.status === 'pending');
+      setHasNewMessages(stillHasPending);
+      
+      setIsViewMessageDialogOpen(false);
+    } catch (error) {
+      console.error("Error updating message status:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el estado del mensaje.",
+        variant: "destructive"
+      });
+    }
   };
   
   // Get selected message details
-  const selectedMessage = mockSupportMessages.find(m => m.id === selectedMessageId);
+  const selectedMessage = supportMessages.find(m => m.id === selectedMessageId);
 
   return (
     <>
-      <h2 className="text-xl font-semibold">Mensajes de Soporte</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">Mensajes de Soporte</h2>
+        {hasNewMessages && (
+          <Badge variant="destructive" className="flex items-center gap-1">
+            <Bell className="h-3 w-3" />
+            <span>Mensajes pendientes</span>
+          </Badge>
+        )}
+      </div>
       
       <div className="relative w-full mb-4">
         <Input 
@@ -108,47 +213,61 @@ const SupportMessagesManagement = () => {
         />
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-muted">
-              <th className="p-3 text-left">Remitente</th>
-              <th className="p-3 text-left">Asunto</th>
-              <th className="p-3 text-left">Fecha</th>
-              <th className="p-3 text-left">Estado</th>
-              <th className="p-3 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMessages.map(message => (
-              <tr key={message.id} className="border-b hover:bg-muted/50">
-                <td className="p-3">
-                  <div>
-                    <p className="font-medium">{message.name}</p>
-                    <p className="text-xs text-muted-foreground">{message.email}</p>
-                  </div>
-                </td>
-                <td className="p-3">{message.subject}</td>
-                <td className="p-3">{formatDate(message.date)}</td>
-                <td className="p-3">
-                  <Badge variant={message.status === "pending" ? "outline" : "secondary"}>
-                    {message.status === "pending" ? "Pendiente" : "Resuelto"}
-                  </Badge>
-                </td>
-                <td className="p-3 text-center">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => handleViewMessage(message.id)}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Eye size={16} />
-                  </Button>
-                </td>
+      {isLoading ? (
+        <div className="flex justify-center items-center p-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : filteredMessages.length === 0 ? (
+        <Alert>
+          <AlertDescription>
+            {searchQuery ? 
+              "No se encontraron mensajes que coincidan con tu búsqueda." : 
+              "No hay mensajes de soporte. Cuando los usuarios envíen consultas, aparecerán aquí."}
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-muted">
+                <th className="p-3 text-left">Remitente</th>
+                <th className="p-3 text-left">Asunto</th>
+                <th className="p-3 text-left">Fecha</th>
+                <th className="p-3 text-left">Estado</th>
+                <th className="p-3 text-center">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filteredMessages.map(message => (
+                <tr key={message.id} className="border-b hover:bg-muted/50">
+                  <td className="p-3">
+                    <div>
+                      <p className="font-medium">{message.name}</p>
+                      <p className="text-xs text-muted-foreground">{message.email}</p>
+                    </div>
+                  </td>
+                  <td className="p-3">{message.subject}</td>
+                  <td className="p-3">{formatDate(message.date)}</td>
+                  <td className="p-3">
+                    <Badge variant={message.status === "pending" ? "outline" : "secondary"}>
+                      {message.status === "pending" ? "Pendiente" : "Resuelto"}
+                    </Badge>
+                  </td>
+                  <td className="p-3 text-center">
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => handleViewMessage(message.id)}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Eye size={16} />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* View Support Message Dialog */}
       <Dialog open={isViewMessageDialogOpen} onOpenChange={setIsViewMessageDialogOpen}>

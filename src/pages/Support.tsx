@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 const Support = () => {
   const [firstName, setFirstName] = useState("");
@@ -23,15 +24,31 @@ const Support = () => {
     setIsSubmitting(true);
     
     try {
-      // Here you would typically send the support request to your backend
-      console.log("Support request submitted:", { firstName, lastName, email, message });
+      // Comprobar que todos los campos están completos
+      if (!firstName.trim() || !lastName.trim() || !email.trim() || !message.trim()) {
+        throw new Error("Por favor, completa todos los campos.");
+      }
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Guardar el mensaje en la base de datos
+      const { data, error } = await supabase
+        .from('support_messages')
+        .insert([
+          { 
+            name: `${firstName} ${lastName}`,
+            email,
+            subject: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
+            message,
+            status: 'pending'
+          }
+        ]);
+        
+      if (error) throw error;
+      
+      console.log("Message saved to database:", data);
       
       toast({
-        title: "Request Submitted",
-        description: "We've received your message. We'll respond soon.",
+        title: "Mensaje Enviado",
+        description: "Hemos recibido tu mensaje. Te responderemos pronto.",
       });
       
       // Reset form
@@ -43,7 +60,7 @@ const Support = () => {
       console.error("Error submitting support request:", error);
       toast({
         title: "Error",
-        description: "Could not send your message. Please try again.",
+        description: error instanceof Error ? error.message : "No se pudo enviar tu mensaje. Por favor, inténtalo de nuevo.",
         variant: "destructive"
       });
     } finally {
@@ -60,9 +77,9 @@ const Support = () => {
     >
       <Card>
         <CardHeader>
-          <CardTitle>Support</CardTitle>
+          <CardTitle>Soporte</CardTitle>
           <CardDescription>
-            We're here to help. Send us your inquiry and we'll respond as soon as possible.
+            Estamos aquí para ayudarte. Envíanos tu consulta y responderemos lo antes posible.
           </CardDescription>
         </CardHeader>
         
@@ -70,29 +87,28 @@ const Support = () => {
           <Alert className="mb-6">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              Support messages are currently sent to the system administrator via email. To access these messages, 
-              you need to check the email account configured in the backend system. If you're the administrator and
-              not receiving these emails, please contact technical support to verify the email configuration.
+              Los mensajes de soporte se envían directamente al administrador del sistema. 
+              Los administradores recibirán una notificación inmediata y podrán responder a tu consulta.
             </AlertDescription>
           </Alert>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="firstName">Nombre</Label>
                 <Input 
                   id="firstName" 
-                  placeholder="Your first name" 
+                  placeholder="Tu nombre" 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName">Apellido</Label>
                 <Input 
                   id="lastName" 
-                  placeholder="Your last name" 
+                  placeholder="Tu apellido" 
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
@@ -105,7 +121,7 @@ const Support = () => {
               <Input 
                 id="email" 
                 type="email"
-                placeholder="your@email.com" 
+                placeholder="tu@email.com" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -113,10 +129,10 @@ const Support = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message">Your inquiry</Label>
+              <Label htmlFor="message">Tu consulta</Label>
               <Textarea 
                 id="message" 
-                placeholder="Describe your problem or question..." 
+                placeholder="Describe tu problema o pregunta..." 
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className="min-h-[120px]"
@@ -133,7 +149,7 @@ const Support = () => {
             onClick={handleSubmit}
           >
             <MessageSquare className="mr-2 h-4 w-4" />
-            {isSubmitting ? "Sending..." : "Send Message"}
+            {isSubmitting ? "Enviando..." : "Enviar Mensaje"}
           </Button>
         </CardFooter>
       </Card>
