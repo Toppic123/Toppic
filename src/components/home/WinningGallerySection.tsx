@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, X, Share2, ArrowRight, Instagram } from "lucide-react";
@@ -89,12 +90,8 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                 alt={photo.title} 
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Display fallback for broken images
+                  // Silently replace with a placeholder image without showing toast
                   (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
-                  toast({
-                    title: "Image not available",
-                    description: "Using a placeholder image instead"
-                  });
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 md:p-3">
@@ -141,6 +138,7 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                   alt={selectedPhoto?.title} 
                   className="max-w-full max-h-[70vh] object-contain"
                   onError={(e) => {
+                    // Silently replace with a placeholder image without showing toast
                     (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
                   }}
                 />

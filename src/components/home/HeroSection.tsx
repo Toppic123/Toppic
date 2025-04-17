@@ -48,10 +48,9 @@ const HeroSection = ({ heroImages, texts }: HeroSectionProps) => {
               alt={`Photography ${image.category}`}
               className="absolute w-full h-full object-cover"
               onError={(e) => {
-                // Instead of showing an alert, silently replace with a placeholder
+                // Silently replace with a placeholder image without showing any alerts or toasts
                 e.currentTarget.src = "/placeholder.svg";
                 e.currentTarget.style.objectFit = "cover";
-                // No toast or console log to avoid notifications
               }}
             />
             <div className="absolute inset-0 bg-black/50" />
