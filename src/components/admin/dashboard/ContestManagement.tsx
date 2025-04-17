@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import ContestFormDialog from "./contests/ContestFormDialog";
 import ContestCard from "./contests/ContestCard";
-import { mockContests, filterContests, getNextContestId } from "./contests/contestUtils";
+import { filterContests, getNextContestId } from "./contests/contestUtils";
 import { Contest, ContestFormData } from "./contests/types";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ContestManagement = () => {
   const { toast } = useToast();
@@ -15,6 +16,7 @@ export const ContestManagement = () => {
   const [filteredContests, setFilteredContests] = useState<Contest[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditContestDialogOpen, setIsEditContestDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [contestFormData, setContestFormData] = useState<ContestFormData>({
     title: "",
     organizer: "",
@@ -27,30 +29,56 @@ export const ContestManagement = () => {
     photoOwnership: true,
     commercialUse: true,
     location: "",
-    latitude: "",
-    longitude: ""
   });
   
-  // Load contests from localStorage on component mount
+  // Cargar concursos desde Supabase al montar el componente
   useEffect(() => {
-    const savedContests = localStorage.getItem('contests');
-    if (savedContests) {
-      const parsedContests = JSON.parse(savedContests);
-      setContests(parsedContests);
-      setFilteredContests(parsedContests);
-    } else {
-      // Initialize with mock data if no saved contests
-      setContests(mockContests);
-      setFilteredContests(mockContests);
-    }
+    fetchContests();
   }, []);
   
-  // Save contests to localStorage whenever they change
-  useEffect(() => {
-    if (contests.length > 0) {
-      localStorage.setItem('contests', JSON.stringify(contests));
+  // Obtener los concursos desde Supabase
+  const fetchContests = async () => {
+    try {
+      setIsLoading(true);
+      
+      const { data, error } = await supabase
+        .from('contests')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error("Error fetching contests:", error);
+        toast({
+          title: "Error al cargar concursos",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Transformar el formato de datos
+      const formattedContests = data.map(contest => ({
+        id: contest.id,
+        title: contest.title,
+        organizer: contest.organizer,
+        status: contest.status,
+        participants: contest.participants,
+        location: contest.location || "",
+      }));
+      
+      setContests(formattedContests);
+      setFilteredContests(formattedContests);
+    } catch (error) {
+      console.error("Error fetching contests:", error);
+      toast({
+        title: "Error al cargar concursos",
+        description: "No se pudieron cargar los concursos. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-  }, [contests]);
+  };
 
   // Handle contest search
   const handleContestSearch = (query: string) => {
@@ -65,66 +93,90 @@ export const ContestManagement = () => {
       setContestFormData({
         title: contest.title,
         organizer: contest.organizer,
-        startDate: "2024-04-15",
-        endDate: "2024-05-15",
-        photoDeadline: "2024-05-10",
-        description: "Contest description goes here...",
-        status: contest.status,
+        startDate: "",
+        endDate: "",
+        photoDeadline: "",
+        description: "",
+        status: contest.status as "pending" | "active" | "finished",
         maxParticipants: contest.participants,
         photoOwnership: true,
         commercialUse: true,
         location: contest.location || "",
-        latitude: contest.latitude || "",
-        longitude: contest.longitude || ""
       });
       setIsEditContestDialogOpen(true);
     }
   };
 
   // Handle save contest changes
-  const handleSaveContestChanges = () => {
+  const handleSaveContestChanges = async () => {
     if (contestFormData.title && contestFormData.organizer) {
-      // Get the next ID for new contests
-      const nextId = getNextContestId(contests);
-      
-      // If editing an existing contest, update it; otherwise add a new one
-      const updatedContests = [...contests];
-      const existingIndex = updatedContests.findIndex(c => c.title === contestFormData.title);
-      
-      if (existingIndex >= 0) {
-        // Update existing contest
-        updatedContests[existingIndex] = {
-          ...updatedContests[existingIndex],
-          title: contestFormData.title,
-          organizer: contestFormData.organizer,
-          status: contestFormData.status,
-          participants: contestFormData.maxParticipants,
-          location: contestFormData.location || "",
-          latitude: contestFormData.latitude || "",
-          longitude: contestFormData.longitude || ""
-        };
-      } else {
-        // Add new contest
-        updatedContests.push({
-          id: nextId,
-          title: contestFormData.title,
-          organizer: contestFormData.organizer,
-          status: contestFormData.status,
-          participants: contestFormData.maxParticipants,
-          location: contestFormData.location || "",
-          latitude: contestFormData.latitude || "",
-          longitude: contestFormData.longitude || ""
+      try {
+        // Si estamos editando un concurso existente
+        const existingContest = contests.find(c => c.title === contestFormData.title);
+        
+        if (existingContest) {
+          // Actualizar concurso existente
+          const { error } = await supabase
+            .from('contests')
+            .update({
+              title: contestFormData.title,
+              organizer: contestFormData.organizer,
+              description: contestFormData.description,
+              status: contestFormData.status,
+              participants: contestFormData.maxParticipants,
+              location: contestFormData.location,
+              start_date: contestFormData.startDate ? new Date(contestFormData.startDate).toISOString() : null,
+              end_date: contestFormData.endDate ? new Date(contestFormData.endDate).toISOString() : null,
+              photo_deadline: contestFormData.photoDeadline ? new Date(contestFormData.photoDeadline).toISOString() : null,
+              photo_ownership: contestFormData.photoOwnership,
+              commercial_use: contestFormData.commercialUse,
+            })
+            .eq('id', existingContest.id);
+            
+          if (error) throw error;
+          
+          toast({
+            title: "Cambios guardados",
+            description: `El concurso "${contestFormData.title}" ha sido actualizado correctamente.`,
+          });
+        } else {
+          // Crear nuevo concurso
+          const { data, error } = await supabase
+            .from('contests')
+            .insert({
+              title: contestFormData.title,
+              organizer: contestFormData.organizer,
+              description: contestFormData.description,
+              status: contestFormData.status,
+              participants: contestFormData.maxParticipants,
+              location: contestFormData.location,
+              start_date: contestFormData.startDate ? new Date(contestFormData.startDate).toISOString() : null,
+              end_date: contestFormData.endDate ? new Date(contestFormData.endDate).toISOString() : null,
+              photo_deadline: contestFormData.photoDeadline ? new Date(contestFormData.photoDeadline).toISOString() : null,
+              photo_ownership: contestFormData.photoOwnership,
+              commercial_use: contestFormData.commercialUse,
+            })
+            .select();
+            
+          if (error) throw error;
+          
+          toast({
+            title: "Concurso creado",
+            description: `El concurso "${contestFormData.title}" ha sido creado correctamente.`,
+          });
+        }
+        
+        // Recargar los concursos
+        await fetchContests();
+        
+      } catch (error: any) {
+        console.error("Error saving contest:", error);
+        toast({
+          title: "Error al guardar",
+          description: error.message || "No se pudo guardar el concurso. Inténtalo de nuevo.",
+          variant: "destructive",
         });
       }
-      
-      // Update state
-      setContests(updatedContests);
-      setFilteredContests(filterContests(updatedContests, searchQuery));
-      
-      toast({
-        title: "Cambios guardados",
-        description: `El concurso "${contestFormData.title}" ha sido ${existingIndex >= 0 ? 'actualizado' : 'creado'} correctamente.`,
-      });
     } else {
       toast({
         title: "Error al guardar",
@@ -137,14 +189,31 @@ export const ContestManagement = () => {
   };
 
   // Handle delete contest
-  const handleDeleteContest = (contestId: string) => {
-    toast({
-      title: "Concurso eliminado",
-      description: `El concurso ha sido eliminado correctamente.`,
-    });
-    const updatedContests = contests.filter(c => c.id !== contestId);
-    setContests(updatedContests);
-    setFilteredContests(filterContests(updatedContests, searchQuery));
+  const handleDeleteContest = async (contestId: string) => {
+    try {
+      const { error } = await supabase
+        .from('contests')
+        .delete()
+        .eq('id', contestId);
+        
+      if (error) throw error;
+      
+      toast({
+        title: "Concurso eliminado",
+        description: `El concurso ha sido eliminado correctamente.`,
+      });
+      
+      // Actualizar la lista de concursos
+      await fetchContests();
+      
+    } catch (error: any) {
+      console.error("Error deleting contest:", error);
+      toast({
+        title: "Error al eliminar",
+        description: error.message || "No se pudo eliminar el concurso. Inténtalo de nuevo.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -164,8 +233,6 @@ export const ContestManagement = () => {
             photoOwnership: true,
             commercialUse: true,
             location: "",
-            latitude: "",
-            longitude: ""
           });
           setIsEditContestDialogOpen(true);
         }} className="flex items-center gap-2">
@@ -183,14 +250,22 @@ export const ContestManagement = () => {
         />
       </div>
       
-      {filteredContests.map(contest => (
-        <ContestCard 
-          key={contest.id}
-          contest={contest}
-          onEdit={handleEditContest}
-          onDelete={handleDeleteContest}
-        />
-      ))}
+      {isLoading ? (
+        <div className="text-center py-8">Cargando concursos...</div>
+      ) : filteredContests.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          {searchQuery ? "No se encontraron concursos con ese criterio de búsqueda" : "No hay concursos creados aún"}
+        </div>
+      ) : (
+        filteredContests.map(contest => (
+          <ContestCard 
+            key={contest.id}
+            contest={contest}
+            onEdit={handleEditContest}
+            onDelete={handleDeleteContest}
+          />
+        ))
+      )}
 
       <ContestFormDialog 
         isOpen={isEditContestDialogOpen}
