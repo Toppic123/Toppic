@@ -19,7 +19,6 @@ export const useContests = () => {
   const fetchContests = async () => {
     setIsLoading(true);
     try {
-      // Fetch all contests from the database
       const { data, error } = await supabase
         .from('contests')
         .select('*')
@@ -32,22 +31,6 @@ export const useContests = () => {
           description: error.message,
           variant: "destructive",
         });
-        
-        // Fall back to mock data if there's an error with the database
-        console.log('Falling back to mock data');
-        const { mockContests } = await import('../contestUtils');
-        setContests(mockContests);
-        setFilteredContests(mockContests);
-        return;
-      }
-      
-      console.log('Fetched contests data:', data);
-      
-      if (!data || data.length === 0) {
-        console.log('No contests found in the database, using mock data');
-        const { mockContests } = await import('../contestUtils');
-        setContests(mockContests);
-        setFilteredContests(mockContests);
         return;
       }
       
@@ -60,18 +43,10 @@ export const useContests = () => {
         location: contest.location || undefined
       }));
       
-      console.log('Formatted contests:', formattedContests);
-      
       setContests(formattedContests);
       setFilteredContests(formattedContests);
     } catch (error) {
       console.error('Error fetching contests:', error);
-      
-      // Fall back to mock data if there's an error
-      console.log('Exception occurred, falling back to mock data');
-      const { mockContests } = await import('../contestUtils');
-      setContests(mockContests);
-      setFilteredContests(mockContests);
     } finally {
       setIsLoading(false);
     }
@@ -89,10 +64,7 @@ export const useContests = () => {
         .delete()
         .eq('id', contestId);
         
-      if (error) {
-        console.error('Error deleting contest:', error);
-        throw error;
-      }
+      if (error) throw error;
       
       const updatedContests = contests.filter(c => c.id !== contestId);
       setContests(updatedContests);
@@ -109,7 +81,6 @@ export const useContests = () => {
         description: error.message || "Ha ocurrido un error al eliminar el concurso.",
         variant: "destructive",
       });
-      throw error; // Re-throw the error so the UI can handle it
     }
   };
 
