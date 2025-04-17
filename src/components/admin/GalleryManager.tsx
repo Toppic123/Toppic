@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
@@ -24,6 +23,7 @@ const GalleryManager = () => {
   const { photos, updatePhoto, addPhoto, removePhoto, reorderPhotos } = useWinningPhotos();
   const [editingPhoto, setEditingPhoto] = useState<WinningPhoto | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [newPhoto, setNewPhoto] = useState({
     imageUrl: '',
     title: '',
@@ -32,19 +32,35 @@ const GalleryManager = () => {
     likes: 0
   });
 
-  const handleEditClick = (photo: WinningPhoto) => {
-    setEditingPhoto(photo);
-  };
-
-  const handleUpdatePhoto = () => {
-    if (editingPhoto) {
-      updatePhoto(editingPhoto.id, editingPhoto);
-      setEditingPhoto(null);
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, isEditing: boolean = false) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      
+      if (isEditing && editingPhoto) {
+        setEditingPhoto({ ...editingPhoto, imageUrl: previewUrl });
+      } else {
+        setNewPhoto(prev => ({ ...prev, imageUrl: previewUrl }));
+      }
     }
   };
 
-  const handleAddPhoto = () => {
-    addPhoto(newPhoto);
+  const handleEditClick = (photo: WinningPhoto) => {
+    setEditingPhoto(photo);
+    setSelectedFile(null);
+  };
+
+  const handleUpdatePhoto = async () => {
+    if (editingPhoto) {
+      await updatePhoto(editingPhoto.id, editingPhoto, selectedFile || undefined);
+      setEditingPhoto(null);
+      setSelectedFile(null);
+    }
+  };
+
+  const handleAddPhoto = async () => {
+    await addPhoto(newPhoto, selectedFile || undefined);
     setNewPhoto({
       imageUrl: '',
       title: '',
@@ -52,6 +68,7 @@ const GalleryManager = () => {
       photographerAvatar: '',
       likes: 0
     });
+    setSelectedFile(null);
     setIsAddDialogOpen(false);
   };
 
@@ -64,6 +81,21 @@ const GalleryManager = () => {
     
     reorderPhotos(items);
   };
+
+  const FileUploadField = ({ onFileSelect, accept = "image/*" }: { onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void, accept?: string }) => (
+    <div className="relative h-40 w-full mb-4 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
+      <input
+        type="file"
+        accept={accept}
+        onChange={onFileSelect}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+      />
+      <div className="flex flex-col items-center text-gray-400">
+        <Upload className="w-8 h-8 mb-2" />
+        <span className="text-sm">Haz clic o arrastra una imagen aquí</span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -157,28 +189,19 @@ const GalleryManager = () => {
           
           {editingPhoto && (
             <div className="space-y-4">
-              <div className="flex flex-col items-center mb-4">
+              <FileUploadField 
+                onFileSelect={(e) => handleFileSelect(e, true)} 
+              />
+              
+              {(editingPhoto.imageUrl || selectedFile) && (
                 <div className="relative h-40 w-full mb-4 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                  {editingPhoto.imageUrl ? (
-                    <img 
-                      src={editingPhoto.imageUrl} 
-                      alt={editingPhoto.title} 
-                      className="object-contain max-h-full max-w-full"
-                    />
-                  ) : (
-                    <Image className="w-12 h-12 text-gray-300" />
-                  )}
-                </div>
-                
-                <div className="space-y-2 w-full">
-                  <Label htmlFor="imageUrl">URL de la imagen</Label>
-                  <Input 
-                    id="imageUrl" 
-                    value={editingPhoto.imageUrl} 
-                    onChange={(e) => setEditingPhoto({...editingPhoto, imageUrl: e.target.value})}
+                  <img 
+                    src={editingPhoto.imageUrl} 
+                    alt={editingPhoto.title} 
+                    className="object-contain max-h-full max-w-full"
                   />
                 </div>
-              </div>
+              )}
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -242,29 +265,19 @@ const GalleryManager = () => {
           </DialogHeader>
           
           <div className="space-y-4">
-            <div className="flex flex-col items-center mb-4">
+            <FileUploadField 
+              onFileSelect={handleFileSelect} 
+            />
+            
+            {(newPhoto.imageUrl || selectedFile) && (
               <div className="relative h-40 w-full mb-4 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                {newPhoto.imageUrl ? (
-                  <img 
-                    src={newPhoto.imageUrl} 
-                    alt="Preview" 
-                    className="object-contain max-h-full max-w-full"
-                  />
-                ) : (
-                  <Upload className="w-12 h-12 text-gray-300" />
-                )}
-              </div>
-              
-              <div className="space-y-2 w-full">
-                <Label htmlFor="new-imageUrl">URL de la imagen</Label>
-                <Input 
-                  id="new-imageUrl" 
-                  value={newPhoto.imageUrl} 
-                  onChange={(e) => setNewPhoto({...newPhoto, imageUrl: e.target.value})}
-                  placeholder="https://ejemplo.com/imagen.jpg"
+                <img 
+                  src={newPhoto.imageUrl} 
+                  alt="Preview" 
+                  className="object-contain max-h-full max-w-full"
                 />
               </div>
-            </div>
+            )}
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -315,7 +328,7 @@ const GalleryManager = () => {
             </DialogClose>
             <Button 
               onClick={handleAddPhoto} 
-              disabled={!newPhoto.imageUrl || !newPhoto.title || !newPhoto.photographer}
+              disabled={!selectedFile || !newPhoto.title || !newPhoto.photographer}
               className="bg-[#4891AA] hover:bg-[#4891AA]/90"
             >
               Añadir foto
