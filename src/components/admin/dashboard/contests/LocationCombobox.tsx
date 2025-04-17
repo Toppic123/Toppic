@@ -38,14 +38,14 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
 
         if (error) {
           console.error("Error fetching locations:", error);
+          setLocations([]);
           return;
         }
 
-        // Asegurarse de que locations siempre es un array, incluso si data es null
-        setLocations(data || []);
+        // Always ensure we have a valid array
+        setLocations(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Error fetching locations:", error);
-        // En caso de error, establecer locations como un array vacío
         setLocations([]);
       } finally {
         setIsLoading(false);
@@ -63,6 +63,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
+          onClick={() => setOpen(!open)}
         >
           {value ? value : "Seleccionar ubicación..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -75,8 +76,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
             {isLoading ? "Cargando ubicaciones..." : "No se encontraron ubicaciones"}
           </CommandEmpty>
           <CommandGroup className="max-h-60 overflow-y-auto">
-            {/* Asegurarse de que locations es un array antes de mapearlo */}
-            {Array.isArray(locations) && locations.map((location) => (
+            {locations.map((location) => (
               <CommandItem
                 key={location.name}
                 value={location.name}
