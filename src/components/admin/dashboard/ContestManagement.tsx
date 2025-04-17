@@ -56,13 +56,15 @@ export const ContestManagement = () => {
         return;
       }
       
-      // Transformar el formato de datos
+      // Transformar el formato de datos y asegurar que el status sea del tipo correcto
       const formattedContests = data.map(contest => ({
         id: contest.id,
         title: contest.title,
         organizer: contest.organizer,
-        status: contest.status,
-        participants: contest.participants,
+        status: (contest.status === "pending" || contest.status === "active" || contest.status === "finished") 
+          ? contest.status as "pending" | "active" | "finished" 
+          : "pending",
+        participants: contest.participants || 0,
         location: contest.location || "",
       }));
       
@@ -97,7 +99,7 @@ export const ContestManagement = () => {
         endDate: "",
         photoDeadline: "",
         description: "",
-        status: contest.status as "pending" | "active" | "finished",
+        status: contest.status,
         maxParticipants: contest.participants,
         photoOwnership: true,
         commercialUse: true,
