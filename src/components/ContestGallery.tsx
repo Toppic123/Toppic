@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock } from "lucide-react";
+import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import PhotoCard from "@/components/PhotoCard";
@@ -14,6 +14,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 
 interface Photo {
@@ -52,6 +53,7 @@ const ContestGallery = ({
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showInfoDialog, setShowInfoDialog] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   
   // Calculate days remaining until gallery expires
   const calculateDaysRemaining = () => {
@@ -84,6 +86,10 @@ const ContestGallery = ({
       description: "Se ha enviado un email con el enlace a la galería",
     });
     setEmailSent(true);
+  };
+
+  const handlePhotoClick = (photo: Photo) => {
+    setSelectedPhoto(photo);
   };
   
   const galleryLink = `${window.location.origin}/contests/${contestId}/gallery`;
@@ -166,8 +172,9 @@ const ContestGallery = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="flex flex-col items-center"
+                onClick={() => handlePhotoClick(winner)}
               >
-                <div className="relative w-full">
+                <div className="relative w-full cursor-pointer">
                   <Badge 
                     className={`absolute top-3 left-3 z-10 ${
                       index === 0 ? 'bg-amber-500' : 
@@ -198,16 +205,17 @@ const ContestGallery = ({
         <h2 className="text-2xl font-bold mb-8">Todas las fotografías</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {photos.map((photo) => (
-            <PhotoCard
-              key={photo.id}
-              id={photo.id}
-              imageUrl={photo.imageUrl}
-              photographer={photo.photographer}
-              photographerAvatar={photo.photographerAvatar}
-              votes={photo.votes}
-              mode="grid"
-              expanded={false}
-            />
+            <div key={photo.id} onClick={() => handlePhotoClick(photo)} className="cursor-pointer">
+              <PhotoCard
+                id={photo.id}
+                imageUrl={photo.imageUrl}
+                photographer={photo.photographer}
+                photographerAvatar={photo.photographerAvatar}
+                votes={photo.votes}
+                mode="grid"
+                expanded={false}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -264,6 +272,43 @@ const ContestGallery = ({
             <div className="flex justify-end pt-4">
               <Button onClick={() => setShowInfoDialog(false)}>Cerrar</Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Photo detail dialog */}
+      <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden p-0">
+          <div className="relative w-full h-full bg-black flex items-center justify-center">
+            <DialogClose className="absolute top-2 right-2 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Cerrar</span>
+            </DialogClose>
+            
+            {selectedPhoto && (
+              <div className="h-full max-h-[80vh] w-full flex flex-col">
+                <div className="flex-1 overflow-hidden flex items-center justify-center">
+                  <img 
+                    src={selectedPhoto.imageUrl} 
+                    alt={`Foto de ${selectedPhoto.photographer}`} 
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+                
+                <div className="bg-white w-full p-4">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="font-medium">{selectedPhoto.photographer}</p>
+                      <p className="text-sm text-muted-foreground">{selectedPhoto.votes} votos</p>
+                    </div>
+                    
+                    <Button variant="outline" size="sm" onClick={() => setSelectedPhoto(null)}>
+                      Cerrar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
