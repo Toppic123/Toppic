@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { 
   Command, 
@@ -29,115 +29,46 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
   const [searchValue, setSearchValue] = useState("");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [apiLoaded, setApiLoaded] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
-  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
-  const googleScriptLoaded = useRef(false);
+  const [initialized, setInitialized] = useState(false);
 
-  // Function to initialize Google Maps API
-  const initializeGoogleMaps = () => {
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
-      console.error("Google Maps API not loaded yet");
-      return;
-    }
+  // Sample locations for demo purposes (since the Google Maps API has restrictions)
+  const sampleLocations = [
+    { description: "Madrid, España", place_id: "madrid_1" },
+    { description: "Barcelona, España", place_id: "barcelona_1" },
+    { description: "Valencia, España", place_id: "valencia_1" },
+    { description: "Sevilla, España", place_id: "sevilla_1" },
+    { description: "Zaragoza, España", place_id: "zaragoza_1" },
+    { description: "Málaga, España", place_id: "malaga_1" },
+    { description: "Murcia, España", place_id: "murcia_1" },
+    { description: "Palma de Mallorca, España", place_id: "palma_1" },
+    { description: "Las Palmas de Gran Canaria, España", place_id: "laspalmas_1" },
+    { description: "Bilbao, España", place_id: "bilbao_1" },
+    { description: "Alicante, España", place_id: "alicante_1" },
+    { description: "Córdoba, España", place_id: "cordoba_1" },
+    { description: "Valladolid, España", place_id: "valladolid_1" },
+    { description: "Vigo, España", place_id: "vigo_1" },
+    { description: "Gijón, España", place_id: "gijon_1" },
+    { description: "Paris, France", place_id: "paris_1" },
+    { description: "London, United Kingdom", place_id: "london_1" },
+    { description: "Berlin, Germany", place_id: "berlin_1" },
+    { description: "Rome, Italy", place_id: "rome_1" },
+    { description: "Amsterdam, Netherlands", place_id: "amsterdam_1" },
+    { description: "Brussels, Belgium", place_id: "brussels_1" },
+    { description: "Lisbon, Portugal", place_id: "lisbon_1" },
+    { description: "New York, United States", place_id: "newyork_1" },
+    { description: "Los Angeles, United States", place_id: "losangeles_1" },
+    { description: "Chicago, United States", place_id: "chicago_1" },
+    { description: "Tokyo, Japan", place_id: "tokyo_1" },
+    { description: "Sydney, Australia", place_id: "sydney_1" },
+    { description: "Rio de Janeiro, Brazil", place_id: "rio_1" },
+    { description: "Mexico City, Mexico", place_id: "mexicocity_1" }
+  ];
 
-    try {
-      autocompleteService.current = new window.google.maps.places.AutocompleteService();
-      googleScriptLoaded.current = true;
-      setApiLoaded(true);
-      setApiError(null);
-      console.log("Google Maps API initialized successfully");
-    } catch (error) {
-      console.error("Error initializing Google Maps API:", error);
-      setApiError("Error al inicializar la API de Google Maps");
-      toast({
-        title: "Error",
-        description: "No se pudo inicializar el servicio de búsqueda de ubicaciones",
-        variant: "destructive",
-      });
-    }
-  };
-
-  // Load Google Maps API script
+  // Initialize component
   useEffect(() => {
-    // Use a valid API key with Places API enabled - currently using a test key
-    const API_KEY = "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg"; // This is a Google public test key
-    
-    if (window.google && window.google.maps && window.google.maps.places) {
-      initializeGoogleMaps();
-      return;
-    }
-
-    setIsLoading(true);
-    const googleMapsScript = document.createElement("script");
-    googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
-    googleMapsScript.async = true;
-    googleMapsScript.defer = true;
-    googleMapsScript.onload = () => {
-      initializeGoogleMaps();
-      setIsLoading(false);
-    };
-    googleMapsScript.onerror = () => {
-      console.error("Error loading Google Maps API");
-      setApiError("Error al cargar la API de Google Maps");
-      setIsLoading(false);
-      toast({
-        title: "Error",
-        description: "No se pudo cargar el servicio de búsqueda de ubicaciones",
-        variant: "destructive",
-      });
-    };
-    document.head.appendChild(googleMapsScript);
-
-    return () => {
-      // Clean up script if component unmounts during loading
-      if (!googleScriptLoaded.current) {
-        document.head.removeChild(googleMapsScript);
-      }
-    };
-  }, [toast]);
-
-  // Function to fetch place predictions
-  const fetchPredictions = (input: string) => {
-    if (!input.trim() || !autocompleteService.current || !googleScriptLoaded.current) {
-      setPredictions([]);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      autocompleteService.current.getPlacePredictions(
-        {
-          input,
-          types: ['(regions)', 'geocode'], // include regions and addresses
-        },
-        (results, status) => {
-          setIsLoading(false);
-          if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
-            console.log("Place predictions status:", status);
-            setPredictions([]);
-            return;
-          }
-          
-          // Log results to help debug
-          console.log("Places results:", results);
-          setPredictions(results as PlacePrediction[]);
-        }
-      );
-    } catch (error) {
-      console.error("Error fetching predictions:", error);
-      setIsLoading(false);
-      setPredictions([]);
-      setApiError("Error al buscar ubicaciones");
-    }
-  };
-
-  // Handle search input change
-  const handleSearchChange = (value: string) => {
-    setSearchValue(value);
-    fetchPredictions(value);
-  };
+    console.log("LocationCombobox initialized");
+    setInitialized(true);
+  }, []);
 
   // If we have a pre-selected value, show it
   useEffect(() => {
@@ -145,6 +76,43 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
       setSearchValue(value);
     }
   }, [value]);
+
+  // Search locations based on input
+  const searchLocations = (input: string) => {
+    if (!input.trim()) {
+      setPredictions([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    console.log("Searching for:", input);
+    
+    // Filter the sample locations based on input
+    setTimeout(() => {
+      const filtered = sampleLocations.filter(
+        location => location.description.toLowerCase().includes(input.toLowerCase())
+      );
+      console.log("Found locations:", filtered);
+      setPredictions(filtered);
+      setIsLoading(false);
+    }, 300); // Small delay to simulate API call
+  };
+
+  // Handle search input change
+  const handleSearchChange = (value: string) => {
+    setSearchValue(value);
+    searchLocations(value);
+  };
+
+  // Handle location selection
+  const handleLocationSelect = (location: string) => {
+    onChange(location);
+    setSearchValue(location);
+    setPredictions([]);
+    setOpen(false);
+  };
 
   return (
     <div className="relative">
@@ -156,15 +124,12 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
             value={searchValue}
             onValueChange={handleSearchChange}
             className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={!apiLoaded || !!apiError}
           />
         </div>
         <CommandList>
           {isLoading ? (
             <div className="py-6 text-center text-sm">Buscando ubicaciones...</div>
-          ) : apiError ? (
-            <div className="py-6 text-center text-sm text-destructive">{apiError}</div>
-          ) : !apiLoaded ? (
+          ) : !initialized ? (
             <div className="py-6 text-center text-sm">Cargando servicio de ubicaciones...</div>
           ) : predictions.length === 0 && searchValue.trim() !== "" ? (
             <CommandEmpty>No se encontraron ubicaciones</CommandEmpty>
@@ -180,12 +145,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
                     <CommandItem
                       key={prediction.place_id}
                       value={prediction.description}
-                      onSelect={(selectedValue) => {
-                        onChange(selectedValue);
-                        setSearchValue(selectedValue);
-                        setPredictions([]);
-                        setOpen(false);
-                      }}
+                      onSelect={(selectedValue) => handleLocationSelect(selectedValue)}
                     >
                       {prediction.description}
                     </CommandItem>

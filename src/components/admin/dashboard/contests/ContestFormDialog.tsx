@@ -66,9 +66,12 @@ export const ContestFormDialog = ({
               />
             </div>
             
-            {/* Location field with Google Maps predictive search */}
+            {/* Location field with predictive search */}
             <div>
-              <Label htmlFor="location">Ubicación</Label>
+              <Label htmlFor="location" className="flex items-center gap-1">
+                Ubicación
+                <span className="text-xs font-normal text-muted-foreground">(requerido)</span>
+              </Label>
               <div className="mt-1">
                 <LocationCombobox 
                   value={contestFormData.location || ""}
