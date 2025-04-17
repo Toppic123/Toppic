@@ -9,7 +9,102 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      contests: {
+        Row: {
+          commercial_use: boolean | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          location: string | null
+          organizer: string
+          participants: number | null
+          photo_deadline: string | null
+          photo_ownership: boolean | null
+          start_date: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          commercial_use?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          organizer: string
+          participants?: number | null
+          photo_deadline?: string | null
+          photo_ownership?: boolean | null
+          start_date?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          commercial_use?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          organizer?: string
+          participants?: number | null
+          photo_deadline?: string | null
+          photo_ownership?: boolean | null
+          start_date?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      locations: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      organizers: {
+        Row: {
+          active_contests: number | null
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          plan: string | null
+          total_contests: number | null
+        }
+        Insert: {
+          active_contests?: number | null
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          plan?: string | null
+          total_contests?: number | null
+        }
+        Update: {
+          active_contests?: number | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          plan?: string | null
+          total_contests?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
