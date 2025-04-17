@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { winningPhotos as defaultPhotos } from "@/components/home/HomeData";
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +16,25 @@ export interface WinningPhoto {
 export const useWinningPhotos = () => {
   const [photos, setPhotos] = useState<WinningPhoto[]>(defaultPhotos);
   const { toast } = useToast();
+  
+  // Carga inicial de fotos
+  useEffect(() => {
+    // Intentamos cargar las fotos desde localStorage primero
+    const savedPhotos = localStorage.getItem('winningPhotos');
+    if (savedPhotos) {
+      try {
+        const parsedPhotos = JSON.parse(savedPhotos);
+        setPhotos(parsedPhotos);
+      } catch (e) {
+        console.error('Error parsing saved photos:', e);
+      }
+    }
+  }, []);
+
+  // Guarda las fotos en localStorage cuando cambien
+  useEffect(() => {
+    localStorage.setItem('winningPhotos', JSON.stringify(photos));
+  }, [photos]);
 
   const uploadImage = async (file: File): Promise<string> => {
     const fileExt = file.name.split('.').pop();

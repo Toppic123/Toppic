@@ -8,6 +8,7 @@ export const useContestForm = (onSuccess: () => void) => {
   const { toast } = useToast();
   const [isEditContestDialogOpen, setIsEditContestDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [contestId, setContestId] = useState<string | null>(null);
   const [contestFormData, setContestFormData] = useState<ContestFormData>({
     title: "",
     organizer: "",
@@ -24,6 +25,9 @@ export const useContestForm = (onSuccess: () => void) => {
 
   const handleEditContest = async (contestId: string) => {
     try {
+      setIsLoading(true);
+      setContestId(contestId);
+      
       const { data, error } = await supabase
         .from('contests')
         .select('*')
@@ -32,6 +36,11 @@ export const useContestForm = (onSuccess: () => void) => {
         
       if (error) {
         console.error('Error fetching contest details:', error);
+        toast({
+          title: "Error al cargar datos",
+          description: "No se pudieron cargar los datos del concurso.",
+          variant: "destructive",
+        });
         return;
       }
       
@@ -53,10 +62,18 @@ export const useContestForm = (onSuccess: () => void) => {
       }
     } catch (error) {
       console.error('Error fetching contest details:', error);
+      toast({
+        title: "Error al cargar datos",
+        description: "No se pudieron cargar los datos del concurso.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const resetFormData = () => {
+    setContestId(null);
     setContestFormData({
       title: "",
       organizer: "",
@@ -82,18 +99,6 @@ export const useContestForm = (onSuccess: () => void) => {
       setIsLoading(true);
       
       try {
-        const { data: existingContests, error: fetchError } = await supabase
-          .from('contests')
-          .select('id, title')
-          .eq('title', contestFormData.title);
-          
-        if (fetchError) {
-          throw fetchError;
-        }
-        
-        let contestId;
-        let isUpdate = false;
-        
         const contestData = {
           title: contestFormData.title,
           organizer: contestFormData.organizer,
@@ -108,10 +113,9 @@ export const useContestForm = (onSuccess: () => void) => {
           location: contestFormData.location || null
         };
         
-        if (existingContests && existingContests.length > 0) {
-          contestId = existingContests[0].id;
-          isUpdate = true;
-          
+        let isUpdate = !!contestId;
+        
+        if (isUpdate) {
           const { error: updateError } = await supabase
             .from('contests')
             .update(contestData)
@@ -126,9 +130,6 @@ export const useContestForm = (onSuccess: () => void) => {
             .select();
             
           if (insertError) throw insertError;
-          if (newContest && newContest.length > 0) {
-            contestId = newContest[0].id;
-          }
         }
         
         toast({

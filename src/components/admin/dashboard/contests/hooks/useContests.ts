@@ -89,7 +89,10 @@ export const useContests = () => {
         .delete()
         .eq('id', contestId);
         
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting contest:', error);
+        throw error;
+      }
       
       const updatedContests = contests.filter(c => c.id !== contestId);
       setContests(updatedContests);
@@ -106,6 +109,7 @@ export const useContests = () => {
         description: error.message || "Ha ocurrido un error al eliminar el concurso.",
         variant: "destructive",
       });
+      throw error; // Re-throw the error so the UI can handle it
     }
   };
 
