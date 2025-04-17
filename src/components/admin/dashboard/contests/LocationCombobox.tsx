@@ -25,6 +25,7 @@ interface LocationComboboxProps {
 export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  // Initialize with empty arrays to prevent null issues
   const [locations, setLocations] = useState<{ name: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filteredLocations, setFilteredLocations] = useState<{ name: string }[]>([]);
@@ -46,6 +47,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
           return;
         }
 
+        // Ensure we always have valid arrays
         const locationsData = Array.isArray(data) ? data : [];
         setLocations(locationsData);
         setFilteredLocations(locationsData);
@@ -91,38 +93,42 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandInput 
-            placeholder="Buscar ubicación..." 
-            value={searchValue}
-            onValueChange={handleSearchChange}
-            className="h-9" 
-          />
-          <CommandEmpty>
-            {isLoading ? "Cargando ubicaciones..." : "No se encontraron ubicaciones"}
-          </CommandEmpty>
-          <CommandGroup className="max-h-60 overflow-y-auto">
-            {filteredLocations.map((location) => (
-              <CommandItem
-                key={location.name}
-                value={location.name}
-                onSelect={(currentValue) => {
-                  onChange(currentValue);
-                  setOpen(false);
-                  setSearchValue("");
-                }}
-              >
-                {location.name}
-                <Check
-                  className={cn(
-                    "ml-auto h-4 w-4",
-                    value === location.name ? "opacity-100" : "opacity-0"
-                  )}
-                />
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </Command>
+        {/* Wrap Command component with an error boundary div to catch any issues */}
+        <div className="w-full">
+          <Command>
+            <CommandInput 
+              placeholder="Buscar ubicación..." 
+              value={searchValue}
+              onValueChange={handleSearchChange}
+              className="h-9" 
+            />
+            <CommandEmpty>
+              {isLoading ? "Cargando ubicaciones..." : "No se encontraron ubicaciones"}
+            </CommandEmpty>
+            <CommandGroup className="max-h-60 overflow-y-auto">
+              {/* Ensure we're only mapping over a valid array */}
+              {(filteredLocations || []).map((location) => (
+                <CommandItem
+                  key={location.name}
+                  value={location.name}
+                  onSelect={(currentValue) => {
+                    onChange(currentValue);
+                    setOpen(false);
+                    setSearchValue("");
+                  }}
+                >
+                  {location.name}
+                  <Check
+                    className={cn(
+                      "ml-auto h-4 w-4",
+                      value === location.name ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </div>
       </PopoverContent>
     </Popover>
   );
