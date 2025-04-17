@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Contest } from "../types";
-import { filterContests } from "../contestUtils";
+import { filterContests, mockContests } from "../contestUtils";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useContests = () => {
@@ -31,22 +31,35 @@ export const useContests = () => {
           description: error.message,
           variant: "destructive",
         });
+        // Usar datos simulados si hay error en la base de datos
+        console.info("No contests found in the database, using mock data");
+        setContests(mockContests);
+        setFilteredContests(mockContests);
         return;
       }
       
-      const formattedContests: Contest[] = data.map(contest => ({
-        id: contest.id,
-        title: contest.title,
-        organizer: contest.organizer,
-        status: contest.status as "pending" | "active" | "finished",
-        participants: contest.participants || 0,
-        location: contest.location || undefined
-      }));
-      
-      setContests(formattedContests);
-      setFilteredContests(formattedContests);
+      if (!data || data.length === 0) {
+        console.info("No contests found in the database, using mock data");
+        setContests(mockContests);
+        setFilteredContests(mockContests);
+      } else {
+        const formattedContests: Contest[] = data.map(contest => ({
+          id: contest.id,
+          title: contest.title,
+          organizer: contest.organizer,
+          status: contest.status as "pending" | "active" | "finished",
+          participants: contest.participants || 0,
+          location: contest.location || undefined
+        }));
+        
+        setContests(formattedContests);
+        setFilteredContests(formattedContests);
+      }
     } catch (error) {
       console.error('Error fetching contests:', error);
+      // Usar datos simulados si hay error
+      setContests(mockContests);
+      setFilteredContests(mockContests);
     } finally {
       setIsLoading(false);
     }
@@ -59,6 +72,23 @@ export const useContests = () => {
 
   const handleDeleteContest = async (contestId: string) => {
     try {
+      // Primero comprobamos si es un ID de simulación (formato numérico)
+      const isMockId = !contestId.includes('-');
+      
+      if (isMockId) {
+        // Para datos simulados, solo actualizamos el estado
+        const updatedContests = contests.filter(c => c.id !== contestId);
+        setContests(updatedContests);
+        setFilteredContests(filterContests(updatedContests, searchQuery));
+        
+        toast({
+          title: "Concurso eliminado",
+          description: `El concurso ha sido eliminado correctamente.`,
+        });
+        return;
+      }
+      
+      // Para datos reales, intentamos eliminar de la base de datos
       const { error } = await supabase
         .from('contests')
         .delete()

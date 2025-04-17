@@ -1,7 +1,6 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MapPin, Lock, Unlock, Loader2, Navigation } from "lucide-react";
+import { Camera, MapPin, Lock, Unlock, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -52,7 +51,11 @@ const mockContests = [
 
 const activeContests = mockContests.filter(contest => contest.isActive);
 
-const Map = () => {
+interface MapProps {
+  showMustardButton?: boolean;
+}
+
+const Map = ({ showMustardButton = false }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [selectedContest, setSelectedContest] = useState<(typeof mockContests)[0] | null>(null);
   const [isMapLoading, setIsMapLoading] = useState(true);
@@ -210,12 +213,13 @@ const Map = () => {
         </div>
       )}
 
-      {/* Repositioned button to center */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         <Button 
           onClick={locateUser}
           disabled={isLocating || isMapLoading || !!mapError}
-          className="flex items-center gap-2 bg-[#4891AA] hover:bg-[#3a7a8b] text-white shadow-lg transition-all pulse-animation"
+          className={`flex items-center gap-2 ${showMustardButton 
+            ? 'bg-[#F5D742] hover:bg-[#E6C83D] text-black shadow-lg transition-all pulse-animation' 
+            : 'bg-[#4891AA] hover:bg-[#3a7a8b] text-white shadow-lg transition-all pulse-animation'}`}
           size="lg"
         >
           {isLocating ? (
@@ -225,7 +229,7 @@ const Map = () => {
             </>
           ) : (
             <>
-              <Navigation className="w-5 h-5" />
+              <Search className="w-5 h-5" />
               <span className="font-medium">CONCURSOS CERCANOS</span>
             </>
           )}
@@ -321,13 +325,13 @@ const Map = () => {
         {`
         @keyframes pulse {
           0% {
-            box-shadow: 0 0 0 0 rgba(72, 145, 170, 0.7);
+            box-shadow: 0 0 0 0 rgba(245, 215, 66, 0.7);
           }
           70% {
-            box-shadow: 0 0 0 10px rgba(72, 145, 170, 0);
+            box-shadow: 0 0 0 10px rgba(245, 215, 66, 0);
           }
           100% {
-            box-shadow: 0 0 0 0 rgba(72, 145, 170, 0);
+            box-shadow: 0 0 0 0 rgba(245, 215, 66, 0);
           }
         }
 

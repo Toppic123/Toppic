@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ContestFormData } from "../types";
 import { supabase } from "@/integrations/supabase/client";
+import { mockContests } from "../contestUtils";
 
 export const useContestForm = (onSuccess: () => void) => {
   const { toast } = useToast();
@@ -24,6 +25,34 @@ export const useContestForm = (onSuccess: () => void) => {
 
   const handleEditContest = async (contestId: string) => {
     try {
+      // Verificar si es un ID simulado (sin guiones)
+      const isMockId = !contestId.includes('-');
+      
+      if (isMockId) {
+        // Obtener datos simulados
+        const mockContest = mockContests.find(c => c.id === contestId);
+        
+        if (mockContest) {
+          setContestFormData({
+            id: mockContest.id,
+            title: mockContest.title,
+            organizer: mockContest.organizer,
+            startDate: "2025-05-01",
+            endDate: "2025-06-01", 
+            photoDeadline: "2025-05-20",
+            description: "Descripción del concurso simulado",
+            status: mockContest.status,
+            maxParticipants: mockContest.participants,
+            photoOwnership: true,
+            commercialUse: true,
+            location: mockContest.location || ""
+          });
+          setIsEditContestDialogOpen(true);
+        }
+        return;
+      }
+      
+      // Para datos reales, obtener de la base de datos
       const { data, error } = await supabase
         .from('contests')
         .select('*')
@@ -37,6 +66,7 @@ export const useContestForm = (onSuccess: () => void) => {
       
       if (data) {
         setContestFormData({
+          id: data.id,
           title: data.title,
           organizer: data.organizer,
           startDate: data.start_date ? new Date(data.start_date).toISOString().split('T')[0] : "",
@@ -82,17 +112,20 @@ export const useContestForm = (onSuccess: () => void) => {
       setIsLoading(true);
       
       try {
-        const { data: existingContests, error: fetchError } = await supabase
-          .from('contests')
-          .select('id, title')
-          .eq('title', contestFormData.title);
-          
-        if (fetchError) {
-          throw fetchError;
-        }
+        const isMockEdit = contestFormData.id && !contestFormData.id.includes('-');
         
-        let contestId;
-        let isUpdate = false;
+        if (isMockEdit) {
+          // Simulamos la actualización para datos de prueba
+          toast({
+            title: "Cambios guardados",
+            description: `El concurso "${contestFormData.title}" ha sido actualizado correctamente.`,
+          });
+          
+          onSuccess();
+          setIsLoading(false);
+          setIsEditContestDialogOpen(false);
+          return;
+        }
         
         const contestData = {
           title: contestFormData.title,
@@ -108,27 +141,25 @@ export const useContestForm = (onSuccess: () => void) => {
           location: contestFormData.location || null
         };
         
-        if (existingContests && existingContests.length > 0) {
-          contestId = existingContests[0].id;
-          isUpdate = true;
-          
+        let isUpdate = !!contestFormData.id;
+        
+        if (isUpdate) {
+          // Actualizar concurso existente
           const { error: updateError } = await supabase
             .from('contests')
             .update(contestData)
-            .eq('id', contestId);
+            .eq('id', contestFormData.id);
             
           if (updateError) throw updateError;
         } 
         else {
+          // Crear nuevo concurso
           const { data: newContest, error: insertError } = await supabase
             .from('contests')
             .insert(contestData)
             .select();
             
           if (insertError) throw insertError;
-          if (newContest && newContest.length > 0) {
-            contestId = newContest[0].id;
-          }
         }
         
         toast({

@@ -1,6 +1,7 @@
 
 import { Contest } from "./types";
 import ContestCard from "./ContestCard";
+import { useEffect } from "react";
 
 interface ContestListProps {
   contests: Contest[];
@@ -17,6 +18,11 @@ export const ContestList = ({
   onEdit,
   onDelete 
 }: ContestListProps) => {
+  // Log contests for debugging
+  useEffect(() => {
+    console.log("Contests in ContestList:", contests);
+  }, [contests]);
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -34,7 +40,7 @@ export const ContestList = ({
   }
   
   return (
-    <>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {contests.map(contest => (
         <ContestCard 
           key={contest.id}
@@ -43,7 +49,7 @@ export const ContestList = ({
           onDelete={onDelete}
         />
       ))}
-    </>
+    </div>
   );
 };
 

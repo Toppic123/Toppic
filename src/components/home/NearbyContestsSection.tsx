@@ -27,7 +27,7 @@ const NearbyContestsSection = ({ texts }: NearbyContestsSectionProps) => {
           viewport={{ once: true }}
           className="mt-8"
         >
-          <Map />
+          <Map showMustardButton={true} />
         </motion.div>
       </div>
     </section>

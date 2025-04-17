@@ -32,6 +32,11 @@ const BannerManagement = ({
   const { toast } = useToast();
   const [contests, setContests] = useState(mockContests);
   
+  // Cargar concursos cuando el componente se monta
+  useEffect(() => {
+    console.info('Loaded contests for banner management:', contests);
+  }, [contests]);
+  
   // Filter contests by organizer if not admin and organizerId provided
   const filteredContests = isAdmin 
     ? contests 
@@ -43,12 +48,21 @@ const BannerManagement = ({
     : subscriptionBannerAccess[subscriptionLevel];
   
   const handleBannerUpload = (type: string, file: File) => {
-    // Here we would integrate with backend to save the banner
-    // For now just show a success message
+    // Aquí se integraría con el backend para guardar el banner
+    // Por ahora solo mostramos un mensaje de éxito
     
+    // Mostrar toast con feedback al usuario
     toast({
       title: "Banner subido correctamente",
       description: `El banner ${type} ha sido asignado ${selectedContest !== "all" ? `al concurso seleccionado` : 'a todos los concursos'}.`,
+    });
+    
+    // Mostrar información de debug en consola
+    console.log('Banner uploaded:', {
+      type,
+      fileName: file.name,
+      contestId: selectedContest,
+      assignedToAll: selectedContest === "all"
     });
   };
   
@@ -88,7 +102,7 @@ const BannerManagement = ({
         allowedBannerTypes={allowedBannerTypes}
       />
       
-      {/* Sample banners */}
+      {/* Ejemplos de banners */}
       <div className="mt-8">
         <h3 className="text-lg font-medium mb-4">Ejemplos de banners</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

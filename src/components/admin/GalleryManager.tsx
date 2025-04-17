@@ -1,8 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
-import { Pencil, Trash2, Image, Plus, X, Upload, Move } from 'lucide-react';
+import { Pencil, Trash2, Image, Plus, Upload, Move } from 'lucide-react';
 import { 
   Dialog, 
   DialogContent, 
@@ -21,7 +21,7 @@ import {
 } from '@/hooks/use-winning-photos';
 
 const GalleryManager = () => {
-  const { photos, updatePhoto, addPhoto, removePhoto, reorderPhotos } = useWinningPhotos();
+  const { photos, updatePhoto, addPhoto, removePhoto, reorderPhotos, loading } = useWinningPhotos();
   const [editingPhoto, setEditingPhoto] = useState<WinningPhoto | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newPhoto, setNewPhoto] = useState({
@@ -31,20 +31,28 @@ const GalleryManager = () => {
     photographerAvatar: '',
     likes: 0
   });
+  
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+  
+  const editFileInputRef = useRef<HTMLInputElement>(null);
+  const newFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleEditClick = (photo: WinningPhoto) => {
     setEditingPhoto(photo);
+    setEditImageFile(null);
   };
 
   const handleUpdatePhoto = () => {
     if (editingPhoto) {
-      updatePhoto(editingPhoto.id, editingPhoto);
+      updatePhoto(editingPhoto.id, editingPhoto, editImageFile || undefined);
       setEditingPhoto(null);
+      setEditImageFile(null);
     }
   };
 
   const handleAddPhoto = () => {
-    addPhoto(newPhoto);
+    addPhoto(newPhoto, newImageFile || undefined);
     setNewPhoto({
       imageUrl: '',
       title: '',
@@ -52,6 +60,7 @@ const GalleryManager = () => {
       photographerAvatar: '',
       likes: 0
     });
+    setNewImageFile(null);
     setIsAddDialogOpen(false);
   };
 
@@ -63,6 +72,18 @@ const GalleryManager = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     
     reorderPhotos(items);
+  };
+  
+  const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setEditImageFile(e.target.files[0]);
+    }
+  };
+  
+  const handleNewFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setNewImageFile(e.target.files[0]);
+    }
   };
 
   return (
@@ -148,7 +169,12 @@ const GalleryManager = () => {
       {/* Edit Photo Dialog */}
       <Dialog 
         open={!!editingPhoto} 
-        onOpenChange={(open) => !open && setEditingPhoto(null)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingPhoto(null);
+            setEditImageFile(null);
+          }
+        }}
       >
         <DialogContent>
           <DialogHeader>
@@ -159,9 +185,9 @@ const GalleryManager = () => {
             <div className="space-y-4">
               <div className="flex flex-col items-center mb-4">
                 <div className="relative h-40 w-full mb-4 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                  {editingPhoto.imageUrl ? (
+                  {(editImageFile || editingPhoto.imageUrl) ? (
                     <img 
-                      src={editingPhoto.imageUrl} 
+                      src={editImageFile ? URL.createObjectURL(editImageFile) : editingPhoto.imageUrl} 
                       alt={editingPhoto.title} 
                       className="object-contain max-h-full max-w-full"
                     />
@@ -171,12 +197,38 @@ const GalleryManager = () => {
                 </div>
                 
                 <div className="space-y-2 w-full">
-                  <Label htmlFor="imageUrl">URL de la imagen</Label>
-                  <Input 
-                    id="imageUrl" 
-                    value={editingPhoto.imageUrl} 
-                    onChange={(e) => setEditingPhoto({...editingPhoto, imageUrl: e.target.value})}
-                  />
+                  <div className="flex flex-col">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => editFileInputRef.current?.click()}
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Subir imagen
+                    </Button>
+                    <input
+                      ref={editFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleEditFileChange}
+                    />
+                    {editImageFile && (
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Archivo seleccionado: {editImageFile.name}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="mt-4">
+                    <Label htmlFor="imageUrl">o URL de la imagen</Label>
+                    <Input 
+                      id="imageUrl" 
+                      value={editingPhoto.imageUrl} 
+                      onChange={(e) => setEditingPhoto({...editingPhoto, imageUrl: e.target.value})}
+                    />
+                  </div>
                 </div>
               </div>
               
@@ -224,8 +276,12 @@ const GalleryManager = () => {
             <DialogClose asChild>
               <Button variant="outline">Cancelar</Button>
             </DialogClose>
-            <Button onClick={handleUpdatePhoto} className="bg-[#4891AA] hover:bg-[#4891AA]/90">
-              Guardar cambios
+            <Button 
+              onClick={handleUpdatePhoto} 
+              className="bg-[#4891AA] hover:bg-[#4891AA]/90"
+              disabled={loading}
+            >
+              {loading ? "Guardando..." : "Guardar cambios"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -234,7 +290,14 @@ const GalleryManager = () => {
       {/* Add Photo Dialog */}
       <Dialog 
         open={isAddDialogOpen} 
-        onOpenChange={setIsAddDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setIsAddDialogOpen(false);
+            setNewImageFile(null);
+          } else {
+            setIsAddDialogOpen(true);
+          }
+        }}
       >
         <DialogContent>
           <DialogHeader>
@@ -244,7 +307,13 @@ const GalleryManager = () => {
           <div className="space-y-4">
             <div className="flex flex-col items-center mb-4">
               <div className="relative h-40 w-full mb-4 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                {newPhoto.imageUrl ? (
+                {newImageFile ? (
+                  <img 
+                    src={URL.createObjectURL(newImageFile)} 
+                    alt="Preview" 
+                    className="object-contain max-h-full max-w-full"
+                  />
+                ) : newPhoto.imageUrl ? (
                   <img 
                     src={newPhoto.imageUrl} 
                     alt="Preview" 
@@ -256,13 +325,39 @@ const GalleryManager = () => {
               </div>
               
               <div className="space-y-2 w-full">
-                <Label htmlFor="new-imageUrl">URL de la imagen</Label>
-                <Input 
-                  id="new-imageUrl" 
-                  value={newPhoto.imageUrl} 
-                  onChange={(e) => setNewPhoto({...newPhoto, imageUrl: e.target.value})}
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                />
+                <div className="flex flex-col">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => newFileInputRef.current?.click()}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Subir imagen
+                  </Button>
+                  <input
+                    ref={newFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleNewFileChange}
+                  />
+                  {newImageFile && (
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Archivo seleccionado: {newImageFile.name}
+                    </p>
+                  )}
+                </div>
+                
+                <div className="mt-4">
+                  <Label htmlFor="new-imageUrl">o URL de la imagen</Label>
+                  <Input 
+                    id="new-imageUrl" 
+                    value={newPhoto.imageUrl} 
+                    onChange={(e) => setNewPhoto({...newPhoto, imageUrl: e.target.value})}
+                    placeholder="https://ejemplo.com/imagen.jpg"
+                  />
+                </div>
               </div>
             </div>
             
@@ -315,10 +410,10 @@ const GalleryManager = () => {
             </DialogClose>
             <Button 
               onClick={handleAddPhoto} 
-              disabled={!newPhoto.imageUrl || !newPhoto.title || !newPhoto.photographer}
+              disabled={loading || (!newImageFile && !newPhoto.imageUrl) || !newPhoto.title || !newPhoto.photographer}
               className="bg-[#4891AA] hover:bg-[#4891AA]/90"
             >
-              Añadir foto
+              {loading ? "Añadiendo..." : "Añadir foto"}
             </Button>
           </DialogFooter>
         </DialogContent>
