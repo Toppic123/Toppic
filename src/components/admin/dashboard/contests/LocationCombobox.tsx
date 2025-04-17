@@ -81,11 +81,11 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
       },
       (results, status) => {
         setIsLoading(false);
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+        if (status !== "OK" || !results) {
           setPredictions([]);
           return;
         }
-        setPredictions(results);
+        setPredictions(results as PlacePrediction[]);
       }
     );
   };
