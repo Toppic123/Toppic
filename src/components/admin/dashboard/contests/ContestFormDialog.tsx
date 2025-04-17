@@ -150,7 +150,7 @@ export const ContestFormDialog = ({
                 checked={contestFormData.photoOwnership}
                 onCheckedChange={(checked) => setContestFormData({...contestFormData, photoOwnership: checked})}
               />
-              <Label htmlFor="photoOwnership">Transferir propiedad de las fotos al organizador</Label>
+              <Label htmlFor="photoOwnership">Transferir propiedad de las fotos al organizador (el número de fotos puede variar según el tipo de suscripción)</Label>
             </div>
             
             <div className="flex items-center space-x-2">

@@ -60,7 +60,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
 
   // Load Google Maps API script
   useEffect(() => {
-    // Use a valid API key with Places API enabled
+    // Use a valid API key with Places API enabled - currently using a test key
     const API_KEY = "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg"; // This is a Google public test key
     
     if (window.google && window.google.maps && window.google.maps.places) {
@@ -101,25 +101,36 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
   const fetchPredictions = (input: string) => {
     if (!input.trim() || !autocompleteService.current || !googleScriptLoaded.current) {
       setPredictions([]);
+      setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
-    autocompleteService.current.getPlacePredictions(
-      {
-        input,
-        types: ['(regions)', 'geocode'], // include regions and addresses
-      },
-      (results, status) => {
-        setIsLoading(false);
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
-          console.log("Place predictions status:", status);
-          setPredictions([]);
-          return;
+    try {
+      autocompleteService.current.getPlacePredictions(
+        {
+          input,
+          types: ['(regions)', 'geocode'], // include regions and addresses
+        },
+        (results, status) => {
+          setIsLoading(false);
+          if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+            console.log("Place predictions status:", status);
+            setPredictions([]);
+            return;
+          }
+          
+          // Log results to help debug
+          console.log("Places results:", results);
+          setPredictions(results as PlacePrediction[]);
         }
-        setPredictions(results as PlacePrediction[]);
-      }
-    );
+      );
+    } catch (error) {
+      console.error("Error fetching predictions:", error);
+      setIsLoading(false);
+      setPredictions([]);
+      setApiError("Error al buscar ubicaciones");
+    }
   };
 
   // Handle search input change
@@ -155,7 +166,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
             <div className="py-6 text-center text-sm text-destructive">{apiError}</div>
           ) : !apiLoaded ? (
             <div className="py-6 text-center text-sm">Cargando servicio de ubicaciones...</div>
-          ) : predictions.length === 0 && searchValue ? (
+          ) : predictions.length === 0 && searchValue.trim() !== "" ? (
             <CommandEmpty>No se encontraron ubicaciones</CommandEmpty>
           ) : (
             <>
