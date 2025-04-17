@@ -7,8 +7,6 @@ export interface Contest {
   status: "pending" | "active" | "finished";
   participants: number;
   location?: string;
-  latitude?: string;
-  longitude?: string;
 }
 
 // ContestFormData type definition (for the form)
@@ -24,8 +22,6 @@ export interface ContestFormData {
   photoOwnership: boolean;
   commercialUse: boolean;
   location?: string;
-  latitude?: string;
-  longitude?: string;
 }
 
 // Props for the contest form dialog

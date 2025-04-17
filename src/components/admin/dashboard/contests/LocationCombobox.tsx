@@ -1,6 +1,6 @@
 
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Search } from "lucide-react";
 import { 
   Command, 
@@ -50,7 +50,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
   }, []);
 
   // Filter locations based on search input
-  const filteredLocations = React.useMemo(() => {
+  const filteredLocations = useMemo(() => {
     if (!searchValue.trim()) return locations;
     
     return locations.filter((location) => 

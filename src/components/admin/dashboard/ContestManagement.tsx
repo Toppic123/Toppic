@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,9 +28,7 @@ export const ContestManagement = () => {
     maxParticipants: 100,
     photoOwnership: true,
     commercialUse: true,
-    location: "",
-    latitude: "",
-    longitude: ""
+    location: ""
   });
   
   useEffect(() => {
@@ -57,9 +56,7 @@ export const ContestManagement = () => {
           organizer: contest.organizer,
           status: contest.status as "pending" | "active" | "finished",
           participants: contest.participants || 0,
-          location: contest.location || undefined,
-          latitude: contest.latitude || undefined,
-          longitude: contest.longitude || undefined,
+          location: contest.location || undefined
         }));
         
         setContests(formattedContests);
@@ -107,9 +104,7 @@ export const ContestManagement = () => {
               maxParticipants: data.participants || 100,
               photoOwnership: data.photo_ownership || true,
               commercialUse: data.commercial_use || true,
-              location: data.location || "",
-              latitude: "",
-              longitude: ""
+              location: data.location || ""
             });
             setIsEditContestDialogOpen(true);
           }
@@ -190,9 +185,7 @@ export const ContestManagement = () => {
             organizer: contest.organizer,
             status: contest.status as "pending" | "active" | "finished",
             participants: contest.participants || 0,
-            location: contest.location || undefined,
-            latitude: contest.latitude || undefined,
-            longitude: contest.longitude || undefined,
+            location: contest.location || undefined
           }));
           
           setContests(formattedContests);
@@ -266,9 +259,7 @@ export const ContestManagement = () => {
             maxParticipants: 100,
             photoOwnership: true,
             commercialUse: true,
-            location: "",
-            latitude: "",
-            longitude: ""
+            location: ""
           });
           setIsEditContestDialogOpen(true);
         }} className="flex items-center gap-2">
