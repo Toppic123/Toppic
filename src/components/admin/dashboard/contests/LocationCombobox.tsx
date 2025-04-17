@@ -10,6 +10,7 @@ import {
   CommandGroup, 
   CommandItem 
 } from "@/components/ui/command";
+import { useToast } from "@/hooks/use-toast";
 
 // Define interfaces for our component and Google Maps types
 interface LocationComboboxProps {
@@ -23,39 +24,69 @@ interface PlacePrediction {
 }
 
 export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => {
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [apiLoaded, setApiLoaded] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
   const googleScriptLoaded = useRef(false);
 
   // Function to initialize Google Maps API
   const initializeGoogleMaps = () => {
     if (!window.google || !window.google.maps || !window.google.maps.places) {
+      console.error("Google Maps API not loaded yet");
       return;
     }
 
     try {
       autocompleteService.current = new window.google.maps.places.AutocompleteService();
       googleScriptLoaded.current = true;
+      setApiLoaded(true);
+      setApiError(null);
+      console.log("Google Maps API initialized successfully");
     } catch (error) {
       console.error("Error initializing Google Maps API:", error);
+      setApiError("Error al inicializar la API de Google Maps");
+      toast({
+        title: "Error",
+        description: "No se pudo inicializar el servicio de búsqueda de ubicaciones",
+        variant: "destructive",
+      });
     }
   };
 
   // Load Google Maps API script
   useEffect(() => {
+    // Use a valid API key with Places API enabled
+    const API_KEY = "AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg"; // This is a Google public test key
+    
     if (window.google && window.google.maps && window.google.maps.places) {
       initializeGoogleMaps();
       return;
     }
 
+    setIsLoading(true);
     const googleMapsScript = document.createElement("script");
-    googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&libraries=places`;
+    googleMapsScript.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
     googleMapsScript.async = true;
     googleMapsScript.defer = true;
-    googleMapsScript.onload = initializeGoogleMaps;
+    googleMapsScript.onload = () => {
+      initializeGoogleMaps();
+      setIsLoading(false);
+    };
+    googleMapsScript.onerror = () => {
+      console.error("Error loading Google Maps API");
+      setApiError("Error al cargar la API de Google Maps");
+      setIsLoading(false);
+      toast({
+        title: "Error",
+        description: "No se pudo cargar el servicio de búsqueda de ubicaciones",
+        variant: "destructive",
+      });
+    };
     document.head.appendChild(googleMapsScript);
 
     return () => {
@@ -64,7 +95,7 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
         document.head.removeChild(googleMapsScript);
       }
     };
-  }, []);
+  }, [toast]);
 
   // Function to fetch place predictions
   const fetchPredictions = (input: string) => {
@@ -81,7 +112,8 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
       },
       (results, status) => {
         setIsLoading(false);
-        if (status !== "OK" || !results) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !results) {
+          console.log("Place predictions status:", status);
           setPredictions([]);
           return;
         }
@@ -96,6 +128,13 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
     fetchPredictions(value);
   };
 
+  // If we have a pre-selected value, show it
+  useEffect(() => {
+    if (value) {
+      setSearchValue(value);
+    }
+  }, [value]);
+
   return (
     <div className="relative">
       <Command className="rounded-lg border shadow-md">
@@ -106,30 +145,42 @@ export const LocationCombobox = ({ value, onChange }: LocationComboboxProps) => 
             value={searchValue}
             onValueChange={handleSearchChange}
             className="flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!apiLoaded || !!apiError}
           />
         </div>
         <CommandList>
           {isLoading ? (
             <div className="py-6 text-center text-sm">Buscando ubicaciones...</div>
+          ) : apiError ? (
+            <div className="py-6 text-center text-sm text-destructive">{apiError}</div>
+          ) : !apiLoaded ? (
+            <div className="py-6 text-center text-sm">Cargando servicio de ubicaciones...</div>
+          ) : predictions.length === 0 && searchValue ? (
+            <CommandEmpty>No se encontraron ubicaciones</CommandEmpty>
           ) : (
             <>
-              <CommandEmpty>No se encontraron ubicaciones</CommandEmpty>
-              <CommandGroup heading="Ubicaciones">
-                {predictions.map((prediction) => (
-                  <CommandItem
-                    key={prediction.place_id}
-                    value={prediction.description}
-                    onSelect={(selectedValue) => {
-                      onChange(selectedValue);
-                      setSearchValue("");
-                      setPredictions([]);
-                      setOpen(false);
-                    }}
-                  >
-                    {prediction.description}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+              {searchValue.trim() === "" ? (
+                <div className="py-6 text-center text-sm text-muted-foreground">
+                  Escribe para buscar ubicaciones
+                </div>
+              ) : (
+                <CommandGroup heading="Ubicaciones">
+                  {predictions.map((prediction) => (
+                    <CommandItem
+                      key={prediction.place_id}
+                      value={prediction.description}
+                      onSelect={(selectedValue) => {
+                        onChange(selectedValue);
+                        setSearchValue(selectedValue);
+                        setPredictions([]);
+                        setOpen(false);
+                      }}
+                    >
+                      {prediction.description}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
             </>
           )}
         </CommandList>
