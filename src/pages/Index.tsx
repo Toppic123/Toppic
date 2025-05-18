@@ -7,7 +7,6 @@ import WinningGallerySection from "@/components/home/WinningGallerySection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
 import NearbyContestsSection from "@/components/home/NearbyContestsSection";
-import ElevatorPitch from "@/components/ElevatorPitch";
 
 const Index = () => {
   return (
@@ -30,8 +29,6 @@ const Index = () => {
           seeAll: homeTexts.seeAll
         }}
       />
-      
-      <ElevatorPitch />
       
       <NearbyContestsSection 
         texts={{

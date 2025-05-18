@@ -4,24 +4,15 @@ import { motion } from "framer-motion";
 import { Heart, X, Share2, ArrowRight, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 import PhotoComments from "@/components/PhotoComments";
-
-interface WinningPhoto {
-  id: number;
-  imageUrl: string;
-  title: string;
-  photographer: string;
-  photographerAvatar: string;
-  likes: number;
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useWinningPhotos } from "@/hooks/use-winning-photos";
 
 interface WinningGallerySectionProps {
-  photos: WinningPhoto[];
+  photos: any[];  // Mantenemos esta prop para compatibilidad, pero usaremos los datos del hook
   texts: {
     winningGallery: string;
     winningGalleryDesc: string;
@@ -29,39 +20,40 @@ interface WinningGallerySectionProps {
   };
 }
 
-const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) => {
-  const [selectedPhoto, setSelectedPhoto] = useState<WinningPhoto | null>(null);
+const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
+  const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   const { toast } = useToast();
+  const { photos } = useWinningPhotos(); // Usamos el hook para obtener los datos actualizados
 
-  const handleSharePhoto = (photo: WinningPhoto, platform: 'native' | 'instagram' = 'native') => {
+  const handleSharePhoto = (photo: any, platform: 'native' | 'instagram' = 'native') => {
     if (platform === 'instagram') {
       // Open Instagram share intent
       const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
       window.open(instagramUrl, '_blank');
       toast({
-        title: "Opening Instagram",
-        description: "Redirecting to Instagram to share this photo"
+        title: "Abriendo Instagram",
+        description: "Redirigiendo a Instagram para compartir esta foto"
       });
       return;
     }
 
     if (navigator.share) {
       navigator.share({
-        title: `Photo by ${photo.photographer}`,
-        text: `Check out this amazing photo by ${photo.photographer}`,
+        title: `Foto de ${photo.photographer}`,
+        text: `Mira esta increíble foto de ${photo.photographer}`,
         url: window.location.href
       }).catch(err => {
-        console.error('Error sharing:', err);
+        console.error('Error al compartir:', err);
         toast({
-          title: "Couldn't share",
-          description: "There was an error sharing this photo."
+          title: "No se pudo compartir",
+          description: "Hubo un error al compartir esta foto."
         });
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
       toast({
-        title: "Link copied",
-        description: "Photo link copied to clipboard"
+        title: "Enlace copiado",
+        description: "Enlace de la foto copiado al portapapeles"
       });
     }
   };
@@ -159,7 +151,7 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                 <div className="flex items-center justify-between px-4">
                   <div className="flex items-center">
                     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                    <span className="text-sm ml-1 text-black">{selectedPhoto?.likes} likes</span>
+                    <span className="text-sm ml-1 text-black">{selectedPhoto?.likes} me gusta</span>
                   </div>
                   
                   <div className="flex items-center space-x-2">
@@ -178,7 +170,7 @@ const WinningGallerySection = ({ photos, texts }: WinningGallerySectionProps) =>
                       onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
                     >
                       <Share2 className="h-4 w-4" />
-                      <span className="ml-1">Share</span>
+                      <span className="ml-1">Compartir</span>
                     </Button>
                   </div>
                 </div>
