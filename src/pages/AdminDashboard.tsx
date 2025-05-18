@@ -11,6 +11,12 @@ import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
 import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 
+// Credenciales de administrador
+const adminCredentials = {
+  email: 'pisillo@gmail.com',
+  password: 'Toppics2025'  // Nueva contraseña
+};
+
 const AdminDashboard = () => {
   const { userRole } = useAuth();
   const navigate = useNavigate();

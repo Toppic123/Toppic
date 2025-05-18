@@ -20,7 +20,7 @@ export const ContestList = ({
 }: ContestListProps) => {
   // Log contests for debugging
   useEffect(() => {
-    console.log("Contests in ContestList:", contests);
+    console.log("Concursos en ContestList:", contests);
   }, [contests]);
 
   if (isLoading) {

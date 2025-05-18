@@ -8,14 +8,14 @@ import { useEffect, useState } from "react";
 
 const Layout = () => {
   const location = useLocation();
-  const [language, setLanguage] = useState<"en">("en");
+  const [language, setLanguage] = useState<"es">("es");
 
-  // Footer texts (Only in English as requested)
+  // Footer texts (Now in Spanish as requested)
   const footerTexts = {
-    rights: "© Snap Contest Hub. All rights reserved.",
-    privacy: "Privacy Policy",
-    terms: "Terms and Conditions",
-    votingSystem: "Voting System"
+    rights: "© TOPPICS. Todos los derechos reservados.",
+    privacy: "Política de Privacidad",
+    terms: "Términos y Condiciones",
+    votingSystem: "Sistema de Votación"
   };
   
   return (

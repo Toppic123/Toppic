@@ -29,7 +29,7 @@ const Contests = () => {
           });
         },
         (error) => {
-          console.error("Error getting location:", error);
+          console.error("Error obteniendo ubicación:", error);
         }
       );
     }
@@ -129,7 +129,7 @@ const Contests = () => {
               </TabsTrigger>
               <TabsTrigger 
                 value="map"
-                className={viewMode === "map" ? "bg-[#4891AA] text-white hover:bg-[#3a7a8b]" : "bg-[#4891AA] text-white hover:bg-[#3a7a8b]"}
+                className={viewMode === "map" ? "bg-[#4891AA] text-white hover:bg-[#3a7a8b]" : ""}
               >
                 Mapa
               </TabsTrigger>

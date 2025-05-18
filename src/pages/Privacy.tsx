@@ -3,83 +3,83 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const Privacy = () => {
-  const [language, setLanguage] = useState<"en">("en");
+  const [language, setLanguage] = useState<"es">("es");
 
-  // Ensuring all content is in English as requested
+  // Content in Spanish as requested
   const content = {
-    title: "Privacy Policy",
-    lastUpdated: "Last updated",
-    introduction: "At Snap Contest, we respect your privacy and are committed to protecting your personal data. This Privacy Policy will inform you about how we look after your personal data when you visit our website and tell you about your privacy rights and how the law protects you.",
+    title: "Política de Privacidad",
+    lastUpdated: "Última actualización",
+    introduction: "En TOPPICS, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta Política de Privacidad te informará sobre cómo cuidamos tus datos personales cuando visitas nuestra web y te contará acerca de tus derechos de privacidad y cómo la ley te protege.",
     sections: [
       {
-        title: "1. What Data We Collect",
-        content: "We may collect, use, store and transfer different kinds of personal data about you which we have grouped together as follows:",
+        title: "1. Qué Datos Recopilamos",
+        content: "Podemos recopilar, utilizar, almacenar y transferir diferentes tipos de datos personales sobre ti que hemos agrupado de la siguiente manera:",
         list: [
-          "Identity Data includes first name, last name, username or similar identifier.",
-          "Contact Data includes email address and telephone numbers.",
-          "Technical Data includes internet protocol (IP) address, your login data, browser type and version, time zone setting and location, browser plug-in types and versions, operating system and platform, and other technology on the devices you use to access this website.",
-          "Profile Data includes your username and password, your interests, preferences, feedback and survey responses.",
-          "Usage Data includes information about how you use our website, products and services.",
-          "Marketing and Communications Data includes your preferences in receiving marketing from us and our third parties and your communication preferences."
+          "Datos de Identidad incluyen nombre, apellido, nombre de usuario o identificador similar.",
+          "Datos de Contacto incluyen dirección de correo electrónico y números de teléfono.",
+          "Datos Técnicos incluyen dirección de protocolo de internet (IP), tus datos de inicio de sesión, tipo y versión del navegador, configuración de zona horaria y ubicación, tipos y versiones de complementos del navegador, sistema operativo y plataforma, y otras tecnologías en los dispositivos que utilizas para acceder a este sitio web.",
+          "Datos de Perfil incluyen tu nombre de usuario y contraseña, tus intereses, preferencias, comentarios y respuestas a encuestas.",
+          "Datos de Uso incluyen información sobre cómo utilizas nuestro sitio web, productos y servicios.",
+          "Datos de Marketing y Comunicaciones incluyen tus preferencias para recibir marketing de nosotros y terceros y tus preferencias de comunicación."
         ]
       },
       {
-        title: "2. How We Collect Your Data",
-        content: "We use different methods to collect data from and about you including through:",
+        title: "2. Cómo Recopilamos tus Datos",
+        content: "Utilizamos diferentes métodos para recopilar datos de y sobre ti, incluyendo a través de:",
         list: [
-          "Direct interactions: You may give us your Identity and Contact Data by filling in forms or by corresponding with us by post, phone, email or otherwise.",
-          "Automated technologies or interactions: As you interact with our website, we will automatically collect Technical Data about your equipment, browsing actions and patterns. We collect this personal data by using cookies, server logs and other similar technologies.",
-          "Third parties or publicly available sources: We will receive personal data about you from various third parties and public sources."
+          "Interacciones directas: Puedes proporcionarnos tus Datos de Identidad y Contacto completando formularios o correspondiendo con nosotros por correo postal, teléfono, correo electrónico o de otra manera.",
+          "Tecnologías o interacciones automatizadas: A medida que interactúas con nuestro sitio web, recopilaremos automáticamente Datos Técnicos sobre tu equipo, acciones de navegación y patrones. Recopilamos estos datos personales utilizando cookies, registros de servidor y otras tecnologías similares.",
+          "Terceros o fuentes públicamente disponibles: Recibiremos datos personales sobre ti de varios terceros y fuentes públicas."
         ]
       },
       {
-        title: "3. How We Use Your Data",
-        content: "We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:",
+        title: "3. Cómo Utilizamos tus Datos",
+        content: "Solo utilizaremos tus datos personales cuando la ley nos lo permita. Más comúnmente, utilizaremos tus datos personales en las siguientes circunstancias:",
         list: [
-          "Where we need to perform the contract we are about to enter into or have entered into with you.",
-          "Where it is necessary for our legitimate interests (or those of a third party) and your interests and fundamental rights do not override those interests.",
-          "Where we need to comply with a legal obligation."
+          "Cuando necesitamos ejecutar el contrato que estamos a punto de celebrar o hemos celebrado contigo.",
+          "Cuando sea necesario para nuestros intereses legítimos (o los de un tercero) y tus intereses y derechos fundamentales no anulen esos intereses.",
+          "Cuando necesitamos cumplir con una obligación legal."
         ],
-        subcontent: "Generally, we do not rely on consent as a legal basis for processing your personal data although we will get your consent before sending third party direct marketing communications to you via email or text message. You have the right to withdraw consent to marketing at any time by contacting us."
+        subcontent: "En general, no nos basamos en el consentimiento como base legal para procesar tus datos personales, aunque obtendremos tu consentimiento antes de enviar comunicaciones de marketing directo de terceros por correo electrónico o mensaje de texto. Tienes derecho a retirar el consentimiento al marketing en cualquier momento poniéndote en contacto con nosotros."
       },
       {
-        title: "4. Data Security",
-        content: "We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used or accessed in an unauthorized way, altered or disclosed. In addition, we limit access to your personal data to those employees, agents, contractors and other third parties who have a business need to know. They will only process your personal data on our instructions and they are subject to a duty of confidentiality.",
-        subcontent: "We have put in place procedures to deal with any suspected personal data breach and will notify you and any applicable regulator of a breach where we are legally required to do so."
+        title: "4. Seguridad de Datos",
+        content: "Hemos implementado medidas de seguridad apropiadas para prevenir que tus datos personales se pierdan accidentalmente, se utilicen o accedan de manera no autorizada, se alteren o se divulguen. Además, limitamos el acceso a tus datos personales a aquellos empleados, agentes, contratistas y otros terceros que tienen una necesidad comercial de conocerlos. Solo procesarán tus datos personales según nuestras instrucciones y están sujetos a un deber de confidencialidad.",
+        subcontent: "Hemos implementado procedimientos para tratar con cualquier sospecha de violación de datos personales y te notificaremos a ti y a cualquier regulador aplicable de una violación donde estemos legalmente obligados a hacerlo."
       },
       {
-        title: "5. Data Retention",
-        content: "We will only retain your personal data for as long as reasonably necessary to fulfill the purposes we collected it for, including for the purposes of satisfying any legal, regulatory, tax, accounting or reporting requirements. We may retain your personal data for a longer period in the event of a complaint or if we reasonably believe there is a prospect of litigation in respect to our relationship with you."
+        title: "5. Retención de Datos",
+        content: "Solo conservaremos tus datos personales durante el tiempo que sea razonablemente necesario para cumplir con los fines para los que los recopilamos, incluidos los fines de satisfacer cualquier requisito legal, regulatorio, fiscal, contable o de informe. Podemos conservar tus datos personales por un período más largo en caso de una queja o si creemos razonablemente que existe la posibilidad de litigio con respecto a nuestra relación contigo."
       },
       {
-        title: "6. Your Legal Rights",
-        content: "Under certain circumstances, you have rights under data protection laws in relation to your personal data including the right to:",
+        title: "6. Tus Derechos Legales",
+        content: "En determinadas circunstancias, tienes derechos bajo las leyes de protección de datos en relación con tus datos personales incluyendo el derecho a:",
         list: [
-          "Request access to your personal data.",
-          "Request correction of your personal data.",
-          "Request erasure of your personal data.",
-          "Object to processing of your personal data.",
-          "Request restriction of processing your personal data.",
-          "Request transfer of your personal data.",
-          "Right to withdraw consent."
+          "Solicitar acceso a tus datos personales.",
+          "Solicitar corrección de tus datos personales.",
+          "Solicitar eliminación de tus datos personales.",
+          "Oponerte al procesamiento de tus datos personales.",
+          "Solicitar restricción del procesamiento de tus datos personales.",
+          "Solicitar la transferencia de tus datos personales.",
+          "Derecho a retirar el consentimiento."
         ],
-        subcontent: "You will not have to pay a fee to access your personal data (or to exercise any of the other rights). However, we may charge a reasonable fee if your request is clearly unfounded, repetitive or excessive. Alternatively, we could refuse to comply with your request in these circumstances."
+        subcontent: "No tendrás que pagar una tarifa para acceder a tus datos personales (o para ejercer cualquiera de los otros derechos). Sin embargo, podemos cobrar una tarifa razonable si tu solicitud es claramente infundada, repetitiva o excesiva. Alternativamente, podríamos negarnos a cumplir con tu solicitud en estas circunstancias."
       },
       {
-        title: "7. Third-Party Links",
-        content: "This website may include links to third-party websites, plug-ins and applications. Clicking on those links or enabling those connections may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements. When you leave our website, we encourage you to read the privacy policy of every website you visit."
+        title: "7. Enlaces de Terceros",
+        content: "Este sitio web puede incluir enlaces a sitios web, complementos y aplicaciones de terceros. Hacer clic en esos enlaces o habilitar esas conexiones puede permitir a terceros recopilar o compartir datos sobre ti. No controlamos estos sitios web de terceros y no somos responsables de sus declaraciones de privacidad. Cuando abandones nuestro sitio web, te recomendamos que leas la política de privacidad de cada sitio web que visites."
       },
       {
         title: "8. Cookies",
-        content: "You can set your browser to refuse all or some browser cookies, or to alert you when websites set or access cookies. If you disable or refuse cookies, please note that some parts of this website may become inaccessible or not function properly."
+        content: "Puedes configurar tu navegador para rechazar todas o algunas cookies del navegador, o para alertarte cuando los sitios web establecen o acceden a cookies. Si desactivas o rechazas las cookies, ten en cuenta que algunas partes de este sitio web pueden volverse inaccesibles o no funcionar correctamente."
       },
       {
-        title: "9. Changes to the Privacy Policy",
-        content: "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the 'Last Updated' date at the top of this Privacy Policy. You are advised to review this Privacy Policy periodically for any changes."
+        title: "9. Cambios en la Política de Privacidad",
+        content: "Podemos actualizar nuestra Política de Privacidad de vez en cuando. Te notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página y actualizando la fecha de 'Última Actualización' en la parte superior de esta Política de Privacidad. Se te aconseja revisar esta Política de Privacidad periódicamente para cualquier cambio."
       },
       {
-        title: "10. Contact Us",
-        content: "If you have any questions about this Privacy Policy, please contact us at: privacy@snapcontest.com"
+        title: "10. Contáctanos",
+        content: "Si tienes alguna pregunta sobre esta Política de Privacidad, por favor contáctanos en: privacidad@toppics.com"
       }
     ]
   };

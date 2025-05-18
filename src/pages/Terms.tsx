@@ -4,114 +4,114 @@ import { useEffect, useState } from "react";
 import ProhibitedConduct from "@/components/ProhibitedConduct";
 
 const Terms = () => {
-  const [language, setLanguage] = useState<"en">("en");
+  const [language, setLanguage] = useState<"es">("es");
 
-  // All content will be in English as requested
+  // Content in Spanish as requested
   const content = {
-    title: "Terms and Conditions",
-    lastUpdated: "Last updated",
+    title: "Términos y Condiciones",
+    lastUpdated: "Última actualización",
     sections: [
       {
-        title: "1. Acceptance of Terms",
-        content: "By accessing or using Snap Contest, you agree to comply with these Terms and Conditions and all applicable laws and regulations. If you do not agree with any of these terms, you should not use our services."
+        title: "1. Aceptación de Términos",
+        content: "Al acceder o utilizar TOPPICS, aceptas cumplir con estos Términos y Condiciones y todas las leyes y regulaciones aplicables. Si no estás de acuerdo con alguno de estos términos, no deberías usar nuestros servicios."
       },
       {
-        title: "2. Changes to Terms",
-        content: "We reserve the right to modify these terms at any time. Changes will take effect immediately after posting. It is your responsibility to periodically review these terms."
+        title: "2. Cambios en los Términos",
+        content: "Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación. Es tu responsabilidad revisar periódicamente estos términos."
       },
       {
-        title: "3. Use of Service",
-        content: "Snap Contest provides a platform to participate in photo contests. By using our services, you agree to:",
+        title: "3. Uso del Servicio",
+        content: "TOPPICS proporciona una plataforma para participar en concursos de fotografía. Al utilizar nuestros servicios, aceptas:",
         list: [
-          "Not use the service for illegal or unauthorized purposes",
-          "Not infringe intellectual property rights",
-          "Not upload offensive, defamatory, or inappropriate content",
-          "Not attempt to access restricted areas of the service",
-          "Not upload AI-generated images",
-          "Only upload images that you have taken yourself and own the rights to"
+          "No utilizar el servicio para propósitos ilegales o no autorizados",
+          "No infringir derechos de propiedad intelectual",
+          "No subir contenido ofensivo, difamatorio o inapropiado",
+          "No intentar acceder a áreas restringidas del servicio",
+          "No subir imágenes generadas por IA",
+          "Solo subir imágenes que hayas tomado tú mismo y de las que poseas los derechos"
         ]
       },
       {
-        title: "4. User Accounts",
-        content: "When creating an account on Snap Contest, you are responsible for:",
+        title: "4. Cuentas de Usuario",
+        content: "Al crear una cuenta en TOPPICS, eres responsable de:",
         list: [
-          "Maintaining the confidentiality of your password",
-          "Restricting access to your account",
-          "All activities that occur under your account",
-          "Notifying us immediately of any unauthorized use"
+          "Mantener la confidencialidad de tu contraseña",
+          "Restringir el acceso a tu cuenta",
+          "Todas las actividades que ocurran en tu cuenta",
+          "Notificarnos inmediatamente de cualquier uso no autorizado"
         ]
       },
       {
-        title: "5. Intellectual Property Rights",
-        content: "When uploading photographs to Snap Contest, you retain your copyright, but you grant us a license to display, promote, and use your content in connection with the platform's services. Additionally, you grant the contest organizers the rights specified in the rules of each contest."
+        title: "5. Derechos de Propiedad Intelectual",
+        content: "Al subir fotografías a TOPPICS, conservas tus derechos de autor, pero nos otorgas una licencia para mostrar, promocionar y utilizar tu contenido en conexión con los servicios de la plataforma. Además, otorgas a los organizadores del concurso los derechos especificados en las reglas de cada concurso."
       },
       {
-        title: "6. Photo Ownership and Commercial Rights",
-        content: "By participating in contests on Snap Contest:",
+        title: "6. Propiedad de Fotos y Derechos Comerciales",
+        content: "Al participar en concursos en TOPPICS:",
         list: [
-          "You understand that winning photos may become the property of the contest organizer if specified in the contest rules.",
-          "You consent to your winning photographs being used for commercial purposes by the contest organizer if specified in the contest rules.",
-          "You confirm that you have obtained appropriate permissions from any identifiable individuals appearing in your photos.",
-          "You consent to appearing in photographs that may be used for commercial purposes if you are visible in winning photos.",
-          "You acknowledge that contest organizers may choose to not claim ownership of photos, and in those cases, you retain all rights to your images."
+          "Entiendes que las fotos ganadoras pueden convertirse en propiedad del organizador del concurso si así se especifica en las reglas del concurso.",
+          "Consientes que tus fotografías ganadoras sean utilizadas con fines comerciales por el organizador del concurso si así se especifica en las reglas del concurso.",
+          "Confirmas que has obtenido los permisos apropiados de cualquier persona identificable que aparezca en tus fotos.",
+          "Consientes aparecer en fotografías que pueden ser utilizadas con fines comerciales si eres visible en fotos ganadoras.",
+          "Reconoces que los organizadores del concurso pueden optar por no reclamar la propiedad de las fotos y, en esos casos, conservas todos los derechos sobre tus imágenes."
         ]
       },
       {
-        title: "7. Voting and Selection System",
-        content: "The Snap Contest voting and selection system works as follows:",
+        title: "7. Sistema de Votación y Selección",
+        content: "El sistema de votación y selección de TOPPICS funciona de la siguiente manera:",
         list: [
-          "Initially, our artificial intelligence performs a first filtering of photographs based on technical and aesthetic quality criteria.",
-          "This filtering ensures that participants only see a maximum of 50 highest-quality photographs for voting.",
-          "Contest administrators have access to all photos, including those filtered by AI, to ensure no photos were incorrectly eliminated.",
-          "Participants vote for the photographs they consider best, thus determining the winners of the contest.",
-          "The number of winning photographs will depend on the type of event and the organizer's subscription.",
-          "The winning photographs will become the property of the organizer according to the terms specified in each contest.",
-          "Winners will receive a notification in the app and an email with a QR code containing their reward."
+          "Inicialmente, nuestra inteligencia artificial realiza un primer filtrado de fotografías basado en criterios técnicos y estéticos de calidad.",
+          "Este filtrado asegura que los participantes solo vean un máximo de 50 fotografías de máxima calidad para votar.",
+          "Los administradores del concurso tienen acceso a todas las fotos, incluidas las filtradas por IA, para garantizar que ninguna foto fuera eliminada incorrectamente.",
+          "Los participantes votan por las fotografías que consideran mejores, determinando así los ganadores del concurso.",
+          "El número de fotografías ganadoras dependerá del tipo de evento y la suscripción del organizador.",
+          "Las fotografías ganadoras pasarán a ser propiedad del organizador según los términos especificados en cada concurso.",
+          "Los ganadores recibirán una notificación en la aplicación y un correo electrónico con un código QR que contiene su recompensa."
         ]
       },
       {
-        title: "8. Image Storage and Quality",
-        content: "To ensure the best possible experience on the platform:",
+        title: "8. Almacenamiento y Calidad de Imagen",
+        content: "Para garantizar la mejor experiencia posible en la plataforma:",
         list: [
-          "Uploaded photographs are compressed to optimize application performance during viewing and voting.",
-          "However, we store the original high-quality version to preserve all image details.",
-          "At the end of the contest, only the winning photographs that will be delivered to the organizer are kept in high quality.",
-          "The other photographs are maintained in their compressed version for platform visualization."
+          "Las fotografías subidas se comprimen para optimizar el rendimiento de la aplicación durante la visualización y votación.",
+          "Sin embargo, almacenamos la versión original de alta calidad para preservar todos los detalles de la imagen.",
+          "Al final del concurso, solo se mantienen en alta calidad las fotografías ganadoras que se entregarán al organizador.",
+          "Las demás fotografías se mantienen en su versión comprimida para visualización en la plataforma."
         ]
       },
       {
-        title: "9. Photograph Requirements",
-        content: "Regarding photographs uploaded to the platform:",
+        title: "9. Requisitos de las Fotografías",
+        content: "Respecto a las fotografías subidas a la plataforma:",
         list: [
-          "Photographs can be taken with mobile phones or cameras.",
-          "Contest organizers will specify in their rules the type of photography they are looking for.",
-          "Organizers will also indicate in their rules whether edited photographs are allowed and to what extent.",
-          "AI-generated images are not accepted.",
-          "Photographs must be taken by the user uploading them.",
-          "The user acknowledges being the owner of the rights to the images uploaded to the platform."
+          "Las fotografías pueden ser tomadas con teléfonos móviles o cámaras.",
+          "Los organizadores del concurso especificarán en sus reglas el tipo de fotografía que están buscando.",
+          "Los organizadores también indicarán en sus reglas si se permiten fotografías editadas y en qué medida.",
+          "No se aceptan imágenes generadas por IA.",
+          "Las fotografías deben ser tomadas por el usuario que las sube.",
+          "El usuario reconoce ser el propietario de los derechos de las imágenes subidas a la plataforma."
         ]
       },
       {
-        title: "10. Organizers and Collaborators",
-        content: "For contest organizers:",
+        title: "10. Organizadores y Colaboradores",
+        content: "Para los organizadores de concursos:",
         list: [
-          "Organizers can choose whether to allow collaborators in their contest.",
-          "Collaborators are companies that can advertise in the application in exchange for providing rewards for participants.",
-          "The main organizer's advertising will always be more prominent than that of collaborators.",
-          "The specific terms of collaboration will be agreed between the organizer and collaborators."
+          "Los organizadores pueden elegir si permiten colaboradores en su concurso.",
+          "Los colaboradores son empresas que pueden hacer publicidad en la aplicación a cambio de proporcionar recompensas para los participantes.",
+          "La publicidad del organizador principal siempre será más destacada que la de los colaboradores.",
+          "Los términos específicos de colaboración serán acordados entre el organizador y los colaboradores."
         ]
       },
       {
-        title: "11. Limitation of Liability",
-        content: "Snap Contest will not be liable for indirect, incidental, special, consequential, or punitive damages, including loss of profits, arising from the use of our services."
+        title: "11. Limitación de Responsabilidad",
+        content: "TOPPICS no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, incluida la pérdida de beneficios, derivados del uso de nuestros servicios."
       },
       {
-        title: "12. Governing Law",
-        content: "These terms will be governed and interpreted in accordance with the laws of Snap Contest's country of operation, without regard to its conflict of law principles."
+        title: "12. Ley Aplicable",
+        content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de TOPPICS, sin tener en cuenta sus principios de conflicto de leyes."
       },
       {
-        title: "13. Contact",
-        content: "If you have questions about these Terms and Conditions, contact us at: terms@snapcontest.com"
+        title: "13. Contacto",
+        content: "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en: terminos@toppics.com"
       }
     ]
   };

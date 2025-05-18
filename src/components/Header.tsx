@@ -46,9 +46,9 @@ const Header = () => {
   };
   
   const navItems = [
-    { name: "Contests", path: "/contests", icon: Award },
-    { name: "Organizers", path: "/organizers", icon: Building },
-    ...(user ? [{ name: "Profile", path: "/profile", icon: User }] : []),
+    { name: "Concursos", path: "/contests", icon: Award },
+    { name: "Organizadores", path: "/organizers", icon: Building },
+    ...(user ? [{ name: "Perfil", path: "/profile", icon: User }] : []),
   ];
   
   return (
@@ -73,7 +73,7 @@ const Header = () => {
           <span className={cn(
             "font-medium text-lg",
             isScrolled ? "text-[#4891AA]" : "text-white"
-          )}>Pix On Air</span>
+          )}>TOPPICS</span>
         </Link>
         
         {/* Desktop Navigation */}
@@ -104,7 +104,7 @@ const Header = () => {
           )}>
             <Link to="/support">
               <HelpCircle className="mr-2 h-4 w-4" />
-              <span>Support</span>
+              <span>Soporte</span>
             </Link>
           </Button>
           
@@ -113,7 +113,7 @@ const Header = () => {
               <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  <span>Upload photo</span>
+                  <span>Subir foto</span>
                 </Link>
               </Button>
               <Button 
@@ -128,7 +128,7 @@ const Header = () => {
                 )}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Sign out</span>
+                <span>Cerrar sesión</span>
               </Button>
             </>
           ) : (
@@ -139,7 +139,7 @@ const Header = () => {
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
-                <span>Log in</span>
+                <span>Iniciar sesión</span>
               </Link>
             </Button>
           )}
@@ -152,7 +152,7 @@ const Header = () => {
             isScrolled ? "text-[#4891AA]" : "text-white"
           )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
         >
           {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
@@ -191,7 +191,7 @@ const Header = () => {
                 className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-[#4891AA] transition-colors"
               >
                 <HelpCircle className="mr-2 w-5 h-5" />
-                <span>Support</span>
+                <span>Soporte</span>
               </Link>
               
               {user ? (
@@ -199,7 +199,7 @@ const Header = () => {
                   <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
                     <Link to="/upload">
                       <PlusCircle className="mr-2 h-4 w-4" />
-                      <span>Upload photo</span>
+                      <span>Subir foto</span>
                     </Link>
                   </Button>
                   <Button 
@@ -209,7 +209,7 @@ const Header = () => {
                     className="w-full justify-start text-muted-foreground hover:text-[#4891AA]"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
+                    <span>Cerrar sesión</span>
                   </Button>
                 </>
               ) : (
@@ -220,7 +220,7 @@ const Header = () => {
                 >
                   <Link to="/login">
                     <LogIn className="mr-2 h-4 w-4" />
-                    <span>Log in</span>
+                    <span>Iniciar sesión</span>
                   </Link>
                 </Button>
               )}
