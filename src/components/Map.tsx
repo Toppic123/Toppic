@@ -1,6 +1,7 @@
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, MapPin, Lock, Unlock, Loader2, Search } from "lucide-react";
+import { MapPin, Lock, Loader2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -213,27 +214,34 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         </div>
       )}
 
+      {/* Botón central de CONCURSOS CERCANOS (reemplaza al antiguo) */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-        <Button 
+        <motion.button 
           onClick={locateUser}
           disabled={isLocating || isMapLoading || !!mapError}
-          className={`flex items-center gap-2 ${showMustardButton 
-            ? 'bg-[#F5D742] hover:bg-[#E6C83D] text-black shadow-lg transition-all pulse-animation' 
-            : 'bg-[#4891AA] hover:bg-[#3a7a8b] text-white shadow-lg transition-all pulse-animation'}`}
-          size="lg"
+          className="flex items-center gap-2 bg-[#FFC72C] text-black font-medium px-6 py-4 rounded-full shadow-lg hover:bg-[#FFD54F] transition-all"
+          whileHover={{ scale: 1.05 }}
+          animate={{
+            boxShadow: ["0px 4px 12px rgba(0,0,0,0.1)", "0px 8px 24px rgba(0,0,0,0.15)", "0px 4px 12px rgba(0,0,0,0.1)"],
+          }}
+          transition={{
+            repeat: Infinity,
+            repeatType: "reverse",
+            duration: 2
+          }}
         >
           {isLocating ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span className="font-medium">Localizando...</span>
+              <span>Localizando...</span>
             </>
           ) : (
             <>
               <Search className="w-5 h-5" />
-              <span className="font-medium">CONCURSOS CERCANOS</span>
+              <span>CONCURSOS CERCANOS</span>
             </>
           )}
-        </Button>
+        </motion.button>
       </div>
 
       {userLocation && (
