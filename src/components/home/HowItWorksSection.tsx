@@ -47,7 +47,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl font-bold mb-4 font-serif tracking-tight">{texts.howItWorks}</h2>
+          <h2 className="text-4xl font-bold mb-4 tracking-tight">{texts.howItWorks}</h2>
           <div className="mx-auto w-24 h-1 bg-primary/60 rounded"></div>
         </motion.div>
         
@@ -72,7 +72,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                   <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold">
                     {step.id}
                   </div>
-                  <h3 className="text-xl font-bold mb-3 font-serif">{step.title}</h3>
+                  <h3 className="text-xl font-bold mb-3 tracking-tight">{step.title}</h3>
                   <p className="text-muted-foreground">{step.description}</p>
                 </div>
               </motion.div>

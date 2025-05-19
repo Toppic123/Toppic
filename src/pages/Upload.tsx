@@ -17,11 +17,11 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 
-// Mock nearby contests
+// Concursos cercanos de ejemplo
 const nearbyContests = [
-  { id: "1", name: "Summer in Barcelona", distance: "0.5 km" },
-  { id: "2", name: "Urban Architecture", distance: "1.2 km" },
-  { id: "3", name: "Beach Life", distance: "3.4 km" },
+  { id: "1", name: "Verano en Barcelona", distance: "0.5 km" },
+  { id: "2", name: "Arquitectura Urbana", distance: "1.2 km" },
+  { id: "3", name: "Vida en la Playa", distance: "3.4 km" },
 ];
 
 const Upload = () => {
@@ -35,12 +35,12 @@ const Upload = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  // Redirect if not logged in
+  // Redireccionar si no está logueado
   useEffect(() => {
     if (!user) {
       toast({
-        title: "Authentication required",
-        description: "Please log in to upload photos",
+        title: "Autenticación requerida",
+        description: "Por favor inicia sesión para subir fotos",
         variant: "destructive"
       });
       navigate('/login');
@@ -59,7 +59,7 @@ const Upload = () => {
           let width = img.width;
           let height = img.height;
           
-          // Scale down if width exceeds maxWidth
+          // Reducir si el ancho excede maxWidth
           if (width > maxWidth) {
             const ratio = maxWidth / width;
             width = maxWidth;
@@ -73,12 +73,12 @@ const Upload = () => {
           
           canvas.toBlob((blob) => {
             if (blob) resolve(blob);
-            else reject(new Error('Canvas to Blob conversion failed'));
-          }, 'image/jpeg', 0.8); // 0.8 quality for JPEG
+            else reject(new Error('Error en la conversión de Canvas a Blob'));
+          }, 'image/jpeg', 0.8); // 0.8 de calidad para JPEG
         };
-        img.onerror = () => reject(new Error('Image loading error'));
+        img.onerror = () => reject(new Error('Error al cargar la imagen'));
       };
-      reader.onerror = () => reject(new Error('FileReader error'));
+      reader.onerror = () => reject(new Error('Error en FileReader'));
     });
   };
 
@@ -86,34 +86,34 @@ const Upload = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Check file size (5MB max)
+      // Comprobar tamaño del archivo (5MB máx)
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          title: "File too large",
-          description: "Please select an image less than 5MB",
+          title: "Archivo demasiado grande",
+          description: "Por favor selecciona una imagen de menos de 5MB",
           variant: "destructive"
         });
         return;
       }
       
       try {
-        // Store original file for later submission
+        // Guardar archivo original para envío posterior
         setOriginalFile(file);
         
-        // Compress for preview
+        // Comprimir para la vista previa
         const compressedBlob = await compressImage(file);
         const compressedUrl = URL.createObjectURL(compressedBlob);
         setPreviewUrl(compressedUrl);
         
         toast({
-          title: "Image loaded",
-          description: "Preview generated with optimized quality"
+          title: "Imagen cargada",
+          description: "Vista previa generada con calidad optimizada"
         });
       } catch (error) {
-        console.error("Error processing image:", error);
+        console.error("Error al procesar la imagen:", error);
         toast({
-          title: "Error processing image",
-          description: "Please try another image",
+          title: "Error al procesar la imagen",
+          description: "Por favor intenta con otra imagen",
           variant: "destructive"
         });
       }
@@ -125,8 +125,8 @@ const Upload = () => {
     
     if (!originalFile) {
       toast({
-        title: "Image required",
-        description: "Please select an image to participate",
+        title: "Imagen requerida",
+        description: "Por favor selecciona una imagen para participar",
         variant: "destructive"
       });
       return;
@@ -134,22 +134,22 @@ const Upload = () => {
 
     if (!selectedContest) {
       toast({
-        title: "Contest required",
-        description: "Please select a contest to participate in",
+        title: "Concurso requerido",
+        description: "Por favor selecciona un concurso en el que participar",
         variant: "destructive"
       });
       return;
     }
     
-    // Here you would upload both the originalFile (for storage) and the metadata
-    console.log("Photo submitted to contest:", selectedContest);
-    console.log("Original file to be stored:", originalFile);
-    console.log("Title:", title);
-    console.log("Description:", description);
+    // Aquí subirías tanto el originalFile (para almacenamiento) como los metadatos
+    console.log("Foto enviada al concurso:", selectedContest);
+    console.log("Archivo original a almacenar:", originalFile);
+    console.log("Título:", title);
+    console.log("Descripción:", description);
     
     toast({
-      title: "Photo submitted!",
-      description: "Your photo has been submitted to the contest"
+      title: "¡Foto enviada!",
+      description: "Tu foto ha sido enviada al concurso"
     });
   };
 
@@ -162,21 +162,21 @@ const Upload = () => {
     >
       <Card>
         <CardHeader>
-          <CardTitle>Upload Photo</CardTitle>
+          <CardTitle>Subir Foto</CardTitle>
           <CardDescription>
-            Participate in a contest by sharing your best photograph
+            Participa en un concurso compartiendo tu mejor fotografía
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="contest">Select a nearby contest</Label>
+              <Label htmlFor="contest">Selecciona un concurso cercano</Label>
               <Select 
                 value={selectedContest} 
                 onValueChange={setSelectedContest}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a contest" />
+                  <SelectValue placeholder="Selecciona un concurso" />
                 </SelectTrigger>
                 <SelectContent>
                   {nearbyContests.map(contest => (
@@ -189,10 +189,10 @@ const Upload = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="photo">Select a photo</Label>
+              <Label htmlFor="photo">Selecciona una foto</Label>
               {previewUrl ? (
                 <div className="relative rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
-                  <img src={previewUrl} alt="Preview" className="w-full h-auto" />
+                  <img src={previewUrl} alt="Vista previa" className="w-full h-auto" />
                   <Button 
                     type="button" 
                     variant="secondary" 
@@ -203,7 +203,7 @@ const Upload = () => {
                       setOriginalFile(null);
                     }}
                   >
-                    Change
+                    Cambiar
                   </Button>
                 </div>
               ) : (
@@ -211,9 +211,9 @@ const Upload = () => {
                   <div className="flex flex-col items-center justify-center space-y-2">
                     <Camera className="h-10 w-10 text-muted-foreground" />
                     <div className="flex flex-col space-y-1 text-sm text-muted-foreground">
-                      <span>Drag your photo here or</span>
+                      <span>Arrastra tu foto aquí o</span>
                       <label htmlFor="photo" className="relative cursor-pointer text-blue-600 hover:underline">
-                        <span>select a file</span>
+                        <span>selecciona un archivo</span>
                         <Input
                           id="photo"
                           type="file"
@@ -224,23 +224,23 @@ const Upload = () => {
                       </label>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      JPG, PNG or GIF. Maximum 5MB.
+                      JPG, PNG o GIF. Máximo 5MB.
                     </span>
                   </div>
                 </div>
               )}
               {previewUrl && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  Note: Your photo is shown in optimized quality for web, but will be saved in its original quality.
+                  Nota: Tu foto se muestra en calidad optimizada para web, pero se guardará en su calidad original.
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="title">Photo title</Label>
+              <Label htmlFor="title">Título de la foto</Label>
               <Input 
                 id="title" 
-                placeholder="Add a descriptive title" 
+                placeholder="Añade un título descriptivo" 
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -248,10 +248,10 @@ const Upload = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description (optional)</Label>
+              <Label htmlFor="description">Descripción (opcional)</Label>
               <Input 
                 id="description" 
-                placeholder="Tell us about your photo..." 
+                placeholder="Cuéntanos sobre tu foto..." 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -259,14 +259,14 @@ const Upload = () => {
 
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <MapPin className="h-4 w-4" />
-              <span>Your location will be automatically added</span>
+              <span>Tu ubicación se añadirá automáticamente</span>
             </div>
           </form>
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full" onClick={handleSubmit}>
             <UploadIcon className="mr-2 h-4 w-4" />
-            Upload photo
+            Subir foto
           </Button>
         </CardFooter>
       </Card>

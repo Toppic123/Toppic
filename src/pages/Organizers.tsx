@@ -50,40 +50,40 @@ import LocationCombobox from "@/components/admin/dashboard/contests/LocationComb
 
 const formSchema = z.object({
   fullName: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
+    message: "El nombre debe tener al menos 2 caracteres.",
   }),
   email: z.string().email({
-    message: "Please enter a valid email.",
+    message: "Por favor, introduce un email válido.",
   }),
   phone: z.string().min(9, {
-    message: "Please enter a valid phone number.",
+    message: "Por favor, introduce un número de teléfono válido.",
   }),
   companyName: z.string().min(2, {
-    message: "Company name must be at least 2 characters.",
+    message: "El nombre de la empresa debe tener al menos 2 caracteres.",
   }),
   eventDescription: z.string().min(20, {
-    message: "Description must be at least 20 characters.",
+    message: "La descripción debe tener al menos 20 caracteres.",
   }),
   photoType: z.string({
-    required_error: "Please select the type of photography.",
+    required_error: "Por favor, selecciona el tipo de fotografía.",
   }),
   location: z.string().min(2, {
-    message: "Please enter a valid location.",
+    message: "Por favor, introduce una ubicación válida.",
   }),
   eventStartDate: z.string({
-    required_error: "Please select a start date.",
+    required_error: "Por favor, selecciona una fecha de inicio.",
   }),
   eventEndDate: z.string({
-    required_error: "Please select an end date.",
+    required_error: "Por favor, selecciona una fecha de fin.",
   }),
   votingEndDate: z.string({
-    required_error: "Please select a voting end date.",
+    required_error: "Por favor, selecciona una fecha de fin de votación.",
   }),
   planType: z.string({
-    required_error: "Please select a plan.",
+    required_error: "Por favor, selecciona un plan.",
   }),
   maxDistance: z.string({
-    required_error: "Please select a maximum distance.",
+    required_error: "Por favor, selecciona una distancia máxima.",
   }),
   rewardVoters: z.boolean().default(false),
 });
@@ -94,9 +94,6 @@ const Organizers = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
-  
-  // Removed the useEffect that checks for user and redirects
-  // This allows non-logged in users to view the page
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -123,8 +120,8 @@ const Organizers = () => {
     if (!user) {
       // If not logged in, prompt user to log in before submitting
       toast({
-        title: "Login required",
-        description: "Please log in to submit your request.",
+        title: "Inicio de sesión requerido",
+        description: "Por favor, inicia sesión para enviar tu solicitud.",
         variant: "destructive",
       });
       navigate("/login");
@@ -132,8 +129,8 @@ const Organizers = () => {
     }
     
     toast({
-      title: "Request submitted",
-      description: "We have received your request and will contact you soon.",
+      title: "Solicitud enviada",
+      description: "Hemos recibido tu solicitud y nos pondremos en contacto contigo pronto.",
     });
     
     form.reset();
@@ -142,41 +139,41 @@ const Organizers = () => {
   const plans = [
     {
       id: "basic",
-      name: "Basic",
+      name: "Básico",
       price: "29€",
-      description: "Ideal for small and local events",
+      description: "Ideal para eventos pequeños y locales",
       features: [
-        "Up to 300 participants",
-        "1 photo contest",
-        "Basic advertising in the app",
-        "Rights to 1 winning photo"
+        "Hasta 300 participantes",
+        "1 concurso fotográfico",
+        "Publicidad básica en la app",
+        "Derechos de 1 foto ganadora"
       ]
     },
     {
       id: "pro",
-      name: "Professional",
+      name: "Profesional",
       price: "79€",
-      description: "Perfect for medium events and companies",
+      description: "Perfecto para eventos medianos y empresas",
       features: [
-        "Up to 1000 participants",
-        "3 photo contests",
-        "Featured advertising in the app",
-        "Rights to 3 winning photos from each contest",
-        "Promotional banner in the app"
+        "Hasta 1000 participantes",
+        "3 concursos fotográficos",
+        "Publicidad destacada en la app",
+        "Derechos de 3 fotos ganadoras de cada concurso",
+        "Banner promocional en la app"
       ]
     },
     {
       id: "premium",
       name: "Premium",
       price: "149€",
-      description: "For large events and recognized brands",
+      description: "Para grandes eventos y marcas reconocidas",
       features: [
-        "Unlimited participants",
-        "5 photo contests",
-        "Premium advertising throughout the app",
-        "Rights to the 9 best photos",
-        "Featured banner on main page",
-        "Custom push notifications"
+        "Participantes ilimitados",
+        "5 concursos fotográficos",
+        "Publicidad premium en toda la app",
+        "Derechos de las 9 mejores fotos",
+        "Banner destacado en página principal",
+        "Notificaciones push personalizadas"
       ]
     }
   ];
@@ -197,7 +194,7 @@ const Organizers = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Organizers
+            Organizadores
           </motion.h1>
           <motion.p 
             className="text-xl text-muted-foreground max-w-3xl mx-auto"
@@ -205,14 +202,14 @@ const Organizers = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Boost your event or company through our photo contests. Connect with your audience in a unique and visual way.
+            Impulsa tu evento o empresa a través de nuestros concursos fotográficos. Conecta con tu audiencia de una forma única y visual.
           </motion.p>
         </div>
         
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-12">
           <TabsList className="w-full max-w-md mx-auto grid grid-cols-2">
-            <TabsTrigger value="info">Plans & Benefits</TabsTrigger>
-            <TabsTrigger value="form">Event Request</TabsTrigger>
+            <TabsTrigger value="info">Planes y Beneficios</TabsTrigger>
+            <TabsTrigger value="form">Solicitud de Evento</TabsTrigger>
           </TabsList>
           
           <TabsContent value="info" className="mt-8">
@@ -239,7 +236,7 @@ const Organizers = () => {
                       className="w-full mt-6" 
                       onClick={() => handleSelectPlan(plan.id)}
                     >
-                      Select Plan
+                      Seleccionar Plan
                     </Button>
                   </CardContent>
                 </Card>
@@ -249,36 +246,36 @@ const Organizers = () => {
             <div className="mt-12 bg-muted/30 rounded-lg p-6">
               <h3 className="text-xl font-bold mb-4 flex items-center">
                 <Info className="h-5 w-5 mr-2" />
-                Why organize with us?
+                ¿Por qué organizar con nosotros?
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
                 <div className="flex flex-col items-center text-center">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Camera className="h-6 w-6 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">User-generated content</h4>
-                  <p className="text-muted-foreground text-sm">Receive hundreds of unique and authentic photos of your event or location.</p>
+                  <h4 className="font-medium mb-2">Contenido generado por usuarios</h4>
+                  <p className="text-muted-foreground text-sm">Recibe cientos de fotos únicas y auténticas de tu evento o ubicación.</p>
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Building className="h-6 w-6 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">Brand visibility</h4>
-                  <p className="text-muted-foreground text-sm">Promote your company or event to thousands of users interested in your sector.</p>
+                  <h4 className="font-medium mb-2">Visibilidad de marca</h4>
+                  <p className="text-muted-foreground text-sm">Promociona tu empresa o evento a miles de usuarios interesados en tu sector.</p>
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <User className="h-6 w-6 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">User engagement</h4>
-                  <p className="text-muted-foreground text-sm">Create an emotional connection with your customers through active participation.</p>
+                  <h4 className="font-medium mb-2">Engagement con usuarios</h4>
+                  <p className="text-muted-foreground text-sm">Crea una conexión emocional con tus clientes a través de la participación activa.</p>
                 </div>
                 <div className="flex flex-col items-center text-center">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Tag className="h-6 w-6 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">Marketing content</h4>
-                  <p className="text-muted-foreground text-sm">Obtain rights to the best photos to use in your future campaigns.</p>
+                  <h4 className="font-medium mb-2">Contenido para marketing</h4>
+                  <p className="text-muted-foreground text-sm">Obtén derechos sobre las mejores fotos para usar en tus futuras campañas.</p>
                 </div>
               </div>
             </div>
@@ -288,9 +285,9 @@ const Organizers = () => {
             <div className="max-w-3xl mx-auto">
               <Card>
                 <CardHeader>
-                  <CardTitle>Event creation request</CardTitle>
+                  <CardTitle>Solicitud de creación de evento</CardTitle>
                   <CardDescription>
-                    Complete the form to request a photo contest for your event or business.
+                    Completa el formulario para solicitar un concurso fotográfico para tu evento o negocio.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -299,7 +296,7 @@ const Organizers = () => {
                       <div className="space-y-4">
                         <h3 className="font-semibold flex items-center text-lg">
                           <User className="mr-2 h-5 w-5" />
-                          Personal information
+                          Información personal
                         </h3>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -308,9 +305,9 @@ const Organizers = () => {
                             name="fullName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Full name</FormLabel>
+                                <FormLabel>Nombre completo</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Your full name" {...field} />
+                                  <Input placeholder="Tu nombre completo" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -322,9 +319,9 @@ const Organizers = () => {
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Email address</FormLabel>
+                                <FormLabel>Dirección de email</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="your@email.com" type="email" {...field} />
+                                  <Input placeholder="tu@email.com" type="email" {...field} />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -337,7 +334,7 @@ const Organizers = () => {
                           name="phone"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Contact phone</FormLabel>
+                              <FormLabel>Teléfono de contacto</FormLabel>
                               <FormControl>
                                 <Input placeholder="+34 600 000 000" {...field} />
                               </FormControl>
@@ -352,7 +349,7 @@ const Organizers = () => {
                       <div className="space-y-4">
                         <h3 className="font-semibold flex items-center text-lg">
                           <Building className="mr-2 h-5 w-5" />
-                          Company information
+                          Información de la empresa
                         </h3>
                         
                         <FormField
@@ -360,9 +357,9 @@ const Organizers = () => {
                           name="companyName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Company/organization name</FormLabel>
+                              <FormLabel>Nombre de la empresa/organización</FormLabel>
                               <FormControl>
-                                <Input placeholder="Your company name" {...field} />
+                                <Input placeholder="Nombre de tu empresa" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -375,7 +372,7 @@ const Organizers = () => {
                       <div className="space-y-4">
                         <h3 className="font-semibold flex items-center text-lg">
                           <FileText className="mr-2 h-5 w-5" />
-                          Event details
+                          Detalles del evento
                         </h3>
                         
                         <FormField
@@ -383,10 +380,10 @@ const Organizers = () => {
                           name="eventDescription"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Event description</FormLabel>
+                              <FormLabel>Descripción del evento</FormLabel>
                               <FormControl>
                                 <Textarea 
-                                  placeholder="Describe your event or what you want to promote..." 
+                                  placeholder="Describe tu evento o lo que quieres promocionar..." 
                                   className="min-h-32"
                                   {...field} 
                                 />
@@ -425,20 +422,20 @@ const Organizers = () => {
                           name="photoType"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Expected photo type</FormLabel>
+                              <FormLabel>Tipo de fotos esperadas</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select the photo type" />
+                                    <SelectValue placeholder="Selecciona el tipo de fotografía" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="location">Places/Monuments</SelectItem>
-                                  <SelectItem value="people">People/Events</SelectItem>
-                                  <SelectItem value="product">Products/Services</SelectItem>
-                                  <SelectItem value="activity">Activities/Performances</SelectItem>
-                                  <SelectItem value="nature">Nature/Landscapes</SelectItem>
-                                  <SelectItem value="other">Other type</SelectItem>
+                                  <SelectItem value="location">Lugares/Monumentos</SelectItem>
+                                  <SelectItem value="people">Personas/Eventos</SelectItem>
+                                  <SelectItem value="product">Productos/Servicios</SelectItem>
+                                  <SelectItem value="activity">Actividades/Actuaciones</SelectItem>
+                                  <SelectItem value="nature">Naturaleza/Paisajes</SelectItem>
+                                  <SelectItem value="other">Otro tipo</SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />
@@ -451,11 +448,11 @@ const Organizers = () => {
                           name="maxDistance"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Maximum distance for photo uploads</FormLabel>
+                              <FormLabel>Distancia máxima para subir fotos</FormLabel>
                               <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select maximum distance" />
+                                    <SelectValue placeholder="Selecciona la distancia máxima" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -466,7 +463,7 @@ const Organizers = () => {
                                 </SelectContent>
                               </Select>
                               <FormDescription>
-                                Users can only upload photos within this distance from the event location
+                                Los usuarios solo podrán subir fotos dentro de esta distancia desde la ubicación del evento
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -479,7 +476,7 @@ const Organizers = () => {
                             name="eventStartDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Start date</FormLabel>
+                                <FormLabel>Fecha de inicio</FormLabel>
                                 <FormControl>
                                   <Input type="date" {...field} />
                                 </FormControl>
@@ -493,7 +490,7 @@ const Organizers = () => {
                             name="eventEndDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>End date</FormLabel>
+                                <FormLabel>Fecha de fin</FormLabel>
                                 <FormControl>
                                   <Input type="date" {...field} />
                                 </FormControl>
@@ -507,12 +504,12 @@ const Organizers = () => {
                             name="votingEndDate"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Voting end date</FormLabel>
+                                <FormLabel>Fecha fin de votación</FormLabel>
                                 <FormControl>
                                   <Input type="date" {...field} />
                                 </FormControl>
                                 <FormDescription>
-                                  Can be during or after the event
+                                  Puede ser durante o después del evento
                                 </FormDescription>
                                 <FormMessage />
                               </FormItem>
@@ -526,7 +523,7 @@ const Organizers = () => {
                       <div className="space-y-4">
                         <h3 className="font-semibold flex items-center text-lg">
                           <Gift className="mr-2 h-5 w-5" />
-                          Prizes configuration
+                          Configuración de premios
                         </h3>
                         
                         <FormField
@@ -541,9 +538,9 @@ const Organizers = () => {
                                 />
                               </FormControl>
                               <div className="space-y-1 leading-none">
-                                <FormLabel>Reward voters</FormLabel>
+                                <FormLabel>Premiar a los votantes</FormLabel>
                                 <FormDescription>
-                                  In addition to rewarding the best photo, a random voter who participated in the contest will be rewarded.
+                                  Además de premiar a la mejor foto, se premiará a un votante aleatorio que haya participado en el concurso.
                                 </FormDescription>
                               </div>
                             </FormItem>
@@ -556,7 +553,7 @@ const Organizers = () => {
                       <div className="space-y-4">
                         <h3 className="font-semibold flex items-center text-lg">
                           <Tag className="mr-2 h-5 w-5" />
-                          Selected plan
+                          Plan seleccionado
                         </h3>
                         
                         <FormField
@@ -568,12 +565,12 @@ const Organizers = () => {
                               <Select onValueChange={field.onChange} defaultValue={field.value || selectedPlan || ""}>
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select a plan" />
+                                    <SelectValue placeholder="Selecciona un plan" />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="basic">Basic - 29€</SelectItem>
-                                  <SelectItem value="pro">Professional - 79€</SelectItem>
+                                  <SelectItem value="basic">Básico - 29€</SelectItem>
+                                  <SelectItem value="pro">Profesional - 79€</SelectItem>
                                   <SelectItem value="premium">Premium - 149€</SelectItem>
                                 </SelectContent>
                               </Select>
@@ -583,7 +580,7 @@ const Organizers = () => {
                         />
                       </div>
                       
-                      <Button type="submit" className="w-full">Submit request</Button>
+                      <Button type="submit" className="w-full">Enviar solicitud</Button>
                     </form>
                   </Form>
                 </CardContent>

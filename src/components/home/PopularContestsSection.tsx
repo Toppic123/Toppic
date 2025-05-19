@@ -46,7 +46,7 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
               initial={{ opacity: 0, y: -10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl font-bold mb-2 tracking-tight font-serif"
+              className="text-4xl font-bold mb-2 tracking-tight"
             >
               {texts.featuredContest}
             </motion.h2>
@@ -76,7 +76,16 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
         >
           {contests.map((contest) => (
             <motion.div key={contest.id} variants={itemVariants}>
-              <ContestCard contest={contest} />
+              <ContestCard 
+                id={contest.id}
+                title={contest.title}
+                imageUrl={contest.imageUrl}
+                location={contest.location}
+                dateStart={contest.dateStart}
+                dateEnd={contest.dateEnd}
+                participantsCount={contest.participantsCount}
+                photosCount={contest.photosCount}
+              />
             </motion.div>
           ))}
         </motion.div>

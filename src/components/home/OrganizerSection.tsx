@@ -1,7 +1,7 @@
 
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface OrganizerSectionProps {
   texts: {
@@ -13,99 +13,79 @@ interface OrganizerSectionProps {
 
 const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
   return (
-    <section className="py-20 relative overflow-hidden">
-      {/* Fondo abstracto */}
-      <div className="absolute inset-0 -z-10 opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/30 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full bg-[#9b87f5]/30 blur-3xl"></div>
-      </div>
-      
+    <section className="py-20 bg-white dark:bg-gray-950">
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
+        <div className="flex flex-col lg:flex-row items-center gap-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            className="lg:w-1/2"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight font-serif tracking-tight">
-              {texts.organizerTitle}
-            </h2>
-            
-            <div className="w-24 h-1 bg-primary mb-6 rounded"></div>
-            
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              {texts.organizerDesc}
-            </p>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-            >
-              <Button asChild size="lg" className="rounded-full px-8">
-                <Link to="/pricing">{texts.discoverPlans}</Link>
-              </Button>
-            </motion.div>
+            <div className="relative">
+              <img 
+                src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=2070&auto=format&fit=crop" 
+                alt="Organizadores de eventos" 
+                className="rounded-xl w-full object-cover"
+              />
+              <div className="absolute -bottom-6 -right-6 bg-primary px-6 py-4 rounded-lg text-white font-medium shadow-xl">
+                <p className="text-lg">¡Impulsa tu marca!</p>
+              </div>
+            </div>
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative"
+            className="lg:w-1/2"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-100 dark:border-gray-700">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="text-4xl mb-2">🏆</div>
-                  <h3 className="font-bold mb-1">Organizadores</h3>
-                  <p className="text-sm text-muted-foreground">Gestiona tus concursos desde un panel intuitivo</p>
+            <h2 className="text-4xl font-bold mb-4 tracking-tight">{texts.organizerTitle}</h2>
+            <div className="h-1 bg-primary rounded w-24 mb-8"></div>
+            
+            <p className="text-muted-foreground text-lg mb-8">{texts.organizerDesc}</p>
+            
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start">
+                <div className="bg-primary/10 p-2 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="text-4xl mb-2">📊</div>
-                  <h3 className="font-bold mb-1">Analíticas</h3>
-                  <p className="text-sm text-muted-foreground">Estadísticas detalladas de participación</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="text-4xl mb-2">🌍</div>
-                  <h3 className="font-bold mb-1">Alcance</h3>
-                  <p className="text-sm text-muted-foreground">Llega a fotógrafos de toda España</p>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <div className="text-4xl mb-2">💰</div>
-                  <h3 className="font-bold mb-1">Rentabilidad</h3>
-                  <p className="text-sm text-muted-foreground">Genera ingresos a través de los concursos</p>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Aumenta la visibilidad</h3>
+                  <p className="text-muted-foreground">Llega a miles de fotógrafos interesados en mostrar su talento.</p>
                 </div>
               </div>
               
-              <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
-                <h4 className="font-bold mb-2 flex items-center">
-                  <span className="text-xl mr-2">⭐</span> 
-                  Beneficios destacados
-                </h4>
-                <ul className="space-y-2">
-                  <li className="flex items-start">
-                    <span className="text-primary mr-2">✓</span>
-                    <span className="text-sm">Personalización completa de concursos</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-primary mr-2">✓</span>
-                    <span className="text-sm">Sistema avanzado de votación con IA</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-primary mr-2">✓</span>
-                    <span className="text-sm">Publicidad para patrocinadores</span>
-                  </li>
-                </ul>
+              <div className="flex items-start">
+                <div className="bg-primary/10 p-2 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Contenido generado por usuarios</h3>
+                  <p className="text-muted-foreground">Recibe fotos auténticas y de alta calidad para tus campañas.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start">
+                <div className="bg-primary/10 p-2 rounded-full mr-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Engagement efectivo</h3>
+                  <p className="text-muted-foreground">Genera una conexión emocional con tu audiencia mediante la participación.</p>
+                </div>
               </div>
             </div>
             
-            {/* Elementos decorativos */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary/10 rounded-full blur-xl"></div>
-            <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-[#9b87f5]/20 rounded-full blur-xl"></div>
+            <Button asChild size="lg" className="rounded-full px-8">
+              <Link to="/organizers">{texts.discoverPlans}</Link>
+            </Button>
           </motion.div>
         </div>
       </div>
