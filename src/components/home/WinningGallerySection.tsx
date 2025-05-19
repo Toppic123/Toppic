@@ -23,9 +23,11 @@ interface WinningGallerySectionProps {
 const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   const { toast } = useToast();
-  const { photos } = useWinningPhotos(); // Usamos el hook para obtener los datos actualizados
+  const { photos = [] } = useWinningPhotos(); // Provide default empty array
 
   const handleSharePhoto = (photo: any, platform: 'native' | 'instagram' = 'native') => {
+    if (!photo) return; // Safety check
+    
     if (platform === 'instagram') {
       // Open Instagram share intent
       const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
@@ -39,8 +41,8 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
 
     if (navigator.share) {
       navigator.share({
-        title: `Foto de ${photo.photographer}`,
-        text: `Mira esta increíble foto de ${photo.photographer}`,
+        title: `Foto de ${photo.photographer || 'Usuario'}`,
+        text: `Mira esta increíble foto de ${photo.photographer || 'Usuario'}`,
         url: window.location.href
       }).catch(err => {
         console.error('Error al compartir:', err);
@@ -58,6 +60,25 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
     }
   };
 
+  // Safety check if photos array is not available or empty
+  if (!photos || photos.length === 0) {
+    return (
+      <section className="py-16 px-4 bg-white text-black">
+        <div className="container max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              {texts.winningGalleryDesc}
+            </p>
+          </div>
+          <div className="text-center py-8">
+            <p>Cargando galería de fotos ganadoras...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 px-4 bg-white text-black">
       <div className="container max-w-5xl mx-auto">
@@ -69,41 +90,49 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
         </div>
         
         <div className="grid grid-cols-3 gap-1 md:gap-1.5 mb-6">
-          {photos.slice(0, 9).map((photo) => (
-            <motion.div 
-              key={photo.id}
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.2 }}
-              className="aspect-square overflow-hidden relative group max-h-[200px] md:max-h-[250px] cursor-pointer"
-              onClick={() => setSelectedPhoto(photo)}
-            >
-              <img 
-                src={photo.imageUrl} 
-                alt={photo.title} 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  // Silently replace with a placeholder image without showing toast
-                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 md:p-3">
-                <p className="text-white font-medium text-xs md:text-sm truncate">{photo.title}</p>
-                <div className="flex items-center justify-between mt-1">
-                  <div className="flex items-center">
-                    <Avatar className="h-4 w-4 md:h-5 md:w-5 mr-1">
-                      <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
-                      <AvatarFallback>{photo.photographer.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-white/90 text-xs truncate max-w-[70px]">{photo.photographer}</span>
-                  </div>
-                  <div className="flex items-center text-white/90">
-                    <Heart className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1 fill-white text-white" />
-                    <span className="text-sm">{photo.likes}</span>
+          {photos.slice(0, 9).map((photo) => {
+            // Skip rendering if photo is missing critical data
+            if (!photo || !photo.id) {
+              console.warn("Invalid photo data found:", photo);
+              return null;
+            }
+            
+            return (
+              <motion.div 
+                key={photo.id}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.2 }}
+                className="aspect-square overflow-hidden relative group max-h-[200px] md:max-h-[250px] cursor-pointer"
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <img 
+                  src={photo.imageUrl} 
+                  alt={photo.title || 'Foto ganadora'} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Silently replace with a placeholder image without showing toast
+                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 md:p-3">
+                  <p className="text-white font-medium text-xs md:text-sm truncate">{photo.title || 'Sin título'}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center">
+                      <Avatar className="h-4 w-4 md:h-5 md:w-5 mr-1">
+                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer || 'Fotógrafo'} />
+                        <AvatarFallback>{(photo.photographer || '?').charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-white/90 text-xs truncate max-w-[70px]">{photo.photographer || 'Anónimo'}</span>
+                    </div>
+                    <div className="flex items-center text-white/90">
+                      <Heart className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1 fill-white text-white" />
+                      <span className="text-sm">{photo.likes || 0}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
         
         <div className="text-center">
@@ -118,73 +147,73 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
 
       <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-0 shadow-none">
-          <div className="relative bg-black rounded-lg overflow-hidden">
-            <DialogClose className="absolute top-2 right-2 z-50 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80">
-              <X className="h-5 w-5" />
-            </DialogClose>
-            
-            <div className="flex flex-col md:flex-row max-h-[90vh]">
-              <div className="relative flex-1 flex items-center justify-center bg-black min-h-[300px] md:min-h-[400px]">
-                <img 
-                  src={selectedPhoto?.imageUrl} 
-                  alt={selectedPhoto?.title} 
-                  className="max-w-full max-h-[70vh] object-contain"
-                  onError={(e) => {
-                    // Silently replace with a placeholder image without showing toast
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
-                  }}
-                />
-              </div>
+          {selectedPhoto && (
+            <div className="relative bg-black rounded-lg overflow-hidden">
+              <DialogClose className="absolute top-2 right-2 z-50 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80">
+                <X className="h-5 w-5" />
+              </DialogClose>
               
-              <div className="w-full md:w-80 bg-white flex flex-col">
-                <div className="mb-4 p-4">
-                  <h3 className="text-lg font-bold text-black">{selectedPhoto?.title}</h3>
-                  <div className="flex items-center mt-2">
-                    <Avatar className="h-6 w-6 mr-2">
-                      <AvatarImage src={selectedPhoto?.photographerAvatar} alt={selectedPhoto?.photographer} />
-                      <AvatarFallback>{selectedPhoto?.photographer?.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm text-black">{selectedPhoto?.photographer}</span>
-                  </div>
+              <div className="flex flex-col md:flex-row max-h-[90vh]">
+                <div className="relative flex-1 flex items-center justify-center bg-black min-h-[300px] md:min-h-[400px]">
+                  <img 
+                    src={selectedPhoto.imageUrl} 
+                    alt={selectedPhoto.title || 'Foto seleccionada'} 
+                    className="max-w-full max-h-[70vh] object-contain"
+                    onError={(e) => {
+                      // Silently replace with a placeholder image without showing toast
+                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                    }}
+                  />
                 </div>
                 
-                <div className="flex items-center justify-between px-4">
-                  <div className="flex items-center">
-                    <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                    <span className="text-sm ml-1 text-black">{selectedPhoto?.likes} me gusta</span>
+                <div className="w-full md:w-80 bg-white flex flex-col">
+                  <div className="mb-4 p-4">
+                    <h3 className="text-lg font-bold text-black">{selectedPhoto.title || 'Sin título'}</h3>
+                    <div className="flex items-center mt-2">
+                      <Avatar className="h-6 w-6 mr-2">
+                        <AvatarImage src={selectedPhoto.photographerAvatar} alt={selectedPhoto.photographer || 'Fotógrafo'} />
+                        <AvatarFallback>{(selectedPhoto.photographer || '?').charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm text-black">{selectedPhoto.photographer || 'Anónimo'}</span>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center space-x-2">
-                    <Button 
-                      variant="outline"
-                      size="sm" 
-                      onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto, 'instagram')}
-                      className="flex items-center gap-1"
-                    >
-                      <Instagram className="h-4 w-4" />
-                      <span className="hidden sm:inline">Instagram</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
-                    >
-                      <Share2 className="h-4 w-4" />
-                      <span className="ml-1">Compartir</span>
-                    </Button>
+                  <div className="flex items-center justify-between px-4">
+                    <div className="flex items-center">
+                      <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                      <span className="text-sm ml-1 text-black">{selectedPhoto.likes || 0} me gusta</span>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Button 
+                        variant="outline"
+                        size="sm" 
+                        onClick={() => handleSharePhoto(selectedPhoto, 'instagram')}
+                        className="flex items-center gap-1"
+                      >
+                        <Instagram className="h-4 w-4" />
+                        <span className="hidden sm:inline">Instagram</span>
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleSharePhoto(selectedPhoto)}
+                      >
+                        <Share2 className="h-4 w-4" />
+                        <span className="ml-1">Compartir</span>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                
-                <Separator className="my-2" />
-                
-                {selectedPhoto && (
+                  
+                  <Separator className="my-2" />
+                  
                   <div className="flex-1 overflow-hidden">
                     <PhotoComments photoId={selectedPhoto.id.toString()} isEmbedded={true} />
                   </div>
-                )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
     </section>

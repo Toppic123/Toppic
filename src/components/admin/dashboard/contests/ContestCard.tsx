@@ -11,13 +11,19 @@ interface ContestCardProps {
 }
 
 export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => {
+  // Safety check for invalid contest data
+  if (!contest || !contest.id) {
+    console.warn("Invalid contest data provided to ContestCard:", contest);
+    return null;
+  }
+
   return (
     <Card key={contest.id}>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle>{contest.title}</CardTitle>
-            <CardDescription>Organizado por: {contest.organizer}</CardDescription>
+            <CardTitle>{contest.title || 'Sin título'}</CardTitle>
+            <CardDescription>Organizado por: {contest.organizer || 'Desconocido'}</CardDescription>
           </div>
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${
             contest.status === 'active' ? 'bg-green-100 text-green-800' :
@@ -33,7 +39,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Camera size={16} className="text-muted-foreground" />
-            <span>{contest.participants} participantes</span>
+            <span>{contest.participants || 0} participantes</span>
           </div>
         </div>
       </CardContent>

@@ -12,7 +12,7 @@ interface ContestListProps {
 }
 
 export const ContestList = ({ 
-  contests, 
+  contests = [], // Add default empty array
   isLoading, 
   searchQuery, 
   onEdit,
@@ -31,7 +31,8 @@ export const ContestList = ({
     );
   }
   
-  if (contests.length === 0) {
+  // Safety check for undefined or empty contests array
+  if (!contests || contests.length === 0) {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">No se encontraron concursos{searchQuery ? " con la búsqueda actual" : ""}.</p>
@@ -41,14 +42,22 @@ export const ContestList = ({
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {contests.map(contest => (
-        <ContestCard 
-          key={contest.id}
-          contest={contest}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
+      {contests.map(contest => {
+        // Skip rendering if contest is missing critical data
+        if (!contest || !contest.id) {
+          console.warn("Invalid contest data found:", contest);
+          return null;
+        }
+        
+        return (
+          <ContestCard 
+            key={contest.id}
+            contest={contest}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        );
+      })}
     </div>
   );
 };
