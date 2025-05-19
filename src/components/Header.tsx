@@ -1,9 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
-  Camera, 
   User, 
   LogIn, 
   Menu, 
@@ -64,16 +62,13 @@ const Header = () => {
         {/* Logo - Always visible */}
         <Link 
           to="/" 
-          className="flex items-center space-x-2 z-10"
+          className="flex items-center z-10"
         >
-          <Camera className={cn(
-            "w-6 h-6",
-            isScrolled ? "text-[#4891AA]" : "text-white"
-          )} />
-          <span className={cn(
-            "font-medium text-lg",
-            isScrolled ? "text-[#4891AA]" : "text-white"
-          )}>TOPPICS</span>
+          <img 
+            src="/lovable-uploads/e24b365f-9171-4e3a-9573-1dfae2e79a5c.png" 
+            alt="TOPPICS Logo" 
+            className="h-8"
+          />
         </Link>
         
         {/* Desktop Navigation */}

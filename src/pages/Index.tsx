@@ -7,7 +7,6 @@ import WinningGallerySection from "@/components/home/WinningGallerySection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
 import NearbyContestsSection from "@/components/home/NearbyContestsSection";
-import Logo from "@/components/Logo";
 
 const Index = () => {
   return (
@@ -22,22 +21,6 @@ const Index = () => {
           startNow: homeTexts.startNow
         }}
       />
-      
-      {/* Logo Demo */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Nuestro Logo</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Un logotipo moderno y dinámico que representa nuestra plataforma de concursos de fotografía.
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap justify-center gap-8">
-            <Logo variant="large" showDemo={true} />
-          </div>
-        </div>
-      </section>
       
       <PopularContestsSection 
         contests={popularContests}
