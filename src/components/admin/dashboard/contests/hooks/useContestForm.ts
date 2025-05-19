@@ -3,22 +3,17 @@ import { useState } from "react";
 import { Contest, ContestFormData } from "../types";
 
 const emptyContestForm: ContestFormData = {
-  id: '',
   title: '',
   description: '',
-  startDate: new Date(),
-  endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // A week from now
-  location: '',
-  locationCoords: { lat: 0, lng: 0 },
-  maxDistance: 50,
-  imageUrl: '',
-  categories: [],
-  rules: '',
-  prizes: '',
   status: 'pending',
   organizer: '',
-  maxPhotos: 5,
-  participants: 0,
+  startDate: '',
+  endDate: '',
+  photoDeadline: '',
+  maxParticipants: 100,
+  photoOwnership: false,
+  commercialUse: false,
+  location: ''
 };
 
 export const useContestForm = (onSuccessfulSave: () => void) => {
@@ -44,7 +39,6 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
     console.log("Editing contest ID:", id);
     const mockContest: ContestFormData = {
       ...emptyContestForm,
-      id,
       title: `Contest ${id}`,
       description: 'Sample contest description',
       status: 'active',
