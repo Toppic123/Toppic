@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, memo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import { 
   User, 
   LogIn, 
@@ -15,6 +15,98 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "./Logo";
+
+// Use memo for better performance
+const MobileMenu = memo(({ 
+  isOpen, 
+  onClose, 
+  navItems, 
+  user, 
+  onSignOut, 
+  isScrolled 
+}: any) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div
+      className="md:hidden fixed inset-0 z-40 bg-background/95 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div 
+        className="h-full max-w-sm w-full bg-background border-r border-border p-6 shadow-lg"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-8">
+          <Logo variant="default" />
+          <button
+            className="text-muted-foreground"
+            onClick={onClose}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+        
+        <nav className="flex flex-col space-y-4">
+          {navItems.map((item: any) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={cn(
+                "flex items-center py-2 text-sm font-medium transition-colors",
+                location.pathname === item.path
+                  ? "text-[#4891AA]"
+                  : "text-muted-foreground hover:text-[#4891AA]",
+              )}
+            >
+              <item.icon className="mr-3 w-5 h-5" />
+              {item.name}
+            </Link>
+          ))}
+
+          <Link
+            to="/support"
+            className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-[#4891AA] transition-colors"
+          >
+            <HelpCircle className="mr-3 w-5 h-5" />
+            <span>Soporte</span>
+          </Link>
+          
+          {user ? (
+            <>
+              <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4">
+                <Link to="/upload">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  <span>Subir foto</span>
+                </Link>
+              </Button>
+              <Button 
+                onClick={onSignOut}
+                variant="ghost" 
+                size="sm"
+                className="w-full justify-start text-muted-foreground hover:text-[#4891AA] mt-2"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Cerrar sesión</span>
+              </Button>
+            </>
+          ) : (
+            <Button 
+              asChild 
+              size="sm"  
+              className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4"
+            >
+              <Link to="/login">
+                <LogIn className="mr-2 h-4 w-4" />
+                <span>Iniciar sesión</span>
+              </Link>
+            </Button>
+          )}
+        </nav>
+      </div>
+    </div>
+  );
+});
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -52,24 +144,15 @@ const Header = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 border-b",
+        "fixed top-0 left-0 right-0 z-50 py-3 transition-all duration-300 border-b",
         isScrolled 
-          ? "bg-white border-border/40"
+          ? "bg-white/95 backdrop-blur-sm border-border/40 shadow-sm"
           : "bg-transparent border-transparent"
       )}
     >
       <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between">
-        {/* Logo - Always visible */}
-        <Link 
-          to="/" 
-          className="flex items-center z-10"
-        >
-          <img 
-            src="/lovable-uploads/e24b365f-9171-4e3a-9573-1dfae2e79a5c.png" 
-            alt="TOPPICS Logo" 
-            className="h-8"
-          />
-        </Link>
+        {/* Logo - Always visible, now larger */}
+        <Logo variant={isScrolled ? "default" : "large"} />
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
@@ -149,80 +232,19 @@ const Header = () => {
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
         >
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <Menu className="w-6 h-6" />
         </button>
       </div>
       
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.2 }}
-          className="md:hidden bg-background border-t"
-        >
-          <div className="container max-w-7xl mx-auto px-4 py-4">
-            <nav className="flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={cn(
-                    "flex items-center py-2 text-sm font-medium transition-colors",
-                    location.pathname === item.path
-                      ? "text-[#4891AA]"
-                      : "text-muted-foreground hover:text-[#4891AA]",
-                  )}
-                >
-                  <item.icon className="mr-2 w-5 h-5" />
-                  {item.name}
-                </Link>
-              ))}
-
-              {/* Support Button in Mobile Menu */}
-              <Link
-                to="/support"
-                className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-[#4891AA] transition-colors"
-              >
-                <HelpCircle className="mr-2 w-5 h-5" />
-                <span>Soporte</span>
-              </Link>
-              
-              {user ? (
-                <>
-                  <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
-                    <Link to="/upload">
-                      <PlusCircle className="mr-2 h-4 w-4" />
-                      <span>Subir foto</span>
-                    </Link>
-                  </Button>
-                  <Button 
-                    onClick={handleSignOut}
-                    variant="ghost" 
-                    size="sm"
-                    className="w-full justify-start text-muted-foreground hover:text-[#4891AA]"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Cerrar sesión</span>
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  asChild 
-                  size="sm"  
-                  className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
-                >
-                  <Link to="/login">
-                    <LogIn className="mr-2 h-4 w-4" />
-                    <span>Iniciar sesión</span>
-                  </Link>
-                </Button>
-              )}
-            </nav>
-          </div>
-        </motion.div>
-      )}
+      {/* Mobile Menu - Now using a memo component */}
+      <MobileMenu 
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        navItems={navItems}
+        user={user}
+        onSignOut={handleSignOut}
+        isScrolled={isScrolled}
+      />
     </header>
   );
 };
