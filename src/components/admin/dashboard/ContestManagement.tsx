@@ -17,13 +17,13 @@ export const ContestManagement = () => {
   } = useContests();
   
   const {
-    contestFormData,
-    setContestFormData,
-    isEditContestDialogOpen,
-    setIsEditContestDialogOpen,
+    formData,
+    isDialogOpen,
+    setIsDialogOpen,
     handleEditContest,
     handleCreateNewContest,
-    handleSaveContestChanges
+    handleFormChange,
+    handleSaveChanges
   } = useContestForm(fetchContests);
 
   return (
@@ -44,11 +44,11 @@ export const ContestManagement = () => {
       />
 
       <ContestFormDialog 
-        isOpen={isEditContestDialogOpen}
-        setIsOpen={setIsEditContestDialogOpen}
-        contestFormData={contestFormData}
-        setContestFormData={setContestFormData}
-        handleSaveChanges={handleSaveContestChanges}
+        isOpen={isDialogOpen}
+        setIsOpen={setIsDialogOpen}
+        contestFormData={formData}
+        setContestFormData={handleFormChange}
+        handleSaveChanges={handleSaveChanges}
       />
     </>
   );

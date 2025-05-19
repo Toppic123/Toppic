@@ -15,7 +15,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import Logo from "./Logo";
 
 // Use memo for better performance
 const MobileMenu = memo(({ 
@@ -38,7 +37,7 @@ const MobileMenu = memo(({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-8">
-          <Logo variant="default" />
+          <div className="text-2xl font-bold text-[#4891AA]">TOPPIC</div>
           <button
             className="text-muted-foreground"
             onClick={onClose}
@@ -53,7 +52,7 @@ const MobileMenu = memo(({
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center py-2 text-sm font-medium transition-colors",
+                "flex items-center py-2 text-sm font-medium uppercase transition-colors",
                 location.pathname === item.path
                   ? "text-[#4891AA]"
                   : "text-muted-foreground hover:text-[#4891AA]",
@@ -66,10 +65,10 @@ const MobileMenu = memo(({
 
           <Link
             to="/support"
-            className="flex items-center py-2 text-sm font-medium text-muted-foreground hover:text-[#4891AA] transition-colors"
+            className="flex items-center py-2 text-sm font-medium uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
           >
             <HelpCircle className="mr-3 w-5 h-5" />
-            <span>Soporte</span>
+            <span>SOPORTE</span>
           </Link>
           
           {user ? (
@@ -77,7 +76,7 @@ const MobileMenu = memo(({
               <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  <span>Subir foto</span>
+                  <span>SUBIR FOTO</span>
                 </Link>
               </Button>
               <Button 
@@ -87,7 +86,7 @@ const MobileMenu = memo(({
                 className="w-full justify-start text-muted-foreground hover:text-[#4891AA] mt-2"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Cerrar sesión</span>
+                <span>CERRAR SESIÓN</span>
               </Button>
             </>
           ) : (
@@ -98,7 +97,7 @@ const MobileMenu = memo(({
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
-                <span>Iniciar sesión</span>
+                <span>INICIAR SESIÓN</span>
               </Link>
             </Button>
           )}
@@ -136,9 +135,9 @@ const Header = () => {
   };
   
   const navItems = [
-    { name: "Concursos", path: "/contests", icon: Award },
-    { name: "Organizadores", path: "/organizers", icon: Building },
-    ...(user ? [{ name: "Perfil", path: "/profile", icon: User }] : []),
+    { name: "CONCURSOS", path: "/contests", icon: Award },
+    { name: "ORGANIZADORES", path: "/organizers", icon: Building },
+    ...(user ? [{ name: "PERFIL", path: "/profile", icon: User }] : []),
   ];
   
   return (
@@ -151,8 +150,12 @@ const Header = () => {
       )}
     >
       <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between">
-        {/* Logo - Always visible, now larger */}
-        <Logo variant={isScrolled ? "default" : "large"} />
+        {/* Project name instead of Logo */}
+        <Link to="/" className="flex items-center gap-2">
+          <h1 className="text-2xl font-bold tracking-tight transition-transform hover:scale-105 text-[#4891AA]">
+            TOPPIC
+          </h1>
+        </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
@@ -161,7 +164,7 @@ const Header = () => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center text-sm font-medium transition-colors",
+                "flex items-center text-sm font-medium uppercase transition-colors tracking-wide",
                 isScrolled
                   ? (location.pathname === item.path
                     ? "text-[#4891AA]"
@@ -176,22 +179,23 @@ const Header = () => {
 
           {/* Support Button */}
           <Button asChild variant="ghost" size="sm" className={cn(
+            "uppercase tracking-wide",
             isScrolled 
               ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
               : "text-white hover:text-white/80 hover:bg-transparent"
           )}>
             <Link to="/support">
               <HelpCircle className="mr-2 h-4 w-4" />
-              <span>Soporte</span>
+              <span>SOPORTE</span>
             </Link>
           </Button>
           
           {user ? (
             <>
-              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90">
+              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  <span>Subir foto</span>
+                  <span>SUBIR FOTO</span>
                 </Link>
               </Button>
               <Button 
@@ -199,25 +203,25 @@ const Header = () => {
                 variant="ghost" 
                 size="sm" 
                 className={cn(
-                  "rounded-full",
+                  "rounded-full uppercase",
                   isScrolled 
                     ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
                     : "text-white hover:text-white/80 hover:bg-transparent"
                 )}
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Cerrar sesión</span>
+                <span>CERRAR SESIÓN</span>
               </Button>
             </>
           ) : (
             <Button 
               asChild 
               size="sm" 
-              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90"
+              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
-                <span>Iniciar sesión</span>
+                <span>INICIAR SESIÓN</span>
               </Link>
             </Button>
           )}

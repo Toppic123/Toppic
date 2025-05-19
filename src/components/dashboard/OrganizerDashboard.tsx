@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Camera, Image, Settings } from "lucide-react";
+import { Camera, Image } from "lucide-react";
 import BannerManagement from "./banners/BannerManagement";
 
 interface OrganizerDashboardProps {
@@ -29,7 +29,7 @@ const OrganizerDashboard = ({
       </div>
 
       <Tabs defaultValue="contests" value={activeTab} onValueChange={setActiveTab} className="mb-8">
-        <TabsList className="grid grid-cols-3 mb-8">
+        <TabsList className="grid grid-cols-2 mb-8">
           <TabsTrigger value="contests" className="flex items-center gap-2">
             <Camera size={16} />
             <span>Mis Concursos</span>
@@ -37,10 +37,6 @@ const OrganizerDashboard = ({
           <TabsTrigger value="banners" className="flex items-center gap-2">
             <Image size={16} />
             <span>Banners Publicitarios</span>
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Settings size={16} />
-            <span>Configuración</span>
           </TabsTrigger>
         </TabsList>
 
@@ -61,15 +57,6 @@ const OrganizerDashboard = ({
               isAdmin={false} 
               organizerId={organizerId} 
             />
-          </div>
-        </TabsContent>
-
-        {/* Settings Tab */}
-        <TabsContent value="settings" className="space-y-4">
-          <div className="rounded-lg border p-6">
-            <h2 className="text-xl font-semibold mb-4">Configuración</h2>
-            <p>Ajustes de la cuenta del organizador.</p>
-            {/* Settings content here */}
           </div>
         </TabsContent>
       </Tabs>

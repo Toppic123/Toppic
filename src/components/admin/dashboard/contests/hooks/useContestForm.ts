@@ -1,178 +1,100 @@
 
 import { useState } from "react";
-import { z } from "zod";
+import { Contest, ContestFormData } from "../types";
 
-export interface ContestFormData {
-  title: string;
-  description: string;
-  category: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-  startDate: Date | null;
-  endDate: Date | null;
-  isActive: boolean;
-  isPrivate: boolean;
-  maxParticipants: number | null;
-  maxPhotosPerUser: number | null;
-  prizeDescription: string;
-  bannerImage: string;
-  allowedRadius: number;
-  contestId?: string; // Añadido para ediciones
-}
+const emptyContestForm: ContestFormData = {
+  id: '',
+  title: '',
+  description: '',
+  startDate: new Date(),
+  endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // A week from now
+  location: '',
+  locationCoords: { lat: 0, lng: 0 },
+  maxDistance: 50,
+  imageUrl: '',
+  categories: [],
+  rules: '',
+  prizes: '',
+  status: 'pending',
+  organizer: '',
+  maxPhotos: 5,
+  participants: 0,
+};
 
-export const useContestForm = (onSubmitSuccess: () => void, initialData?: ContestFormData) => {
-  const [formData, setFormData] = useState<ContestFormData>(
-    initialData || {
-      title: "",
-      description: "",
-      category: "landscape",
-      location: "",
-      latitude: 0,
-      longitude: 0,
-      startDate: null,
-      endDate: null,
-      isActive: true,
-      isPrivate: false,
-      maxParticipants: null,
-      maxPhotosPerUser: null,
-      prizeDescription: "",
-      bannerImage: "",
-      allowedRadius: 500,
-    }
-  );
-
-  const [errors, setErrors] = useState<Partial<Record<keyof ContestFormData, string>>>({});
+export const useContestForm = (onSuccessfulSave: () => void) => {
+  // Renamed to formData to follow standard naming conventions
+  const [formData, setFormData] = useState<ContestFormData>(emptyContestForm);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const isEditMode = !!initialData;
+  const [submitError, setSubmitError] = useState('');
+  const [errors, setErrors] = useState<Partial<Record<keyof ContestFormData, string>>>({});
 
-  const updateFormData = (
-    field: keyof ContestFormData,
-    value: string | number | boolean | Date | null
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Clear error when field is updated
-    if (errors[field]) {
-      setErrors((prev) => {
-        const updated = { ...prev };
-        delete updated[field];
-        return updated;
-      });
-    }
+  const handleFormChange = (updatedFormData: Partial<ContestFormData>) => {
+    setFormData(prev => ({ ...prev, ...updatedFormData }));
   };
 
-  const handleLocationSelect = (place: any) => {
-    if (place && place.geometry && place.geometry.location) {
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      
-      setFormData((prev) => ({
-        ...prev,
-        location: place.formatted_address || place.name,
-        latitude: lat,
-        longitude: lng,
-      }));
-    }
+  const handleCreateNewContest = () => {
+    setFormData(emptyContestForm);
+    setIsDialogOpen(true);
   };
 
-  const validateForm = () => {
-    const schema = z.object({
-      title: z.string().min(5, "El título debe tener al menos 5 caracteres"),
-      description: z.string().min(20, "La descripción debe tener al menos 20 caracteres"),
-      category: z.string().min(1, "Seleccione una categoría"),
-      location: z.string().min(3, "Especifique una ubicación válida"),
-      latitude: z.number().refine((val) => val !== 0, "Latitud no válida"),
-      longitude: z.number().refine((val) => val !== 0, "Longitud no válida"),
-      startDate: z
-        .date({ invalid_type_error: "La fecha de inicio es obligatoria" })
-        .nullable()
-        .refine((date) => date !== null, "La fecha de inicio es requerida"),
-      endDate: z
-        .date({ invalid_type_error: "La fecha de fin es obligatoria" })
-        .nullable()
-        .refine((date) => date !== null, "La fecha de fin es requerida"),
-      isActive: z.boolean(),
-      isPrivate: z.boolean(),
-      maxParticipants: z.number().nullable(),
-      maxPhotosPerUser: z.number().nullable(),
-      prizeDescription: z.string(),
-      bannerImage: z.string(),
-      allowedRadius: z.number().min(1, "El radio debe ser mayor que 0"),
-    });
-
-    try {
-      schema.parse(formData);
-      return true;
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        const fieldErrors: Record<string, string> = {};
-        err.errors.forEach((error) => {
-          const path = error.path[0] as keyof ContestFormData;
-          fieldErrors[path] = error.message;
-        });
-        setErrors(fieldErrors);
-      }
-      return false;
-    }
+  const handleEditContest = (id: string) => {
+    // In a real app, you'd fetch contest by ID here
+    // For now we'll simulate finding the contest
+    console.log("Editing contest ID:", id);
+    const mockContest: ContestFormData = {
+      ...emptyContestForm,
+      id,
+      title: `Contest ${id}`,
+      description: 'Sample contest description',
+      status: 'active',
+    };
+    
+    setFormData(mockContest);
+    setIsDialogOpen(true);
   };
 
-  const handleSubmit = async () => {
-    setSubmitError(null);
-    const isValid = validateForm();
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<keyof ContestFormData, string>> = {};
+    
+    if (!formData.title) newErrors.title = "El título es obligatorio";
+    if (!formData.description) newErrors.description = "La descripción es obligatoria";
+    if (!formData.location) newErrors.location = "La ubicación es obligatoria";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-    if (!isValid) {
-      return;
-    }
-
+  const handleSaveChanges = async () => {
+    if (!validateForm()) return;
+    
     setIsSubmitting(true);
-
+    setSubmitError('');
+    
     try {
-      // En un caso real, aquí enviaríamos los datos al servidor
-      console.log("Enviando datos del concurso:", formData);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Simular una llamada a la API exitosa después de un tiempo
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Saving contest:", formData);
       
-      // Aquí iría la lógica para enviar los datos al backend
-      console.log(isEditMode ? "Concurso actualizado" : "Concurso creado", {
-        ...formData,
-        contestId: formData.contestId // Este es el ID para ediciones
-      });
+      // Close dialog and reset form
+      setIsDialogOpen(false);
+      setFormData(emptyContestForm);
       
-      onSubmitSuccess();
-    } catch (error) {
-      console.error("Error al guardar el concurso:", error);
-      setSubmitError("Error al guardar el concurso. Por favor, inténtelo de nuevo.");
+      // Call the callback function to refresh the contests list
+      onSuccessfulSave();
+    } catch (error: any) {
+      console.error("Error saving contest:", error);
+      setSubmitError(error.message || "No se pudo guardar el concurso");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const resetForm = () => {
-    setFormData({
-      title: "",
-      description: "",
-      category: "landscape",
-      location: "",
-      latitude: 0,
-      longitude: 0,
-      startDate: null,
-      endDate: null,
-      isActive: true,
-      isPrivate: false,
-      maxParticipants: null,
-      maxPhotosPerUser: null,
-      prizeDescription: "",
-      bannerImage: "",
-      allowedRadius: 500,
-    });
+    setFormData(emptyContestForm);
     setErrors({});
-    setSubmitError(null);
+    setSubmitError('');
   };
 
   return {
@@ -180,10 +102,12 @@ export const useContestForm = (onSubmitSuccess: () => void, initialData?: Contes
     errors,
     isSubmitting,
     submitError,
-    isEditMode,
-    updateFormData,
-    handleLocationSelect,
-    handleSubmit,
-    resetForm,
+    isDialogOpen,
+    setIsDialogOpen,
+    handleEditContest,
+    handleCreateNewContest,
+    handleFormChange,
+    handleSaveChanges,
+    resetForm
   };
 };

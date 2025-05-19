@@ -14,13 +14,16 @@ export interface WinningPhoto {
 }
 
 export const useWinningPhotos = () => {
-  const [photos, setPhotos] = useState<WinningPhoto[]>(defaultPhotos);
-  const [loading, setLoading] = useState(false);
+  const [photos, setPhotos] = useState<WinningPhoto[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   // Cargar fotos iniciales
   useEffect(() => {
-    console.log("Fotos iniciales cargadas:", photos);
+    // Always load default photos initially to ensure we have data
+    setPhotos(defaultPhotos);
+    setLoading(false);
+    console.log("Fotos iniciales cargadas:", defaultPhotos);
   }, []);
 
   const updatePhoto = async (id: number, newPhotoData: Partial<WinningPhoto>, file?: File) => {
@@ -47,7 +50,9 @@ export const useWinningPhotos = () => {
           .from('gallery')
           .getPublicUrl(fileName);
           
-        imageUrl = urlData.publicUrl;
+        if (urlData) {
+          imageUrl = urlData.publicUrl;
+        }
       }
       
       // Actualizar el estado local
@@ -61,6 +66,9 @@ export const useWinningPhotos = () => {
         title: "Foto actualizada",
         description: "La información de la foto ha sido actualizada correctamente."
       });
+
+      // Log success for debugging
+      console.log("Foto actualizada:", id, newPhotoData, imageUrl);
     } catch (error: any) {
       console.error("Error al actualizar la foto:", error);
       toast({
@@ -96,7 +104,9 @@ export const useWinningPhotos = () => {
           .from('gallery')
           .getPublicUrl(fileName);
           
-        imageUrl = urlData.publicUrl;
+        if (urlData) {
+          imageUrl = urlData.publicUrl;
+        }
       }
       
       // Crear nueva foto con URL de imagen actualizada
@@ -104,12 +114,17 @@ export const useWinningPhotos = () => {
       const photoWithUrl = { ...newPhoto, imageUrl, id: newId };
       
       // Actualizar estado local
-      setPhotos(currentPhotos => [...currentPhotos, photoWithUrl]);
+      const updatedPhotos = [...photos, photoWithUrl];
+      setPhotos(updatedPhotos);
       
       toast({
         title: "Foto añadida",
         description: "La nueva foto ha sido añadida a la galería."
       });
+
+      // Log success for debugging
+      console.log("Nueva foto añadida:", photoWithUrl);
+      console.log("Total fotos ahora:", updatedPhotos.length);
     } catch (error: any) {
       console.error("Error al añadir la foto:", error);
       toast({
@@ -123,7 +138,11 @@ export const useWinningPhotos = () => {
   };
 
   const removePhoto = (id: number) => {
-    setPhotos(currentPhotos => currentPhotos.filter(photo => photo.id !== id));
+    setPhotos(currentPhotos => {
+      const updated = currentPhotos.filter(photo => photo.id !== id);
+      console.log(`Foto ${id} eliminada. Quedan ${updated.length} fotos.`);
+      return updated;
+    });
     
     toast({
       title: "Foto eliminada",
@@ -138,10 +157,12 @@ export const useWinningPhotos = () => {
       title: "Orden actualizado",
       description: "El orden de las fotos ha sido actualizado."
     });
+    
+    console.log("Nuevo orden de fotos:", newOrder.map(p => p.id));
   };
 
   return {
-    photos,
+    photos: photos.length > 0 ? photos : defaultPhotos, // Fallback to default photos if empty
     loading,
     updatePhoto,
     addPhoto,
