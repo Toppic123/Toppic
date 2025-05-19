@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import PhotoCard from "@/components/PhotoCard";
@@ -34,6 +35,7 @@ import PhotoComments from "@/components/PhotoComments";
 import { useToast } from "@/hooks/use-toast";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
+import ContestAdBanner from "@/components/contests/ContestAdBanner";
 
 const contestData = {
   id: "1",
@@ -302,6 +304,9 @@ const ContestDetail = () => {
                 />
               </div>
               
+              {/* Añadir banner publicitario aquí */}
+              <ContestAdBanner position="top" contestId={id} />
+              
               <h1 className="text-3xl font-bold mb-4">{contest.title}</h1>
               
               <div className="flex flex-wrap gap-4 mb-6">
@@ -525,6 +530,9 @@ const ContestDetail = () => {
             
             <div className="lg:col-span-2">
               <div className="bg-card rounded-xl border shadow-sm p-6 sticky top-24">
+                {/* Añadir banner publicitario en la barra lateral */}
+                <ContestAdBanner position="sidebar" contestId={id} />
+                
                 <h3 className="text-xl font-bold mb-4">Resumen del concurso</h3>
                 
                 <div className="space-y-4 mb-6">

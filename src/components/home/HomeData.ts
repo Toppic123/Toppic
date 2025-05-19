@@ -58,8 +58,8 @@ export const popularContests = [
 export const winningPhotos = [
   {
     id: 1,
-    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    title: "Valley of Dawn",
+    imageUrl: "https://images.unsplash.com/photo-1583779457094-ab6f1d729fd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Sagrada Familia",
     photographer: "Carlos Montoya",
     photographerAvatar: "https://randomuser.me/api/portraits/men/32.jpg",
     likes: 542
@@ -74,8 +74,8 @@ export const winningPhotos = [
   },
   {
     id: 3,
-    imageUrl: "https://images.unsplash.com/photo-1576377999785-cf30a129e0da?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    title: "Human Connection",
+    imageUrl: "https://images.unsplash.com/photo-1546039907-7fa05f864c02?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Gastronomía Española",
     photographer: "Javier Rodriguez",
     photographerAvatar: "https://randomuser.me/api/portraits/men/67.jpg",
     likes: 396

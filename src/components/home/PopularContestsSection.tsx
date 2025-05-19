@@ -1,22 +1,12 @@
 
+import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
 
-interface Contest {
-  id: string;
-  title: string;
-  imageUrl: string;
-  location: string;
-  dateStart: string;
-  dateEnd: string;
-  participantsCount: number;
-  photosCount: number;
-}
-
 interface PopularContestsSectionProps {
-  contests: Contest[];
+  contests: any[];
   texts: {
     featuredContest: string;
     seeAll: string;
@@ -24,30 +14,72 @@ interface PopularContestsSectionProps {
 }
 
 const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps) => {
+  // Variantes de animación para contenedor e items
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100
+      }
+    }
+  };
+
   return (
-    <section className="py-16 px-4 bg-white text-black">
-      <div className="container max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">{texts.featuredContest}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover the most popular contests right now and participate with your best photographs.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {contests.map((contest) => (
-            <ContestCard key={contest.id} {...contest} />
-          ))}
-        </div>
-        
-        <div className="text-center mt-10">
-          <Button asChild variant="outline" className="rounded-full px-8 border-[#4891AA] text-[#4891AA] hover:bg-[#4891AA]/10">
+    <section className="py-12 md:py-20 bg-gradient-to-b from-white to-[#f8f9fe] dark:from-background dark:to-background/90">
+      <div className="container max-w-7xl mx-auto px-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
+          <div>
+            <motion.h2 
+              initial={{ opacity: 0, y: -10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl font-bold mb-2 tracking-tight font-serif"
+            >
+              {texts.featuredContest}
+            </motion.h2>
+            <motion.div 
+              initial={{ opacity: 0, width: 0 }}
+              whileInView={{ opacity: 1, width: 100 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="h-1 bg-primary rounded w-24 mb-4"
+            ></motion.div>
+          </div>
+          
+          <Button asChild variant="ghost" className="group">
             <Link to="/contests">
               <span>{texts.seeAll}</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
+        
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {contests.map((contest) => (
+            <motion.div key={contest.id} variants={itemVariants}>
+              <ContestCard contest={contest} />
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

@@ -7,6 +7,17 @@ export interface Contest {
   status: "pending" | "active" | "finished";
   participants: number;
   location?: string;
+  startDate?: string;
+  endDate?: string;
+  maxParticipants?: number;
+  maxPhotosPerParticipant?: number;
+  locationCoords?: { lat: number; lng: number };
+  maxDistance?: number;
+  description?: string;
+  rules?: string;
+  prizes?: string;
+  categories?: string[];
+  bannerUrl?: string;
 }
 
 // ContestFormData type definition (for the form)
