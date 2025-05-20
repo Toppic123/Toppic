@@ -1,6 +1,6 @@
 
 export const homeTexts = {
-  featuredContest: "Concursos Populares",
+  featuredContest: "Concursos Abiertos",
   seeAll: "Ver todos",
   eventTypes: "Fotografía cualquier tipo de evento",
   eventTypesDesc: "Desde eventos musicales y competiciones deportivas hasta monumentos históricos y plazas emblemáticas.",

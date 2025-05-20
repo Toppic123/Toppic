@@ -40,26 +40,24 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-white to-[#f8f9fe] dark:from-background dark:to-background/90">
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
-          <div>
-            <motion.h2 
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-4xl font-bold mb-2 tracking-tight"
-            >
-              {texts.featuredContest}
-            </motion.h2>
-            <motion.div 
-              initial={{ opacity: 0, width: 0 }}
-              whileInView={{ opacity: 1, width: 100 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="h-1 bg-primary rounded w-24 mb-4"
-            ></motion.div>
-          </div>
+        <div className="flex flex-col items-center mb-10">
+          <motion.h2 
+            initial={{ opacity: 0, y: -10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold mb-2 tracking-tight text-center"
+          >
+            {texts.featuredContest}
+          </motion.h2>
+          <motion.div 
+            initial={{ opacity: 0, width: 0 }}
+            whileInView={{ opacity: 1, width: 100 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="h-1 bg-primary rounded w-24 mb-4"
+          ></motion.div>
           
-          <Button asChild variant="ghost" className="group">
+          <Button asChild variant="ghost" className="group mt-4">
             <Link to="/contests">
               <span>{texts.seeAll}</span>
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { User, Plus, Trash, Edit, X } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import OrganizerCard from "./OrganizerCard";
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock data for organizers - we'll simulate persistence with localStorage
 export const mockOrganizers = [
@@ -62,13 +62,57 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
     email: "",
     plan: "basic"
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load organizers on component mount
   useEffect(() => {
-    const loadedOrganizers = loadOrganizersFromStorage();
-    setOrganizers(loadedOrganizers);
-    setFilteredOrganizers(loadedOrganizers);
+    fetchOrganizers();
   }, []);
+
+  // Fetch organizers from Supabase
+  const fetchOrganizers = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('organizers')
+        .select('*');
+      
+      if (error) {
+        console.error('Error fetching organizers:', error);
+        throw error;
+      }
+      
+      if (data && data.length > 0) {
+        const formattedOrganizers = data.map(org => ({
+          id: org.id,
+          name: org.name,
+          email: org.email,
+          plan: org.plan,
+          activeContests: org.active_contests || 0,
+          totalContests: org.total_contests || 0
+        }));
+        
+        setOrganizers(formattedOrganizers);
+        setFilteredOrganizers(formattedOrganizers);
+      } else {
+        // Use mock data if no organizers found
+        setOrganizers(mockOrganizers);
+        setFilteredOrganizers(mockOrganizers);
+      }
+    } catch (error) {
+      console.error('Error loading organizers:', error);
+      // Fall back to mock data on error
+      setOrganizers(mockOrganizers);
+      setFilteredOrganizers(mockOrganizers);
+      toast({
+        title: "Error al cargar organizadores",
+        description: "Se están usando datos de ejemplo.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Handle organizer search
   const handleOrganizerSearch = (query: string) => {
@@ -113,18 +157,34 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
   };
 
   // Handle delete organizer
-  const handleDeleteOrganizer = (organizerId: string) => {
-    const updatedOrganizers = organizers.filter(o => o.id !== organizerId);
-    setOrganizers(updatedOrganizers);
-    setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
-    
-    // Persist changes
-    saveOrganizersToStorage(updatedOrganizers);
-    
-    toast({
-      title: "Organizador eliminado",
-      description: `El organizador ha sido eliminado correctamente.`,
-    });
+  const handleDeleteOrganizer = async (organizerId: string) => {
+    try {
+      // Delete from Supabase if it's a UUID
+      if (organizerId.includes('-')) {
+        const { error } = await supabase
+          .from('organizers')
+          .delete()
+          .eq('id', organizerId);
+        
+        if (error) throw error;
+      }
+      
+      const updatedOrganizers = organizers.filter(o => o.id !== organizerId);
+      setOrganizers(updatedOrganizers);
+      setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
+      
+      toast({
+        title: "Organizador eliminado",
+        description: `El organizador ha sido eliminado correctamente.`,
+      });
+    } catch (error) {
+      console.error('Error deleting organizer:', error);
+      toast({
+        title: "Error al eliminar",
+        description: "No se pudo eliminar el organizador.",
+        variant: "destructive"
+      });
+    }
   };
 
   // Filter organizers based on search query
@@ -139,7 +199,7 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
   };
 
   // Handle save organizer
-  const handleSaveOrganizer = () => {
+  const handleSaveOrganizer = async () => {
     if (!formData.name || !formData.email) {
       toast({
         title: "Error",
@@ -149,52 +209,84 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
       return;
     }
 
-    let updatedOrganizers: Organizer[] = [];
-
-    if (editingOrganizer) {
-      // Update existing organizer
-      updatedOrganizers = organizers.map(org => 
-        org.id === editingOrganizer.id 
-          ? { 
-              ...org, 
-              name: formData.name, 
-              email: formData.email, 
-              plan: formData.plan 
-            } 
-          : org
-      );
+    try {
+      if (editingOrganizer) {
+        // Update existing organizer
+        const { error } = await supabase
+          .from('organizers')
+          .update({
+            name: formData.name,
+            email: formData.email,
+            plan: formData.plan
+          })
+          .eq('id', editingOrganizer.id);
+        
+        if (error) throw error;
+        
+        const updatedOrganizers = organizers.map(org => 
+          org.id === editingOrganizer.id 
+            ? { 
+                ...org, 
+                name: formData.name, 
+                email: formData.email, 
+                plan: formData.plan 
+              } 
+            : org
+        );
+        
+        setOrganizers(updatedOrganizers);
+        setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
+        
+        toast({
+          title: "Organizador actualizado",
+          description: `El organizador "${formData.name}" ha sido actualizado correctamente.`,
+        });
+      } else {
+        // Add new organizer
+        const { data, error } = await supabase
+          .from('organizers')
+          .insert({
+            name: formData.name,
+            email: formData.email,
+            plan: formData.plan,
+            active_contests: 0,
+            total_contests: 0
+          })
+          .select();
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          const newOrganizer: Organizer = {
+            id: data[0].id,
+            name: formData.name,
+            email: formData.email,
+            plan: formData.plan,
+            activeContests: 0,
+            totalContests: 0
+          };
+          
+          const updatedOrganizers = [...organizers, newOrganizer];
+          setOrganizers(updatedOrganizers);
+          setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
+        }
+        
+        toast({
+          title: "Organizador añadido",
+          description: `El organizador "${formData.name}" ha sido añadido correctamente.`,
+        });
+      }
       
+      setIsDialogOpen(false);
+      resetFormData();
+    } catch (error) {
+      console.error('Error saving organizer:', error);
       toast({
-        title: "Organizador actualizado",
-        description: `El organizador "${formData.name}" ha sido actualizado correctamente.`,
-      });
-    } else {
-      // Add new organizer
-      const newOrganizer: Organizer = {
-        id: `new-${Date.now()}`,
-        name: formData.name,
-        email: formData.email,
-        plan: formData.plan,
-        activeContests: 0,
-        totalContests: 0
-      };
-      
-      updatedOrganizers = [...organizers, newOrganizer];
-      
-      toast({
-        title: "Organizador añadido",
-        description: `El organizador "${formData.name}" ha sido añadido correctamente.`,
+        title: "Error",
+        description: "No se pudo guardar el organizador.",
+        variant: "destructive"
       });
     }
-    
-    setOrganizers(updatedOrganizers);
-    setFilteredOrganizers(filterOrganizers(updatedOrganizers, searchQuery));
-    
-    // Persist changes
-    saveOrganizersToStorage(updatedOrganizers);
-    
-    setIsDialogOpen(false);
-    resetFormData();
   };
 
   return (
@@ -216,7 +308,11 @@ const OrganizersList = ({ onAddOrganizer }: OrganizersListProps) => {
         />
       </div>
       
-      {filteredOrganizers.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-8 border rounded-md bg-muted/50">
+          <p className="text-muted-foreground">Cargando organizadores...</p>
+        </div>
+      ) : filteredOrganizers.length === 0 ? (
         <div className="text-center py-8 border rounded-md bg-muted/50">
           <p className="text-muted-foreground">No se encontraron organizadores</p>
         </div>

@@ -1,6 +1,8 @@
 
 import { useState } from "react";
 import { Contest, ContestFormData } from "../types";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const emptyContestForm: ContestFormData = {
   title: '',
@@ -13,7 +15,8 @@ const emptyContestForm: ContestFormData = {
   maxParticipants: 100,
   photoOwnership: false,
   commercialUse: false,
-  location: ''
+  location: '',
+  imageUrl: '' // Añadimos el campo para la imagen
 };
 
 export const useContestForm = (onSuccessfulSave: () => void) => {
@@ -23,6 +26,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [errors, setErrors] = useState<Partial<Record<keyof ContestFormData, string>>>({});
+  const { toast } = useToast();
 
   const handleFormChange = (updatedFormData: Partial<ContestFormData>) => {
     setFormData(prev => ({ ...prev, ...updatedFormData }));
@@ -33,19 +37,55 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
     setIsDialogOpen(true);
   };
 
-  const handleEditContest = (id: string) => {
-    // In a real app, you'd fetch contest by ID here
-    // For now we'll simulate finding the contest
-    console.log("Editing contest ID:", id);
-    const mockContest: ContestFormData = {
-      ...emptyContestForm,
-      title: `Contest ${id}`,
-      description: 'Sample contest description',
-      status: 'active',
-    };
-    
-    setFormData(mockContest);
-    setIsDialogOpen(true);
+  const handleEditContest = async (id: string) => {
+    try {
+      // Intentamos buscar el concurso en la base de datos
+      const { data, error } = await supabase
+        .from('contests')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      
+      if (data) {
+        // Si encontramos el concurso, actualizamos el formulario
+        setFormData({
+          title: data.title || '',
+          description: data.description || '',
+          status: data.status || 'pending',
+          organizer: data.organizer || '',
+          startDate: data.start_date ? new Date(data.start_date).toISOString().split('T')[0] : '',
+          endDate: data.end_date ? new Date(data.end_date).toISOString().split('T')[0] : '',
+          photoDeadline: data.photo_deadline ? new Date(data.photo_deadline).toISOString().split('T')[0] : '',
+          maxParticipants: data.participants || 100,
+          photoOwnership: data.photo_ownership !== undefined ? data.photo_ownership : false,
+          commercialUse: data.commercial_use !== undefined ? data.commercial_use : false,
+          location: data.location || '',
+          imageUrl: data.image_url || ''
+        });
+      } else {
+        // Si no encontramos el concurso, usamos datos simulados
+        console.log("Editing contest ID:", id);
+        const mockContest: ContestFormData = {
+          ...emptyContestForm,
+          title: `Contest ${id}`,
+          description: 'Sample contest description',
+          status: 'active',
+        };
+        
+        setFormData(mockContest);
+      }
+      
+      setIsDialogOpen(true);
+    } catch (error) {
+      console.error("Error fetching contest:", error);
+      toast({
+        title: "Error al cargar concurso",
+        description: "No se pudo cargar la información del concurso",
+        variant: "destructive"
+      });
+    }
   };
 
   const validateForm = (): boolean => {
@@ -66,10 +106,34 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
     setSubmitError('');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Convertir fechas a formato ISO para Supabase
+      const contestData = {
+        title: formData.title,
+        description: formData.description,
+        status: formData.status,
+        organizer: formData.organizer,
+        start_date: formData.startDate ? new Date(formData.startDate).toISOString() : null,
+        end_date: formData.endDate ? new Date(formData.endDate).toISOString() : null,
+        photo_deadline: formData.photoDeadline ? new Date(formData.photoDeadline).toISOString() : null,
+        participants: formData.maxParticipants,
+        photo_ownership: formData.photoOwnership,
+        commercial_use: formData.commercialUse,
+        location: formData.location,
+        image_url: formData.imageUrl
+      };
       
-      console.log("Saving contest:", formData);
+      // Guardar en Supabase
+      const { error } = await supabase
+        .from('contests')
+        .insert([contestData]);
+      
+      if (error) throw error;
+      
+      console.log("Contest saved successfully");
+      toast({
+        title: "Concurso guardado",
+        description: "El concurso se ha guardado correctamente",
+      });
       
       // Close dialog and reset form
       setIsDialogOpen(false);
@@ -80,6 +144,11 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
     } catch (error: any) {
       console.error("Error saving contest:", error);
       setSubmitError(error.message || "No se pudo guardar el concurso");
+      toast({
+        title: "Error al guardar",
+        description: error.message || "No se pudo guardar el concurso",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -24,8 +24,8 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
           >
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?q=80&w=2070&auto=format&fit=crop" 
-                alt="Organizadores de eventos" 
+                src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+                alt="Personas tomando fotos en un evento" 
                 className="rounded-xl w-full object-cover"
               />
               <div className="absolute -bottom-6 -right-6 bg-primary px-6 py-4 rounded-lg text-white font-medium shadow-xl">

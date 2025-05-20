@@ -1,3 +1,4 @@
+
 // Hero section images
 export const heroImages = [
   {
@@ -44,88 +45,58 @@ export const popularContests = [
   },
   {
     id: "3",
-    title: "Gastronomía Local",
-    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
-    location: "Madrid",
-    dateStart: "2025-07-15",
+    title: "Arquitectura Histórica",
+    imageUrl: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80",
+    location: "Toledo",
+    dateStart: "2025-06-20",
     dateEnd: "2025-07-20",
     participantsCount: 56,
     photosCount: 189,
-  },
+  }
 ];
 
-// Winning photos for the gallery
+// Winning photos gallery
 export const winningPhotos = [
   {
-    id: 1,
-    imageUrl: "https://images.unsplash.com/photo-1560935044-b5f7f2396562?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Sagrada Familia",
-    photographer: "María Rodríguez",
-    photographerAvatar: "https://i.pravatar.cc/150?img=23",
-    likes: 345
+    id: "1",
+    title: "Amanecer en el Lago",
+    author: "Carlos Ruiz",
+    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    contestName: "Naturaleza",
   },
   {
-    id: 2,
-    imageUrl: "https://images.unsplash.com/photo-1574484284002-952d92456975?q=80&w=1974&auto=format&fit=crop",
-    title: "Gastronomía Española",
-    photographer: "Carlos Martínez",
-    photographerAvatar: "https://i.pravatar.cc/150?img=53",
-    likes: 289
+    id: "2",
+    title: "Reflejo Urbano",
+    author: "Ana Martín",
+    url: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    contestName: "Ciudad Moderna",
   },
   {
-    id: 3,
-    imageUrl: "https://images.unsplash.com/photo-1500531279542-fc8490c8ea4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
-    title: "Atardecer en Valencia",
-    photographer: "Ana Pérez",
-    photographerAvatar: "https://i.pravatar.cc/150?img=28",
-    likes: 274
+    id: "3",
+    title: "SAGRADA FAMILIA",
+    author: "Elena García",
+    url: "https://images.unsplash.com/photo-1583579366799-966f43365214?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    contestName: "Monumentos",
   },
   {
-    id: 4,
-    imageUrl: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
-    title: "Calles de Madrid",
-    photographer: "Jorge Fernández",
-    photographerAvatar: "https://i.pravatar.cc/150?img=54",
-    likes: 235
+    id: "4",
+    title: "Serenidad",
+    author: "Pablo López",
+    url: "https://images.unsplash.com/photo-1536782376847-5c9d14d97cc0?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    contestName: "Retratos",
   },
   {
-    id: 5,
-    imageUrl: "https://images.unsplash.com/photo-1561648107-82925b2a1b26?q=80&w=1974&auto=format&fit=crop",
-    title: "Fotografía de Alimentos",
-    photographer: "Elena Santos",
-    photographerAvatar: "https://i.pravatar.cc/150?img=44",
-    likes: 219
+    id: "5",
+    title: "Movimiento",
+    author: "Laura Torres",
+    url: "https://images.unsplash.com/photo-1605559911160-a3561f9eb7a3?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    contestName: "Deportes",
   },
   {
-    id: 6,
-    imageUrl: "https://images.unsplash.com/photo-1549310786-a634d453e653?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
-    title: "Parque del Retiro",
-    photographer: "Daniel López",
-    photographerAvatar: "https://i.pravatar.cc/150?img=12",
-    likes: 197
+    id: "6",
+    title: "Mercado Local",
+    author: "Miguel Sánchez",
+    url: "https://images.unsplash.com/photo-1626894499201-49ab820ee5ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    contestName: "Gastronomía",
   },
-  {
-    id: 7,
-    imageUrl: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
-    title: "Basketball en Barcelona",
-    photographer: "Marcos Salazar",
-    photographerAvatar: "https://i.pravatar.cc/150?img=50",
-    likes: 186
-  },
-  {
-    id: 8,
-    imageUrl: "https://images.unsplash.com/photo-1591115765373-5207764f72e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
-    title: "Playa de la Barceloneta",
-    photographer: "Sofía Navarro",
-    photographerAvatar: "https://i.pravatar.cc/150?img=47",
-    likes: 172
-  },
-  {
-    id: 9,
-    imageUrl: "https://images.unsplash.com/photo-1568027762272-e4da8b8f056d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60",
-    title: "Barrio Gótico",
-    photographer: "Roberto Gil",
-    photographerAvatar: "https://i.pravatar.cc/150?img=68",
-    likes: 159
-  }
 ];

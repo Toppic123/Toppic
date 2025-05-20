@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ContestFormProps } from "./types";
 import LocationCombobox from "./LocationCombobox";
+import { Image } from "lucide-react";
 
 // Contest form dialog component
 export const ContestFormDialog = ({ 
@@ -64,6 +65,25 @@ export const ContestFormDialog = ({
                 onChange={(e) => setContestFormData({...contestFormData, description: e.target.value})}
                 className="mt-1"
               />
+            </div>
+            
+            {/* Campo para URL de imagen */}
+            <div>
+              <Label htmlFor="imageUrl" className="flex items-center gap-1">
+                <Image size={16} className="mr-1" />
+                Imagen del concurso
+              </Label>
+              <Input
+                id="imageUrl"
+                type="url"
+                placeholder="https://ejemplo.com/imagen.jpg"
+                value={contestFormData.imageUrl || ""}
+                onChange={(e) => setContestFormData({...contestFormData, imageUrl: e.target.value})}
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Introduce la URL de una imagen para este concurso
+              </p>
             </div>
             
             {/* Location field with predictive search */}

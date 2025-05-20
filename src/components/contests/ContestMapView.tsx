@@ -1,21 +1,35 @@
 
-import Map from "@/components/Map";
+import React, { useState, useEffect } from 'react';
+import { Map, Grid2x2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-const ContestMapView = () => {
+interface ViewToggleButtonProps {
+  isMap: boolean;
+  toggleView: () => void;
+}
+
+const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggleView }) => {
   return (
-    <div className="mt-6">
-      <Map />
-      <div className="mt-4 p-4 border rounded-md bg-muted/50">
-        <h3 className="text-sm font-medium mb-2">Restricciones de ubicación:</h3>
-        <p className="text-sm text-muted-foreground">
-          Los participantes solo pueden subir fotos si están dentro de la distancia máxima especificada por cada concurso (indicada en la ficha del concurso).
-        </p>
-        <p className="text-sm text-muted-foreground mt-2">
-          <strong>Nota:</strong> Solo se muestran concursos activos en el mapa.
-        </p>
-      </div>
+    <div className="fixed bottom-8 right-8 z-10">
+      <Button 
+        onClick={toggleView}
+        size="lg"
+        className="shadow-lg bg-primary hover:bg-primary/90 text-white transition-all duration-200 transform hover:scale-105"
+      >
+        {isMap ? (
+          <>
+            <Grid2x2 className="mr-2 h-5 w-5" />
+            Ver cuadrícula
+          </>
+        ) : (
+          <>
+            <Map className="mr-2 h-5 w-5" />
+            Ver mapa
+          </>
+        )}
+      </Button>
     </div>
   );
 };
 
-export default ContestMapView;
+export { ViewToggleButton };

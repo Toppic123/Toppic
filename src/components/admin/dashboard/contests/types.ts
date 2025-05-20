@@ -1,45 +1,53 @@
 
-// Contest type definition
+export type ContestStatus = "active" | "pending" | "finished";
+
 export interface Contest {
   id: string;
   title: string;
-  organizer: string;
-  status: "pending" | "active" | "finished";
-  participants: number;
-  location?: string;
+  description?: string;
+  status: ContestStatus;
+  organizer?: string;
   startDate?: string;
   endDate?: string;
-  maxParticipants?: number;
-  maxPhotosPerParticipant?: number;
-  locationCoords?: { lat: number; lng: number };
-  maxDistance?: number;
-  description?: string;
-  rules?: string;
-  prizes?: string;
-  categories?: string[];
-  bannerUrl?: string;
+  participants?: number;
+  location?: string;
+  imageUrl?: string;
 }
 
-// ContestFormData type definition (for the form)
 export interface ContestFormData {
   title: string;
+  description: string;
+  status: ContestStatus;
   organizer: string;
   startDate: string;
   endDate: string;
   photoDeadline: string;
-  description: string;
-  status: "pending" | "active" | "finished";
   maxParticipants: number;
   photoOwnership: boolean;
   commercialUse: boolean;
-  location?: string;
+  location: string;
+  imageUrl?: string;
 }
 
-// Props for the contest form dialog
+export interface ContestCardProps {
+  contest: Contest;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
+}
+
+export interface ContestHeaderProps {
+  onCreateNew: () => void;
+}
+
+export interface ContestSearchProps {
+  searchQuery: string;
+  onSearch: (query: string) => void;
+}
+
 export interface ContestFormProps {
   isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
+  setIsOpen: (isOpen: boolean) => void;
   contestFormData: ContestFormData;
-  setContestFormData: (data: Partial<ContestFormData>) => void;
+  setContestFormData: (data: ContestFormData) => void;
   handleSaveChanges: () => void;
 }
