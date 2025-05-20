@@ -58,8 +58,8 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
           photoOwnership: data.photo_ownership || false,
           commercialUse: data.commercial_use || false,
           location: data.location || '',
-          // Access image_url from data with type safety
-          imageUrl: data.image_url as string || ''
+          // Check if image_url exists in the data and use it, otherwise use an empty string
+          imageUrl: data.image_url || '' // This line needs to be fixed
         });
       }
     } catch (error: any) {

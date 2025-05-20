@@ -1,3 +1,7 @@
+
+// Import the WinningPhoto type from the use-winning-photos hook
+import { WinningPhoto } from "@/hooks/use-winning-photos";
+
 // Hero section carousel images
 export const heroImages = [
   {

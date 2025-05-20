@@ -12,6 +12,7 @@ export interface Contest {
   participants?: number;
   location?: string;
   imageUrl?: string;
+  image_url?: string; // Add this field to match the database column
 }
 
 export interface ContestFormData {
