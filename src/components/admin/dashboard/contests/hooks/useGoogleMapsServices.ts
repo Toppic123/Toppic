@@ -6,7 +6,8 @@ export const useGoogleMapsServices = () => {
   const [services, setServices] = useState<GoogleMapsServices>({
     map: null,
     placesService: null,
-    autocompleteService: null
+    autocompleteService: null,
+    status: google.maps.places.PlacesServiceStatus
   });
   const [apiError, setApiError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,7 +41,8 @@ export const useGoogleMapsServices = () => {
           setServices({
             map: mapInstance,
             placesService: placesService,
-            autocompleteService: autocompleteService
+            autocompleteService: autocompleteService,
+            status: google.maps.places.PlacesServiceStatus
           });
           
           console.log("Google Maps services initialized successfully");

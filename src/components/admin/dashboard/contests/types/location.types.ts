@@ -10,6 +10,7 @@ export interface Prediction {
   structured_formatting?: {
     main_text: string;
     secondary_text: string;
+    main_text_matched_substrings?: Array<{ offset: number; length: number }>;
   };
 }
 
@@ -17,6 +18,7 @@ export interface GoogleMapsServices {
   map: google.maps.Map | null;
   placesService: google.maps.places.PlacesService | null;
   autocompleteService: google.maps.places.AutocompleteService | null;
+  status: typeof google.maps.places.PlacesServiceStatus;
 }
 
 export interface GeolocationResult {

@@ -1,20 +1,22 @@
-
 // Hero section images
 export const heroImages = [
   {
     id: 1,
     url: "https://images.unsplash.com/photo-1533747350731-7769151f6db4?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Concurso de fotografía de Naturaleza"
+    alt: "Concurso de fotografía de Naturaleza",
+    category: "Naturaleza"
   },
   {
     id: 2, 
     url: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?q=80&w=2058&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Concurso de fotografía de Arquitectura"
+    alt: "Concurso de fotografía de Arquitectura",
+    category: "Arquitectura"
   },
   {
     id: 3,
     url: "https://images.unsplash.com/photo-1519417688547-61e5d5338ab0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Concurso de fotografía de Retratos"
+    alt: "Concurso de fotografía de Retratos",
+    category: "Retratos"
   },
 ];
 
