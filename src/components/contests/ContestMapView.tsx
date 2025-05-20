@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from "@/lib/utils";
@@ -9,7 +9,7 @@ interface ViewToggleButtonProps {
   toggleView: () => void;
 }
 
-const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggleView }) => {
+export const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggleView }) => {
   return (
     <div className="fixed bottom-8 right-8 z-10">
       <Button 
@@ -39,7 +39,7 @@ const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggleView }
 };
 
 // Add a default ContestMapView component
-const ContestMapView = () => {
+export const ContestMapView = () => {
   return (
     <div className="relative h-[70vh] w-full rounded-lg overflow-hidden border border-border">
       <div className="absolute inset-0 bg-muted flex items-center justify-center">
@@ -49,5 +49,5 @@ const ContestMapView = () => {
   );
 };
 
-export { ViewToggleButton };
+// Make sure we export the component as default too
 export default ContestMapView;

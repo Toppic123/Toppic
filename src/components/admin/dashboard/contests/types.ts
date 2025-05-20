@@ -48,6 +48,6 @@ export interface ContestFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   contestFormData: ContestFormData;
-  setContestFormData: (data: ContestFormData) => void;
-  handleSaveChanges: () => void;
+  setContestFormData: (data: Partial<ContestFormData>) => void;
+  handleSaveChanges: (file?: File) => void;
 }

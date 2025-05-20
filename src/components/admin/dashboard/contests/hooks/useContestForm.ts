@@ -23,6 +23,7 @@ const defaultFormData: ContestFormData = {
 export const useContestForm = (onSuccessfulSave: () => void) => {
   const [formData, setFormData] = useState<ContestFormData>(defaultFormData);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
   // Fetch contest details
@@ -41,7 +42,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
       }
       
       if (data) {
-        // Si encontramos el concurso, actualizamos el formulario
+        // If we find the contest, update the form
         const status = data.status as ContestStatus; // Cast to ContestStatus type
         setFormData({
           title: data.title || '',
@@ -55,7 +56,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
           photoOwnership: data.photo_ownership || false,
           commercialUse: data.commercial_use || false,
           location: data.location || '',
-          imageUrl: data.image_url || '' // Access the image_url field
+          imageUrl: data.image_url || '' // Handle possible undefined image_url
         });
       }
     } catch (error: any) {
@@ -73,6 +74,23 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
   // Reset form data to default
   const resetFormData = () => {
     setFormData(defaultFormData);
+  };
+
+  // Handle new contest creation
+  const handleCreateNewContest = () => {
+    resetFormData();
+    setIsDialogOpen(true);
+  };
+
+  // Handle edit contest
+  const handleEditContest = async (contestId: string) => {
+    await fetchContestById(contestId);
+    setIsDialogOpen(true);
+  };
+
+  // Handle form field changes
+  const handleFormChange = (updatedData: Partial<ContestFormData>) => {
+    setFormData(prev => ({ ...prev, ...updatedData }));
   };
 
   // Handle form submission
@@ -119,7 +137,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
         photo_ownership: formData.photoOwnership,
         commercial_use: formData.commercialUse,
         location: formData.location,
-        image_url: imageUrl // Add the image URL field
+        image_url: imageUrl // Store the image URL field
       };
       
       // Determine if we're creating or updating a contest
@@ -138,6 +156,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
       });
       
       resetFormData();
+      setIsDialogOpen(false);
       onSuccessfulSave();
     } catch (error: any) {
       console.error('Error al guardar el concurso:', error);
@@ -151,12 +170,23 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
     }
   };
 
+  // Handle save changes (pass to ContestFormDialog)
+  const handleSaveChanges = () => {
+    handleSubmit();
+  };
+
   return {
     formData,
-    setFormData,
+    setFormData: handleFormChange,
     isLoading,
+    isDialogOpen,
+    setIsDialogOpen,
     fetchContestById,
     resetFormData,
-    handleSubmit
+    handleSubmit,
+    handleEditContest,
+    handleCreateNewContest,
+    handleFormChange,
+    handleSaveChanges
   };
 };
