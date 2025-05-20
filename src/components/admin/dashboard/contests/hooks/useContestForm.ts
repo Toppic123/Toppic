@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Contest, ContestFormData } from "../types";
+import { Contest, ContestFormData, ContestStatus } from "../types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,7 +16,7 @@ const emptyContestForm: ContestFormData = {
   photoOwnership: false,
   commercialUse: false,
   location: '',
-  imageUrl: '' // Añadimos el campo para la imagen
+  imageUrl: ''
 };
 
 export const useContestForm = (onSuccessfulSave: () => void) => {
@@ -50,10 +50,11 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
       
       if (data) {
         // Si encontramos el concurso, actualizamos el formulario
+        const status = data.status as ContestStatus; // Cast to ContestStatus type
         setFormData({
           title: data.title || '',
           description: data.description || '',
-          status: data.status || 'pending',
+          status: status || 'pending',
           organizer: data.organizer || '',
           startDate: data.start_date ? new Date(data.start_date).toISOString().split('T')[0] : '',
           endDate: data.end_date ? new Date(data.end_date).toISOString().split('T')[0] : '',

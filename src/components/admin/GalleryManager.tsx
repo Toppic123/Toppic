@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
@@ -24,7 +23,7 @@ const GalleryManager = () => {
   const { photos, updatePhoto, addPhoto, removePhoto, reorderPhotos, loading } = useWinningPhotos();
   const [editingPhoto, setEditingPhoto] = useState<WinningPhoto | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newPhoto, setNewPhoto] = useState({
+  const [newPhoto, setNewPhoto] = useState<Omit<WinningPhoto, "id">>({
     imageUrl: '',
     title: '',
     photographer: '',

@@ -111,7 +111,7 @@ export const useWinningPhotos = () => {
       
       // Crear nueva foto con URL de imagen actualizada
       const newId = Math.max(0, ...photos.map(p => p.id)) + 1;
-      const photoWithUrl = { ...newPhoto, imageUrl, id: newId };
+      const photoWithUrl: WinningPhoto = { ...newPhoto, imageUrl, id: newId };
       
       // Actualizar estado local
       const updatedPhotos = [...photos, photoWithUrl];

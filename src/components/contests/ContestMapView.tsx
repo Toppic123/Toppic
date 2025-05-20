@@ -32,4 +32,16 @@ const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggleView }
   );
 };
 
+// Add a default ContestMapView component
+const ContestMapView = () => {
+  return (
+    <div className="relative h-[70vh] w-full rounded-lg overflow-hidden border border-border">
+      <div className="absolute inset-0 bg-muted flex items-center justify-center">
+        <p className="text-muted-foreground">Cargando mapa de concursos...</p>
+      </div>
+    </div>
+  );
+};
+
 export { ViewToggleButton };
+export default ContestMapView;

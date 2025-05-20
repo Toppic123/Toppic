@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 
 import ContestFilters from "@/components/contests/ContestFilters";
 import ContestGrid from "@/components/contests/ContestGrid";
-import ContestMapView from "@/components/contests/ContestMapView";
+import ContestMapView, { ViewToggleButton } from "@/components/contests/ContestMapView";
 import { allContests, categories, locations, calculateDistance } from "@/utils/contestsData";
 
 const Contests = () => {
