@@ -7,7 +7,7 @@ export const useGoogleMapsServices = () => {
     map: null,
     placesService: null,
     autocompleteService: null,
-    status: google.maps.places.PlacesServiceStatus
+    status: null // Inicializamos como null hasta que la API se cargue
   });
   const [apiError, setApiError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);

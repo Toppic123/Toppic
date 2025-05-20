@@ -61,8 +61,8 @@ export const useLocationSearch = (services: GoogleMapsServices, isApiLoading: bo
       return;
     }
 
-    // Si la API está cargando o no está disponible, usamos la búsqueda local
-    if (isApiLoading || !services.autocompleteService) {
+    // Si la API está cargando, no está disponible o status es null, usamos la búsqueda local
+    if (isApiLoading || !services.autocompleteService || !services.status) {
       setIsLoading(true);
       
       // Buscar en nuestra lista local de ciudades españolas
@@ -105,7 +105,7 @@ export const useLocationSearch = (services: GoogleMapsServices, isApiLoading: bo
         console.error('Error fetching predictions:', status);
         setPredictions([]);
         
-        if (status === services.status.ZERO_RESULTS) {
+        if (services.status && status === services.status.ZERO_RESULTS) {
           // Usar búsqueda local como fallback
           const filteredCities = spanishCities
             .filter(city => city.description.toLowerCase().includes(input.toLowerCase()))
@@ -162,7 +162,7 @@ export const useLocationSearch = (services: GoogleMapsServices, isApiLoading: bo
       };
     }
     
-    if (!services.placesService) {
+    if (!services.placesService || !services.status) {
       toast({
         title: "Error",
         description: "El servicio de lugares no está disponible",
@@ -175,7 +175,7 @@ export const useLocationSearch = (services: GoogleMapsServices, isApiLoading: bo
       services.placesService.getDetails(
         { placeId, fields: ['formatted_address', 'geometry'] },
         (place, status) => {
-          if (status !== services.status.OK || !place) {
+          if (services.status && status !== services.status.OK || !place) {
             toast({
               title: "Error",
               description: "No se pudieron obtener los detalles de esta ubicación",

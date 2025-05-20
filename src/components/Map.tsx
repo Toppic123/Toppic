@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Lock, Loader2, Search } from "lucide-react";
@@ -6,6 +5,12 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
 
 const mockContests = [
   {
@@ -67,6 +72,39 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   const { toast } = useToast();
   const [mapError, setMapError] = useState<string | null>(null);
   const [googleMapURL, setGoogleMapURL] = useState<string>("");
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+
+  // Función para cargar el script de Google Maps
+  const loadGoogleMapsScript = () => {
+    if (window.google) {
+      setIsScriptLoaded(true);
+      return; // Ya está cargado
+    }
+
+    if (document.querySelector('script[src*="maps.googleapis.com/maps/api"]')) {
+      return; // Script ya en proceso de carga
+    }
+
+    const apiKey = "AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"; // Usar la misma key que está en el iframe
+    
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    
+    script.onload = () => {
+      setIsScriptLoaded(true);
+      setIsMapLoading(false);
+    };
+    
+    script.onerror = () => {
+      console.error("Failed to load Google Maps API");
+      setMapError("No se pudo cargar la API de Google Maps. Se está mostrando una versión simplificada.");
+      setIsMapLoading(false);
+    };
+    
+    document.head.appendChild(script);
+  };
 
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
     const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -160,12 +198,17 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       lng: -3.7038
     };
 
+    // Intentar cargar el script si no está cargado
+    loadGoogleMapsScript();
+
     const url = `https://www.google.com/maps/search/?api=1&query=${defaultLocation.lat},${defaultLocation.lng}`;
     setGoogleMapURL(url);
 
     const timer = setTimeout(() => {
-      setIsMapLoading(false);
-    }, 1000);
+      if (isMapLoading) {
+        setIsMapLoading(false);
+      }
+    }, 3000); // Si después de 3 segundos sigue cargando, mostrar el mapa de todos modos
 
     return () => {
       clearTimeout(timer);
@@ -173,7 +216,8 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   }, []);
 
   return (
-    <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden">
+    <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden shadow-lg border border-gray-200">
+      {/* Mostrar estado de carga */}
       {isMapLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
           <div className="flex flex-col items-center">
@@ -183,6 +227,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         </div>
       )}
 
+      {/* Mostrar mensaje de error */}
       {mapError && (
         <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
           <div className="flex flex-col items-center max-w-md text-center p-4">
@@ -201,6 +246,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         </div>
       )}
 
+      {/* Contenedor del mapa */}
       {!isMapLoading && !mapError && (
         <div className="w-full h-full">
           <iframe
@@ -209,12 +255,13 @@ const Map = ({ showMustardButton = false }: MapProps) => {
             height="100%"
             referrerPolicy="no-referrer-when-downgrade"
             src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${userLocation ? `${userLocation.lat},${userLocation.lng}` : 'Spain'}`}
+            className="rounded-lg shadow-inner"
             allowFullScreen
           ></iframe>
         </div>
       )}
 
-      {/* Botón central de CONCURSOS CERCANOS (reemplaza al antiguo) */}
+      {/* Botón central para buscar concursos cercanos */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         <motion.button 
           onClick={locateUser}

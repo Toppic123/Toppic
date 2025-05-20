@@ -18,7 +18,7 @@ export interface GoogleMapsServices {
   map: google.maps.Map | null;
   placesService: google.maps.places.PlacesService | null;
   autocompleteService: google.maps.places.AutocompleteService | null;
-  status: typeof google.maps.places.PlacesServiceStatus;
+  status: typeof google.maps.places.PlacesServiceStatus | null;
 }
 
 export interface GeolocationResult {
