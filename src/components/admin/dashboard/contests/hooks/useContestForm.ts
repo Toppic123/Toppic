@@ -44,6 +44,8 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
       if (data) {
         // If we find the contest, update the form
         const status = data.status as ContestStatus; // Cast to ContestStatus type
+        
+        // Handle possible undefined fields
         setFormData({
           title: data.title || '',
           description: data.description || '',
@@ -56,7 +58,8 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
           photoOwnership: data.photo_ownership || false,
           commercialUse: data.commercial_use || false,
           location: data.location || '',
-          imageUrl: data.image_url || '' // Handle possible undefined image_url
+          // Access image_url from data with type safety
+          imageUrl: data.image_url as string || ''
         });
       }
     } catch (error: any) {
@@ -171,8 +174,8 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
   };
 
   // Handle save changes (pass to ContestFormDialog)
-  const handleSaveChanges = () => {
-    handleSubmit();
+  const handleSaveChanges = (file?: File) => {
+    handleSubmit(file);
   };
 
   return {

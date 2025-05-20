@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from "@/lib/utils";
+import NearbyMap from '@/components/Map';
 
 interface ViewToggleButtonProps {
   isMap: boolean;
@@ -38,13 +39,18 @@ export const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggl
   );
 };
 
-// Add a default ContestMapView component
+// Update ContestMapView component to use the Map component
 export const ContestMapView = () => {
   return (
     <div className="relative h-[70vh] w-full rounded-lg overflow-hidden border border-border">
-      <div className="absolute inset-0 bg-muted flex items-center justify-center">
-        <p className="text-muted-foreground">Cargando mapa de concursos...</p>
+      <div className="absolute z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <Button 
+          className="flex items-center justify-center bg-[#F0C14B] hover:bg-[#F0C14B]/90 text-black font-medium px-6 py-3 rounded-full shadow-lg"
+        >
+          <span>Concursos cercanos</span>
+        </Button>
       </div>
+      <NearbyMap />
     </div>
   );
 };

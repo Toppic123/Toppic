@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,7 @@ import { ContestFormProps } from "./types";
 import LocationCombobox from "./LocationCombobox";
 import { Image, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 // Contest form dialog component
 export const ContestFormDialog = ({ 
@@ -22,7 +23,37 @@ export const ContestFormDialog = ({
   handleSaveChanges 
 }: ContestFormProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [organizers, setOrganizers] = useState<{id: string, name: string}[]>([]);
   const { toast } = useToast();
+
+  // Fetch organizers from the database
+  useEffect(() => {
+    async function fetchOrganizers() {
+      try {
+        const { data, error } = await supabase
+          .from('organizers')
+          .select('id, name')
+          .order('name');
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          setOrganizers(data);
+        }
+      } catch (err) {
+        console.error('Error fetching organizers:', err);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los organizadores",
+          variant: "destructive"
+        });
+      }
+    }
+    
+    fetchOrganizers();
+  }, [toast, isOpen]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -86,11 +117,13 @@ export const ContestFormDialog = ({
                   <SelectValue placeholder="Seleccionar organizador" />
                 </SelectTrigger>
                 <SelectContent>
+                  {organizers.map(org => (
+                    <SelectItem key={org.id} value={org.name}>{org.name}</SelectItem>
+                  ))}
                   <SelectItem value="PictureThis">PictureThis</SelectItem>
                   <SelectItem value="FoodLens">FoodLens</SelectItem>
                   <SelectItem value="CoastalShots">CoastalShots</SelectItem>
                   <SelectItem value="NightOwl">NightOwl</SelectItem>
-                  {/* Fetch from database would happen here */}
                 </SelectContent>
               </Select>
             </div>

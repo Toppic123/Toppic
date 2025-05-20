@@ -125,7 +125,7 @@ const Contests = () => {
                 value="grid" 
                 className={viewMode === "grid" ? "bg-[#4891AA] text-white hover:bg-[#3a7a8b]" : ""}
               >
-                Cuadrícula
+                Lista
               </TabsTrigger>
               <TabsTrigger 
                 value="map"

@@ -1,32 +1,24 @@
-// Hero section images
+// Hero section carousel images
 export const heroImages = [
   {
-    id: 1,
-    url: "https://images.unsplash.com/photo-1533747350731-7769151f6db4?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Concurso de fotografía de Naturaleza",
-    category: "Naturaleza"
+    url: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Events"
   },
   {
-    id: 2, 
-    url: "https://images.unsplash.com/photo-1493863641943-9b68992a8d07?q=80&w=2058&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Concurso de fotografía de Arquitectura",
-    category: "Arquitectura"
+    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Landscape"
   },
   {
-    id: 3,
-    url: "https://images.unsplash.com/photo-1519417688547-61e5d5338ab0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Concurso de fotografía de Retratos",
-    category: "Retratos"
+    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Mobile Photography"
   },
   {
-    id: 4,
-    url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    alt: "Persona tomando fotos con móvil",
-    category: "Fotografía móvil"
-  },
+    url: "https://images.unsplash.com/photo-1504198453758-3a438de90f0c?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Night"
+  }
 ];
 
-// Popular contests for homepage
+// Popular contests section
 export const popularContests = [
   {
     id: "1",
@@ -60,78 +52,78 @@ export const popularContests = [
   }
 ];
 
-// Winning photos gallery - Updated to match WinningPhoto interface
-export const winningPhotos = [
+// Export winning photos with the correct structure
+export const winningPhotos: WinningPhoto[] = [
   {
     id: 1,
-    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Amanecer en el Lago",
-    photographer: "Carlos Ruiz",
-    photographerAvatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    likes: 245,
+    imageUrl: "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Cascada en el bosque",
+    photographer: "Elena Rivera",
+    photographerAvatar: "https://i.pravatar.cc/150?img=1",
+    likes: 342
   },
   {
     id: 2,
-    imageUrl: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Reflejo Urbano",
-    photographer: "Ana Martín",
-    photographerAvatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    likes: 189,
+    imageUrl: "https://images.unsplash.com/photo-1682687982470-8f1b17271fc1?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Amanecer en la montaña",
+    photographer: "Carlos Mendoza",
+    photographerAvatar: "https://i.pravatar.cc/150?img=2",
+    likes: 289
   },
   {
     id: 3,
-    imageUrl: "https://images.unsplash.com/photo-1583579366799-966f43365214?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "SAGRADA FAMILIA",
-    photographer: "Elena García",
-    photographerAvatar: "https://randomuser.me/api/portraits/women/22.jpg",
-    likes: 312,
+    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Reflejos acuáticos",
+    photographer: "Marina Costa",
+    photographerAvatar: "https://i.pravatar.cc/150?img=3",
+    likes: 412
   },
   {
     id: 4,
-    imageUrl: "https://images.unsplash.com/photo-1536782376847-5c9d14d97cc0?q=80&w=2076&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Serenidad",
-    photographer: "Pablo López",
-    photographerAvatar: "https://randomuser.me/api/portraits/men/67.jpg",
-    likes: 156,
+    imageUrl: "https://images.unsplash.com/photo-1504198453758-3a438de90f0c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Estrella fugaz",
+    photographer: "Luis Hernández",
+    photographerAvatar: "https://i.pravatar.cc/150?img=4",
+    likes: 251
   },
   {
     id: 5,
-    imageUrl: "https://images.unsplash.com/photo-1605559911160-a3561f9eb7a3?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Movimiento",
-    photographer: "Laura Torres",
-    photographerAvatar: "https://randomuser.me/api/portraits/women/54.jpg",
-    likes: 203,
+    imageUrl: "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Entre nubes",
+    photographer: "Ana Martínez",
+    photographerAvatar: "https://i.pravatar.cc/150?img=5",
+    likes: 317
   },
   {
     id: 6,
-    imageUrl: "https://images.unsplash.com/photo-1626894499201-49ab820ee5ca?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Mercado Local",
-    photographer: "Miguel Sánchez",
-    photographerAvatar: "https://randomuser.me/api/portraits/men/22.jpg",
-    likes: 178,
+    imageUrl: "https://images.unsplash.com/photo-1516616370751-86d6bd8b0651?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Calma en el lago",
+    photographer: "Marco Valencia",
+    photographerAvatar: "https://i.pravatar.cc/150?img=6",
+    likes: 284
   },
   {
     id: 7,
-    imageUrl: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Concierto en el Parque",
-    photographer: "Ana Martín",
-    photographerAvatar: "https://randomuser.me/api/portraits/women/68.jpg",
-    likes: 412,
+    imageUrl: "https://images.unsplash.com/photo-1509773896068-7fd415d91e2e?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Aurora boreal",
+    photographer: "Diana Suárez",
+    photographerAvatar: "https://i.pravatar.cc/150?img=7",
+    likes: 398
   },
   {
     id: 8,
-    imageUrl: "https://images.unsplash.com/photo-1549576490-b0b4831ef60a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "El Gato Curioso",
-    photographer: "Elena Torres",
-    photographerAvatar: "https://randomuser.me/api/portraits/women/54.jpg",
-    likes: 521,
+    imageUrl: "https://images.unsplash.com/photo-1560174684-b8253351ecf5?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Puente al atardecer",
+    photographer: "Javier Acosta",
+    photographerAvatar: "https://i.pravatar.cc/150?img=8",
+    likes: 275
   },
   {
     id: 9,
-    imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    title: "Celebración Cultural",
-    photographer: "Miguel Fernández",
-    photographerAvatar: "https://randomuser.me/api/portraits/men/34.jpg",
-    likes: 356,
+    imageUrl: "https://images.unsplash.com/photo-1618035881605-dfe8d7eb387b?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Desierto dorado",
+    photographer: "Teresa Luna",
+    photographerAvatar: "https://i.pravatar.cc/150?img=9",
+    likes: 329
   }
 ];
