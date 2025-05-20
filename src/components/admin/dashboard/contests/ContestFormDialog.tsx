@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ContestFormProps } from "./types";
 import LocationCombobox from "./LocationCombobox";
-import { Image } from "lucide-react";
+import { Image, Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Contest form dialog component
 export const ContestFormDialog = ({ 
@@ -20,6 +22,41 @@ export const ContestFormDialog = ({
   setContestFormData, 
   handleSaveChanges 
 }: ContestFormProps) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { toast } = useToast();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Check if file is an image
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Archivo no válido",
+          description: "Por favor, selecciona una imagen (JPG, PNG, etc.)",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Store the file for later upload
+      setSelectedFile(file);
+      
+      // Show a preview URL for the UI
+      const imageUrl = URL.createObjectURL(file);
+      setContestFormData({...contestFormData, imageUrl: imageUrl});
+    }
+  };
+
+  const clearFileSelection = () => {
+    setSelectedFile(null);
+    setContestFormData({...contestFormData, imageUrl: ''});
+  };
+  
+  const handleFormSubmit = () => {
+    handleSaveChanges(selectedFile);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[600px]">
@@ -54,6 +91,7 @@ export const ContestFormDialog = ({
                   <SelectItem value="FoodLens">FoodLens</SelectItem>
                   <SelectItem value="CoastalShots">CoastalShots</SelectItem>
                   <SelectItem value="NightOwl">NightOwl</SelectItem>
+                  {/* Fetch from database would happen here */}
                 </SelectContent>
               </Select>
             </div>
@@ -67,23 +105,58 @@ export const ContestFormDialog = ({
               />
             </div>
             
-            {/* Campo para URL de imagen */}
+            {/* Campo para subir imagen */}
             <div>
-              <Label htmlFor="imageUrl" className="flex items-center gap-1">
+              <Label htmlFor="imageUpload" className="flex items-center gap-1">
                 <Image size={16} className="mr-1" />
                 Imagen del concurso
               </Label>
-              <Input
-                id="imageUrl"
-                type="url"
-                placeholder="https://ejemplo.com/imagen.jpg"
-                value={contestFormData.imageUrl || ""}
-                onChange={(e) => setContestFormData({...contestFormData, imageUrl: e.target.value})}
-                className="mt-1"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                Introduce la URL de una imagen para este concurso
-              </p>
+              
+              <div className="mt-1 flex flex-col space-y-4">
+                {/* File input */}
+                <div className="flex items-center justify-center w-full">
+                  <label
+                    htmlFor="imageUpload"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Upload className="w-8 h-8 mb-3 text-gray-400" />
+                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                        <span className="font-semibold">Haz clic para subir</span> o arrastra y suelta
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG o GIF</p>
+                    </div>
+                    <Input
+                      id="imageUpload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                
+                {/* Preview or current image */}
+                {contestFormData.imageUrl && (
+                  <div className="relative">
+                    <img
+                      src={contestFormData.imageUrl}
+                      alt="Vista previa"
+                      className="h-40 object-cover rounded-lg mx-auto"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={clearFileSelection}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                      <span className="sr-only">Eliminar</span>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </div>
             
             {/* Location field with predictive search */}
@@ -192,7 +265,7 @@ export const ContestFormDialog = ({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-          <Button onClick={handleSaveChanges}>Guardar</Button>
+          <Button onClick={handleFormSubmit}>Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

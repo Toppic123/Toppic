@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { winningPhotos as defaultPhotos } from "@/components/home/HomeData";
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,6 +12,9 @@ export interface WinningPhoto {
   likes: number;
 }
 
+// Import the default photos directly to ensure correct typing
+import { winningPhotos as defaultWinningPhotos } from "@/components/home/HomeData";
+
 export const useWinningPhotos = () => {
   const [photos, setPhotos] = useState<WinningPhoto[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,9 +23,9 @@ export const useWinningPhotos = () => {
   // Cargar fotos iniciales
   useEffect(() => {
     // Always load default photos initially to ensure we have data
-    setPhotos(defaultPhotos);
+    setPhotos(defaultWinningPhotos as WinningPhoto[]);
     setLoading(false);
-    console.log("Fotos iniciales cargadas:", defaultPhotos);
+    console.log("Fotos iniciales cargadas:", defaultWinningPhotos);
   }, []);
 
   const updatePhoto = async (id: number, newPhotoData: Partial<WinningPhoto>, file?: File) => {
@@ -162,7 +164,7 @@ export const useWinningPhotos = () => {
   };
 
   return {
-    photos: photos.length > 0 ? photos : defaultPhotos, // Fallback to default photos if empty
+    photos: photos.length > 0 ? photos : defaultWinningPhotos as WinningPhoto[], // Fallback to default photos if empty
     loading,
     updatePhoto,
     addPhoto,

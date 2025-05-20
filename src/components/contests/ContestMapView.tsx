@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Map, Grid2x2 } from 'lucide-react';
+import { Map, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from "@/lib/utils";
 
 interface ViewToggleButtonProps {
   isMap: boolean;
@@ -14,12 +15,17 @@ const ViewToggleButton: React.FC<ViewToggleButtonProps> = ({ isMap, toggleView }
       <Button 
         onClick={toggleView}
         size="lg"
-        className="shadow-lg bg-primary hover:bg-primary/90 text-white transition-all duration-200 transform hover:scale-105"
+        className={cn(
+          "shadow-lg transition-all duration-200 transform hover:scale-105 font-semibold",
+          isMap 
+          ? "bg-white text-primary hover:bg-gray-100 border border-primary" 
+          : "bg-primary text-white hover:bg-primary/90"
+        )}
       >
         {isMap ? (
           <>
-            <Grid2x2 className="mr-2 h-5 w-5" />
-            Ver cuadrícula
+            <List className="mr-2 h-5 w-5" />
+            Ver lista
           </>
         ) : (
           <>
