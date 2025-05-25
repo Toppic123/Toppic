@@ -100,7 +100,7 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 6,
-    imageUrl: "https://images.unsplash.com/photo-1539650116574-75c0c6d73a0e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    imageUrl: "https://images.unsplash.com/photo-1549144511-f099e773c147?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     title: "Torre Eiffel al atardecer",
     photographer: "Marco Valencia",
     photographerAvatar: "https://i.pravatar.cc/150?img=6",
