@@ -2,7 +2,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Rocket, Sparkles, TrendingUp } from "lucide-react";
 
 interface OrganizerSectionProps {
   texts: {
@@ -29,17 +28,10 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
                 alt="Personas disfrutando en un evento cultural" 
                 className="rounded-xl w-full object-cover"
               />
-              {/* MODERNIZED: New call-to-action box with better design */}
-              <div className="absolute -bottom-8 -right-8 bg-gradient-to-r from-primary via-blue-600 to-purple-600 p-6 rounded-2xl text-white font-medium shadow-2xl border border-white/20 backdrop-blur-sm min-w-[200px]">
-                <div className="flex items-center mb-2">
-                  <Rocket className="w-6 h-6 mr-2 text-yellow-300" />
-                  <Sparkles className="w-4 h-4 text-yellow-300" />
-                </div>
-                <p className="text-lg font-bold mb-1">¡Impulsa tu marca!</p>
-                <div className="flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-1 text-green-300" />
-                  <span className="text-sm text-blue-100">Crece con nosotros</span>
-                </div>
+              {/* UPDATED: Simplified call-to-action box without icons, larger text */}
+              <div className="absolute -bottom-8 -right-8 bg-gradient-to-r from-primary via-blue-600 to-purple-600 p-8 rounded-2xl text-white font-medium shadow-2xl border border-white/20 backdrop-blur-sm min-w-[240px]">
+                <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
+                <span className="text-lg text-blue-100">Crece con nosotros</span>
                 {/* Decorative elements */}
                 <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
                 <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-pink-400 rounded-full"></div>

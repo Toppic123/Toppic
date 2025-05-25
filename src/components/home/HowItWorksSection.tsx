@@ -100,13 +100,13 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                   <div className="hidden lg:block absolute top-20 -right-6 w-12 h-0.5 bg-gradient-to-r from-gray-300 to-transparent dark:from-gray-600"></div>
                 )}
                 
-                <div className={`${step.bgPattern} rounded-3xl p-8 relative overflow-hidden border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105`}>
+                <div className={`${step.bgPattern} rounded-3xl p-8 pt-12 pb-8 relative overflow-hidden border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105`}>
                   {/* Floating elements */}
                   <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
                   <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
                   
-                  {/* Step number - FIXED: Better positioning and visibility */}
-                  <div className={`absolute -top-3 -left-3 w-14 h-14 bg-gradient-to-br ${step.gradient} rounded-full flex items-center justify-center text-white font-bold text-xl shadow-2xl border-4 border-white/30 backdrop-blur-sm z-10`}>
+                  {/* Step number - FIXED: Proper positioning within container */}
+                  <div className={`absolute top-3 left-3 w-12 h-12 bg-gradient-to-br ${step.gradient} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-2xl border-3 border-white/40 backdrop-blur-sm z-10`}>
                     {index + 1}
                   </div>
                   

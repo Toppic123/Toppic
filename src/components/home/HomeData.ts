@@ -2,14 +2,14 @@
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images
+// Hero section carousel images - UPDATED with new images as requested
 export const heroImages = [
   {
     url: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     category: "Evento Musical"
   },
   {
-    url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
     category: "Personas en Evento"
   },
   {
@@ -17,8 +17,8 @@ export const heroImages = [
     category: "Fotografía Móvil"
   },
   {
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Arquitectura"
+    url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Sagrada Familia"
   }
 ];
 
@@ -100,8 +100,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 6,
-    imageUrl: "https://images.unsplash.com/photo-1549144511-f099e773c147?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Torre Eiffel al atardecer",
+    imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Sagrada Familia de Barcelona",
     photographer: "Marco Valencia",
     photographerAvatar: "https://i.pravatar.cc/150?img=6",
     likes: 284
