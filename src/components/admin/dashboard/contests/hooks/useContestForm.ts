@@ -45,7 +45,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
         // If we find the contest, update the form
         const status = data.status as ContestStatus; // Cast to ContestStatus type
         
-        // Handle possible undefined fields
+        // Handle possible undefined fields with proper type checking
         setFormData({
           title: data.title || '',
           description: data.description || '',
@@ -58,8 +58,8 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
           photoOwnership: data.photo_ownership || false,
           commercialUse: data.commercial_use || false,
           location: data.location || '',
-          // Check if image_url exists in the data and use it, otherwise use an empty string
-          imageUrl: data.image_url || '' // This line needs to be fixed
+          // Safely access image_url with proper type checking
+          imageUrl: (data as any).image_url || ''
         });
       }
     } catch (error: any) {
