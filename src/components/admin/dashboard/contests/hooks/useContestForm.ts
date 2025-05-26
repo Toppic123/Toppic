@@ -24,6 +24,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
   const [formData, setFormData] = useState<ContestFormData>(defaultFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingContestId, setEditingContestId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Fetch contest details
@@ -43,9 +44,8 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
       
       if (data) {
         // If we find the contest, update the form
-        const status = data.status as ContestStatus; // Cast to ContestStatus type
+        const status = data.status as ContestStatus;
         
-        // Handle possible undefined fields with proper type checking
         setFormData({
           title: data.title || '',
           description: data.description || '',
@@ -58,9 +58,10 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
           photoOwnership: data.photo_ownership || false,
           commercialUse: data.commercial_use || false,
           location: data.location || '',
-          // Safely access image_url with proper type checking
-          imageUrl: (data as any).image_url || ''
+          imageUrl: data.image_url || ''
         });
+        
+        setEditingContestId(contestId);
       }
     } catch (error: any) {
       console.error('Error al obtener el concurso:', error);
@@ -77,6 +78,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
   // Reset form data to default
   const resetFormData = () => {
     setFormData(defaultFormData);
+    setEditingContestId(null);
   };
 
   // Handle new contest creation
@@ -140,14 +142,27 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
         photo_ownership: formData.photoOwnership,
         commercial_use: formData.commercialUse,
         location: formData.location,
-        image_url: imageUrl // Store the image URL field
+        image_url: imageUrl // Use image_url to match database column
       };
       
       // Determine if we're creating or updating a contest
-      const { data, error } = await supabase
-        .from('contests')
-        .upsert(contestData)
-        .select();
+      let result;
+      if (editingContestId) {
+        // Update existing contest
+        result = await supabase
+          .from('contests')
+          .update(contestData)
+          .eq('id', editingContestId)
+          .select();
+      } else {
+        // Create new contest
+        result = await supabase
+          .from('contests')
+          .insert(contestData)
+          .select();
+      }
+      
+      const { data, error } = result;
       
       if (error) {
         throw error;
@@ -155,7 +170,7 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
       
       toast({
         title: "Concurso guardado",
-        description: "Los datos del concurso se han guardado correctamente."
+        description: `El concurso se ha ${editingContestId ? 'actualizado' : 'creado'} correctamente.`
       });
       
       resetFormData();
