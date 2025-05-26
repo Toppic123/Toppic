@@ -2,23 +2,23 @@
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images - UPDATED with new images as requested
+// Hero section carousel images - Updated with new diverse images
 export const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Evento Musical"
+    url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Concierto al aire libre"
   },
   {
-    url: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
-    category: "Personas en Evento"
+    url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
+    category: "Evento Deportivo"
   },
   {
-    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Fotografía Móvil"
+    url: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Momento Social"
   },
   {
     url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Sagrada Familia"
+    category: "Sagrada Familia Barcelona"
   }
 ];
 

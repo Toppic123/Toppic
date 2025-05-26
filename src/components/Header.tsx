@@ -37,7 +37,7 @@ const MobileMenu = memo(({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-8">
-          <div className="text-2xl font-bold text-[#4891AA]">TOPPIC</div>
+          <div className="text-2xl font-bold text-[#4891AA]">TOPPICS</div>
           <button
             className="text-muted-foreground"
             onClick={onClose}
@@ -153,7 +153,7 @@ const Header = () => {
         {/* Project name instead of Logo */}
         <Link to="/" className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight transition-transform hover:scale-105 text-[#4891AA]">
-            TOPPIC
+            TOPPICS
           </h1>
         </Link>
         
