@@ -16,6 +16,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           id: string
+          image_url: string | null
           location: string | null
           organizer: string
           participants: number | null
@@ -31,6 +32,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
+          image_url?: string | null
           location?: string | null
           organizer: string
           participants?: number | null
@@ -46,6 +48,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
+          image_url?: string | null
           location?: string | null
           organizer?: string
           participants?: number | null
