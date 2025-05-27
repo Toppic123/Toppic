@@ -6,15 +6,9 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import L from 'leaflet';
 
-// Fix for default markers in Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Import leaflet dynamically to avoid SSR issues
+let L: any;
 
 const mockContests = [
   {
@@ -67,18 +61,40 @@ interface MapProps {
 
 const Map = ({ showMustardButton = false }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.Marker[]>([]);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
   const [selectedContest, setSelectedContest] = useState<(typeof mockContests)[0] | null>(null);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [nearbyContests, setNearbyContests] = useState<(typeof mockContests)>([]);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const loadLeaflet = async () => {
+    try {
+      // Dynamically import leaflet
+      const leafletModule = await import('leaflet');
+      L = leafletModule.default;
+      
+      // Fix for default markers in Leaflet
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      });
+      
+      setLeafletLoaded(true);
+    } catch (error) {
+      console.error("Error loading Leaflet:", error);
+      setIsMapLoading(false);
+    }
+  };
+
   const initializeMap = () => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    if (!mapRef.current || mapInstanceRef.current || !leafletLoaded || !L) return;
 
     try {
       // Initialize map centered on Spain
@@ -101,7 +117,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   };
 
   const addContestMarkers = () => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || !L) return;
 
     // Clear existing markers
     markersRef.current.forEach(marker => {
@@ -179,7 +195,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     }
 
     // Center map on user location and add user marker
-    if (mapInstanceRef.current) {
+    if (mapInstanceRef.current && L) {
       mapInstanceRef.current.setView([userLat, userLng], 10);
       
       // Add user location marker
@@ -240,20 +256,27 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       document.head.appendChild(link);
     }
 
-    // Initialize map after a brief delay to ensure the container is ready
-    const timer = setTimeout(() => {
-      initializeMap();
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      // Cleanup map on unmount
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-    };
+    // Load Leaflet library
+    loadLeaflet();
   }, []);
+
+  useEffect(() => {
+    if (leafletLoaded) {
+      // Initialize map after Leaflet is loaded and a brief delay to ensure the container is ready
+      const timer = setTimeout(() => {
+        initializeMap();
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        // Cleanup map on unmount
+        if (mapInstanceRef.current) {
+          mapInstanceRef.current.remove();
+          mapInstanceRef.current = null;
+        }
+      };
+    }
+  }, [leafletLoaded]);
 
   return (
     <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden shadow-lg border border-gray-200">
