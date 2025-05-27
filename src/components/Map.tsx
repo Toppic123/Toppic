@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Lock, Loader2, Search } from "lucide-react";
@@ -5,12 +6,15 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import L from 'leaflet';
 
-declare global {
-  interface Window {
-    google?: any;
-  }
-}
+// Fix for default markers in Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 const mockContests = [
   {
@@ -63,6 +67,8 @@ interface MapProps {
 
 const Map = ({ showMustardButton = false }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markersRef = useRef<L.Marker[]>([]);
   const [selectedContest, setSelectedContest] = useState<(typeof mockContests)[0] | null>(null);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
@@ -70,40 +76,68 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   const [nearbyContests, setNearbyContests] = useState<(typeof mockContests)>([]);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [mapError, setMapError] = useState<string | null>(null);
-  const [googleMapURL, setGoogleMapURL] = useState<string>("");
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
-  // Función para cargar el script de Google Maps
-  const loadGoogleMapsScript = () => {
-    if (window.google) {
-      setIsScriptLoaded(true);
-      return; // Ya está cargado
-    }
+  const initializeMap = () => {
+    if (!mapRef.current || mapInstanceRef.current) return;
 
-    if (document.querySelector('script[src*="maps.googleapis.com/maps/api"]')) {
-      return; // Script ya en proceso de carga
-    }
+    try {
+      // Initialize map centered on Spain
+      const map = L.map(mapRef.current).setView([40.4168, -3.7038], 6);
 
-    const apiKey = "AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8"; // Usar la misma key que está en el iframe
-    
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-    script.async = true;
-    script.defer = true;
-    
-    script.onload = () => {
-      setIsScriptLoaded(true);
+      // Add OpenStreetMap tiles
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      mapInstanceRef.current = map;
       setIsMapLoading(false);
-    };
-    
-    script.onerror = () => {
-      console.error("Failed to load Google Maps API");
-      setMapError("No se pudo cargar la API de Google Maps. Se está mostrando una versión simplificada.");
+
+      // Add contest markers
+      addContestMarkers();
+    } catch (error) {
+      console.error("Error initializing map:", error);
       setIsMapLoading(false);
-    };
-    
-    document.head.appendChild(script);
+    }
+  };
+
+  const addContestMarkers = () => {
+    if (!mapInstanceRef.current) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => {
+      mapInstanceRef.current?.removeLayer(marker);
+    });
+    markersRef.current = [];
+
+    // Add markers for all contests
+    mockContests.forEach(contest => {
+      if (!mapInstanceRef.current) return;
+
+      const marker = L.marker([contest.coords.lat, contest.coords.lng])
+        .addTo(mapInstanceRef.current);
+
+      const popupContent = `
+        <div class="p-2">
+          <h3 class="font-medium text-sm">${contest.title}</h3>
+          <p class="text-xs text-gray-600 flex items-center mt-1">
+            <span class="mr-1">📍</span> ${contest.location}
+          </p>
+          <p class="text-xs text-gray-600 mt-1">${contest.photosCount} fotos</p>
+          <div class="flex items-center gap-2 mt-2">
+            ${contest.isPrivate ? '<span class="bg-amber-100 text-amber-800 text-xs px-1 py-0.5 rounded flex items-center gap-1"><span>🔒</span> Privado</span>' : ''}
+            ${contest.isActive ? '<span class="bg-green-100 text-green-800 text-xs px-1 py-0.5 rounded">Activo</span>' : '<span class="bg-gray-100 text-gray-800 text-xs px-1 py-0.5 rounded">Finalizado</span>'}
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(popupContent);
+      
+      marker.on('click', () => {
+        setSelectedContest(contest);
+      });
+
+      markersRef.current.push(marker);
+    });
   };
 
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
@@ -144,13 +178,23 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       });
     }
 
-    createGoogleMapsURL(userLat, userLng, nearby);
-  };
+    // Center map on user location and add user marker
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.setView([userLat, userLng], 10);
+      
+      // Add user location marker
+      const userIcon = L.divIcon({
+        className: 'custom-user-marker',
+        html: '<div style="background: #4891AA; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
 
-  const createGoogleMapsURL = (userLat: number, userLng: number, contests: typeof nearbyContests) => {
-    let url = `https://www.google.com/maps/search/?api=1&query=${userLat},${userLng}`;
-    setGoogleMapURL(url);
-    setIsMapLoading(false);
+      L.marker([userLat, userLng], { icon: userIcon })
+        .addTo(mapInstanceRef.current)
+        .bindPopup("Tu ubicación")
+        .openPopup();
+    }
   };
 
   const locateUser = () => {
@@ -170,7 +214,6 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       (position) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lng: longitude });
-
         findNearbyContests(latitude, longitude);
         setIsLocating(false);
       },
@@ -186,32 +229,29 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     );
   };
 
-  const openInGoogleMaps = () => {
-    window.open(googleMapURL, '_blank');
-  };
-
   useEffect(() => {
-    setIsMapLoading(true);
+    // Add Leaflet CSS
+    if (!document.querySelector('link[href*="leaflet"]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';
+      link.crossOrigin = '';
+      document.head.appendChild(link);
+    }
 
-    const defaultLocation = {
-      lat: 40.4168,
-      lng: -3.7038
-    };
-
-    // Intentar cargar el script si no está cargado
-    loadGoogleMapsScript();
-
-    const url = `https://www.google.com/maps/search/?api=1&query=${defaultLocation.lat},${defaultLocation.lng}`;
-    setGoogleMapURL(url);
-
+    // Initialize map after a brief delay to ensure the container is ready
     const timer = setTimeout(() => {
-      if (isMapLoading) {
-        setIsMapLoading(false);
-      }
-    }, 3000); // Si después de 3 segundos sigue cargando, mostrar el mapa de todos modos
+      initializeMap();
+    }, 100);
 
     return () => {
       clearTimeout(timer);
+      // Cleanup map on unmount
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
     };
   }, []);
 
@@ -227,46 +267,15 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         </div>
       )}
 
-      {/* Mostrar mensaje de error */}
-      {mapError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted z-10">
-          <div className="flex flex-col items-center max-w-md text-center p-4">
-            <MapPin className="w-8 h-8 text-destructive mb-2" />
-            <p className="font-medium text-destructive">Error en el mapa</p>
-            <p className="mt-2 text-muted-foreground">{mapError}</p>
-            <p className="mt-4 text-sm">Verifica tu conexión a internet o prueba a recargar la página.</p>
-            <Button 
-              onClick={() => window.location.reload()} 
-              variant="outline" 
-              className="mt-4"
-            >
-              Recargar página
-            </Button>
-          </div>
-        </div>
-      )}
-
       {/* Contenedor del mapa */}
-      {!isMapLoading && !mapError && (
-        <div className="w-full h-full">
-          <iframe
-            title="Google Maps"
-            width="100%"
-            height="100%"
-            referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${userLocation ? `${userLocation.lat},${userLocation.lng}` : 'Spain'}`}
-            className="rounded-lg shadow-inner"
-            allowFullScreen
-          ></iframe>
-        </div>
-      )}
+      <div ref={mapRef} className="w-full h-full rounded-lg" />
 
       {/* Botón central para buscar concursos cercanos */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[1000]">
         <motion.button 
           onClick={locateUser}
-          disabled={isLocating || isMapLoading || !!mapError}
-          className="flex items-center gap-2 bg-[#FFC72C] text-black font-medium px-6 py-4 rounded-full shadow-lg hover:bg-[#FFD54F] transition-all"
+          disabled={isLocating || isMapLoading}
+          className="flex items-center gap-2 bg-[#FFC72C] text-black font-medium px-6 py-4 rounded-full shadow-lg hover:bg-[#FFD54F] transition-all disabled:opacity-50"
           whileHover={{ scale: 1.05 }}
           animate={{
             boxShadow: ["0px 4px 12px rgba(0,0,0,0.1)", "0px 8px 24px rgba(0,0,0,0.15)", "0px 4px 12px rgba(0,0,0,0.1)"],
@@ -291,22 +300,11 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         </motion.button>
       </div>
 
-      {userLocation && (
-        <div className="absolute bottom-4 right-4 z-10">
-          <Button
-            onClick={openInGoogleMaps}
-            className="flex items-center gap-2 bg-white text-black hover:bg-gray-100 shadow-md mt-2"
-          >
-            <span>Abrir en Google Maps</span>
-          </Button>
-        </div>
-      )}
-
       {nearbyContests.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg max-h-[50%] overflow-auto"
+          className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg max-h-[50%] overflow-auto z-[1000]"
         >
           <h3 className="text-lg font-medium mb-4">Concursos cercanos ({nearbyContests.length})</h3>
           <div className="space-y-3">
@@ -344,7 +342,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg"
+          className="absolute bottom-4 left-4 right-4 bg-card/90 backdrop-blur-md p-4 rounded-lg border shadow-lg z-[1000]"
         >
           <div className="flex justify-between items-start">
             <div>
@@ -375,26 +373,6 @@ const Map = ({ showMustardButton = false }: MapProps) => {
           </div>
         </motion.div>
       )}
-
-      <style>
-        {`
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 0 0 0 rgba(245, 215, 66, 0.7);
-          }
-          70% {
-            box-shadow: 0 0 0 10px rgba(245, 215, 66, 0);
-          }
-          100% {
-            box-shadow: 0 0 0 0 rgba(245, 215, 66, 0);
-          }
-        }
-
-        .pulse-animation {
-          animation: pulse 2s infinite;
-        }
-        `}
-      </style>
     </div>
   );
 };
