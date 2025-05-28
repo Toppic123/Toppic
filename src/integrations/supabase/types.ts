@@ -12,11 +12,13 @@ export type Database = {
       contests: {
         Row: {
           commercial_use: boolean | null
+          contest_password: string | null
           created_at: string | null
           description: string | null
           end_date: string | null
           id: string
           image_url: string | null
+          is_private: boolean | null
           location: string | null
           organizer: string
           participants: number | null
@@ -28,11 +30,13 @@ export type Database = {
         }
         Insert: {
           commercial_use?: boolean | null
+          contest_password?: string | null
           created_at?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
           image_url?: string | null
+          is_private?: boolean | null
           location?: string | null
           organizer: string
           participants?: number | null
@@ -44,11 +48,13 @@ export type Database = {
         }
         Update: {
           commercial_use?: boolean | null
+          contest_password?: string | null
           created_at?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
           image_url?: string | null
+          is_private?: boolean | null
           location?: string | null
           organizer?: string
           participants?: number | null

@@ -17,7 +17,9 @@ const defaultFormData: ContestFormData = {
   photoOwnership: false,
   commercialUse: false,
   location: '',
-  imageUrl: ''
+  imageUrl: '',
+  isPrivate: false,
+  contestPassword: ''
 };
 
 export const useContestForm = (onSuccessfulSave: () => void) => {
@@ -58,7 +60,9 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
           photoOwnership: data.photo_ownership || false,
           commercialUse: data.commercial_use || false,
           location: data.location || '',
-          imageUrl: data.image_url || ''
+          imageUrl: data.image_url || '',
+          isPrivate: data.is_private || false,
+          contestPassword: data.contest_password || ''
         });
         
         setEditingContestId(contestId);
@@ -142,7 +146,9 @@ export const useContestForm = (onSuccessfulSave: () => void) => {
         photo_ownership: formData.photoOwnership,
         commercial_use: formData.commercialUse,
         location: formData.location,
-        image_url: imageUrl // Use image_url to match database column
+        image_url: imageUrl, // Use image_url to match database column
+        is_private: formData.isPrivate || false, // New field
+        contest_password: formData.isPrivate ? formData.contestPassword : null // Only set if private
       };
       
       // Determine if we're creating or updating a contest

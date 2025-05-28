@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ContestFormProps } from "./types";
 import LocationCombobox from "./LocationCombobox";
-import { Image, Upload } from "lucide-react";
+import { Image, Upload, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -273,6 +273,39 @@ export const ContestFormDialog = ({
                   />
                 </div>
               </div>
+              
+              <Separator className="my-2" />
+              
+              <h3 className="text-sm font-semibold">Configuración de acceso</h3>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isPrivate"
+                  checked={contestFormData.isPrivate || false}
+                  onCheckedChange={(checked) => setContestFormData({...contestFormData, isPrivate: checked})}
+                />
+                <Label htmlFor="isPrivate" className="flex items-center gap-2">
+                  <Lock size={16} />
+                  Concurso privado (requiere código de acceso)
+                </Label>
+              </div>
+              
+              {contestFormData.isPrivate && (
+                <div>
+                  <Label htmlFor="contestPassword">Código de acceso</Label>
+                  <Input
+                    id="contestPassword"
+                    type="text"
+                    value={contestFormData.contestPassword || ''}
+                    onChange={(e) => setContestFormData({...contestFormData, contestPassword: e.target.value})}
+                    placeholder="Introduce un código para acceder al concurso"
+                    className="mt-1"
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Los participantes necesitarán este código para acceder al concurso
+                  </p>
+                </div>
+              )}
               
               <Separator className="my-2" />
               

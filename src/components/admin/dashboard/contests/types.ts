@@ -13,6 +13,8 @@ export interface Contest {
   location?: string;
   imageUrl?: string;
   image_url?: string; // Add this field to match the database column
+  is_private?: boolean; // New field for private contests
+  contest_password?: string; // New field for contest password
 }
 
 export interface ContestFormData {
@@ -28,6 +30,8 @@ export interface ContestFormData {
   commercialUse: boolean;
   location: string;
   imageUrl?: string;
+  isPrivate?: boolean; // New field for private contests
+  contestPassword?: string; // New field for contest password
 }
 
 export interface ContestCardProps {

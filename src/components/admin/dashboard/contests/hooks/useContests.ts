@@ -49,7 +49,11 @@ export const useContests = () => {
           organizer: contest.organizer,
           status: contest.status as "pending" | "active" | "finished",
           participants: contest.participants || 0,
-          location: contest.location || undefined
+          location: contest.location || undefined,
+          description: contest.description || undefined,
+          imageUrl: contest.image_url || undefined,
+          is_private: contest.is_private || false,
+          contest_password: contest.contest_password || undefined
         }));
         
         setContests(formattedContests);
