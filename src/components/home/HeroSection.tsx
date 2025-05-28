@@ -65,17 +65,17 @@ const HeroSection = ({ heroImages, texts }: HeroSectionProps) => {
           className="max-w-3xl"
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">{texts.heroTitle}</h1>
-          <p className="text-xl md:text-2xl mb-6 text-white/90">{texts.heroSubtitle}</p>
-          <p className="text-lg mb-10 max-w-xl text-white/80">{texts.heroDescription}</p>
+          <p className="text-2xl md:text-3xl mb-6 text-white/90 font-medium">{texts.heroSubtitle}</p>
+          <p className="text-xl md:text-2xl mb-10 max-w-xl text-white/80">{texts.heroDescription}</p>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" className="rounded-full px-8 bg-white text-[#4891AA] hover:bg-white/90">
+            <Button asChild size="lg" className="rounded-full px-8 bg-white text-[#4891AA] hover:bg-white/90 text-lg font-semibold">
               <Link to="/contests">
                 <Camera className="mr-2 h-5 w-5" />
                 <span>{texts.exploreContests}</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full px-8 bg-[#4891AA]/80 border-white text-white hover:bg-[#4891AA]/90 hover:border-white">
+            <Button asChild variant="outline" size="lg" className="rounded-full px-8 bg-[#4891AA]/80 border-white text-white hover:bg-[#4891AA]/90 hover:border-white text-lg font-semibold">
               <Link to="/register">
                 <span>{texts.startNow}</span>
                 <ArrowRight className="ml-2 h-4 w-4" />

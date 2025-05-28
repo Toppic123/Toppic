@@ -2,23 +2,23 @@
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images - Updated with new diverse images
+// Hero section carousel images - Updated with requested images
 export const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Concierto al aire libre"
+    url: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Dos personas en un evento"
   },
   {
-    url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
-    category: "Evento Deportivo"
+    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
+    category: "Persona tomando fotos con móvil en concierto"
   },
   {
-    url: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Momento Social"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    url: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     category: "Sagrada Familia Barcelona"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1460574283810-2aab119d8511?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Fotógrafo con cámara"
   }
 ];
 
@@ -56,12 +56,12 @@ export const popularContests = [
   }
 ];
 
-// Export winning photos with updated images
+// Export winning photos with food and Eiffel Tower replacing duplicates
 export const winningPhotos: WinningPhoto[] = [
   {
     id: 1,
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Concierto al aire libre",
+    imageUrl: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Evento con amigos",
     photographer: "Elena Rivera",
     photographerAvatar: "https://i.pravatar.cc/150?img=1",
     likes: 342
@@ -84,8 +84,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 4,
-    imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Selfie en el evento",
+    imageUrl: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Deliciosa gastronomía",
     photographer: "Luis Hernández",
     photographerAvatar: "https://i.pravatar.cc/150?img=4",
     likes: 251
@@ -100,8 +100,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 6,
-    imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Sagrada Familia de Barcelona",
+    imageUrl: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Torre Eiffel París",
     photographer: "Marco Valencia",
     photographerAvatar: "https://i.pravatar.cc/150?img=6",
     likes: 284
@@ -116,7 +116,7 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 8,
-    imageUrl: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    imageUrl: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     title: "Sagrada Familia",
     photographer: "Javier Acosta",
     photographerAvatar: "https://i.pravatar.cc/150?img=8",
@@ -124,8 +124,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 9,
-    imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Momento compartido",
+    imageUrl: "https://images.unsplash.com/photo-1460574283810-2aab119d8511?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Fotógrafo profesional",
     photographer: "Teresa Luna",
     photographerAvatar: "https://i.pravatar.cc/150?img=9",
     likes: 329

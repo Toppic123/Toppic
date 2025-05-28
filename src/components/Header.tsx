@@ -52,7 +52,7 @@ const MobileMenu = memo(({
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center py-2 text-sm font-medium uppercase transition-colors",
+                "flex items-center py-2 text-sm font-bold uppercase transition-colors",
                 location.pathname === item.path
                   ? "text-[#4891AA]"
                   : "text-muted-foreground hover:text-[#4891AA]",
@@ -65,7 +65,7 @@ const MobileMenu = memo(({
 
           <Link
             to="/support"
-            className="flex items-center py-2 text-sm font-medium uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
+            className="flex items-center py-2 text-sm font-bold uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
           >
             <HelpCircle className="mr-3 w-5 h-5" />
             <span>SOPORTE</span>
@@ -73,7 +73,7 @@ const MobileMenu = memo(({
           
           {user ? (
             <>
-              <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4">
+              <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-semibold">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -83,7 +83,7 @@ const MobileMenu = memo(({
                 onClick={onSignOut}
                 variant="ghost" 
                 size="sm"
-                className="w-full justify-start text-muted-foreground hover:text-[#4891AA] mt-2"
+                className="w-full justify-start text-muted-foreground hover:text-[#4891AA] mt-2 font-bold"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>CERRAR SESIÓN</span>
@@ -93,7 +93,7 @@ const MobileMenu = memo(({
             <Button 
               asChild 
               size="sm"  
-              className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4"
+              className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-semibold"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
@@ -164,7 +164,7 @@ const Header = () => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center text-sm font-medium uppercase transition-colors tracking-wide",
+                "flex items-center text-sm font-bold uppercase transition-colors tracking-wide",
                 isScrolled
                   ? (location.pathname === item.path
                     ? "text-[#4891AA]"
@@ -179,7 +179,7 @@ const Header = () => {
 
           {/* Support Button */}
           <Button asChild variant="ghost" size="sm" className={cn(
-            "uppercase tracking-wide",
+            "uppercase tracking-wide font-bold",
             isScrolled 
               ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
               : "text-white hover:text-white/80 hover:bg-transparent"
@@ -192,7 +192,7 @@ const Header = () => {
           
           {user ? (
             <>
-              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase">
+              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-lg font-semibold">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -203,7 +203,7 @@ const Header = () => {
                 variant="ghost" 
                 size="sm" 
                 className={cn(
-                  "rounded-full uppercase",
+                  "rounded-full uppercase font-bold",
                   isScrolled 
                     ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
                     : "text-white hover:text-white/80 hover:bg-transparent"
@@ -217,7 +217,7 @@ const Header = () => {
             <Button 
               asChild 
               size="sm" 
-              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase"
+              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-lg font-semibold"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
