@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Calendar, 
@@ -206,6 +205,55 @@ const Organizers = () => {
           </motion.p>
         </div>
         
+        {/* Duplicated ¿Eres organizador? section */}
+        <section className="py-16 mb-12">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:w-1/2"
+            >
+              <div className="relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3" 
+                  alt="Personas disfrutando en un evento cultural" 
+                  className="rounded-xl w-full object-cover"
+                />
+                <div className="absolute -bottom-8 -right-8 bg-gradient-to-r from-primary via-blue-600 to-purple-600 p-8 rounded-2xl text-white font-medium shadow-2xl border border-white/20 backdrop-blur-sm min-w-[240px]">
+                  <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
+                  <span className="text-lg text-blue-100">Crece con nosotros</span>
+                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
+                  <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-pink-400 rounded-full"></div>
+                </div>
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="lg:w-1/2 text-center lg:text-left"
+            >
+              <h2 className="text-4xl font-bold mb-4 tracking-tight">¿Eres organizador?</h2>
+              <div className="h-1 bg-primary rounded w-24 mb-8 mx-auto lg:mx-0"></div>
+              
+              <div className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">
+                <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
+                <span className="text-lg">Crece con nosotros</span>
+              </div>
+              
+              <Button 
+                size="lg" 
+                className="rounded-full px-8"
+                onClick={() => setSelectedTab("form")}
+              >
+                Descubre nuestros planes
+              </Button>
+            </motion.div>
+          </div>
+        </section>
+        
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-12">
           <TabsList className="w-full max-w-md mx-auto grid grid-cols-2">
             <TabsTrigger value="info">Planes y Beneficios</TabsTrigger>
@@ -213,6 +261,7 @@ const Organizers = () => {
           </TabsList>
           
           <TabsContent value="info" className="mt-8">
+            {/* Plans section - keep existing code */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {plans.map((plan) => (
                 <Card key={plan.id} className={`border-2 hover:shadow-lg transition-all ${selectedPlan === plan.id ? 'border-primary' : 'border-border'}`}>
@@ -243,40 +292,71 @@ const Organizers = () => {
               ))}
             </div>
             
-            <div className="mt-12 bg-muted/30 rounded-lg p-6">
-              <h3 className="text-xl font-bold mb-4 flex items-center">
-                <Info className="h-5 w-5 mr-2" />
-                ¿Por qué organizar con nosotros?
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Camera className="h-6 w-6 text-primary" />
+            {/* Modern and simple "¿Por qué organizar con nosotros?" section */}
+            <div className="mt-16">
+              <div className="text-center mb-12">
+                <h3 className="text-3xl font-bold mb-4">¿Por qué organizar con nosotros?</h3>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Descubre las ventajas de crear concursos fotográficos con nuestra plataforma
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.1 }}
+                  className="text-center"
+                >
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Camera className="h-8 w-8 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">Contenido generado por usuarios</h4>
-                  <p className="text-muted-foreground text-sm">Recibe cientos de fotos únicas y auténticas de tu evento o ubicación.</p>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Building className="h-6 w-6 text-primary" />
+                  <h4 className="text-xl font-semibold mb-3">Contenido auténtico</h4>
+                  <p className="text-muted-foreground">Recibe fotos únicas y auténticas de tu evento o ubicación</p>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="text-center"
+                >
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Building className="h-8 w-8 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">Visibilidad de marca</h4>
-                  <p className="text-muted-foreground text-sm">Promociona tu empresa o evento a miles de usuarios interesados en tu sector.</p>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <User className="h-6 w-6 text-primary" />
+                  <h4 className="text-xl font-semibold mb-3">Visibilidad de marca</h4>
+                  <p className="text-muted-foreground">Promociona tu empresa a miles de usuarios interesados</p>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="text-center"
+                >
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <User className="h-8 w-8 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">Engagement con usuarios</h4>
-                  <p className="text-muted-foreground text-sm">Crea una conexión emocional con tus clientes a través de la participación activa.</p>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <Tag className="h-6 w-6 text-primary" />
+                  <h4 className="text-xl font-semibold mb-3">Engagement efectivo</h4>
+                  <p className="text-muted-foreground">Crea conexión emocional con tu audiencia</p>
+                </motion.div>
+                
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.4 }}
+                  className="text-center"
+                >
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Tag className="h-8 w-8 text-primary" />
                   </div>
-                  <h4 className="font-medium mb-2">Contenido para marketing</h4>
-                  <p className="text-muted-foreground text-sm">Obtén derechos sobre las mejores fotos para usar en tus futuras campañas.</p>
-                </div>
+                  <h4 className="text-xl font-semibold mb-3">Marketing content</h4>
+                  <p className="text-muted-foreground">Obtén derechos sobre las mejores fotos para tus campañas</p>
+                </motion.div>
               </div>
             </div>
           </TabsContent>

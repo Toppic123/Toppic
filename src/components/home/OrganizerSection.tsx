@@ -28,7 +28,7 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
                 alt="Personas disfrutando en un evento cultural" 
                 className="rounded-xl w-full object-cover"
               />
-              {/* UPDATED: Simplified call-to-action box without icons, larger text */}
+              {/* Simplified call-to-action box */}
               <div className="absolute -bottom-8 -right-8 bg-gradient-to-r from-primary via-blue-600 to-purple-600 p-8 rounded-2xl text-white font-medium shadow-2xl border border-white/20 backdrop-blur-sm min-w-[240px]">
                 <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
                 <span className="text-lg text-blue-100">Crece con nosotros</span>
@@ -43,49 +43,14 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:w-1/2"
+            className="lg:w-1/2 text-center lg:text-left"
           >
             <h2 className="text-4xl font-bold mb-4 tracking-tight">{texts.organizerTitle}</h2>
-            <div className="h-1 bg-primary rounded w-24 mb-8"></div>
+            <div className="h-1 bg-primary rounded w-24 mb-8 mx-auto lg:mx-0"></div>
             
-            <p className="text-muted-foreground text-lg mb-8">{texts.organizerDesc}</p>
-            
-            <div className="space-y-4 mb-8">
-              <div className="flex items-start">
-                <div className="bg-primary/10 p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Aumenta la visibilidad</h3>
-                  <p className="text-muted-foreground">Llega a miles de fotógrafos interesados en mostrar su talento.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="bg-primary/10 p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Contenido generado por usuarios</h3>
-                  <p className="text-muted-foreground">Recibe fotos auténticas y de alta calidad para tus campañas.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start">
-                <div className="bg-primary/10 p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Engagement efectivo</h3>
-                  <p className="text-muted-foreground">Genera una conexión emocional con tu audiencia mediante la participación.</p>
-                </div>
-              </div>
+            <div className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">
+              <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
+              <span className="text-lg">Crece con nosotros</span>
             </div>
             
             <Button asChild size="lg" className="rounded-full px-8">
