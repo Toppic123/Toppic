@@ -52,7 +52,7 @@ const MobileMenu = memo(({
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center py-2 text-sm font-bold uppercase transition-colors",
+                "flex items-center py-2 text-lg font-bold uppercase transition-colors",
                 location.pathname === item.path
                   ? "text-[#4891AA]"
                   : "text-muted-foreground hover:text-[#4891AA]",
@@ -65,7 +65,7 @@ const MobileMenu = memo(({
 
           <Link
             to="/support"
-            className="flex items-center py-2 text-sm font-bold uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
+            className="flex items-center py-2 text-lg font-bold uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
           >
             <HelpCircle className="mr-3 w-5 h-5" />
             <span>CONTACTO</span>
@@ -164,7 +164,7 @@ const Header = () => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center text-sm font-bold uppercase transition-colors tracking-wide",
+                "flex items-center text-lg font-bold uppercase transition-colors tracking-wide",
                 isScrolled
                   ? (location.pathname === item.path
                     ? "text-[#4891AA]"
@@ -179,7 +179,7 @@ const Header = () => {
 
           {/* Support Button */}
           <Button asChild variant="ghost" size="sm" className={cn(
-            "uppercase tracking-wide font-bold",
+            "uppercase tracking-wide font-bold text-lg",
             isScrolled 
               ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
               : "text-white hover:text-white/80 hover:bg-transparent"

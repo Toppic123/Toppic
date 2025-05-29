@@ -30,6 +30,6 @@ export const homeTexts = {
   heroDescription: "Descubre concursos fotográficos en cualquier parte del mundo. Sube tus mejores fotos y gana increíbles premios.",
   exploreContests: "Explorar concursos",
   winningGallery: "Galería de Fotos Ganadoras",
-  winningGalleryDesc: "Explora las mejores fotos de nuestros concursos - una muestra del mejor talento fotográfico.",
+  winningGalleryDesc: "",
   viewGallery: "Ver Galería Completa"
 };

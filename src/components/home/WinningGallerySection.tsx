@@ -63,13 +63,10 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
   // Safety check if photos array is not available or empty
   if (!photos || photos.length === 0) {
     return (
-      <section className="py-16 px-4 bg-white text-black">
+      <section className="py-24 px-4 bg-white text-black">
         <div className="container max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              {texts.winningGalleryDesc}
-            </p>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-6">{texts.winningGallery}</h2>
           </div>
           <div className="text-center py-8">
             <p>Cargando galería de fotos ganadoras...</p>
@@ -80,16 +77,13 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
   }
 
   return (
-    <section className="py-16 px-4 bg-white text-black">
+    <section className="py-24 px-4 bg-white text-black">
       <div className="container max-w-5xl mx-auto">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-4">{texts.winningGallery}</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            {texts.winningGalleryDesc}
-          </p>
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-6">{texts.winningGallery}</h2>
         </div>
         
-        <div className="grid grid-cols-3 gap-1 md:gap-1.5 mb-6">
+        <div className="grid grid-cols-3 gap-1 md:gap-1.5 mb-8">
           {photos.slice(0, 9).map((photo) => {
             // Skip rendering if photo is missing critical data
             if (!photo || !photo.id) {
