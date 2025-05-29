@@ -142,7 +142,7 @@ const Organizers = () => {
     {
       id: "basic",
       name: "Básico",
-      price: "29€",
+      price: "89€",
       description: "Ideal para eventos pequeños y locales",
       features: [
         "Hasta 300 participantes",
@@ -154,7 +154,7 @@ const Organizers = () => {
     {
       id: "pro",
       name: "Profesional",
-      price: "79€",
+      price: "149€",
       description: "Perfecto para eventos medianos y empresas",
       features: [
         "Hasta 1000 participantes",
@@ -167,7 +167,7 @@ const Organizers = () => {
     {
       id: "premium",
       name: "Premium",
-      price: "149€",
+      price: "199€",
       description: "Para grandes eventos y marcas reconocidas",
       features: [
         "Participantes ilimitados",
@@ -213,33 +213,18 @@ const Organizers = () => {
     <div className="pt-24 pb-16">
       <div className="container max-w-7xl mx-auto px-4">
         <motion.div 
-          className="text-center mb-12"
+          className="text-center mb-16"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Organizadores</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
             Impulsa tu evento o empresa a través de nuestros concursos fotográficos. Conecta con tu audiencia de una forma única y visual.
           </p>
-        </motion.div>
-        
-        {/* ¿Por qué organizar con nosotros? - colocado antes y con mejor diseño */}
-        <section className="py-16 mb-12 bg-gradient-to-r from-primary/5 to-blue-500/5 rounded-3xl px-6">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold mb-4">¿Por qué organizar con nosotros?</h2>
-            <div className="h-1 bg-gradient-to-r from-primary to-blue-600 rounded w-24 mb-6 mx-auto"></div>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Descubre las ventajas de crear concursos fotográficos con nuestra plataforma
-            </p>
-          </motion.div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          {/* Beneficios integrados directamente aquí */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {benefitCards.map((card, index) => (
               <motion.div
                 key={card.title}
@@ -259,56 +244,7 @@ const Organizers = () => {
               </motion.div>
             ))}
           </div>
-        </section>
-        
-        {/* Re-usando la misma sección de organizador de la homepage pero con diseño mejorado */}
-        <section className="py-16 mb-12 border-t border-b border-gray-100 dark:border-gray-800">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="lg:w-1/2"
-            >
-              <div className="relative">
-                <img 
-                  src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3" 
-                  alt="Personas disfrutando en un evento cultural" 
-                  className="rounded-xl w-full object-cover shadow-xl"
-                />
-                <div className="absolute -bottom-8 -right-8 bg-gradient-to-r from-primary via-blue-600 to-purple-600 p-8 rounded-2xl text-white font-medium shadow-2xl border border-white/20 backdrop-blur-sm min-w-[240px]">
-                  <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
-                  <span className="text-lg text-blue-100">Crece con nosotros</span>
-                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
-                  <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-pink-400 rounded-full"></div>
-                </div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="lg:w-1/2 text-center lg:text-left"
-            >
-              <h2 className="text-4xl font-bold mb-4 tracking-tight">¿Eres organizador?</h2>
-              <div className="h-1 bg-primary rounded w-24 mb-8 mx-auto lg:mx-0"></div>
-              
-              <div className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">
-                <p className="text-2xl font-bold mb-2">¡Impulsa tu marca!</p>
-                <span className="text-lg">Crece con nosotros</span>
-              </div>
-              
-              <Button 
-                size="lg" 
-                className="rounded-full px-8 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-lg"
-                onClick={() => setSelectedTab("form")}
-              >
-                Descubre nuestros planes
-              </Button>
-            </motion.div>
-          </div>
-        </section>
+        </motion.div>
         
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-12">
           <TabsList className="w-full max-w-md mx-auto grid grid-cols-2">
@@ -649,9 +585,9 @@ const Organizers = () => {
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  <SelectItem value="basic">Básico - 29€</SelectItem>
-                                  <SelectItem value="pro">Profesional - 79€</SelectItem>
-                                  <SelectItem value="premium">Premium - 149€</SelectItem>
+                                  <SelectItem value="basic">Básico - 89€</SelectItem>
+                                  <SelectItem value="pro">Profesional - 149€</SelectItem>
+                                  <SelectItem value="premium">Premium - 199€</SelectItem>
                                 </SelectContent>
                               </Select>
                               <FormMessage />

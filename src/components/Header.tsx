@@ -68,7 +68,7 @@ const MobileMenu = memo(({
             className="flex items-center py-2 text-sm font-bold uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
           >
             <HelpCircle className="mr-3 w-5 h-5" />
-            <span>SOPORTE</span>
+            <span>CONTACTO</span>
           </Link>
           
           {user ? (
@@ -186,7 +186,7 @@ const Header = () => {
           )}>
             <Link to="/support">
               <HelpCircle className="mr-2 h-4 w-4" />
-              <span>SOPORTE</span>
+              <span>CONTACTO</span>
             </Link>
           </Button>
           
