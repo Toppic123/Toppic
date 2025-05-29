@@ -73,7 +73,7 @@ const MobileMenu = memo(({
           
           {user ? (
             <>
-              <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-semibold">
+              <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-bold">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -93,7 +93,7 @@ const MobileMenu = memo(({
             <Button 
               asChild 
               size="sm"  
-              className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-semibold"
+              className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-bold"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
@@ -192,7 +192,7 @@ const Header = () => {
           
           {user ? (
             <>
-              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-lg font-semibold">
+              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-xl font-bold px-6 py-3">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -217,7 +217,7 @@ const Header = () => {
             <Button 
               asChild 
               size="sm" 
-              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-lg font-semibold"
+              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-xl font-bold px-6 py-3"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />

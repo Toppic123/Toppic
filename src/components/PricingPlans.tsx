@@ -22,46 +22,46 @@ interface PricingPlansProps {
 
 const defaultPlans: PricingPlan[] = [
   {
-    name: "Basic",
-    price: "29€",
-    description: "Ideal for small and local events",
+    name: "Básico",
+    price: "89€",
+    description: "Ideal para eventos pequeños y locales",
     features: [
-      "Up to 300 participants",
-      "1 photo contest",
-      "Basic advertising in the app",
-      "Rights to 1 winning photo"
+      "Hasta 300 participantes",
+      "1 concurso de fotos",
+      "Publicidad básica en la app",
+      "Derechos de 1 foto ganadora"
     ],
-    buttonText: "Get Started",
+    buttonText: "Comenzar",
     buttonVariant: "outline"
   },
   {
-    name: "Professional",
-    price: "79€",
-    description: "Perfect for medium events and companies",
+    name: "Profesional",
+    price: "149€",
+    description: "Perfecto para eventos medianos y empresas",
     features: [
-      "Up to 1000 participants",
-      "3 photo contests",
-      "Featured advertising in the app",
-      "Rights to 3 winning photos from each contest",
-      "Promotional banner in the app"
+      "Hasta 1000 participantes",
+      "3 concursos de fotos",
+      "Publicidad destacada en la app",
+      "Derechos de 3 fotos ganadoras de cada concurso",
+      "Banner promocional en la app"
     ],
     recommended: true,
-    buttonText: "Select Plan",
+    buttonText: "Seleccionar Plan",
     buttonVariant: "default"
   },
   {
     name: "Premium",
-    price: "149€",
-    description: "For large events and recognized brands",
+    price: "199€",
+    description: "Para eventos grandes y marcas reconocidas",
     features: [
-      "Unlimited participants",
-      "5 photo contests",
-      "Premium advertising throughout the app",
-      "Rights to the 9 best photos",
-      "Featured banner on main page",
-      "Custom push notifications"
+      "Participantes ilimitados",
+      "5 concursos de fotos",
+      "Publicidad premium en toda la app",
+      "Derechos de las 9 mejores fotos",
+      "Banner destacado en página principal",
+      "Notificaciones push personalizadas"
     ],
-    buttonText: "Contact Us",
+    buttonText: "Contactanos",
     buttonVariant: "secondary"
   }
 ];
@@ -70,9 +70,9 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4">Our Plans</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Choose the plan that best fits your needs. All include access to our AI-powered voting system.
+        <h2 className="text-3xl font-bold mb-4">Nuestros Planes</h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          Elige el plan que mejor se adapte a tus necesidades.
         </p>
       </div>
       
@@ -84,16 +84,16 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
           >
             {plan.recommended && (
               <Badge className="absolute -top-2 right-4 bg-primary">
-                Recommended
+                Recomendado
               </Badge>
             )}
             
             <CardHeader>
-              <CardTitle>{plan.name}</CardTitle>
-              <CardDescription>{plan.description}</CardDescription>
+              <CardTitle className="text-xl">{plan.name}</CardTitle>
+              <CardDescription className="text-base">{plan.description}</CardDescription>
               <div className="mt-4">
-                <span className="text-3xl font-bold">{plan.price}</span>
-                <span className="text-muted-foreground ml-1">/ event</span>
+                <span className="text-4xl font-bold">{plan.price}</span>
+                <span className="text-muted-foreground ml-1 text-lg">/ evento</span>
               </div>
             </CardHeader>
             
@@ -102,7 +102,7 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-2">
                     <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span>{feature}</span>
+                    <span className="text-base">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -111,10 +111,10 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
             <CardFooter>
               <Button 
                 variant={plan.buttonVariant || "default"} 
-                className="w-full"
+                className="w-full text-lg py-6"
                 onClick={() => onSelectPlan && onSelectPlan(plan)}
               >
-                {plan.buttonText || "Select"}
+                {plan.buttonText || "Seleccionar"}
               </Button>
             </CardFooter>
           </Card>
@@ -125,14 +125,14 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="link" className="text-sm text-muted-foreground">
+              <Button variant="link" className="text-base text-muted-foreground">
                 <Info className="h-4 w-4 mr-1" />
-                Need a custom plan?
+                ¿Necesitas un plan personalizado?
               </Button>
             </TooltipTrigger>
             <TooltipContent>
               <p className="max-w-xs text-sm">
-                Contact us to create a customized plan for your specific needs.
+                Contáctanos para crear un plan personalizado para tus necesidades específicas.
               </p>
             </TooltipContent>
           </Tooltip>

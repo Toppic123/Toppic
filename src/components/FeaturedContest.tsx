@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Camera, User, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Camera, User, ArrowRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -101,12 +101,20 @@ const FeaturedContest = ({
             </div>
           </div>
           
-          <Button asChild size="lg" className="rounded-full px-8">
-            <Link to={`/contests/${id}`}>
-              <span>Ver concurso</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="rounded-full px-8 text-lg">
+              <Link to={`/contests/${id}`}>
+                <span>Ver concurso</span>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-full px-8 text-lg">
+              <Link to="/voting-rules">
+                <FileText className="mr-2 h-4 w-4" />
+                <span>REGLAS</span>
+              </Link>
+            </Button>
+          </div>
         </motion.div>
       </div>
     </div>

@@ -5,11 +5,11 @@ import { WinningPhoto } from "@/hooks/use-winning-photos";
 // Hero section carousel images - Updated with requested images
 export const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     category: "Dos personas en un evento"
   },
   {
-    url: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
+    url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
     category: "Persona tomando fotos con móvil en concierto"
   },
   {
@@ -17,7 +17,7 @@ export const heroImages = [
     category: "Sagrada Familia Barcelona"
   },
   {
-    url: "https://images.unsplash.com/photo-1460574283810-2aab119d8511?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    url: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     category: "Fotógrafo con cámara"
   }
 ];
@@ -60,7 +60,7 @@ export const popularContests = [
 export const winningPhotos: WinningPhoto[] = [
   {
     id: 1,
-    imageUrl: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    imageUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     title: "Evento con amigos",
     photographer: "Elena Rivera",
     photographerAvatar: "https://i.pravatar.cc/150?img=1",
@@ -76,7 +76,7 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 3,
-    imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     title: "Captura móvil perfecta",
     photographer: "Marina Costa",
     photographerAvatar: "https://i.pravatar.cc/150?img=3",
@@ -124,7 +124,7 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 9,
-    imageUrl: "https://images.unsplash.com/photo-1460574283810-2aab119d8511?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    imageUrl: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     title: "Fotógrafo profesional",
     photographer: "Teresa Luna",
     photographerAvatar: "https://i.pravatar.cc/150?img=9",

@@ -16,7 +16,7 @@ const Contests = () => {
   const [displayedContests, setDisplayedContests] = useState(allContests);
   const [viewMode, setViewMode] = useState("grid");
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
-  const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("all");
+  const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active"); // Default to active only
   
   // Get user location for distance calculations
   useEffect(() => {
@@ -39,7 +39,7 @@ const Contests = () => {
   useEffect(() => {
     let filtered = allContests;
     
-    // Filter by contest status (active or finished)
+    // Filter by contest status (active or finished) - default to active only
     if (contestStatus !== "all") {
       const isActive = contestStatus === "active";
       filtered = filtered.filter(contest => contest.isActive === isActive);
@@ -82,7 +82,7 @@ const Contests = () => {
     setSearchQuery("");
     setActiveCategory("all");
     setActiveLocation("all");
-    setContestStatus("all");
+    setContestStatus("active"); // Reset to active only
   };
   
   return (
@@ -91,7 +91,7 @@ const Contests = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Explora concursos</h1>
-            <p className="text-muted-foreground max-w-2xl">
+            <p className="text-muted-foreground max-w-2xl text-lg">
               Descubre y participa en concursos de fotografía cerca de ti.
             </p>
           </div>
@@ -116,7 +116,7 @@ const Contests = () => {
         <Tabs defaultValue="grid" value={viewMode} onValueChange={setViewMode} className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <span className="text-sm text-muted-foreground mr-4">
+              <span className="text-base text-muted-foreground mr-4">
                 {displayedContests.length} concursos encontrados
               </span>
             </div>
