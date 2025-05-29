@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Home, Camera, Trophy, Users, Building, Map, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
