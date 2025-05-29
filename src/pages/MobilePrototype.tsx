@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Home, Search, Camera, Vote, User, X } from "lucide-react";
+import { ArrowLeft, Search, Camera, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Import mobile screens
@@ -113,15 +113,6 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'home' ? 'text-blue-600' : 'text-gray-500'}`}
-                      onClick={() => handleNavigation('home')}
-                    >
-                      <Home className="h-5 w-5 mb-1" />
-                      <span className="text-xs">Inicio</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
                       className={`flex flex-col items-center p-2 ${currentScreen === 'contests' ? 'text-blue-600' : 'text-gray-500'}`}
                       onClick={() => handleNavigation('contests')}
                     >
@@ -140,11 +131,11 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'voting' ? 'text-blue-600' : 'text-gray-500'}`}
-                      onClick={() => handleNavigation('voting')}
+                      className={`flex flex-col items-center p-2 ${currentScreen === 'profile' ? 'text-blue-600' : 'text-gray-500'}`}
+                      onClick={() => handleNavigation('profile')}
                     >
-                      <Vote className="h-5 w-5 mb-1" />
-                      <span className="text-xs">Votar</span>
+                      <User className="h-5 w-5 mb-1" />
+                      <span className="text-xs">Perfil</span>
                     </Button>
                   </div>
                 </div>

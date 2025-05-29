@@ -162,24 +162,10 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{contest.participants} participantes</span>
-                  <div className="flex space-x-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => onNavigate('voting')}
-                    >
-                      Ver fotos
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => onNavigate('vote')}
-                      className="bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
-                    >
-                      Votar
-                    </Button>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{contest.participants} participantes</span>
+                    {/* Participate Button - Above others */}
                     <Button 
                       size="sm"
                       onClick={() => onNavigate('upload')}
@@ -187,6 +173,26 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     >
                       <Camera className="h-4 w-4 mr-1" />
                       Participar
+                    </Button>
+                  </div>
+                  
+                  {/* Bottom buttons row */}
+                  <div className="flex space-x-3">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => onNavigate('voting')}
+                      className="flex-1"
+                    >
+                      Fotos
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => onNavigate('vote')}
+                      className="flex-1 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
+                    >
+                      Votar
                     </Button>
                   </div>
                 </div>

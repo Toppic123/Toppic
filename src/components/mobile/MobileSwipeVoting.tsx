@@ -50,90 +50,70 @@ const mockVotingPhotos: VotingPhoto[] = [
     title: "Bosque misterioso",
     contest: "Naturaleza Salvaje",
     rating: 1220
+  },
+  {
+    id: 5,
+    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400",
+    photographer: "Sofia Chen",
+    title: "Refugio en la montaña",
+    contest: "Arquitectura Rural",
+    rating: 1100
+  },
+  {
+    id: 6,
+    image: "https://images.unsplash.com/photo-1544737151500-6e4b999de2a9?w=400",
+    photographer: "Roberto Silva",
+    title: "Reflejos urbanos",
+    contest: "Ciudad Nocturna",
+    rating: 1250
   }
 ];
 
 const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
   const { toast } = useToast();
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [votes, setVotes] = useState(0);
-  const cardRef = useRef<HTMLDivElement>(null);
 
-  const currentPhoto = mockVotingPhotos[currentPhotoIndex];
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !cardRef.current) return;
-    
-    const touch = e.touches[0];
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const offset = touch.clientX - centerX;
-    
-    setDragOffset(Math.max(-150, Math.min(150, offset)));
-  };
-
-  const handleTouchEnd = () => {
-    if (!isDragging) return;
-    
-    if (Math.abs(dragOffset) > 80) {
-      const isLike = dragOffset > 0;
-      handleVote(isLike);
+  // Create pairs of photos for comparison
+  const createPhotoPairs = () => {
+    const pairs = [];
+    for (let i = 0; i < mockVotingPhotos.length - 1; i += 2) {
+      if (mockVotingPhotos[i + 1]) {
+        pairs.push([mockVotingPhotos[i], mockVotingPhotos[i + 1]]);
+      }
     }
-    
-    setDragOffset(0);
-    setIsDragging(false);
+    return pairs;
   };
 
-  const handleVote = (isLike: boolean) => {
-    const action = isLike ? "Me gusta" : "No me gusta";
+  const photoPairs = createPhotoPairs();
+  const currentPair = photoPairs[currentPairIndex];
+
+  const handleVote = (selectedPhoto: VotingPhoto, rejectedPhoto: VotingPhoto) => {
     toast({
-      title: `${action} registrado`,
-      description: `Has votado ${isLike ? "a favor" : "en contra"} de esta foto`
+      title: "Voto registrado",
+      description: `Has elegido "${selectedPhoto.title}" sobre "${rejectedPhoto.title}"`
     });
     
     setVotes(votes + 1);
     
-    // Move to next photo
-    if (currentPhotoIndex < mockVotingPhotos.length - 1) {
-      setCurrentPhotoIndex(currentPhotoIndex + 1);
+    // Move to next pair
+    if (currentPairIndex < photoPairs.length - 1) {
+      setCurrentPairIndex(currentPairIndex + 1);
     } else {
-      // Reset to first photo or show completion message
-      setCurrentPhotoIndex(0);
+      // Reset or show completion message
+      setCurrentPairIndex(0);
       toast({
         title: "¡Votación completada!",
-        description: `Has votado ${votes + 1} fotos. Gracias por participar.`
+        description: `Has votado ${votes + 1} comparaciones. Gracias por participar.`
       });
     }
   };
 
-  const getCardStyle = () => {
-    if (!isDragging && dragOffset === 0) return {};
-    
-    const rotation = dragOffset * 0.1;
-    const opacity = 1 - Math.abs(dragOffset) * 0.003;
-    
-    return {
-      transform: `translateX(${dragOffset}px) rotate(${rotation}deg)`,
-      opacity
-    };
-  };
-
-  const getOverlayColor = () => {
-    if (Math.abs(dragOffset) < 30) return 'transparent';
-    return dragOffset > 0 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)';
-  };
-
-  if (!currentPhoto) {
+  if (!currentPair) {
     return (
       <div className="h-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">No hay más fotos para votar</p>
+          <p className="text-gray-500 mb-4">No hay más fotos para comparar</p>
           <Button onClick={() => onNavigate('contests')}>
             Volver a concursos
           </Button>
@@ -156,8 +136,8 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="text-center">
-            <h1 className="text-lg font-semibold">Votación ELO</h1>
-            <p className="text-sm opacity-80">{votes} votos realizados</p>
+            <h1 className="text-lg font-semibold">Votación Comparativa</h1>
+            <p className="text-sm opacity-80">{votes} comparaciones • {currentPairIndex + 1}/{photoPairs.length}</p>
           </div>
           <Button
             variant="ghost"
@@ -170,45 +150,53 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         </div>
       </div>
 
-      {/* Photo Card */}
-      <div className="flex items-center justify-center h-full p-4 pt-20 pb-32">
-        <div
-          ref={cardRef}
-          className="relative w-full max-w-sm bg-white rounded-xl shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing"
-          style={getCardStyle()}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+      {/* Two Photos Side by Side */}
+      <div className="flex h-full pt-20 pb-32">
+        {/* Left Photo */}
+        <div 
+          className="flex-1 relative cursor-pointer active:scale-95 transition-transform"
+          onClick={() => handleVote(currentPair[0], currentPair[1])}
         >
-          {/* Overlay for swipe feedback */}
-          <div 
-            className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
-            style={{ backgroundColor: getOverlayColor() }}
-          >
-            {Math.abs(dragOffset) > 30 && (
-              <div className="text-white text-2xl font-bold">
-                {dragOffset > 0 ? '❤️' : '✖️'}
-              </div>
-            )}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20 z-10"></div>
+          <img
+            src={currentPair[0].image}
+            alt={currentPair[0].title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-4 left-4 right-4 z-20 text-white">
+            <Badge className="mb-2 text-xs bg-white/20 text-white border-white/30">
+              {currentPair[0].contest}
+            </Badge>
+            <h3 className="text-lg font-semibold mb-1">{currentPair[0].title}</h3>
+            <p className="text-sm opacity-90">por {currentPair[0].photographer}</p>
+            <div className="text-xs opacity-75 mt-1">
+              Rating ELO: {currentPair[0].rating}
+            </div>
           </div>
+        </div>
 
-          {/* Photo */}
-          <div className="aspect-[3/4] relative">
-            <img
-              src={currentPhoto.image}
-              alt={currentPhoto.title}
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-          </div>
+        {/* Divider */}
+        <div className="w-0.5 bg-white/30"></div>
 
-          {/* Photo Info */}
-          <div className="p-4">
-            <Badge className="mb-2 text-xs">{currentPhoto.contest}</Badge>
-            <h3 className="text-lg font-semibold mb-1">{currentPhoto.title}</h3>
-            <p className="text-gray-600 text-sm mb-2">por {currentPhoto.photographer}</p>
-            <div className="text-xs text-gray-500">
-              Rating ELO: {currentPhoto.rating}
+        {/* Right Photo */}
+        <div 
+          className="flex-1 relative cursor-pointer active:scale-95 transition-transform"
+          onClick={() => handleVote(currentPair[1], currentPair[0])}
+        >
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent to-black/20 z-10"></div>
+          <img
+            src={currentPair[1].image}
+            alt={currentPair[1].title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-4 left-4 right-4 z-20 text-white">
+            <Badge className="mb-2 text-xs bg-white/20 text-white border-white/30">
+              {currentPair[1].contest}
+            </Badge>
+            <h3 className="text-lg font-semibold mb-1">{currentPair[1].title}</h3>
+            <p className="text-sm opacity-90">por {currentPair[1].photographer}</p>
+            <div className="text-xs opacity-75 mt-1">
+              Rating ELO: {currentPair[1].rating}
             </div>
           </div>
         </div>
@@ -217,41 +205,28 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
       {/* Instructions */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
         <div className="text-center space-y-3">
-          <p className="text-sm opacity-80">Desliza para votar</p>
-          <div className="flex justify-center space-x-8">
-            <div className="flex flex-col items-center">
-              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center mb-2">
-                <X className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xs">← No me gusta</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mb-2">
-                <Heart className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-xs">Me gusta →</span>
-            </div>
-          </div>
+          <p className="text-lg font-medium">¿Cuál te gusta más?</p>
+          <p className="text-sm opacity-80">Toca la foto que prefieras</p>
           
           {/* Action Buttons */}
           <div className="flex space-x-4 mt-4">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleVote(false)}
-              className="flex-1 bg-red-500/20 border-red-500 text-white hover:bg-red-500/30"
+              onClick={() => handleVote(currentPair[0], currentPair[1])}
+              className="flex-1 bg-blue-500/20 border-blue-500 text-white hover:bg-blue-500/30"
             >
-              <X className="h-4 w-4 mr-1" />
-              No me gusta
+              <Heart className="h-4 w-4 mr-1" />
+              Izquierda
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handleVote(true)}
-              className="flex-1 bg-green-500/20 border-green-500 text-white hover:bg-green-500/30"
+              onClick={() => handleVote(currentPair[1], currentPair[0])}
+              className="flex-1 bg-purple-500/20 border-purple-500 text-white hover:bg-purple-500/30"
             >
               <Heart className="h-4 w-4 mr-1" />
-              Me gusta
+              Derecha
             </Button>
           </div>
         </div>

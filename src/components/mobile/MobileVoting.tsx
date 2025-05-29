@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Heart, MessageCircle, Share, ArrowLeft, Send, Home, User } from "lucide-react";
+import { MessageCircle, Share, ArrowLeft, Send, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileVotingProps {
@@ -14,7 +15,6 @@ interface Photo {
   image: string;
   photographer: string;
   title: string;
-  votes: number;
   contest: string;
   comments: Comment[];
 }
@@ -32,7 +32,6 @@ const mockPhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
     photographer: "María López",
     title: "Flores de primavera",
-    votes: 24,
     contest: "Primavera en Barcelona",
     comments: [
       { id: "1", user: "Carlos", text: "¡Increíble foto!", timestamp: new Date() },
@@ -44,7 +43,6 @@ const mockPhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400",
     photographer: "Carlos Ruiz",
     title: "Geometría urbana",
-    votes: 31,
     contest: "Arquitectura Urbana",
     comments: [
       { id: "3", user: "Pedro", text: "Excelente perspectiva", timestamp: new Date() }
@@ -55,7 +53,6 @@ const mockPhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
     photographer: "Ana García",
     title: "Atardecer dorado",
-    votes: 18,
     contest: "Vida en la Playa",
     comments: []
   },
@@ -64,7 +61,6 @@ const mockPhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400",
     photographer: "Luis Martín",
     title: "Bosque misterioso",
-    votes: 42,
     contest: "Naturaleza Salvaje",
     comments: []
   },
@@ -73,7 +69,6 @@ const mockPhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400",
     photographer: "Sofia Chen",
     title: "Refugio en la montaña",
-    votes: 15,
     contest: "Arquitectura Rural",
     comments: []
   },
@@ -82,7 +77,6 @@ const mockPhotos: Photo[] = [
     image: "https://images.unsplash.com/photo-1544737151500-6e4b999de2a9?w=400",
     photographer: "Roberto Silva",
     title: "Reflejos urbanos",
-    votes: 28,
     contest: "Ciudad Nocturna",
     comments: []
   }
@@ -90,25 +84,9 @@ const mockPhotos: Photo[] = [
 
 const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
   const { toast } = useToast();
-  const [votedPhotos, setVotedPhotos] = useState<number[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [photos, setPhotos] = useState<Photo[]>(mockPhotos);
   const [newComment, setNewComment] = useState("");
-
-  const handleVote = (photoId: number) => {
-    if (!votedPhotos.includes(photoId)) {
-      setVotedPhotos([...votedPhotos, photoId]);
-      setPhotos(photos.map(photo => 
-        photo.id === photoId 
-          ? { ...photo, votes: photo.votes + 1 }
-          : photo
-      ));
-      toast({
-        title: "Voto registrado",
-        description: "Has votado por esta foto"
-      });
-    }
-  };
 
   const handleShare = (photo: Photo) => {
     const shareData = {
@@ -213,7 +191,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           />
         </div>
 
-        {/* Photo Info and Actions */}
+        {/* Photo Info and Comments */}
         <div className="h-1/2 bg-white p-4 flex flex-col">
           <div className="mb-4">
             <Badge className="mb-2">{selectedPhoto.contest}</Badge>
@@ -224,15 +202,6 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           {/* Actions */}
           <div className="flex items-center justify-between mb-4 pb-4 border-b">
             <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleVote(selectedPhoto.id)}
-                className={`flex items-center space-x-1 ${votedPhotos.includes(selectedPhoto.id) ? 'text-red-500' : 'text-gray-600'}`}
-              >
-                <Heart className={`h-5 w-5 ${votedPhotos.includes(selectedPhoto.id) ? 'fill-current' : ''}`} />
-                <span>{selectedPhoto.votes + (votedPhotos.includes(selectedPhoto.id) ? 1 : 0)}</span>
-              </Button>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -311,7 +280,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-lg font-semibold">Votación</h1>
+          <h1 className="text-lg font-semibold">Fotos</h1>
           <Button
             variant="ghost"
             size="sm"
@@ -338,20 +307,11 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                   alt={photo.title}
                   className="w-full h-full object-cover"
                 />
-                {votedPhotos.includes(photo.id) && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full">
-                    <Heart className="w-3 h-3 fill-white" />
-                  </div>
-                )}
               </div>
               <div className="p-3">
                 <h3 className="font-medium text-sm truncate">{photo.title}</h3>
                 <p className="text-xs text-gray-500 truncate">por {photo.photographer}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center space-x-1">
-                    <Heart className="w-3 h-3 text-red-500" />
-                    <span className="text-xs text-gray-600">{photo.votes + (votedPhotos.includes(photo.id) ? 1 : 0)}</span>
-                  </div>
                   <div className="flex items-center space-x-1">
                     <MessageCircle className="w-3 h-3 text-gray-400" />
                     <span className="text-xs text-gray-600">{photo.comments.length}</span>
