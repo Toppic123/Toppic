@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Camera, Trophy, Heart, Settings, LogOut, Home, ExternalLink } from "lucide-react";
+import { Edit2, Camera, Trophy, Heart, LogOut, Home, Save, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface MobileProfileProps {
   onNavigate: (screen: 'contests' | 'home') => void;
@@ -18,20 +20,35 @@ const mockUserPhotos = [
 ];
 
 const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: "María López",
     bio: "Fotógrafa aficionada. Me encanta capturar la belleza en los momentos cotidianos.",
-    location: "Barcelona, España"
+    location: "Barcelona, España",
+    email: "maria.lopez@email.com",
+    website: "www.marialopezphoto.com"
   });
 
-  const handleSave = () => {
-    setIsEditing(false);
+  const [editingInfo, setEditingInfo] = useState(userInfo);
+
+  const handleStartEdit = () => {
+    setEditingInfo(userInfo);
+    setIsEditing(true);
   };
 
-  const handleOpenWebSettings = () => {
-    // Abrir la versión web en una nueva ventana/pestaña
-    window.open('/dashboard/settings', '_blank');
+  const handleSave = () => {
+    setUserInfo(editingInfo);
+    setIsEditing(false);
+    toast({
+      title: "Perfil actualizado",
+      description: "Tus cambios han sido guardados correctamente"
+    });
+  };
+
+  const handleCancel = () => {
+    setEditingInfo(userInfo);
+    setIsEditing(false);
   };
 
   return (
@@ -50,14 +67,35 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
               <Home className="h-4 w-4" />
             </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute top-4 right-4 text-white hover:bg-white/20"
-            onClick={() => setIsEditing(!isEditing)}
-          >
-            <Edit2 className="h-4 w-4" />
-          </Button>
+          {!isEditing ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 text-white hover:bg-white/20"
+              onClick={handleStartEdit}
+            >
+              <Edit2 className="h-4 w-4" />
+            </Button>
+          ) : (
+            <div className="absolute top-4 right-4 flex space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCancel}
+                className="text-white hover:bg-white/20 p-2"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSave}
+                className="text-white hover:bg-white/20 p-2"
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Profile Info */}
@@ -77,25 +115,65 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
           </div>
 
           {isEditing ? (
-            <div className="space-y-3">
-              <Input
-                value={userInfo.name}
-                onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
-                className="font-semibold text-lg"
-              />
-              <Input
-                value={userInfo.bio}
-                onChange={(e) => setUserInfo({...userInfo, bio: e.target.value})}
-                placeholder="Cuéntanos sobre ti..."
-              />
-              <Input
-                value={userInfo.location}
-                onChange={(e) => setUserInfo({...userInfo, location: e.target.value})}
-                placeholder="Tu ubicación"
-              />
-              <div className="flex space-x-2">
-                <Button onClick={handleSave} className="flex-1">Guardar</Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>Cancelar</Button>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nombre
+                </label>
+                <Input
+                  value={editingInfo.name}
+                  onChange={(e) => setEditingInfo({...editingInfo, name: e.target.value})}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Biografía
+                </label>
+                <Textarea
+                  value={editingInfo.bio}
+                  onChange={(e) => setEditingInfo({...editingInfo, bio: e.target.value})}
+                  placeholder="Cuéntanos sobre ti..."
+                  className="w-full"
+                  rows={3}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ubicación
+                </label>
+                <Input
+                  value={editingInfo.location}
+                  onChange={(e) => setEditingInfo({...editingInfo, location: e.target.value})}
+                  placeholder="Tu ubicación"
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  value={editingInfo.email}
+                  onChange={(e) => setEditingInfo({...editingInfo, email: e.target.value})}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sitio web
+                </label>
+                <Input
+                  value={editingInfo.website}
+                  onChange={(e) => setEditingInfo({...editingInfo, website: e.target.value})}
+                  placeholder="Tu sitio web"
+                  className="w-full"
+                />
               </div>
             </div>
           ) : (
@@ -103,6 +181,9 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
               <h1 className="text-xl font-semibold text-gray-900">{userInfo.name}</h1>
               <p className="text-gray-600 mt-1">{userInfo.bio}</p>
               <p className="text-gray-500 text-sm mt-2">{userInfo.location}</p>
+              {userInfo.website && (
+                <p className="text-blue-600 text-sm mt-1">{userInfo.website}</p>
+              )}
             </div>
           )}
         </div>
@@ -156,32 +237,16 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
         </div>
       </div>
 
-      {/* Settings */}
+      {/* Logout */}
       <div className="bg-white mt-2 px-4 py-4">
-        <div className="space-y-3">
-          <Button 
-            variant="ghost" 
-            className="w-full justify-between"
-            onClick={handleOpenWebSettings}
-          >
-            <div className="flex items-center">
-              <Settings className="h-4 w-4 mr-3" />
-              Configuración completa
-            </div>
-            <ExternalLink className="h-4 w-4 text-gray-400" />
-          </Button>
-          <div className="text-xs text-gray-500 px-4">
-            Accede a todas las opciones de configuración en la versión web
-          </div>
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-            onClick={onLogout}
-          >
-            <LogOut className="h-4 w-4 mr-3" />
-            Cerrar sesión
-          </Button>
-        </div>
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+          onClick={onLogout}
+        >
+          <LogOut className="h-4 w-4 mr-3" />
+          Cerrar sesión
+        </Button>
       </div>
 
       <div className="h-20" /> {/* Bottom spacing */}

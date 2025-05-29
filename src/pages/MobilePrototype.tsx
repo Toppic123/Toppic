@@ -12,8 +12,9 @@ import MobileContests from "@/components/mobile/MobileContests";
 import MobileUpload from "@/components/mobile/MobileUpload";
 import MobileVoting from "@/components/mobile/MobileVoting";
 import MobileProfile from "@/components/mobile/MobileProfile";
+import MobileSwipeVoting from "@/components/mobile/MobileSwipeVoting";
 
-type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'voting' | 'profile';
+type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile';
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
@@ -47,6 +48,8 @@ const MobilePrototype = () => {
         return <MobileUpload onNavigate={handleNavigation} />;
       case 'voting':
         return <MobileVoting onNavigate={handleNavigation} />;
+      case 'vote':
+        return <MobileSwipeVoting onNavigate={handleNavigation} />;
       case 'profile':
         return <MobileProfile onNavigate={handleNavigation} onLogout={handleLogout} />;
       default:
@@ -54,7 +57,7 @@ const MobilePrototype = () => {
     }
   };
 
-  const showBottomNav = isLoggedIn && !['home', 'register', 'login'].includes(currentScreen);
+  const showBottomNav = isLoggedIn && !['home', 'register', 'login', 'vote'].includes(currentScreen);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -110,6 +113,15 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="sm"
+                      className={`flex flex-col items-center p-2 ${currentScreen === 'home' ? 'text-blue-600' : 'text-gray-500'}`}
+                      onClick={() => handleNavigation('home')}
+                    >
+                      <Home className="h-5 w-5 mb-1" />
+                      <span className="text-xs">Inicio</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
                       className={`flex flex-col items-center p-2 ${currentScreen === 'contests' ? 'text-blue-600' : 'text-gray-500'}`}
                       onClick={() => handleNavigation('contests')}
                     >
@@ -133,15 +145,6 @@ const MobilePrototype = () => {
                     >
                       <Vote className="h-5 w-5 mb-1" />
                       <span className="text-xs">Votar</span>
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'profile' ? 'text-blue-600' : 'text-gray-500'}`}
-                      onClick={() => handleNavigation('profile')}
-                    >
-                      <User className="h-5 w-5 mb-1" />
-                      <span className="text-xs">Perfil</span>
                     </Button>
                   </div>
                 </div>

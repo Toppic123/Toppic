@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Calendar, Trophy, Camera, Home } from "lucide-react";
+import { Search, MapPin, Calendar, Trophy, Camera, User } from "lucide-react";
 import MobileSearchBar from "./MobileSearchBar";
 
 interface MobileContestsProps {
-  onNavigate: (screen: 'upload' | 'voting' | 'home') => void;
+  onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
 }
 
 const mockContests = [
@@ -89,10 +89,10 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onNavigate('home')}
+            onClick={() => onNavigate('profile')}
             className="text-gray-600 hover:bg-gray-100 p-2"
           >
-            <Home className="h-5 w-5" />
+            <User className="h-5 w-5" />
           </Button>
         </div>
         <Button
@@ -118,16 +118,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
           </div>
         </div>
       )}
-
-      {/* Quick Filters */}
-      <div className="px-4 py-3 bg-white border-b border-gray-200">
-        <div className="flex space-x-2 overflow-x-auto">
-          <Badge variant="default" className="whitespace-nowrap">Cerca de ti</Badge>
-          <Badge variant="outline" className="whitespace-nowrap">Terminan pronto</Badge>
-          <Badge variant="outline" className="whitespace-nowrap">Nuevos</Badge>
-          <Badge variant="outline" className="whitespace-nowrap">Populares</Badge>
-        </div>
-      </div>
 
       {/* Contests List */}
       <div className="p-4 space-y-4">
@@ -181,6 +171,14 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                       onClick={() => onNavigate('voting')}
                     >
                       Ver fotos
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => onNavigate('vote')}
+                      className="bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
+                    >
+                      Votar
                     </Button>
                     <Button 
                       size="sm"

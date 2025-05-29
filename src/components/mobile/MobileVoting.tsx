@@ -1,13 +1,12 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Heart, MessageCircle, Share, ArrowLeft, Send, Home } from "lucide-react";
+import { Heart, MessageCircle, Share, ArrowLeft, Send, Home, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileVotingProps {
-  onNavigate: (screen: 'contests' | 'home') => void;
+  onNavigate: (screen: 'contests' | 'home' | 'profile') => void;
 }
 
 interface Photo {
@@ -171,7 +170,6 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
   };
 
   const openPhotoDetail = (photo: Photo) => {
-    // Encuentra la foto actualizada en el estado actual
     const updatedPhoto = photos.find(p => p.id === photo.id) || photo;
     setSelectedPhoto(updatedPhoto);
   };
@@ -198,10 +196,10 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onNavigate('home')}
+              onClick={() => onNavigate('profile')}
               className="text-white hover:bg-white/20 p-2"
             >
-              <Home className="h-5 w-5" />
+              <User className="h-5 w-5" />
             </Button>
           </div>
         </div>
@@ -317,10 +315,10 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onNavigate('home')}
+            onClick={() => onNavigate('profile')}
             className="text-gray-600 hover:bg-gray-100 p-2"
           >
-            <Home className="h-5 w-5" />
+            <User className="h-5 w-5" />
           </Button>
         </div>
       </div>

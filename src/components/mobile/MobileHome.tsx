@@ -30,7 +30,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
           <Button 
             onClick={() => onNavigate('login')}
             variant="outline" 
-            className="w-full border-white text-white hover:bg-white/10 font-medium py-3 text-base border-2"
+            className="w-full border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-600 font-medium py-3 text-base"
           >
             Iniciar sesión
           </Button>
