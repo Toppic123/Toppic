@@ -20,6 +20,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import VotingSystem from "./pages/VotingSystem";
 import AdminDashboard from "./pages/AdminDashboard";
+import MobilePrototype from "./pages/MobilePrototype";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -54,6 +55,9 @@ function App() {
         <AuthProvider>
           <Router>
             <Routes>
+              {/* Mobile prototype route - no layout wrapper */}
+              <Route path="/mobile-prototype" element={<MobilePrototype />} />
+              
               <Route element={<Layout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
