@@ -51,30 +51,33 @@ const ContestFilters = ({
   
   return (
     <div className="space-y-4 mb-8">
-      {/* Search bar - larger and more prominent */}
+      {/* Search bar - redesigned to be more prominent and intuitive */}
       <div className="relative max-w-2xl mx-auto">
-        <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-        <Input
-          type="text"
-          placeholder="Buscar concursos por nombre o ubicación..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-12 pr-4 py-6 text-lg border-2 border-border focus:border-primary rounded-xl bg-white shadow-sm"
-        />
-        {searchQuery && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSearchQuery("")}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        )}
+        <div className="relative shadow-lg rounded-xl overflow-hidden border-2 border-primary/30 hover:border-primary/50 transition-all">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary h-5 w-5" />
+          <Input
+            type="text"
+            placeholder="Buscar concursos por nombre o ubicación..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-12 pr-4 py-7 text-lg border-0 bg-white rounded-xl shadow-inner focus:ring-2 focus:ring-primary/20 focus-visible:ring-offset-0"
+          />
+          {searchQuery && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-10 h-1 bg-primary/30 rounded-full"></div>
       </div>
       
       {/* Filters button and active filters */}
-      <div className="flex items-center justify-center gap-4 flex-wrap">
+      <div className="flex items-center justify-center gap-4 flex-wrap pt-2">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button variant="outline" className="relative px-6 py-3 rounded-full border-2">

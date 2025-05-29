@@ -2,7 +2,7 @@
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images - Updated with requested images
+// Hero section carousel images - Updated with Torre Eiffel replacing Sagrada Familia
 export const heroImages = [
   {
     url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
@@ -13,8 +13,8 @@ export const heroImages = [
     category: "Persona tomando fotos con móvil en concierto"
   },
   {
-    url: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Sagrada Familia Barcelona"
+    url: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Torre Eiffel París"
   },
   {
     url: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
@@ -56,7 +56,7 @@ export const popularContests = [
   }
 ];
 
-// Export winning photos with food and Eiffel Tower replacing duplicates
+// Export winning photos with Torre Eiffel replacing Sagrada Familia
 export const winningPhotos: WinningPhoto[] = [
   {
     id: 1,
@@ -116,8 +116,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 8,
-    imageUrl: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Sagrada Familia",
+    imageUrl: "https://images.unsplash.com/photo-1549451371-64aa98a6f632?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Arquitectura moderna",
     photographer: "Javier Acosta",
     photographerAvatar: "https://i.pravatar.cc/150?img=8",
     likes: 275
