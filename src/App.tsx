@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
@@ -19,7 +20,6 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import VotingSystem from "./pages/VotingSystem";
 import AdminDashboard from "./pages/AdminDashboard";
-import PrototypePage from "./pages/PrototypePage";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -54,9 +54,6 @@ function App() {
         <AuthProvider>
           <Router>
             <Routes>
-              {/* Nueva ruta para el prototipo */}
-              <Route path="/prototype" element={<PrototypePage />} />
-              
               <Route element={<Layout />}>
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
