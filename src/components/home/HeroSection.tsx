@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Camera, ArrowRight } from "lucide-react";
@@ -79,6 +78,14 @@ const HeroSection = ({ heroImages, texts }: HeroSectionProps) => {
               <Link to="/register">
                 <span>{texts.startNow}</span>
                 <ArrowRight className="ml-3 h-6 w-6" />
+              </Link>
+            </Button>
+          </div>
+          
+          <div className="mt-8">
+            <Button asChild variant="ghost" size="sm" className="text-white/70 hover:text-white border border-white/30 hover:bg-white/10">
+              <Link to="/prototype">
+                <span>🎨 Ver Prototipo Interactivo</span>
               </Link>
             </Button>
           </div>
