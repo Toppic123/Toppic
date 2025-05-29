@@ -190,22 +190,34 @@ const Organizers = () => {
     {
       icon: Camera,
       title: "Contenido auténtico",
-      description: "Recibe fotos únicas y auténticas de tu evento o ubicación"
+      description: "Recibe fotos únicas y auténticas de tu evento o ubicación",
+      bgGradient: "from-emerald-400 to-cyan-500",
+      iconBg: "bg-gradient-to-br from-emerald-100 to-cyan-100",
+      iconColor: "text-emerald-600"
     },
     {
       icon: Building,
       title: "Visibilidad de marca",
-      description: "Promociona tu empresa a miles de usuarios interesados"
+      description: "Promociona tu empresa a miles de usuarios interesados",
+      bgGradient: "from-blue-400 to-indigo-500",
+      iconBg: "bg-gradient-to-br from-blue-100 to-indigo-100",
+      iconColor: "text-blue-600"
     },
     {
       icon: Users,
       title: "Engagement efectivo",
-      description: "Crea conexión emocional con tu audiencia"
+      description: "Crea conexión emocional con tu audiencia",
+      bgGradient: "from-purple-400 to-pink-500",
+      iconBg: "bg-gradient-to-br from-purple-100 to-pink-100",
+      iconColor: "text-purple-600"
     },
     {
       icon: Award,
       title: "Marketing content",
-      description: "Obtén derechos sobre las mejores fotos para tus campañas"
+      description: "Obtén derechos sobre las mejores fotos para tus campañas",
+      bgGradient: "from-orange-400 to-red-500",
+      iconBg: "bg-gradient-to-br from-orange-100 to-red-100",
+      iconColor: "text-orange-600"
     }
   ];
   
@@ -223,7 +235,7 @@ const Organizers = () => {
             Impulsa tu evento o empresa a través de nuestros concursos fotográficos. Conecta con tu audiencia de una forma única y visual.
           </p>
 
-          {/* Beneficios integrados directamente aquí */}
+          {/* Beneficios modernizados con colores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             {benefitCards.map((card, index) => (
               <motion.div
@@ -232,14 +244,22 @@ const Organizers = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+                className="relative group"
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-blue-600/20 rounded-full flex items-center justify-center mb-4">
-                    <card.icon className="h-8 w-8 text-primary" />
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+                  {/* Gradiente de fondo sutil */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                  
+                  <div className="relative z-10 flex flex-col items-center text-center">
+                    <div className={`w-20 h-20 ${card.iconBg} rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <card.icon className={`h-10 w-10 ${card.iconColor}`} />
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{card.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{card.description}</p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{card.title}</h3>
-                  <p className="text-muted-foreground">{card.description}</p>
+                  
+                  {/* Brillo sutil en hover */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                 </div>
               </motion.div>
             ))}

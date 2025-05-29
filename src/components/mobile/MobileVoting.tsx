@@ -3,11 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Heart, MessageCircle, Share, ArrowLeft, X, Send } from "lucide-react";
+import { Heart, MessageCircle, Share, ArrowLeft, Send, Home } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileVotingProps {
-  onNavigate: (screen: 'contests') => void;
+  onNavigate: (screen: 'contests' | 'home') => void;
 }
 
 interface Photo {
@@ -148,11 +148,13 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
       timestamp: new Date()
     };
 
-    setPhotos(photos.map(photo => 
+    const updatedPhotos = photos.map(photo => 
       photo.id === photoId 
         ? { ...photo, comments: [...photo.comments, comment] }
         : photo
-    ));
+    );
+    
+    setPhotos(updatedPhotos);
 
     if (selectedPhoto && selectedPhoto.id === photoId) {
       setSelectedPhoto({
@@ -169,7 +171,9 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
   };
 
   const openPhotoDetail = (photo: Photo) => {
-    setSelectedPhoto(photo);
+    // Encuentra la foto actualizada en el estado actual
+    const updatedPhoto = photos.find(p => p.id === photo.id) || photo;
+    setSelectedPhoto(updatedPhoto);
   };
 
   const closePhotoDetail = () => {
@@ -191,7 +195,14 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-lg font-semibold">Foto</h1>
-            <div className="w-9" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onNavigate('home')}
+              className="text-white hover:bg-white/20 p-2"
+            >
+              <Home className="h-5 w-5" />
+            </Button>
           </div>
         </div>
 
@@ -244,30 +255,41 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
               {selectedPhoto.comments.map((comment) => (
                 <div key={comment.id} className="flex space-x-2">
                   <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0"></div>
-                  <div>
-                    <span className="font-medium text-sm">{comment.user}</span>
-                    <p className="text-sm text-gray-700">{comment.text}</p>
+                  <div className="flex-1">
+                    <div className="flex items-baseline space-x-2">
+                      <span className="font-medium text-sm">{comment.user}</span>
+                      <span className="text-xs text-gray-500">
+                        {comment.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700 mt-1">{comment.text}</p>
                   </div>
                 </div>
               ))}
               {selectedPhoto.comments.length === 0 && (
-                <p className="text-gray-500 text-center py-4">No hay comentarios aún</p>
+                <p className="text-gray-500 text-center py-4">No hay comentarios aún. ¡Sé el primero en comentar!</p>
               )}
             </div>
 
             {/* Add Comment */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 pt-2 border-t">
               <Input
                 placeholder="Escribe un comentario..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 className="flex-1"
-                onKeyDown={(e) => e.key === "Enter" && handleAddComment(selectedPhoto.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAddComment(selectedPhoto.id);
+                  }
+                }}
               />
               <Button 
                 size="sm"
                 onClick={() => handleAddComment(selectedPhoto.id)}
                 disabled={!newComment.trim()}
+                className="px-3"
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -292,7 +314,14 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-lg font-semibold">Votación</h1>
-          <div className="w-9" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate('home')}
+            className="text-gray-600 hover:bg-gray-100 p-2"
+          >
+            <Home className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 

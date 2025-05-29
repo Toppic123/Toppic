@@ -3,10 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Camera, Trophy, Heart, Settings, LogOut } from "lucide-react";
+import { Edit2, Camera, Trophy, Heart, Settings, LogOut, Home, ExternalLink } from "lucide-react";
 
 interface MobileProfileProps {
-  onNavigate: (screen: 'contests') => void;
+  onNavigate: (screen: 'contests' | 'home') => void;
   onLogout: () => void;
 }
 
@@ -29,12 +29,27 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
     setIsEditing(false);
   };
 
+  const handleOpenWebSettings = () => {
+    // Abrir la versión web en una nueva ventana/pestaña
+    window.open('/dashboard/settings', '_blank');
+  };
+
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Profile Header */}
       <div className="bg-white">
         {/* Cover Image */}
         <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
+          <div className="absolute top-4 left-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onNavigate('home')}
+              className="text-white hover:bg-white/20 p-2"
+            >
+              <Home className="h-4 w-4" />
+            </Button>
+          </div>
           <Button
             variant="ghost"
             size="sm"
@@ -144,10 +159,20 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
       {/* Settings */}
       <div className="bg-white mt-2 px-4 py-4">
         <div className="space-y-3">
-          <Button variant="ghost" className="w-full justify-start">
-            <Settings className="h-4 w-4 mr-3" />
-            Configuración
+          <Button 
+            variant="ghost" 
+            className="w-full justify-between"
+            onClick={handleOpenWebSettings}
+          >
+            <div className="flex items-center">
+              <Settings className="h-4 w-4 mr-3" />
+              Configuración completa
+            </div>
+            <ExternalLink className="h-4 w-4 text-gray-400" />
           </Button>
+          <div className="text-xs text-gray-500 px-4">
+            Accede a todas las opciones de configuración en la versión web
+          </div>
           <Button 
             variant="ghost" 
             className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"

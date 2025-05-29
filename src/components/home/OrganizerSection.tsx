@@ -50,7 +50,7 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
             >
               <Link to="/organizers">
                 <Building className="mr-4 h-8 w-8" />
-                CÓMO CREAR CONCURSO
+                CREA AQUÍ TUS CONCURSOS
               </Link>
             </Button>
           </motion.div>

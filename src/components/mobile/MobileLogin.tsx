@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 
 interface MobileLoginProps {
   onNavigate: (screen: 'home' | 'register') => void;
@@ -25,7 +25,7 @@ const MobileLogin = ({ onNavigate, onLogin }: MobileLoginProps) => {
     <div className="h-full bg-white overflow-y-auto">
       {/* Header */}
       <div className="bg-blue-600 text-white px-4 py-4">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
@@ -35,6 +35,14 @@ const MobileLogin = ({ onNavigate, onLogin }: MobileLoginProps) => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-lg font-semibold text-white">Iniciar sesión</h1>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onNavigate('home')}
+            className="text-white hover:bg-blue-700 p-2"
+          >
+            <Home className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 
