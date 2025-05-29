@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Camera, Building, Users, Award, TrendingUp, Target, Eye, Gift } from "lucide-react";
+import { Building } from "lucide-react";
 
 interface OrganizerSectionProps {
   texts: {
@@ -13,33 +13,6 @@ interface OrganizerSectionProps {
 }
 
 const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
-  const benefits = [
-    {
-      icon: Camera,
-      title: "Contenido auténtico",
-      description: "Fotos únicas y reales",
-      gradient: "from-purple-500 to-pink-500"
-    },
-    {
-      icon: Eye,
-      title: "Visibilidad de marca", 
-      description: "Miles de usuarios activos",
-      gradient: "from-blue-500 to-cyan-500"
-    },
-    {
-      icon: TrendingUp,
-      title: "Engagement efectivo",
-      description: "Conexión con tu audiencia",
-      gradient: "from-green-500 to-emerald-500"
-    },
-    {
-      icon: Gift,
-      title: "Marketing content",
-      description: "Derechos sobre las fotos",
-      gradient: "from-orange-500 to-red-500"
-    }
-  ];
-
   return (
     <section className="py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 relative overflow-hidden">
       {/* Decorative background elements */}
@@ -54,52 +27,21 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center"
         >
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-primary to-blue-600 rounded-full mb-8 shadow-2xl">
-            <Building className="w-12 h-12 text-white" />
-          </div>
-          
           <h2 className="text-6xl font-bold mb-8 tracking-tight bg-gradient-to-r from-gray-900 via-primary to-blue-600 bg-clip-text text-transparent">
             ¿Eres organizador?
           </h2>
           
-          <p className="text-2xl mb-16 leading-relaxed max-w-3xl mx-auto text-gray-600">
-            Transforma tus eventos con fotografía auténtica
+          <p className="text-3xl mb-16 leading-relaxed max-w-4xl mx-auto text-gray-700 font-medium">
+            OFRECE UNA EXPERIENCIA ÚNICA A LOS ASISTENTES
           </p>
-          
-          {/* Modern Benefits Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={benefit.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-                className="group"
-              >
-                <div className="relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent h-full transform hover:scale-105">
-                  {/* Gradient background on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${benefit.gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-500`}></div>
-                  
-                  <div className="relative z-10 flex flex-col items-center text-center">
-                    <div className={`w-20 h-20 bg-gradient-to-br ${benefit.gradient} rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                      <benefit.icon className="h-10 w-10 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-900">{benefit.title}</h3>
-                    <p className="text-gray-600 leading-relaxed text-sm">{benefit.description}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
           
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.3 }}
           >
             <Button 
               asChild 
@@ -108,7 +50,7 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
             >
               <Link to="/organizers">
                 <Building className="mr-4 h-8 w-8" />
-                ORGANIZADORES
+                CÓMO CREAR CONCURSO
               </Link>
             </Button>
           </motion.div>

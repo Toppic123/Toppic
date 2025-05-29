@@ -18,7 +18,6 @@ import Organizers from "./pages/Organizers";
 import Support from "./pages/Support";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import VotingSystem from "./pages/VotingSystem";
 import VotingRules from "./pages/VotingRules";
 import AdminDashboard from "./pages/AdminDashboard";
 import MobilePrototype from "./pages/MobilePrototype";
@@ -104,7 +103,6 @@ function App() {
                 <Route path="/support" element={<Support />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
-                <Route path="/voting-system" element={<VotingSystem />} />
                 <Route path="/voting-rules" element={<VotingRules />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
