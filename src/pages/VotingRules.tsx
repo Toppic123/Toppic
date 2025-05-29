@@ -1,142 +1,153 @@
 
-import { motion } from "framer-motion";
-import { ArrowLeft, Vote, Shield, Award, Users } from "lucide-react";
+import { ArrowLeft, Users, Clock, Trophy, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 
 const VotingRules = () => {
-  const navigate = useNavigate();
-
   const rules = [
     {
       icon: Users,
-      title: "Participación Democrática",
-      description: "Todos los usuarios registrados pueden votar en los concursos activos."
+      title: "Voto democrático",
+      description: "Cada usuario registrado puede votar una vez por concurso. Tu voto cuenta igual que el de todos los demás participantes."
     },
     {
-      icon: Vote,
-      title: "Un Voto por Usuario",
-      description: "Cada usuario puede votar una sola vez por concurso para mantener la equidad."
+      icon: Clock,
+      title: "Período de votación",
+      description: "La votación comienza cuando se publican las fotos y termina en la fecha límite del concurso. No se pueden cambiar los votos una vez emitidos."
+    },
+    {
+      icon: Trophy,
+      title: "Criterios de evaluación",
+      description: "Vota por las fotos que consideres más creativas, técnicamente mejores o que mejor representen el tema del concurso."
     },
     {
       icon: Shield,
-      title: "Votación Anónima",
-      description: "Los votos son completamente anónimos para garantizar decisiones imparciales."
-    },
-    {
-      icon: Award,
-      title: "Resultados Transparentes",
-      description: "Los resultados se publican automáticamente al finalizar el período de votación."
-    }
-  ];
-
-  const votingSystemInfo = [
-    {
-      title: "¿Cómo funciona el sistema de votación?",
-      content: "Nuestro sistema utiliza inteligencia artificial para garantizar votos justos y prevenir manipulaciones. Cada voto es verificado y validado automáticamente."
-    },
-    {
-      title: "¿Cuándo puedo votar?",
-      content: "Puedes votar desde el momento en que se publican las fotos hasta la fecha límite del concurso. El período de votación se muestra claramente en cada concurso."
-    },
-    {
-      title: "¿Puedo cambiar mi voto?",
-      content: "No, una vez emitido tu voto, no puede ser modificado. Esto garantiza la integridad del proceso de votación."
+      title: "Fair play",
+      description: "Está prohibido crear múltiples cuentas para votar. Los votos fraudulentos serán detectados y eliminados automáticamente."
     }
   ];
 
   return (
-    <div className="pt-24 pb-16 min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="container max-w-4xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="mb-6 text-primary hover:text-primary/80"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </Button>
-
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4 text-primary">Reglas de Votación</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Conoce las reglas y el funcionamiento de nuestro sistema de votación
-            </p>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
+        <div className="container max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="mr-3"
+            >
+              <Link to="/contests">
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Volver
+              </Link>
+            </Button>
+            <h1 className="text-2xl font-bold text-gray-900">Reglas de Votación</h1>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {rules.map((rule, index) => (
-              <motion.div
-                key={rule.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <Card className="h-full hover:shadow-lg transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <rule.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <CardTitle className="text-lg">{rule.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-base">
-                      {rule.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+      {/* Content */}
+      <div className="container max-w-4xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Sistema de Votación</h2>
+          <p className="text-xl text-gray-600">
+            Conoce cómo funciona nuestro sistema de votación transparente y justo
+          </p>
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mb-12"
-          >
-            <h2 className="text-3xl font-bold mb-8 text-center">Sistema de Votación</h2>
-            <div className="space-y-6">
-              {votingSystemInfo.map((info, index) => (
-                <Card key={info.title} className="hover:shadow-lg transition-all duration-300">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-primary">{info.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-base text-muted-foreground">{info.content}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-center"
-          >
-            <Card className="bg-primary/5 border-primary/20">
-              <CardContent className="pt-6">
-                <h3 className="text-xl font-semibold mb-3 text-primary">¿Tienes dudas sobre la votación?</h3>
-                <p className="text-muted-foreground mb-4">
-                  Si tienes alguna pregunta sobre el proceso de votación, no dudes en contactarnos.
-                </p>
-                <Button asChild className="bg-primary hover:bg-primary/90">
-                  <a href="/support">Contactar Soporte</a>
-                </Button>
+        {/* Rules Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          {rules.map((rule, index) => (
+            <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <rule.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2 text-gray-900">{rule.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{rule.description}</p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          </motion.div>
-        </motion.div>
+          ))}
+        </div>
+
+        {/* Voting Process */}
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-8">
+            <h3 className="text-2xl font-bold mb-6 text-center text-gray-900">Proceso de Votación</h3>
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  1
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Explora las fotos</h4>
+                  <p className="text-gray-600">Navega por todas las fotos participantes en el concurso. Tómate tu tiempo para apreciar cada una.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  2
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Selecciona tu favorita</h4>
+                  <p className="text-gray-600">Haz clic en el corazón de la foto que más te guste. Solo puedes votar una vez por concurso.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  3
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Confirma tu voto</h4>
+                  <p className="text-gray-600">Una vez que votes, tu elección quedará registrada. No podrás cambiar tu voto después.</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  4
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg mb-2">Espera los resultados</h4>
+                  <p className="text-gray-600">Al finalizar el período de votación, se anunciarán los ganadores basándose en el número total de votos.</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Additional Information */}
+        <div className="mt-12 bg-blue-50 rounded-lg p-8">
+          <h3 className="text-xl font-bold mb-4 text-gray-900">Información Adicional</h3>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex items-start space-x-2">
+              <span className="text-primary">•</span>
+              <span>Los votos son anónimos y no se muestran públicamente quién votó por cada foto.</span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <span className="text-primary">•</span>
+              <span>Puedes comentar en las fotos sin necesidad de votar por ellas.</span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <span className="text-primary">•</span>
+              <span>El sistema detecta automáticamente comportamientos sospechosos como votos múltiples o cuentas falsas.</span>
+            </li>
+            <li className="flex items-start space-x-2">
+              <span className="text-primary">•</span>
+              <span>Los organizadores del concurso no pueden influir en el resultado de la votación.</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
