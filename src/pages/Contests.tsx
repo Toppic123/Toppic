@@ -18,6 +18,10 @@ const Contests = () => {
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active"); // Default to active only
   
+  // Convert category and location objects to string arrays
+  const categoryStrings = categories.map(cat => typeof cat === 'string' ? cat : cat.name);
+  const locationStrings = locations.map(loc => typeof loc === 'string' ? loc : loc.name);
+  
   // Get user location for distance calculations
   useEffect(() => {
     if (navigator.geolocation) {
@@ -107,8 +111,8 @@ const Contests = () => {
           setActiveLocation={setActiveLocation}
           contestStatus={contestStatus}
           setContestStatus={setContestStatus}
-          categories={categories}
-          locations={locations}
+          categories={categoryStrings}
+          locations={locationStrings}
           clearFilters={clearFilters}
         />
         
