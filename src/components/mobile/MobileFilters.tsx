@@ -1,9 +1,9 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X } from "lucide-react";
+import LocationSearchInput from "./LocationSearchInput";
 
 interface MobileFiltersProps {
   onApply: (location: string, theme: string, status: string) => void;
@@ -31,6 +31,7 @@ const MobileFilters = ({ onApply, onClose, initialLocation, initialTheme, initia
 
   const handleApply = () => {
     onApply(location, theme === "all" ? "" : theme, status);
+    onClose();
   };
 
   const handleClear = () => {
@@ -41,7 +42,7 @@ const MobileFilters = ({ onApply, onClose, initialLocation, initialTheme, initia
   };
 
   return (
-    <div className="h-full bg-white">
+    <div className="h-full bg-white flex flex-col">
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -58,18 +59,16 @@ const MobileFilters = ({ onApply, onClose, initialLocation, initialTheme, initia
       </div>
 
       {/* Filter Options */}
-      <div className="p-4 space-y-6">
+      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
         {/* Location Filter */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Ubicación
           </label>
-          <Input
-            type="text"
-            placeholder="Ej: Barcelona, Madrid..."
+          <LocationSearchInput
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full"
+            onChange={setLocation}
+            placeholder="Ej: Barcelona, Madrid..."
           />
         </div>
 
@@ -111,8 +110,8 @@ const MobileFilters = ({ onApply, onClose, initialLocation, initialTheme, initia
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200">
+      {/* Action Buttons - Fixed at bottom */}
+      <div className="p-4 bg-white border-t border-gray-200">
         <div className="flex space-x-3">
           <Button 
             variant="outline" 

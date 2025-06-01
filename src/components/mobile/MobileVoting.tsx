@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Share, ArrowLeft, Send, User } from "lucide-react";
+import { MessageCircle, Share, ArrowLeft, Send, User, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileVotingProps {
@@ -17,6 +17,7 @@ interface Photo {
   title: string;
   contest: string;
   comments: Comment[];
+  votes: number;
 }
 
 interface Comment {
@@ -33,6 +34,7 @@ const mockPhotos: Photo[] = [
     photographer: "María López",
     title: "Flores de primavera",
     contest: "Primavera en Barcelona",
+    votes: 142,
     comments: [
       { id: "1", user: "Carlos", text: "¡Increíble foto!", timestamp: new Date() },
       { id: "2", user: "Ana", text: "Me encanta la composición", timestamp: new Date() }
@@ -44,6 +46,7 @@ const mockPhotos: Photo[] = [
     photographer: "Carlos Ruiz",
     title: "Geometría urbana",
     contest: "Arquitectura Urbana",
+    votes: 98,
     comments: [
       { id: "3", user: "Pedro", text: "Excelente perspectiva", timestamp: new Date() }
     ]
@@ -54,6 +57,7 @@ const mockPhotos: Photo[] = [
     photographer: "Ana García",
     title: "Atardecer dorado",
     contest: "Vida en la Playa",
+    votes: 205,
     comments: []
   },
   {
@@ -62,6 +66,7 @@ const mockPhotos: Photo[] = [
     photographer: "Luis Martín",
     title: "Bosque misterioso",
     contest: "Naturaleza Salvaje",
+    votes: 167,
     comments: []
   },
   {
@@ -70,6 +75,7 @@ const mockPhotos: Photo[] = [
     photographer: "Sofia Chen",
     title: "Refugio en la montaña",
     contest: "Arquitectura Rural",
+    votes: 89,
     comments: []
   },
   {
@@ -78,6 +84,7 @@ const mockPhotos: Photo[] = [
     photographer: "Roberto Silva",
     title: "Reflejos urbanos",
     contest: "Ciudad Nocturna",
+    votes: 234,
     comments: []
   }
 ];
@@ -202,6 +209,10 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           {/* Actions */}
           <div className="flex items-center justify-between mb-4 pb-4 border-b">
             <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-1">
+                <Heart className="h-5 w-5 text-red-500" />
+                <span className="text-sm font-medium">{selectedPhoto.votes} votos</span>
+              </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -312,9 +323,15 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                 <h3 className="font-medium text-sm truncate">{photo.title}</h3>
                 <p className="text-xs text-gray-500 truncate">por {photo.photographer}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center space-x-1">
-                    <MessageCircle className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs text-gray-600">{photo.comments.length}</span>
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-1">
+                      <Heart className="w-3 h-3 text-red-500" />
+                      <span className="text-xs text-gray-600">{photo.votes}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <MessageCircle className="w-3 h-3 text-gray-400" />
+                      <span className="text-xs text-gray-600">{photo.comments.length}</span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, LogOut, Trophy, Camera, Star } from "lucide-react";
+import { Settings, LogOut, Trophy, Camera, Star, Heart, Users, Award } from "lucide-react";
 
 interface MobileProfileProps {
   onNavigate: (screen: 'contests' | 'home') => void;
@@ -14,7 +14,8 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
     photosUploaded: 24,
     totalVotes: 156,
     followers: 89,
-    following: 42
+    following: 42,
+    contestsParticipated: 15
   };
 
   const recentContests = [
@@ -23,23 +24,30 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
       title: "Primavera en Barcelona",
       status: "Ganador",
       image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=100",
-      prize: "500€"
+      prize: "500€",
+      place: 1
     },
     {
       id: 2,
       title: "Arquitectura Urbana",
       status: "2º lugar",
       image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100",
-      prize: "200€"
+      prize: "200€",
+      place: 2
     },
     {
       id: 3,
       title: "Vida en la Playa",
       status: "Participante",
       image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=100",
-      prize: "-"
+      prize: "-",
+      place: null
     }
   ];
+
+  const winRatio = userStats.contestsParticipated > 0 
+    ? Math.round((userStats.contestsWon / userStats.contestsParticipated) * 100) 
+    : 0;
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
@@ -59,7 +67,7 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
 
       {/* Profile Info */}
       <div className="bg-white p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-4 mb-4">
+        <div className="flex items-center space-x-4 mb-6">
           <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
             <span className="text-2xl font-bold text-white">MG</span>
           </div>
@@ -73,19 +81,47 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 text-center">
+        {/* Social Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{userStats.followers}</div>
+            <div className="text-sm text-gray-600">Seguidores</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-gray-900">{userStats.following}</div>
+            <div className="text-sm text-gray-600">Siguiendo</div>
+          </div>
+        </div>
+
+        {/* Contest Stats */}
+        <div className="grid grid-cols-3 gap-4 text-center bg-gray-50 rounded-lg p-4">
           <div>
-            <div className="text-2xl font-bold text-gray-900">{userStats.contestsWon}</div>
-            <div className="text-xs text-gray-600">Concursos ganados</div>
+            <div className="text-xl font-bold text-gray-900">{userStats.contestsWon}</div>
+            <div className="text-xs text-gray-600">Ganados</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">{userStats.photosUploaded}</div>
-            <div className="text-xs text-gray-600">Fotos subidas</div>
+            <div className="text-xl font-bold text-gray-900">{userStats.photosUploaded}</div>
+            <div className="text-xs text-gray-600">Fotos</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900">{userStats.totalVotes}</div>
-            <div className="text-xs text-gray-600">Votos recibidos</div>
+            <div className="text-xl font-bold text-gray-900">{userStats.totalVotes}</div>
+            <div className="text-xs text-gray-600">Votos</div>
+          </div>
+        </div>
+
+        {/* Performance Stats */}
+        <div className="grid grid-cols-3 gap-4 text-center mt-4">
+          <div>
+            <div className="text-lg font-bold text-gray-900">{userStats.contestsParticipated}</div>
+            <div className="text-xs text-gray-600">Participaciones</div>
+          </div>
+          <div>
+            <div className="text-lg font-bold text-green-600">{winRatio}%</div>
+            <div className="text-xs text-gray-600">Ratio ganador</div>
+          </div>
+          <div className="flex flex-col items-center">
+            <Award className="h-5 w-5 text-amber-500 mb-1" />
+            <div className="text-xs text-gray-600">Top 10%</div>
           </div>
         </div>
       </div>
@@ -107,10 +143,10 @@ const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
                 <h4 className="font-medium text-gray-900 text-sm">{contest.title}</h4>
                 <div className="flex items-center space-x-2">
                   <Badge 
-                    variant={contest.status === "Ganador" ? "default" : contest.status === "2º lugar" ? "secondary" : "outline"}
+                    variant={contest.place === 1 ? "default" : contest.place === 2 ? "secondary" : "outline"}
                     className="text-xs"
                   >
-                    {contest.status === "Ganador" && <Trophy className="h-3 w-3 mr-1" />}
+                    {contest.place === 1 && <Trophy className="h-3 w-3 mr-1" />}
                     {contest.status}
                   </Badge>
                   {contest.prize !== "-" && (

@@ -94,7 +94,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
       
       return matchesQuery && matchesFilters && matchesLocation && matchesTheme && matchesStatus;
     })
-    .sort((a, b) => a.proximityKm - b.proximityKm); // Sort by proximity ascending
+    .sort((a, b) => a.proximityKm - b.proximityKm);
 
   if (showSearch) {
     return (
@@ -224,7 +224,8 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                 <img 
                   src={contest.image} 
                   alt={contest.title}
-                  className="w-full h-40 object-cover"
+                  className="w-full h-40 object-cover cursor-pointer"
+                  onClick={() => onNavigate('voting')}
                 />
                 <div className="absolute top-3 right-3">
                   <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
@@ -251,7 +252,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                   </div>
                 </div>
 
-                {/* Topics */}
                 <div className="flex flex-wrap gap-1 mb-4">
                   {contest.topics.map((topic, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
