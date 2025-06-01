@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map } from "lucide-react";
+import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map as MapIcon } from "lucide-react";
 import MobileSearchBar from "./MobileSearchBar";
 import MobileFilters from "./MobileFilters";
 import Map from "@/components/Map";
@@ -181,7 +180,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             onClick={() => setShowMap(true)}
             className="flex-1"
           >
-            <Map className="h-4 w-4 mr-2" />
+            <MapIcon className="h-4 w-4 mr-2" />
             Mapa
           </Button>
         </div>
