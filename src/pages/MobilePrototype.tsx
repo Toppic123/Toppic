@@ -18,7 +18,7 @@ type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'vot
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true); // Set to true since home is now the same as contests
 
   const handleNavigation = (screen: MobileScreen) => {
     setCurrentScreen(screen);
@@ -57,7 +57,7 @@ const MobilePrototype = () => {
     }
   };
 
-  const showBottomNav = isLoggedIn && !['home', 'register', 'login', 'vote'].includes(currentScreen);
+  const showBottomNav = isLoggedIn && !['register', 'login', 'vote'].includes(currentScreen);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -113,7 +113,7 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'contests' ? 'text-blue-600' : 'text-gray-500'}`}
+                      className={`flex flex-col items-center p-2 ${['home', 'contests'].includes(currentScreen) ? 'text-blue-600' : 'text-gray-500'}`}
                       onClick={() => handleNavigation('contests')}
                     >
                       <Search className="h-5 w-5 mb-1" />

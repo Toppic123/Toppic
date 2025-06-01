@@ -1,255 +1,148 @@
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Edit2, Camera, Trophy, Heart, LogOut, Home, Save, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Settings, LogOut, Trophy, Camera, Star } from "lucide-react";
 
 interface MobileProfileProps {
   onNavigate: (screen: 'contests' | 'home') => void;
   onLogout: () => void;
 }
 
-const mockUserPhotos = [
-  "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=300",
-  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300",
-  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300",
-  "https://images.unsplash.com/photo-1582560486382-347f58937685?w=300"
-];
-
 const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
-  const { toast } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    name: "María López",
-    bio: "Fotógrafa aficionada. Me encanta capturar la belleza en los momentos cotidianos.",
-    location: "Barcelona, España",
-    email: "maria.lopez@email.com",
-    website: "www.marialopezphoto.com"
-  });
-
-  const [editingInfo, setEditingInfo] = useState(userInfo);
-
-  const handleStartEdit = () => {
-    setEditingInfo(userInfo);
-    setIsEditing(true);
+  const userStats = {
+    contestsWon: 3,
+    photosUploaded: 24,
+    totalVotes: 156,
+    followers: 89,
+    following: 42
   };
 
-  const handleSave = () => {
-    setUserInfo(editingInfo);
-    setIsEditing(false);
-    toast({
-      title: "Perfil actualizado",
-      description: "Tus cambios han sido guardados correctamente"
-    });
-  };
-
-  const handleCancel = () => {
-    setEditingInfo(userInfo);
-    setIsEditing(false);
-  };
+  const recentContests = [
+    {
+      id: 1,
+      title: "Primavera en Barcelona",
+      status: "Ganador",
+      image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=100",
+      prize: "500€"
+    },
+    {
+      id: 2,
+      title: "Arquitectura Urbana",
+      status: "2º lugar",
+      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100",
+      prize: "200€"
+    },
+    {
+      id: 3,
+      title: "Vida en la Playa",
+      status: "Participante",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=100",
+      prize: "-"
+    }
+  ];
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
-      {/* Profile Header */}
-      <div className="bg-white">
-        {/* Cover Image */}
-        <div className="h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-          <div className="absolute top-4 left-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onNavigate('home')}
-              className="text-white hover:bg-white/20 p-2"
-            >
-              <Home className="h-4 w-4" />
-            </Button>
-          </div>
-          {!isEditing ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute top-4 right-4 text-white hover:bg-white/20"
-              onClick={handleStartEdit}
-            >
-              <Edit2 className="h-4 w-4" />
-            </Button>
-          ) : (
-            <div className="absolute top-4 right-4 flex space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCancel}
-                className="text-white hover:bg-white/20 p-2"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSave}
-                className="text-white hover:bg-white/20 p-2"
-              >
-                <Save className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Profile Info */}
-        <div className="px-4 pb-6 -mt-16 relative">
-          <div className="flex items-end space-x-4 mb-4">
-            <div className="w-24 h-24 bg-white rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-              <img 
-                src="https://i.pravatar.cc/150?img=1"
-                alt="Profile"
-                className="w-full h-full rounded-full object-cover"
-              />
-            </div>
-            <Button size="sm" variant="outline" className="mb-2">
-              <Camera className="h-4 w-4 mr-1" />
-              Cambiar foto
-            </Button>
-          </div>
-
-          {isEditing ? (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Nombre
-                </label>
-                <Input
-                  value={editingInfo.name}
-                  onChange={(e) => setEditingInfo({...editingInfo, name: e.target.value})}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Biografía
-                </label>
-                <Textarea
-                  value={editingInfo.bio}
-                  onChange={(e) => setEditingInfo({...editingInfo, bio: e.target.value})}
-                  placeholder="Cuéntanos sobre ti..."
-                  className="w-full"
-                  rows={3}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ubicación
-                </label>
-                <Input
-                  value={editingInfo.location}
-                  onChange={(e) => setEditingInfo({...editingInfo, location: e.target.value})}
-                  placeholder="Tu ubicación"
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <Input
-                  type="email"
-                  value={editingInfo.email}
-                  onChange={(e) => setEditingInfo({...editingInfo, email: e.target.value})}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sitio web
-                </label>
-                <Input
-                  value={editingInfo.website}
-                  onChange={(e) => setEditingInfo({...editingInfo, website: e.target.value})}
-                  placeholder="Tu sitio web"
-                  className="w-full"
-                />
-              </div>
-            </div>
-          ) : (
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">{userInfo.name}</h1>
-              <p className="text-gray-600 mt-1">{userInfo.bio}</p>
-              <p className="text-gray-500 text-sm mt-2">{userInfo.location}</p>
-              {userInfo.website && (
-                <p className="text-blue-600 text-sm mt-1">{userInfo.website}</p>
-              )}
-            </div>
-          )}
+      {/* Header */}
+      <div className="bg-white px-4 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-gray-900">Perfil</h1>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-gray-600 hover:bg-gray-100 p-2"
+          >
+            <Settings className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="bg-white mt-2 px-4 py-4">
+      {/* Profile Info */}
+      <div className="bg-white p-6 border-b border-gray-200">
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
+            <span className="text-2xl font-bold text-white">MG</span>
+          </div>
+          <div className="flex-1">
+            <h2 className="text-xl font-semibold text-gray-900">María García</h2>
+            <p className="text-gray-600">@maria_photographer</p>
+            <Badge variant="secondary" className="mt-1">
+              <Star className="h-3 w-3 mr-1" />
+              Fotógrafa Premium
+            </Badge>
+          </div>
+        </div>
+
+        {/* Stats */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-xl font-semibold text-gray-900">12</div>
-            <div className="text-sm text-gray-600">Fotos</div>
+            <div className="text-2xl font-bold text-gray-900">{userStats.contestsWon}</div>
+            <div className="text-xs text-gray-600">Concursos ganados</div>
           </div>
           <div>
-            <div className="text-xl font-semibold text-gray-900">3</div>
-            <div className="text-sm text-gray-600">Concursos</div>
+            <div className="text-2xl font-bold text-gray-900">{userStats.photosUploaded}</div>
+            <div className="text-xs text-gray-600">Fotos subidas</div>
           </div>
           <div>
-            <div className="text-xl font-semibold text-gray-900">156</div>
-            <div className="text-sm text-gray-600">Votos</div>
+            <div className="text-2xl font-bold text-gray-900">{userStats.totalVotes}</div>
+            <div className="text-xs text-gray-600">Votos recibidos</div>
           </div>
         </div>
       </div>
 
-      {/* Achievements */}
-      <div className="bg-white mt-2 px-4 py-4">
-        <h3 className="font-semibold text-gray-900 mb-3">Logros</h3>
-        <div className="flex space-x-2">
-          <Badge variant="outline" className="flex items-center">
-            <Trophy className="h-3 w-3 mr-1" />
-            1er lugar
-          </Badge>
-          <Badge variant="outline" className="flex items-center">
-            <Heart className="h-3 w-3 mr-1" />
-            Popular
-          </Badge>
+      {/* Recent Contests */}
+      <div className="bg-white mt-4 mx-4 rounded-lg shadow-sm">
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="font-semibold text-gray-900">Concursos Recientes</h3>
         </div>
-      </div>
-
-      {/* Photos Grid */}
-      <div className="bg-white mt-2 px-4 py-4">
-        <h3 className="font-semibold text-gray-900 mb-3">Mis fotos</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {mockUserPhotos.map((photo, index) => (
-            <img
-              key={index}
-              src={photo}
-              alt={`Foto ${index + 1}`}
-              className="aspect-square object-cover rounded-lg"
-            />
+        <div className="space-y-1">
+          {recentContests.map((contest) => (
+            <div key={contest.id} className="flex items-center p-4 hover:bg-gray-50">
+              <img 
+                src={contest.image} 
+                alt={contest.title}
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+              <div className="ml-3 flex-1">
+                <h4 className="font-medium text-gray-900 text-sm">{contest.title}</h4>
+                <div className="flex items-center space-x-2">
+                  <Badge 
+                    variant={contest.status === "Ganador" ? "default" : contest.status === "2º lugar" ? "secondary" : "outline"}
+                    className="text-xs"
+                  >
+                    {contest.status === "Ganador" && <Trophy className="h-3 w-3 mr-1" />}
+                    {contest.status}
+                  </Badge>
+                  {contest.prize !== "-" && (
+                    <span className="text-xs text-green-600 font-medium">{contest.prize}</span>
+                  )}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Logout */}
-      <div className="bg-white mt-2 px-4 py-4">
+      {/* Quick Actions */}
+      <div className="p-4 space-y-3">
         <Button 
-          variant="ghost" 
-          className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+          variant="outline" 
+          className="w-full justify-start"
+          onClick={() => onNavigate('contests')}
+        >
+          <Camera className="h-4 w-4 mr-2" />
+          Ver todos mis concursos
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          className="w-full justify-start text-red-600 border-red-200 hover:bg-red-50"
           onClick={onLogout}
         >
-          <LogOut className="h-4 w-4 mr-3" />
+          <LogOut className="h-4 w-4 mr-2" />
           Cerrar sesión
         </Button>
       </div>
-
-      <div className="h-20" /> {/* Bottom spacing */}
     </div>
   );
 };

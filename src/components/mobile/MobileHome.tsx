@@ -1,51 +1,305 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Trophy, Users, Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map } from "lucide-react";
+import MobileSearchBar from "./MobileSearchBar";
+import MobileFilters from "./MobileFilters";
+import MapComponent from "@/components/Map";
 
 interface MobileHomeProps {
-  onNavigate: (screen: 'register' | 'login' | 'contests') => void;
+  onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
 }
 
+const mockContests = [
+  {
+    id: 1,
+    title: "Primavera en Barcelona",
+    location: "Barcelona",
+    distance: "0.5 km",
+    endDate: "2025-04-15",
+    participants: 45,
+    prize: "500€",
+    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
+    topics: ["Flores", "Naturaleza"],
+    isActive: true,
+    proximityKm: 0.5
+  },
+  {
+    id: 2,
+    title: "Arquitectura Urbana",
+    location: "Madrid",
+    distance: "1.2 km",
+    endDate: "2025-03-30",
+    participants: 32,
+    prize: "300€",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400",
+    topics: ["Arquitectura"],
+    isActive: true,
+    proximityKm: 1.2
+  },
+  {
+    id: 3,
+    title: "Vida en la Playa",
+    location: "Valencia",
+    distance: "3.4 km",
+    endDate: "2025-05-01",
+    participants: 67,
+    prize: "750€",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
+    topics: ["Playa", "Paisajes"],
+    isActive: true,
+    proximityKm: 3.4
+  }
+];
+
 const MobileHome = ({ onNavigate }: MobileHomeProps) => {
-  return (
-    <div className="h-full bg-gradient-to-br from-blue-500 to-purple-600 text-white overflow-y-auto">
-      <div className="px-6 py-8">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
-            <Camera className="h-8 w-8 text-white" />
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [locationFilter, setLocationFilter] = useState("");
+  const [themeFilter, setThemeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const handleSearch = (query: string, filters: string[]) => {
+    setSearchQuery(query);
+    setActiveFilters(filters);
+    console.log("Searching for:", query, "with filters:", filters);
+  };
+
+  const handleFiltersApply = (location: string, theme: string, status: string) => {
+    setLocationFilter(location);
+    setThemeFilter(theme);
+    setStatusFilter(status);
+    setShowFilters(false);
+  };
+
+  const filteredContests = mockContests
+    .filter(contest => {
+      const matchesQuery = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          contest.location.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilters = activeFilters.length === 0 || 
+                            activeFilters.some(filter => 
+                              contest.location.toLowerCase().includes(filter.toLowerCase()) ||
+                              contest.topics.some(topic => topic.toLowerCase().includes(filter.toLowerCase()))
+                            );
+
+      const matchesLocation = !locationFilter || contest.location.toLowerCase().includes(locationFilter.toLowerCase());
+      const matchesTheme = !themeFilter || contest.topics.some(topic => topic.toLowerCase().includes(themeFilter.toLowerCase()));
+      const matchesStatus = statusFilter === "all" || 
+                           (statusFilter === "active" && contest.isActive) ||
+                           (statusFilter === "finished" && !contest.isActive);
+      
+      return matchesQuery && matchesFilters && matchesLocation && matchesTheme && matchesStatus;
+    })
+    .sort((a, b) => a.proximityKm - b.proximityKm);
+
+  if (showSearch) {
+    return (
+      <div className="h-full bg-white">
+        <MobileSearchBar 
+          onSearch={handleSearch}
+          onClose={() => setShowSearch(false)}
+        />
+      </div>
+    );
+  }
+
+  if (showFilters) {
+    return (
+      <div className="h-full bg-white">
+        <MobileFilters 
+          onApply={handleFiltersApply}
+          onClose={() => setShowFilters(false)}
+          initialLocation={locationFilter}
+          initialTheme={themeFilter}
+          initialStatus={statusFilter}
+        />
+      </div>
+    );
+  }
+
+  if (showMap) {
+    return (
+      <div className="h-full bg-white">
+        <div className="bg-white px-4 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowMap(false)}
+              className="text-gray-600 hover:bg-gray-100 p-2"
+            >
+              ← Volver
+            </Button>
+            <h1 className="text-lg font-semibold">Mapa de Concursos</h1>
+            <div></div>
           </div>
-          <h1 className="text-2xl font-bold">TOPPICS</h1>
-          <p className="text-white/80 text-sm mt-2">Participa en concursos fotográficos cerca de ti y gana premios</p>
         </div>
+        <div className="flex-1">
+          <MapComponent showMustardButton={true} />
+        </div>
+      </div>
+    );
+  }
 
-        {/* CTA Buttons */}
-        <div className="space-y-3 mt-12">
-          <Button 
-            onClick={() => onNavigate('register')}
-            className="w-full bg-white text-blue-600 hover:bg-gray-100 font-medium py-3 text-base"
-          >
-            Crear cuenta
-          </Button>
-          <Button 
-            onClick={() => onNavigate('login')}
-            variant="outline" 
-            className="w-full border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-600 font-medium py-3 text-base"
-          >
-            Iniciar sesión
-          </Button>
+  return (
+    <div className="h-full bg-gray-50 overflow-y-auto">
+      {/* Header */}
+      <div className="bg-white px-4 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between mb-3">
+          <h1 className="text-xl font-semibold text-gray-900">Concursos</h1>
         </div>
+        <Button
+          variant="outline"
+          onClick={() => setShowSearch(true)}
+          className="w-full justify-start text-gray-500"
+        >
+          <Search className="h-4 w-4 mr-2" />
+          Buscar lugares o temas...
+        </Button>
+      </div>
 
-        {/* Quick Preview */}
-        <div className="mt-8 text-center">
-          <Button 
-            onClick={() => onNavigate('contests')}
-            variant="ghost" 
-            className="text-white hover:bg-white/10 underline"
+      {/* Filters and Map Section */}
+      <div className="px-4 py-3 bg-white border-b border-gray-200">
+        <div className="flex space-x-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(true)}
+            className="flex-1"
           >
-            Ver concursos disponibles
+            <Filter className="h-4 w-4 mr-2" />
+            Filtros
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowMap(true)}
+            className="flex-1"
+          >
+            <Map className="h-4 w-4 mr-2" />
+            Mapa
           </Button>
         </div>
+      </div>
+
+      {/* Active Filters Display */}
+      {(activeFilters.length > 0 || locationFilter || themeFilter || statusFilter !== "all") && (
+        <div className="px-4 py-3 bg-white border-b border-gray-200">
+          <div className="text-sm text-gray-600 mb-2">Filtros activos:</div>
+          <div className="flex flex-wrap gap-2">
+            {activeFilters.map((filter, index) => (
+              <Badge key={index} variant="secondary">
+                {filter}
+              </Badge>
+            ))}
+            {locationFilter && (
+              <Badge variant="secondary">
+                Ubicación: {locationFilter}
+              </Badge>
+            )}
+            {themeFilter && (
+              <Badge variant="secondary">
+                Tema: {themeFilter}
+              </Badge>
+            )}
+            {statusFilter !== "all" && (
+              <Badge variant="secondary">
+                {statusFilter === "active" ? "Activos" : "Finalizados"}
+              </Badge>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Contests List */}
+      <div className="p-4 space-y-4">
+        {filteredContests.length > 0 ? (
+          filteredContests.map((contest) => (
+            <div key={contest.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="relative">
+                <img 
+                  src={contest.image} 
+                  alt={contest.title}
+                  className="w-full h-40 object-cover"
+                />
+                <div className="absolute top-3 right-3">
+                  <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+                    {contest.isActive ? "Activo" : "Finalizado"}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="p-4">
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">{contest.title}</h3>
+                
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    {contest.location} • {contest.distance}
+                  </div>
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Termina el {new Date(contest.endDate).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center text-gray-600 text-sm">
+                    <Trophy className="h-4 w-4 mr-2" />
+                    Premio: {contest.prize}
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-1 mb-4">
+                  {contest.topics.map((topic, index) => (
+                    <Badge key={index} variant="outline" className="text-xs">
+                      {topic}
+                    </Badge>
+                  ))}
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">{contest.participants} participantes</span>
+                    <Button 
+                      size="sm"
+                      onClick={() => onNavigate('upload')}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      <Camera className="h-4 w-4 mr-1" />
+                      Participar
+                    </Button>
+                  </div>
+                  
+                  <div className="flex space-x-3">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => onNavigate('voting')}
+                      className="flex-1"
+                    >
+                      Fotos
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => onNavigate('vote')}
+                      className="flex-1 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
+                    >
+                      Votar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No se encontraron concursos que coincidan con tu búsqueda</p>
+          </div>
+        )}
       </div>
     </div>
   );

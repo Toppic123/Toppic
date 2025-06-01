@@ -2,8 +2,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Calendar, Trophy, Camera, User } from "lucide-react";
+import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map } from "lucide-react";
 import MobileSearchBar from "./MobileSearchBar";
+import MobileFilters from "./MobileFilters";
+import Map from "@/components/Map";
 
 interface MobileContestsProps {
   onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
@@ -19,7 +21,9 @@ const mockContests = [
     participants: 45,
     prize: "500€",
     image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
-    topics: ["Flores", "Naturaleza"]
+    topics: ["Flores", "Naturaleza"],
+    isActive: true,
+    proximityKm: 0.5
   },
   {
     id: 2,
@@ -30,7 +34,9 @@ const mockContests = [
     participants: 32,
     prize: "300€",
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400",
-    topics: ["Arquitectura"]
+    topics: ["Arquitectura"],
+    isActive: true,
+    proximityKm: 1.2
   },
   {
     id: 3,
@@ -41,7 +47,9 @@ const mockContests = [
     participants: 67,
     prize: "750€",
     image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
-    topics: ["Playa", "Paisajes"]
+    topics: ["Playa", "Paisajes"],
+    isActive: true,
+    proximityKm: 3.4
   }
 ];
 
@@ -49,6 +57,11 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [locationFilter, setLocationFilter] = useState("");
+  const [themeFilter, setThemeFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const handleSearch = (query: string, filters: string[]) => {
     setSearchQuery(query);
@@ -56,18 +69,33 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     console.log("Searching for:", query, "with filters:", filters);
   };
 
-  const filteredContests = mockContests.filter(contest => {
-    const matchesQuery = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        contest.location.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesFilters = activeFilters.length === 0 || 
-                          activeFilters.some(filter => 
-                            contest.location.toLowerCase().includes(filter.toLowerCase()) ||
-                            contest.topics.some(topic => topic.toLowerCase().includes(filter.toLowerCase()))
-                          );
-    
-    return matchesQuery && matchesFilters;
-  });
+  const handleFiltersApply = (location: string, theme: string, status: string) => {
+    setLocationFilter(location);
+    setThemeFilter(theme);
+    setStatusFilter(status);
+    setShowFilters(false);
+  };
+
+  const filteredContests = mockContests
+    .filter(contest => {
+      const matchesQuery = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          contest.location.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilters = activeFilters.length === 0 || 
+                            activeFilters.some(filter => 
+                              contest.location.toLowerCase().includes(filter.toLowerCase()) ||
+                              contest.topics.some(topic => topic.toLowerCase().includes(filter.toLowerCase()))
+                            );
+
+      const matchesLocation = !locationFilter || contest.location.toLowerCase().includes(locationFilter.toLowerCase());
+      const matchesTheme = !themeFilter || contest.topics.some(topic => topic.toLowerCase().includes(themeFilter.toLowerCase()));
+      const matchesStatus = statusFilter === "all" || 
+                           (statusFilter === "active" && contest.isActive) ||
+                           (statusFilter === "finished" && !contest.isActive);
+      
+      return matchesQuery && matchesFilters && matchesLocation && matchesTheme && matchesStatus;
+    })
+    .sort((a, b) => a.proximityKm - b.proximityKm); // Sort by proximity ascending
 
   if (showSearch) {
     return (
@@ -80,20 +108,50 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     );
   }
 
+  if (showFilters) {
+    return (
+      <div className="h-full bg-white">
+        <MobileFilters 
+          onApply={handleFiltersApply}
+          onClose={() => setShowFilters(false)}
+          initialLocation={locationFilter}
+          initialTheme={themeFilter}
+          initialStatus={statusFilter}
+        />
+      </div>
+    );
+  }
+
+  if (showMap) {
+    return (
+      <div className="h-full bg-white">
+        <div className="bg-white px-4 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowMap(false)}
+              className="text-gray-600 hover:bg-gray-100 p-2"
+            >
+              ← Volver
+            </Button>
+            <h1 className="text-lg font-semibold">Mapa de Concursos</h1>
+            <div></div>
+          </div>
+        </div>
+        <div className="flex-1">
+          <Map showMustardButton={true} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">
           <h1 className="text-xl font-semibold text-gray-900">Concursos</h1>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onNavigate('profile')}
-            className="text-gray-600 hover:bg-gray-100 p-2"
-          >
-            <User className="h-5 w-5" />
-          </Button>
         </div>
         <Button
           variant="outline"
@@ -105,8 +163,32 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
         </Button>
       </div>
 
+      {/* Filters and Map Section */}
+      <div className="px-4 py-3 bg-white border-b border-gray-200">
+        <div className="flex space-x-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(true)}
+            className="flex-1"
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            Filtros
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowMap(true)}
+            className="flex-1"
+          >
+            <Map className="h-4 w-4 mr-2" />
+            Mapa
+          </Button>
+        </div>
+      </div>
+
       {/* Active Filters Display */}
-      {activeFilters.length > 0 && (
+      {(activeFilters.length > 0 || locationFilter || themeFilter || statusFilter !== "all") && (
         <div className="px-4 py-3 bg-white border-b border-gray-200">
           <div className="text-sm text-gray-600 mb-2">Filtros activos:</div>
           <div className="flex flex-wrap gap-2">
@@ -115,6 +197,21 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                 {filter}
               </Badge>
             ))}
+            {locationFilter && (
+              <Badge variant="secondary">
+                Ubicación: {locationFilter}
+              </Badge>
+            )}
+            {themeFilter && (
+              <Badge variant="secondary">
+                Tema: {themeFilter}
+              </Badge>
+            )}
+            {statusFilter !== "all" && (
+              <Badge variant="secondary">
+                {statusFilter === "active" ? "Activos" : "Finalizados"}
+              </Badge>
+            )}
           </div>
         </div>
       )}
@@ -131,7 +228,9 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                   className="w-full h-40 object-cover"
                 />
                 <div className="absolute top-3 right-3">
-                  <Badge className="bg-green-500 text-white">Activo</Badge>
+                  <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+                    {contest.isActive ? "Activo" : "Finalizado"}
+                  </Badge>
                 </div>
               </div>
               
@@ -165,7 +264,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">{contest.participants} participantes</span>
-                    {/* Participate Button - Above others */}
                     <Button 
                       size="sm"
                       onClick={() => onNavigate('upload')}
@@ -176,7 +274,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     </Button>
                   </div>
                   
-                  {/* Bottom buttons row */}
                   <div className="flex space-x-3">
                     <Button 
                       size="sm" 
