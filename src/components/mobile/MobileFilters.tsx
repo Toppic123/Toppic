@@ -30,12 +30,12 @@ const MobileFilters = ({ onApply, onClose, initialLocation, initialTheme, initia
   const [status, setStatus] = useState(initialStatus);
 
   const handleApply = () => {
-    onApply(location, theme, status);
+    onApply(location, theme === "all" ? "" : theme, status);
   };
 
   const handleClear = () => {
     setLocation("");
-    setTheme("");
+    setTheme("all");
     setStatus("all");
     onApply("", "", "all");
   };
@@ -83,7 +83,7 @@ const MobileFilters = ({ onApply, onClose, initialLocation, initialTheme, initia
               <SelectValue placeholder="Seleccionar tema" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos los temas</SelectItem>
+              <SelectItem value="all">Todos los temas</SelectItem>
               {themes.map((themeOption) => (
                 <SelectItem key={themeOption} value={themeOption}>
                   {themeOption}
