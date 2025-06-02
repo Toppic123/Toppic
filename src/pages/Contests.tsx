@@ -15,10 +15,26 @@ const Contests = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLocation, setActiveLocation] = useState("all");
-  const [displayedContests, setDisplayedContests] = useState(allContests);
+  const [displayedContests, setDisplayedContests] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState("grid");
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active");
+  
+  // Transform contests to match ContestGrid interface
+  const transformedContests = allContests.map(contest => ({
+    id: contest.id,
+    title: contest.title,
+    imageUrl: contest.imageUrl || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
+    location: contest.location,
+    locationCoords: contest.coordinates || { lat: 40.4168, lng: -3.7038 },
+    maxDistance: 1, // Default max distance in km
+    dateStart: contest.startDate || new Date().toISOString(),
+    dateEnd: contest.endDate,
+    participantsCount: contest.participants,
+    photosCount: 0, // Default since it's not in the database yet
+    category: contest.category,
+    isActive: contest.isActive,
+  }));
   
   // Extract unique categories and locations from contests
   const categories = ["all", ...Array.from(new Set(allContests.map(contest => contest.category)))];
@@ -43,7 +59,7 @@ const Contests = () => {
   
   // Filter contests based on search query, active category, location and status
   useEffect(() => {
-    let filtered = allContests;
+    let filtered = transformedContests;
     
     // Filter by contest status (active or finished) - default to active only
     if (contestStatus !== "all") {
@@ -81,7 +97,7 @@ const Contests = () => {
     });
     
     setDisplayedContests(filtered);
-  }, [searchQuery, activeCategory, activeLocation, contestStatus, allContests]);
+  }, [searchQuery, activeCategory, activeLocation, contestStatus, transformedContests]);
   
   // Clear all filters
   const clearFilters = () => {
