@@ -170,7 +170,6 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     setIsDragging(false);
   }, [isDragging, currentPair, handleVote]);
 
-  // Handle direct clicks on photos
   const handlePhotoClick = useCallback((photo: VotingPhoto, side: 'left' | 'right') => {
     if (!isDragging) {
       handleVote(photo, side);
@@ -225,16 +224,16 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         </div>
       </div>
 
-      {/* Photos Container - Horizontal Layout */}
+      {/* Photos Container - Fixed Horizontal Layout */}
       <div 
         ref={containerRef}
-        className="flex h-full pt-20 pb-24"
+        className="flex h-full pt-20 pb-32"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         {/* Left Photo */}
-        <div className="flex-1 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[0], 'left')}>
+        <div className="w-1/2 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[0], 'left')}>
           {/* Vote Indicator for Left Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
@@ -271,7 +270,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         <div className="w-1 bg-white/30 flex-shrink-0"></div>
 
         {/* Right Photo */}
-        <div className="flex-1 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[1], 'right')}>
+        <div className="w-1/2 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[1], 'right')}>
           {/* Vote Indicator for Right Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"

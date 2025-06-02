@@ -19,6 +19,7 @@ type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'vot
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
   const [isLoggedIn, setIsLoggedIn] = useState(true); // Set to true since home is now the same as contests
+  const [hasNotifications, setHasNotifications] = useState(true); // Mock notification state
 
   const handleNavigation = (screen: MobileScreen) => {
     setCurrentScreen(screen);
@@ -51,7 +52,7 @@ const MobilePrototype = () => {
       case 'vote':
         return <MobileSwipeVoting onNavigate={handleNavigation} />;
       case 'profile':
-        return <MobileProfile onNavigate={handleNavigation} onLogout={handleLogout} />;
+        return <MobileProfile onNavigate={handleNavigation} />;
       case 'settings':
         return (
           <div className="h-full bg-gray-50 p-4">
@@ -150,10 +151,15 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'profile' ? 'text-blue-600' : 'text-gray-500'}`}
+                      className={`flex flex-col items-center p-2 relative ${currentScreen === 'profile' ? 'text-blue-600' : 'text-gray-500'}`}
                       onClick={() => handleNavigation('profile')}
                     >
-                      <User className="h-5 w-5 mb-1" />
+                      <div className="relative">
+                        <User className="h-5 w-5 mb-1" />
+                        {hasNotifications && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                        )}
+                      </div>
                       <span className="text-xs">Perfil</span>
                     </Button>
                   </div>

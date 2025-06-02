@@ -6,7 +6,6 @@ import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map as MapIcon } from
 import MobileSearchBar from "./MobileSearchBar";
 import MobileFilters from "./MobileFilters";
 import Map from "@/components/Map";
-import ContestAdBanner from "@/components/contests/ContestAdBanner";
 
 interface MobileContestsProps {
   onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
@@ -186,11 +185,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             Mapa
           </Button>
         </div>
-      </div>
-
-      {/* Top Ad Banner - Only one banner on this page */}
-      <div className="px-4 pt-4">
-        <ContestAdBanner position="top" />
       </div>
 
       {/* Active Filters Display */}

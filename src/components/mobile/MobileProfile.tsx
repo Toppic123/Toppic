@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Camera, Trophy, Users, Calendar, MapPin } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Settings, Camera, Trophy, Users, Calendar, MapPin, X } from "lucide-react";
 
 interface MobileProfileProps {
   onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'vote' | 'settings') => void;
@@ -14,7 +15,6 @@ const userStats = {
   contestsWon: 3,
   contestsParticipated: 12,
   totalPhotos: 28,
-  totalLikes: 1240,
   location: "Barcelona, España",
   memberSince: "Marzo 2024"
 };
@@ -24,28 +24,24 @@ const userPhotos = [
     id: 1,
     url: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=300",
     contest: "Primavera en Barcelona",
-    likes: 45,
     position: "1º"
   },
   {
     id: 2,
     url: "https://images.unsplash.com/photo-1464822759844-d150baec81f2?w=300",
     contest: "Flores Urbanas",
-    likes: 38,
     position: "3º"
   },
   {
     id: 3,
     url: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=300",
     contest: "Naturaleza Pura",
-    likes: 52,
     position: "1º"
   },
   {
     id: 4,
     url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300",
     contest: "Bosques Mágicos",
-    likes: 41,
     position: "2º"
   }
 ];
@@ -76,6 +72,7 @@ const userContests = [
 
 const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
   const [activeTab, setActiveTab] = useState<'photos' | 'contests'>('photos');
+  const [selectedPhoto, setSelectedPhoto] = useState<typeof userPhotos[0] | null>(null);
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
@@ -114,23 +111,15 @@ const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
           </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats Grid - Removed likes and participants */}
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{userStats.contestsWon}</div>
             <div className="text-sm text-gray-600">Concursos Ganados</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{userStats.contestsParticipated}</div>
-            <div className="text-sm text-gray-600">Participaciones</div>
-          </div>
-          <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">{userStats.totalPhotos}</div>
             <div className="text-sm text-gray-600">Fotos Subidas</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">{userStats.totalLikes}</div>
-            <div className="text-sm text-gray-600">Me Gusta</div>
           </div>
         </div>
       </div>
@@ -169,7 +158,8 @@ const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
                   <img 
                     src={photo.url} 
                     alt={photo.contest}
-                    className="w-full h-40 object-cover"
+                    className="w-full h-40 object-cover cursor-pointer"
+                    onClick={() => setSelectedPhoto(photo)}
                   />
                   <div className="absolute top-2 left-2">
                     <Badge 
@@ -181,9 +171,6 @@ const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
                     >
                       {photo.position}
                     </Badge>
-                  </div>
-                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                    ❤️ {photo.likes}
                   </div>
                 </div>
                 <div className="p-3">
@@ -217,6 +204,45 @@ const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
           </div>
         )}
       </div>
+
+      {/* Photo Enlargement Dialog */}
+      <Dialog open={selectedPhoto !== null} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
+        <DialogContent className="sm:max-w-md p-0 bg-black">
+          {selectedPhoto && (
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedPhoto(null)}
+                className="absolute top-2 right-2 z-10 text-white hover:bg-white/20 h-8 w-8 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <img 
+                src={selectedPhoto.url} 
+                alt={selectedPhoto.contest}
+                className="w-full h-auto max-h-[80vh] object-contain"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                <div className="text-white">
+                  <h3 className="text-lg font-semibold">{selectedPhoto.contest}</h3>
+                  <div className="flex items-center justify-between mt-2">
+                    <Badge 
+                      className={`text-xs ${
+                        selectedPhoto.position === "1º" ? "bg-yellow-500" :
+                        selectedPhoto.position === "2º" ? "bg-gray-400" :
+                        "bg-orange-600"
+                      } text-white`}
+                    >
+                      Posición: {selectedPhoto.position}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

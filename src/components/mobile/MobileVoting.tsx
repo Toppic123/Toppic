@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Share2, MessageCircle, Trophy, Users } from "lucide-react";
-import ContestAdBanner from "@/components/contests/ContestAdBanner";
+import MobilePhotoDetail from "./MobilePhotoDetail";
 
 interface MobileVotingProps {
   onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
@@ -62,6 +62,7 @@ const mockPhotos = [
 
 const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
   const [likedPhotos, setLikedPhotos] = useState<Set<number>>(new Set());
+  const [selectedPhoto, setSelectedPhoto] = useState<typeof mockPhotos[0] | null>(null);
 
   const handleLike = (photoId: number) => {
     setLikedPhotos(prev => {
@@ -74,6 +75,19 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
       return newSet;
     });
   };
+
+  const handlePhotoClick = (photo: typeof mockPhotos[0]) => {
+    setSelectedPhoto(photo);
+  };
+
+  if (selectedPhoto) {
+    return (
+      <MobilePhotoDetail 
+        photo={selectedPhoto} 
+        onBack={() => setSelectedPhoto(null)} 
+      />
+    );
+  }
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
@@ -107,11 +121,6 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
         </div>
       </div>
 
-      {/* Top Ad Banner */}
-      <div className="px-4 pt-4">
-        <ContestAdBanner position="top" />
-      </div>
-
       {/* Photo Grid - Two photos horizontally */}
       <div className="p-4">
         <div className="grid grid-cols-2 gap-3">
@@ -121,7 +130,8 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                 <img 
                   src={photo.url} 
                   alt={photo.description}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 object-cover cursor-pointer"
+                  onClick={() => handlePhotoClick(photo)}
                 />
                 <div className="absolute top-2 right-2">
                   <Button
@@ -132,7 +142,10 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                         ? "bg-red-500 hover:bg-red-600 text-white" 
                         : "bg-white/80 hover:bg-white text-gray-600"
                     }`}
-                    onClick={() => handleLike(photo.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLike(photo.id);
+                    }}
                   >
                     <Heart 
                       size={16} 
@@ -161,6 +174,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                     size="sm"
                     variant="ghost"
                     className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <Share2 size={12} />
                   </Button>
