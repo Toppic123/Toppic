@@ -6,54 +6,14 @@ import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map as MapIcon } from
 import MobileSearchBar from "./MobileSearchBar";
 import MobileFilters from "./MobileFilters";
 import Map from "@/components/Map";
+import { useContestsData } from "@/hooks/useContestsData";
 
 interface MobileContestsProps {
   onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
 }
 
-const mockContests = [
-  {
-    id: 1,
-    title: "Primavera en Barcelona",
-    location: "Barcelona",
-    distance: "0.5 km",
-    endDate: "2025-04-15",
-    participants: 45,
-    prize: "500€",
-    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
-    topics: ["Flores", "Naturaleza"],
-    isActive: true,
-    proximityKm: 0.5
-  },
-  {
-    id: 2,
-    title: "Arquitectura Urbana",
-    location: "Madrid",
-    distance: "1.2 km",
-    endDate: "2025-03-30",
-    participants: 32,
-    prize: "300€",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400",
-    topics: ["Arquitectura"],
-    isActive: true,
-    proximityKm: 1.2
-  },
-  {
-    id: 3,
-    title: "Vida en la Playa",
-    location: "Valencia",
-    distance: "3.4 km",
-    endDate: "2025-05-01",
-    participants: 67,
-    prize: "750€",
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
-    topics: ["Playa", "Paisajes"],
-    isActive: true,
-    proximityKm: 3.4
-  }
-];
-
 const MobileContests = ({ onNavigate }: MobileContestsProps) => {
+  const { contests: allContests, isLoading } = useContestsData();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [showSearch, setShowSearch] = useState(false);
@@ -76,7 +36,22 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     setShowFilters(false);
   };
 
-  const filteredContests = mockContests
+  // Convert contests to mobile format
+  const mobileContests = allContests.map(contest => ({
+    id: parseInt(contest.id.slice(0, 8), 16), // Convert UUID to number for mobile compatibility
+    title: contest.title,
+    location: contest.location,
+    distance: "0.5 km", // Default distance
+    endDate: contest.endDate,
+    participants: contest.participants,
+    prize: contest.prize || "500€",
+    image: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
+    topics: [contest.category],
+    isActive: contest.isActive,
+    proximityKm: 0.5
+  }));
+
+  const filteredContests = mobileContests
     .filter(contest => {
       const matchesQuery = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           contest.location.toLowerCase().includes(searchQuery.toLowerCase());
@@ -96,6 +71,14 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
       return matchesQuery && matchesFilters && matchesLocation && matchesTheme && matchesStatus;
     })
     .sort((a, b) => a.proximityKm - b.proximityKm);
+
+  if (isLoading) {
+    return (
+      <div className="h-full bg-gray-50 flex items-center justify-center">
+        <p className="text-gray-500">Cargando concursos...</p>
+      </div>
+    );
+  }
 
   if (showSearch) {
     return (

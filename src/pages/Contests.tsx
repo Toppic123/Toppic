@@ -7,20 +7,22 @@ import { Separator } from "@/components/ui/separator";
 import ContestFilters from "@/components/contests/ContestFilters";
 import ContestGrid from "@/components/contests/ContestGrid";
 import ContestMapView, { ViewToggleButton } from "@/components/contests/ContestMapView";
-import { allContests, categories, locations, calculateDistance } from "@/utils/contestsData";
+import { calculateDistance } from "@/utils/contestsData";
+import { useContestsData } from "@/hooks/useContestsData";
 
 const Contests = () => {
+  const { contests: allContests, isLoading } = useContestsData();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [activeLocation, setActiveLocation] = useState("all");
   const [displayedContests, setDisplayedContests] = useState(allContests);
   const [viewMode, setViewMode] = useState("grid");
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
-  const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active"); // Default to active only
+  const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active");
   
-  // Convert category and location objects to string arrays
-  const categoryStrings = categories.map(cat => typeof cat === 'string' ? cat : cat.name);
-  const locationStrings = locations.map(loc => typeof loc === 'string' ? loc : loc.name);
+  // Extract unique categories and locations from contests
+  const categories = ["all", ...Array.from(new Set(allContests.map(contest => contest.category)))];
+  const locations = ["all", ...Array.from(new Set(allContests.map(contest => contest.location)))];
   
   // Get user location for distance calculations
   useEffect(() => {
@@ -79,15 +81,27 @@ const Contests = () => {
     });
     
     setDisplayedContests(filtered);
-  }, [searchQuery, activeCategory, activeLocation, contestStatus]);
+  }, [searchQuery, activeCategory, activeLocation, contestStatus, allContests]);
   
   // Clear all filters
   const clearFilters = () => {
     setSearchQuery("");
     setActiveCategory("all");
     setActiveLocation("all");
-    setContestStatus("active"); // Reset to active only
+    setContestStatus("active");
   };
+
+  if (isLoading) {
+    return (
+      <div className="pt-24 pb-16">
+        <div className="container max-w-7xl mx-auto px-4">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <p className="text-lg text-muted-foreground">Cargando concursos...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="pt-24 pb-16">
@@ -111,8 +125,8 @@ const Contests = () => {
           setActiveLocation={setActiveLocation}
           contestStatus={contestStatus}
           setContestStatus={setContestStatus}
-          categories={categoryStrings}
-          locations={locationStrings}
+          categories={categories}
+          locations={locations}
           clearFilters={clearFilters}
         />
         
