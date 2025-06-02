@@ -83,13 +83,6 @@ export const useContestForm = (onSuccess?: () => void) => {
       const fileName = `contest-${Date.now()}.${fileExt}`;
       const filePath = `contests/${fileName}`;
 
-      // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.log('User not authenticated, skipping image upload');
-        return null;
-      }
-
       const { data, error } = await supabase.storage
         .from('contest-images')
         .upload(filePath, file);
@@ -112,28 +105,6 @@ export const useContestForm = (onSuccess?: () => void) => {
 
   const handleSaveChanges = async (imageFile?: File) => {
     try {
-      // Check if user is authenticated first
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      
-      if (authError) {
-        console.error('Auth error:', authError);
-        toast({
-          title: "Error de autenticación",
-          description: "Por favor, inicia sesión para continuar",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (!user) {
-        toast({
-          title: "Acceso requerido",
-          description: "Necesitas estar autenticado para crear concursos",
-          variant: "destructive"
-        });
-        return;
-      }
-
       let imageUrl = formData.imageUrl;
 
       // Upload image if provided

@@ -1,183 +1,221 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Settings, LogOut, Trophy, Camera, Star, Heart, Users, Award } from "lucide-react";
+import { Settings, Camera, Trophy, Users, Calendar, MapPin } from "lucide-react";
 
 interface MobileProfileProps {
-  onNavigate: (screen: 'contests' | 'home') => void;
-  onLogout: () => void;
+  onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'vote' | 'settings') => void;
 }
 
-const MobileProfile = ({ onNavigate, onLogout }: MobileProfileProps) => {
-  const userStats = {
-    contestsWon: 3,
-    photosUploaded: 24,
-    totalVotes: 156,
-    followers: 89,
-    following: 42,
-    contestsParticipated: 15
-  };
+const userStats = {
+  name: "María García",
+  username: "@maria_photos",
+  contestsWon: 3,
+  contestsParticipated: 12,
+  totalPhotos: 28,
+  totalLikes: 1240,
+  location: "Barcelona, España",
+  memberSince: "Marzo 2024"
+};
 
-  const recentContests = [
-    {
-      id: 1,
-      title: "Primavera en Barcelona",
-      status: "Ganador",
-      image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=100",
-      prize: "500€",
-      place: 1
-    },
-    {
-      id: 2,
-      title: "Arquitectura Urbana",
-      status: "2º lugar",
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=100",
-      prize: "200€",
-      place: 2
-    },
-    {
-      id: 3,
-      title: "Vida en la Playa",
-      status: "Participante",
-      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=100",
-      prize: "-",
-      place: null
-    }
-  ];
+const userPhotos = [
+  {
+    id: 1,
+    url: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=300",
+    contest: "Primavera en Barcelona",
+    likes: 45,
+    position: "1º"
+  },
+  {
+    id: 2,
+    url: "https://images.unsplash.com/photo-1464822759844-d150baec81f2?w=300",
+    contest: "Flores Urbanas",
+    likes: 38,
+    position: "3º"
+  },
+  {
+    id: 3,
+    url: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=300",
+    contest: "Naturaleza Pura",
+    likes: 52,
+    position: "1º"
+  },
+  {
+    id: 4,
+    url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=300",
+    contest: "Bosques Mágicos",
+    likes: 41,
+    position: "2º"
+  }
+];
 
-  const winRatio = userStats.contestsParticipated > 0 
-    ? Math.round((userStats.contestsWon / userStats.contestsParticipated) * 100) 
-    : 0;
+const userContests = [
+  {
+    id: 1,
+    title: "Primavera en Barcelona",
+    status: "Ganador",
+    date: "Abril 2024",
+    prize: "500€"
+  },
+  {
+    id: 2,
+    title: "Arquitectura Urbana",
+    status: "Participante",
+    date: "Marzo 2024",
+    prize: "300€"
+  },
+  {
+    id: 3,
+    title: "Naturaleza Pura",
+    status: "Ganador",
+    date: "Febrero 2024",
+    prize: "750€"
+  }
+];
+
+const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
+  const [activeTab, setActiveTab] = useState<'photos' | 'contests'>('photos');
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Perfil</h1>
+          <h1 className="text-xl font-semibold text-gray-900">Mi Perfil</h1>
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => onNavigate('settings')}
             className="text-gray-600 hover:bg-gray-100 p-2"
           >
-            <Settings className="h-5 w-5" />
+            <Settings size={20} />
           </Button>
         </div>
       </div>
 
       {/* Profile Info */}
-      <div className="bg-white p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">MG</span>
+      <div className="bg-white mx-4 mt-4 rounded-lg shadow-sm p-6">
+        <div className="text-center mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto mb-3 flex items-center justify-center">
+            <span className="text-2xl text-white font-bold">
+              {userStats.name.split(' ').map(n => n[0]).join('')}
+            </span>
           </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900">María García</h2>
-            <p className="text-gray-600">@maria_photographer</p>
-            <Badge variant="secondary" className="mt-1">
-              <Star className="h-3 w-3 mr-1" />
-              Fotógrafa Premium
-            </Badge>
+          <h2 className="text-xl font-bold text-gray-900">{userStats.name}</h2>
+          <p className="text-gray-600">{userStats.username}</p>
+          <div className="flex items-center justify-center gap-1 mt-2 text-sm text-gray-500">
+            <MapPin size={14} />
+            <span>{userStats.location}</span>
+          </div>
+          <div className="flex items-center justify-center gap-1 mt-1 text-sm text-gray-500">
+            <Calendar size={14} />
+            <span>Miembro desde {userStats.memberSince}</span>
           </div>
         </div>
 
-        {/* Social Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{userStats.followers}</div>
-            <div className="text-sm text-gray-600">Seguidores</div>
+            <div className="text-2xl font-bold text-blue-600">{userStats.contestsWon}</div>
+            <div className="text-sm text-gray-600">Concursos Ganados</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{userStats.following}</div>
-            <div className="text-sm text-gray-600">Siguiendo</div>
+            <div className="text-2xl font-bold text-green-600">{userStats.contestsParticipated}</div>
+            <div className="text-sm text-gray-600">Participaciones</div>
           </div>
-        </div>
-
-        {/* Contest Stats */}
-        <div className="grid grid-cols-3 gap-4 text-center bg-gray-50 rounded-lg p-4">
-          <div>
-            <div className="text-xl font-bold text-gray-900">{userStats.contestsWon}</div>
-            <div className="text-xs text-gray-600">Ganados</div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600">{userStats.totalPhotos}</div>
+            <div className="text-sm text-gray-600">Fotos Subidas</div>
           </div>
-          <div>
-            <div className="text-xl font-bold text-gray-900">{userStats.photosUploaded}</div>
-            <div className="text-xs text-gray-600">Fotos</div>
-          </div>
-          <div>
-            <div className="text-xl font-bold text-gray-900">{userStats.totalVotes}</div>
-            <div className="text-xs text-gray-600">Votos</div>
-          </div>
-        </div>
-
-        {/* Performance Stats */}
-        <div className="grid grid-cols-3 gap-4 text-center mt-4">
-          <div>
-            <div className="text-lg font-bold text-gray-900">{userStats.contestsParticipated}</div>
-            <div className="text-xs text-gray-600">Participaciones</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold text-green-600">{winRatio}%</div>
-            <div className="text-xs text-gray-600">Ratio ganador</div>
-          </div>
-          <div className="flex flex-col items-center">
-            <Award className="h-5 w-5 text-amber-500 mb-1" />
-            <div className="text-xs text-gray-600">Top 10%</div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-red-600">{userStats.totalLikes}</div>
+            <div className="text-sm text-gray-600">Me Gusta</div>
           </div>
         </div>
       </div>
 
-      {/* Recent Contests */}
-      <div className="bg-white mt-4 mx-4 rounded-lg shadow-sm">
-        <div className="p-4 border-b border-gray-200">
-          <h3 className="font-semibold text-gray-900">Concursos Recientes</h3>
+      {/* Tab Navigation */}
+      <div className="mx-4 mt-6">
+        <div className="flex bg-white rounded-lg shadow-sm p-1">
+          <Button
+            variant={activeTab === 'photos' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('photos')}
+            className="flex-1"
+            size="sm"
+          >
+            <Camera size={16} className="mr-2" />
+            Mis Fotos
+          </Button>
+          <Button
+            variant={activeTab === 'contests' ? 'default' : 'ghost'}
+            onClick={() => setActiveTab('contests')}
+            className="flex-1"
+            size="sm"
+          >
+            <Trophy size={16} className="mr-2" />
+            Concursos
+          </Button>
         </div>
-        <div className="space-y-1">
-          {recentContests.map((contest) => (
-            <div key={contest.id} className="flex items-center p-4 hover:bg-gray-50">
-              <img 
-                src={contest.image} 
-                alt={contest.title}
-                className="w-12 h-12 rounded-lg object-cover"
-              />
-              <div className="ml-3 flex-1">
-                <h4 className="font-medium text-gray-900 text-sm">{contest.title}</h4>
-                <div className="flex items-center space-x-2">
-                  <Badge 
-                    variant={contest.place === 1 ? "default" : contest.place === 2 ? "secondary" : "outline"}
-                    className="text-xs"
-                  >
-                    {contest.place === 1 && <Trophy className="h-3 w-3 mr-1" />}
-                    {contest.status}
-                  </Badge>
-                  {contest.prize !== "-" && (
-                    <span className="text-xs text-green-600 font-medium">{contest.prize}</span>
-                  )}
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        {activeTab === 'photos' && (
+          <div className="grid grid-cols-2 gap-3">
+            {userPhotos.map((photo) => (
+              <div key={photo.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="relative">
+                  <img 
+                    src={photo.url} 
+                    alt={photo.contest}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="absolute top-2 left-2">
+                    <Badge 
+                      className={`text-xs ${
+                        photo.position === "1º" ? "bg-yellow-500" :
+                        photo.position === "2º" ? "bg-gray-400" :
+                        "bg-orange-600"
+                      } text-white`}
+                    >
+                      {photo.position}
+                    </Badge>
+                  </div>
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                    ❤️ {photo.likes}
+                  </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-sm font-medium text-gray-900">{photo.contest}</p>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        )}
 
-      {/* Quick Actions */}
-      <div className="p-4 space-y-3">
-        <Button 
-          variant="outline" 
-          className="w-full justify-start"
-          onClick={() => onNavigate('contests')}
-        >
-          <Camera className="h-4 w-4 mr-2" />
-          Ver todos mis concursos
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          className="w-full justify-start text-red-600 border-red-200 hover:bg-red-50"
-          onClick={onLogout}
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Cerrar sesión
-        </Button>
+        {activeTab === 'contests' && (
+          <div className="space-y-3">
+            {userContests.map((contest) => (
+              <div key={contest.id} className="bg-white rounded-lg shadow-sm p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-medium text-gray-900">{contest.title}</h3>
+                  <Badge 
+                    className={`text-xs ${
+                      contest.status === "Ganador" ? "bg-green-500" : "bg-blue-500"
+                    } text-white`}
+                  >
+                    {contest.status}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <span>{contest.date}</span>
+                  <span>Premio: {contest.prize}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
