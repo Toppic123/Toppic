@@ -120,7 +120,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     }, 800);
   }, [currentPairIndex, photoPairs.length, votes, toast]);
 
-  const handleTouchStart = useCallback((e: React.TouchEvent, photo: VotingPhoto, side: 'left' | 'right') => {
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
     startX.current = e.touches[0].clientX;
     setSwipeDirection(null);
@@ -170,6 +170,13 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     setIsDragging(false);
   }, [isDragging, currentPair, handleVote]);
 
+  // Handle direct clicks on photos
+  const handlePhotoClick = useCallback((photo: VotingPhoto, side: 'left' | 'right') => {
+    if (!isDragging) {
+      handleVote(photo, side);
+    }
+  }, [isDragging, handleVote]);
+
   if (!currentPair) {
     return (
       <div className="h-full bg-gray-50 flex items-center justify-center">
@@ -218,20 +225,16 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         </div>
       </div>
 
-      {/* Photos Container */}
+      {/* Photos Container - Horizontal Layout */}
       <div 
         ref={containerRef}
         className="flex h-full pt-20 pb-24"
-        onTouchStart={(e) => {
-          if (currentPair) {
-            handleTouchStart(e, currentPair[0], 'left');
-          }
-        }}
+        onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         {/* Left Photo */}
-        <div className="flex-1 relative overflow-hidden">
+        <div className="flex-1 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[0], 'left')}>
           {/* Vote Indicator for Left Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
@@ -268,7 +271,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         <div className="w-1 bg-white/30 flex-shrink-0"></div>
 
         {/* Right Photo */}
-        <div className="flex-1 relative overflow-hidden">
+        <div className="flex-1 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[1], 'right')}>
           {/* Vote Indicator for Right Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
@@ -307,17 +310,17 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         <div className="text-center space-y-3">
           <p className="text-lg font-medium">¿Cuál te gusta más?</p>
           <p className="text-sm opacity-80">
-            Desliza hacia la izquierda para elegir la foto izquierda o hacia la derecha para la foto derecha
+            Toca una foto o desliza hacia la izquierda/derecha para votar
           </p>
           
           {/* Visual Swipe Indicators */}
           <div className="flex justify-center items-center space-x-8 mt-4">
             <div className="text-center">
-              <div className="text-xs opacity-60">← Desliza izquierda</div>
+              <div className="text-xs opacity-60">← Desliza o toca</div>
               <div className="text-xs opacity-60">Foto izquierda</div>
             </div>
             <div className="text-center">
-              <div className="text-xs opacity-60">Desliza derecha →</div>
+              <div className="text-xs opacity-60">Toca o desliza →</div>
               <div className="text-xs opacity-60">Foto derecha</div>
             </div>
           </div>

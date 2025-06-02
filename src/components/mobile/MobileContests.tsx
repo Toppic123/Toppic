@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -188,7 +187,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
         </div>
       </div>
 
-      {/* Ad Banner */}
+      {/* Top Ad Banner */}
       <div className="px-4 pt-4">
         <ContestAdBanner position="top" />
       </div>
@@ -268,6 +267,11 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     ))}
                   </div>
 
+                  {/* Contest-specific ad banner */}
+                  <div className="mb-4">
+                    <ContestAdBanner position="middle" />
+                  </div>
+
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500">{contest.participants} participantes</span>
@@ -306,7 +310,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
               {/* Ad Banner after every 2 contests */}
               {index === 1 && (
                 <div className="mt-4">
-                  <ContestAdBanner position="top" />
+                  <ContestAdBanner position="bottom" />
                 </div>
               )}
             </div>
