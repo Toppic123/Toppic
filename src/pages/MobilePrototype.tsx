@@ -14,7 +14,7 @@ import MobileVoting from "@/components/mobile/MobileVoting";
 import MobileProfile from "@/components/mobile/MobileProfile";
 import MobileSwipeVoting from "@/components/mobile/MobileSwipeVoting";
 
-type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile';
+type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | 'settings';
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
@@ -52,12 +52,31 @@ const MobilePrototype = () => {
         return <MobileSwipeVoting onNavigate={handleNavigation} />;
       case 'profile':
         return <MobileProfile onNavigate={handleNavigation} onLogout={handleLogout} />;
+      case 'settings':
+        return (
+          <div className="h-full bg-gray-50 p-4">
+            <div className="bg-white rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleNavigation('profile')}
+                  className="text-gray-600 hover:bg-gray-100 p-2 mr-2"
+                >
+                  ← Volver
+                </Button>
+                <h1 className="text-xl font-semibold">Configuración</h1>
+              </div>
+              <p className="text-gray-600">Página de configuración en desarrollo...</p>
+            </div>
+          </div>
+        );
       default:
         return <MobileHome onNavigate={handleNavigation} />;
     }
   };
 
-  const showBottomNav = isLoggedIn && !['register', 'login', 'vote'].includes(currentScreen);
+  const showBottomNav = isLoggedIn && !['register', 'login', 'vote', 'settings'].includes(currentScreen);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
