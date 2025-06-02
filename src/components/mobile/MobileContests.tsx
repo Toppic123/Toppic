@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -5,6 +6,7 @@ import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map as MapIcon } from
 import MobileSearchBar from "./MobileSearchBar";
 import MobileFilters from "./MobileFilters";
 import Map from "@/components/Map";
+import ContestAdBanner from "@/components/contests/ContestAdBanner";
 
 interface MobileContestsProps {
   onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
@@ -186,6 +188,11 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
         </div>
       </div>
 
+      {/* Ad Banner */}
+      <div className="px-4 pt-4">
+        <ContestAdBanner position="top" />
+      </div>
+
       {/* Active Filters Display */}
       {(activeFilters.length > 0 || locationFilter || themeFilter || statusFilter !== "all") && (
         <div className="px-4 py-3 bg-white border-b border-gray-200">
@@ -218,81 +225,90 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
       {/* Contests List */}
       <div className="p-4 space-y-4">
         {filteredContests.length > 0 ? (
-          filteredContests.map((contest) => (
-            <div key={contest.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="relative">
-                <img 
-                  src={contest.image} 
-                  alt={contest.title}
-                  className="w-full h-40 object-cover cursor-pointer"
-                  onClick={() => onNavigate('voting')}
-                />
-                <div className="absolute top-3 right-3">
-                  <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
-                    {contest.isActive ? "Activo" : "Finalizado"}
-                  </Badge>
+          filteredContests.map((contest, index) => (
+            <div key={contest.id}>
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="relative">
+                  <img 
+                    src={contest.image} 
+                    alt={contest.title}
+                    className="w-full h-40 object-cover cursor-pointer"
+                    onClick={() => onNavigate('voting')}
+                  />
+                  <div className="absolute top-3 right-3">
+                    <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+                      {contest.isActive ? "Activo" : "Finalizado"}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div className="p-4">
+                  <h3 className="font-semibold text-lg text-gray-900 mb-2">{contest.title}</h3>
+                  
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center text-gray-600 text-sm">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {contest.location} • {contest.distance}
+                    </div>
+                    <div className="flex items-center text-gray-600 text-sm">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Termina el {new Date(contest.endDate).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center text-gray-600 text-sm">
+                      <Trophy className="h-4 w-4 mr-2" />
+                      Premio: {contest.prize}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {contest.topics.map((topic, topicIndex) => (
+                      <Badge key={topicIndex} variant="outline" className="text-xs">
+                        {topic}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">{contest.participants} participantes</span>
+                      <Button 
+                        size="sm"
+                        onClick={() => onNavigate('upload')}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Camera className="h-4 w-4 mr-1" />
+                        Participar
+                      </Button>
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => onNavigate('voting')}
+                        className="flex-1"
+                      >
+                        Fotos
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => onNavigate('vote')}
+                        className="flex-1 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
+                      >
+                        Votar
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
               
-              <div className="p-4">
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">{contest.title}</h3>
-                
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center text-gray-600 text-sm">
-                    <MapPin className="h-4 w-4 mr-2" />
-                    {contest.location} • {contest.distance}
-                  </div>
-                  <div className="flex items-center text-gray-600 text-sm">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Termina el {new Date(contest.endDate).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center text-gray-600 text-sm">
-                    <Trophy className="h-4 w-4 mr-2" />
-                    Premio: {contest.prize}
-                  </div>
+              {/* Ad Banner after every 2 contests */}
+              {index === 1 && (
+                <div className="mt-4">
+                  <ContestAdBanner position="top" />
                 </div>
-
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {contest.topics.map((topic, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {topic}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">{contest.participants} participantes</span>
-                    <Button 
-                      size="sm"
-                      onClick={() => onNavigate('upload')}
-                      className="bg-blue-600 hover:bg-blue-700"
-                    >
-                      <Camera className="h-4 w-4 mr-1" />
-                      Participar
-                    </Button>
-                  </div>
-                  
-                  <div className="flex space-x-3">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => onNavigate('voting')}
-                      className="flex-1"
-                    >
-                      Fotos
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => onNavigate('vote')}
-                      className="flex-1 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
-                    >
-                      Votar
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           ))
         ) : (
