@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
 interface ContestAdBannerProps {
-  position: "top" | "sidebar";
+  position: "top" | "sidebar" | "middle" | "bottom";
   contestId?: string;
 }
 
@@ -102,6 +102,71 @@ const ContestAdBanner = ({ position, contestId }: ContestAdBannerProps) => {
         </div>
         <div className="bg-primary/10 py-1 px-4 text-xs text-center">
           Ejemplo de cómo aparecería tu publicidad
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (position === "middle") {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg overflow-hidden border border-blue-200"
+      >
+        <div className="flex items-center p-3">
+          <div className="w-12 h-12 bg-cover bg-center rounded-lg mr-3" 
+            style={{ backgroundImage: `url(${randomAd.imageUrl})` }}
+          ></div>
+          <div className="flex-1">
+            <p className="text-xs uppercase tracking-wider text-blue-600 font-semibold mb-1">
+              {randomAd.brand} • Anuncio
+            </p>
+            <h3 className="text-sm font-bold mb-1">{randomAd.title}</h3>
+            <p className="text-xs text-gray-600">{randomAd.description}</p>
+          </div>
+          <a 
+            href={randomAd.url}
+            className="flex items-center bg-blue-600 text-white px-2 py-1 rounded text-xs hover:bg-blue-700 transition-colors ml-2"
+          >
+            <span className="mr-1">Ver</span>
+            <ExternalLink size={10} />
+          </a>
+        </div>
+      </motion.div>
+    );
+  }
+
+  if (position === "bottom") {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full bg-gradient-to-r from-green-50 to-blue-50 rounded-lg overflow-hidden border border-green-200"
+      >
+        <div className="p-4">
+          <div className="flex items-center mb-3">
+            <div className="w-16 h-16 bg-cover bg-center rounded-lg mr-4" 
+              style={{ backgroundImage: `url(${randomAd.imageUrl})` }}
+            ></div>
+            <div className="flex-1">
+              <p className="text-xs uppercase tracking-wider text-green-600 font-semibold mb-1">
+                {randomAd.brand} • Anuncio
+              </p>
+              <h3 className="text-base font-bold mb-1">{randomAd.title}</h3>
+              <p className="text-sm text-gray-600">{randomAd.description}</p>
+            </div>
+          </div>
+          <a 
+            href={randomAd.url}
+            className="flex items-center justify-center bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition-colors w-full"
+          >
+            <span className="mr-2">Ver ofertas especiales</span>
+            <ExternalLink size={14} />
+          </a>
+        </div>
+        <div className="bg-green-100 py-1 px-4 text-xs text-center text-green-700">
+          Publicidad • Ayuda a mantener la plataforma gratuita
         </div>
       </motion.div>
     );
