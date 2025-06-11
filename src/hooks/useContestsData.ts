@@ -21,6 +21,7 @@ export interface Contest {
   is_private?: boolean;
   contest_password?: string;
   coordinates?: { lat: number; lng: number };
+  created_at?: string;
 }
 
 export const useContestsData = () => {
@@ -56,19 +57,20 @@ export const useContestsData = () => {
           title: contest.title || "Concurso sin título",
           organizer: contest.organizer || "Organizador desconocido",
           location: contest.location || "Madrid, España",
-          category: "Fotografía", // Default category
+          category: "Fotografía",
           description: contest.description || "Descripción del concurso disponible pronto.",
           imageUrl: contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
-          prize: "500€", // Default prize
+          prize: "500€",
           participants: contest.participants || 0,
           isActive: contest.status === "active",
-          endDate: contest.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Default to 30 days from now
+          endDate: contest.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
           startDate: contest.start_date || new Date().toISOString(),
-          photoDeadline: contest.photo_deadline || new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(), // 20 days from now
+          photoDeadline: contest.photo_deadline || new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
           status: contest.status as "pending" | "active" | "finished",
           is_private: contest.is_private || false,
           contest_password: contest.contest_password || undefined,
-          coordinates: { lat: 40.4168, lng: -3.7038 } // Default to Madrid coordinates
+          coordinates: { lat: 40.4168, lng: -3.7038 },
+          created_at: contest.created_at
         }));
         
         console.log("Concursos formateados:", formattedContests);

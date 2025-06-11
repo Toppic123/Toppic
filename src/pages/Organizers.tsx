@@ -1,631 +1,238 @@
-import { useState } from "react";
-import { 
-  Calendar, 
-  Clock, 
-  Camera, 
-  Building, 
-  Mail, 
-  Phone, 
-  User,
-  FileText,
-  Check,
-  Tag,
-  Info,
-  Gift,
-  MapPin,
-  ChartBar,
-  Award,
-  Users
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Form, 
-  FormControl, 
-  FormDescription, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import LocationCombobox from "@/components/admin/dashboard/contests/LocationCombobox";
 
-const formSchema = z.object({
-  fullName: z.string().min(2, {
-    message: "El nombre debe tener al menos 2 caracteres.",
-  }),
-  email: z.string().email({
-    message: "Por favor, introduce un email válido.",
-  }),
-  phone: z.string().min(9, {
-    message: "Por favor, introduce un número de teléfono válido.",
-  }),
-  companyName: z.string().min(2, {
-    message: "El nombre de la empresa debe tener al menos 2 caracteres.",
-  }),
-  eventDescription: z.string().min(20, {
-    message: "La descripción debe tener al menos 20 caracteres.",
-  }),
-  photoType: z.string({
-    required_error: "Por favor, selecciona el tipo de fotografía.",
-  }),
-  location: z.string().min(2, {
-    message: "Por favor, introduce una ubicación válida.",
-  }),
-  eventStartDate: z.string({
-    required_error: "Por favor, selecciona una fecha de inicio.",
-  }),
-  eventEndDate: z.string({
-    required_error: "Por favor, selecciona una fecha de fin.",
-  }),
-  votingEndDate: z.string({
-    required_error: "Por favor, selecciona una fecha de fin de votación.",
-  }),
-  planType: z.string({
-    required_error: "Por favor, selecciona un plan.",
-  }),
-  maxDistance: z.string({
-    required_error: "Por favor, selecciona una distancia máxima.",
-  }),
-  rewardVoters: z.boolean().default(false),
-});
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Building, Users, Trophy, Calendar, Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Organizers = () => {
-  const [selectedTab, setSelectedTab] = useState("info");
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const { toast } = useToast();
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      fullName: "",
-      email: "",
-      phone: "",
-      companyName: "",
-      eventDescription: "",
-      photoType: "",
-      location: "",
-      eventStartDate: "",
-      eventEndDate: "",
-      votingEndDate: "",
-      planType: "",
-      maxDistance: "5",
-      rewardVoters: false,
-    },
-  });
-  
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    
-    if (!user) {
-      // If not logged in, prompt user to log in before submitting
-      toast({
-        title: "Inicio de sesión requerido",
-        description: "Por favor, inicia sesión para enviar tu solicitud.",
-        variant: "destructive",
-      });
-      navigate("/login");
-      return;
-    }
-    
-    toast({
-      title: "Solicitud enviada",
-      description: "Hemos recibido tu solicitud y nos pondremos en contacto contigo pronto.",
-    });
-    
-    form.reset();
-  }
-  
-  const plans = [
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [organizerName, setOrganizerName] = useState("");
+  const [organizerEmail, setOrganizerEmail] = useState("");
+  const [organizerCompany, setOrganizerCompany] = useState("");
+
+  // Mock data for organizers
+  const organizers = [
     {
-      id: "basic",
-      name: "Básico",
-      price: "89€",
-      description: "Ideal para eventos pequeños y locales",
-      features: [
-        "Hasta 300 participantes",
-        "1 concurso fotográfico",
-        "Publicidad básica en la app",
-        "Derechos de 1 foto ganadora"
-      ]
+      id: 1,
+      name: "PhotoEvents Madrid",
+      company: "Eventos Fotográficos S.L.",
+      activeContests: 3,
+      totalContests: 15,
+      participants: 1250,
+      since: "2022"
     },
     {
-      id: "pro",
-      name: "Profesional",
-      price: "149€",
-      description: "Perfecto para eventos medianos y empresas",
-      features: [
-        "Hasta 1000 participantes",
-        "3 concursos fotográficos",
-        "Publicidad destacada en la app",
-        "Derechos de 3 fotos ganadoras de cada concurso",
-        "Banner promocional en la app"
-      ]
+      id: 2,
+      name: "Barcelona Photo Club",
+      company: "Club Fotográfico BCN",
+      activeContests: 2,
+      totalContests: 8,
+      participants: 890,
+      since: "2023"
     },
     {
-      id: "premium",
-      name: "Premium",
-      price: "199€",
-      description: "Para grandes eventos y marcas reconocidas",
-      features: [
-        "Participantes ilimitados",
-        "5 concursos fotográficos",
-        "Publicidad premium en toda la app",
-        "Derechos de las 9 mejores fotos",
-        "Banner destacado en página principal",
-        "Notificaciones push personalizadas"
-      ]
+      id: 3,
+      name: "Natura Shots",
+      company: "Fotografía Natural",
+      activeContests: 1,
+      totalContests: 12,
+      participants: 650,
+      since: "2021"
     }
   ];
-  
-  const handleSelectPlan = (planId: string) => {
-    setSelectedPlan(planId);
-    form.setValue("planType", planId);
-    setSelectedTab("form");
+
+  const handleOrganizerRegistration = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsRegistering(true);
+
+    // Simulate registration process
+    setTimeout(() => {
+      toast({
+        title: "Registro exitoso",
+        description: "Tu solicitud como organizador ha sido enviada. Te contactaremos pronto.",
+      });
+      setIsRegistering(false);
+      setOrganizerName("");
+      setOrganizerEmail("");
+      setOrganizerCompany("");
+    }, 2000);
   };
 
-  const benefitCards = [
-    {
-      icon: Camera,
-      title: "Contenido auténtico",
-      description: "Recibe fotos únicas y auténticas de tu evento o ubicación",
-      bgGradient: "from-emerald-400 to-cyan-500",
-      iconBg: "bg-gradient-to-br from-emerald-100 to-cyan-100",
-      iconColor: "text-emerald-600"
-    },
-    {
-      icon: Building,
-      title: "Visibilidad de marca",
-      description: "Promociona tu empresa a miles de usuarios interesados",
-      bgGradient: "from-blue-400 to-indigo-500",
-      iconBg: "bg-gradient-to-br from-blue-100 to-indigo-100",
-      iconColor: "text-blue-600"
-    },
-    {
-      icon: Users,
-      title: "Engagement efectivo",
-      description: "Crea conexión emocional con tu audiencia",
-      bgGradient: "from-purple-400 to-pink-500",
-      iconBg: "bg-gradient-to-br from-purple-100 to-pink-100",
-      iconColor: "text-purple-600"
-    },
-    {
-      icon: Award,
-      title: "Marketing content",
-      description: "Obtén derechos sobre las mejores fotos para tus campañas",
-      bgGradient: "from-orange-400 to-red-500",
-      iconBg: "bg-gradient-to-br from-orange-100 to-red-100",
-      iconColor: "text-orange-600"
-    }
-  ];
-  
   return (
-    <div className="pt-24 pb-16">
-      <div className="container max-w-7xl mx-auto px-4">
-        <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Organizadores</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-12">
-            Impulsa tu evento o empresa a través de nuestros concursos fotográficos. Conecta con tu audiencia de una forma única y visual.
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="pt-24 pb-16"
+    >
+      <div className="container max-w-6xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Organizadores de Concursos</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Conecta con los mejores organizadores de concursos fotográficos o únete como organizador profesional
           </p>
+        </div>
 
-          {/* Beneficios modernizados con colores */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            {benefitCards.map((card, index) => (
-              <motion.div
-                key={card.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative group"
-              >
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-                  {/* Gradiente de fondo sutil */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                  
-                  <div className="relative z-10 flex flex-col items-center text-center">
-                    <div className={`w-20 h-20 ${card.iconBg} rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                      <card.icon className={`h-10 w-10 ${card.iconColor}`} />
+        {/* Registration CTA */}
+        <div className="mb-12 text-center">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle className="flex items-center justify-center gap-2">
+                <Building className="h-6 w-6" />
+                ¿Quieres organizar concursos?
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-6">
+                Únete a nuestra plataforma como organizador y crea concursos fotográficos profesionales
+              </p>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="lg" className="gap-2">
+                    <Plus className="h-5 w-5" />
+                    Registrarse como Organizador
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Registro de Organizador</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleOrganizerRegistration} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="organizer-name">Nombre completo</Label>
+                      <Input
+                        id="organizer-name"
+                        value={organizerName}
+                        onChange={(e) => setOrganizerName(e.target.value)}
+                        placeholder="Tu nombre completo"
+                        required
+                      />
                     </div>
-                    <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">{card.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{card.description}</p>
-                  </div>
-                  
-                  {/* Brillo sutil en hover */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white to-transparent opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-        
-        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="mb-12">
-          <TabsList className="w-full max-w-md mx-auto grid grid-cols-2">
-            <TabsTrigger value="info">Planes y Beneficios</TabsTrigger>
-            <TabsTrigger value="form">Solicitud de Evento</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="info" className="mt-8">
-            {/* Plans section - keep existing code */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {plans.map((plan, index) => (
-                <motion.div
-                  key={plan.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <Card className={`border-2 hover:shadow-lg transition-all ${selectedPlan === plan.id ? 'border-primary' : 'border-border'} h-full`}>
-                    <CardHeader>
-                      <div className="text-center">
-                        <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                        <div className="mt-4">
-                          <span className="text-4xl font-bold">{plan.price}</span>
-                        </div>
-                      </div>
-                      <CardDescription className="text-center">
-                        <p className="mt-2">{plan.description}</p>
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col h-full">
-                      <ul className="space-y-2 flex-grow mb-6">
-                        {plan.features.map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <Button 
-                        className="w-full mt-auto" 
-                        onClick={() => handleSelectPlan(plan.id)}
-                      >
-                        Seleccionar Plan
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="form" className="mt-8">
-            <div className="max-w-3xl mx-auto">
-              <Card>
+                    <div className="space-y-2">
+                      <Label htmlFor="organizer-email">Email</Label>
+                      <Input
+                        id="organizer-email"
+                        type="email"
+                        value={organizerEmail}
+                        onChange={(e) => setOrganizerEmail(e.target.value)}
+                        placeholder="tu@email.com"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="organizer-company">Empresa/Organización</Label>
+                      <Input
+                        id="organizer-company"
+                        value={organizerCompany}
+                        onChange={(e) => setOrganizerCompany(e.target.value)}
+                        placeholder="Nombre de tu empresa"
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" disabled={isRegistering}>
+                      {isRegistering ? "Enviando solicitud..." : "Enviar Solicitud"}
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Organizers Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {organizers.map((organizer) => (
+            <motion.div
+              key={organizer.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: organizer.id * 0.1 }}
+            >
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <CardTitle>Solicitud de creación de evento</CardTitle>
-                  <CardDescription>
-                    Completa el formulario para solicitar un concurso fotográfico para tu evento o negocio.
-                  </CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg">{organizer.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{organizer.company}</p>
+                    </div>
+                    <Badge variant="secondary">
+                      Desde {organizer.since}
+                    </Badge>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <div className="space-y-4">
-                        <h3 className="font-semibold flex items-center text-lg">
-                          <User className="mr-2 h-5 w-5" />
-                          Información personal
-                        </h3>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="fullName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Nombre completo</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Tu nombre completo" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Dirección de email</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="tu@email.com" type="email" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        
-                        <FormField
-                          control={form.control}
-                          name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Teléfono de contacto</FormLabel>
-                              <FormControl>
-                                <Input placeholder="+34 600 000 000" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-4 w-4 text-amber-500" />
+                      <div>
+                        <p className="font-medium">{organizer.activeContests}</p>
+                        <p className="text-muted-foreground">Activos</p>
                       </div>
-                      
-                      <Separator />
-                      
-                      <div className="space-y-4">
-                        <h3 className="font-semibold flex items-center text-lg">
-                          <Building className="mr-2 h-5 w-5" />
-                          Información de la empresa
-                        </h3>
-                        
-                        <FormField
-                          control={form.control}
-                          name="companyName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Nombre de la empresa/organización</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Nombre de tu empresa" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-blue-500" />
+                      <div>
+                        <p className="font-medium">{organizer.totalContests}</p>
+                        <p className="text-muted-foreground">Total</p>
                       </div>
-                      
-                      <Separator />
-                      
-                      <div className="space-y-4">
-                        <h3 className="font-semibold flex items-center text-lg">
-                          <FileText className="mr-2 h-5 w-5" />
-                          Detalles del evento
-                        </h3>
-                        
-                        <FormField
-                          control={form.control}
-                          name="eventDescription"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Descripción del evento</FormLabel>
-                              <FormControl>
-                                <Textarea 
-                                  placeholder="Describe tu evento o lo que quieres promocionar..." 
-                                  className="min-h-32"
-                                  {...field} 
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="location"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="flex items-center gap-1">
-                                <MapPin className="h-4 w-4" />
-                                Ubicación
-                                <span className="text-xs font-normal text-muted-foreground">(requerido)</span>
-                              </FormLabel>
-                              <FormControl>
-                                <LocationCombobox 
-                                  value={field.value} 
-                                  onChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                Especifica la ubicación exacta del evento o la zona para las fotografías
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="photoType"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Tipo de fotos esperadas</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Selecciona el tipo de fotografía" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="location">Lugares/Monumentos</SelectItem>
-                                  <SelectItem value="people">Personas/Eventos</SelectItem>
-                                  <SelectItem value="product">Productos/Servicios</SelectItem>
-                                  <SelectItem value="activity">Actividades/Actuaciones</SelectItem>
-                                  <SelectItem value="nature">Naturaleza/Paisajes</SelectItem>
-                                  <SelectItem value="other">Otro tipo</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <FormField
-                          control={form.control}
-                          name="maxDistance"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Distancia máxima para subir fotos</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Selecciona la distancia máxima" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="1">1 km</SelectItem>
-                                  <SelectItem value="5">5 km</SelectItem>
-                                  <SelectItem value="10">10 km</SelectItem>
-                                  <SelectItem value="25">25 km</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormDescription>
-                                Los usuarios solo podrán subir fotos dentro de esta distancia desde la ubicación del evento
-                              </FormDescription>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="eventStartDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Fecha de inicio</FormLabel>
-                                <FormControl>
-                                  <Input type="date" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="eventEndDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Fecha de fin</FormLabel>
-                                <FormControl>
-                                  <Input type="date" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="votingEndDate"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Fecha fin de votación</FormLabel>
-                                <FormControl>
-                                  <Input type="date" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                  Puede ser durante o después del evento
-                                </FormDescription>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 col-span-2">
+                      <Users className="h-4 w-4 text-green-500" />
+                      <div>
+                        <p className="font-medium">{organizer.participants.toLocaleString()}</p>
+                        <p className="text-muted-foreground">Participantes totales</p>
                       </div>
-                      
-                      <Separator />
-                      
-                      <div className="space-y-4">
-                        <h3 className="font-semibold flex items-center text-lg">
-                          <Gift className="mr-2 h-5 w-5" />
-                          Configuración de premios
-                        </h3>
-                        
-                        <FormField
-                          control={form.control}
-                          name="rewardVoters"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <div className="space-y-1 leading-none">
-                                <FormLabel>Premiar a los votantes</FormLabel>
-                                <FormDescription>
-                                  Además de premiar a la mejor foto, se premiará a un votante aleatorio que haya participado en el concurso.
-                                </FormDescription>
-                              </div>
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      
-                      <Separator />
-                      
-                      <div className="space-y-4">
-                        <h3 className="font-semibold flex items-center text-lg">
-                          <Tag className="mr-2 h-5 w-5" />
-                          Plan seleccionado
-                        </h3>
-                        
-                        <FormField
-                          control={form.control}
-                          name="planType"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Plan</FormLabel>
-                              <Select onValueChange={field.onChange} defaultValue={field.value || selectedPlan || ""}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Selecciona un plan" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="basic">Básico - 89€</SelectItem>
-                                  <SelectItem value="pro">Profesional - 149€</SelectItem>
-                                  <SelectItem value="premium">Premium - 199€</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      
-                      <Button type="submit" className="w-full">Enviar solicitud</Button>
-                    </form>
-                  </Form>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Info Section */}
+        <div className="mt-16 text-center">
+          <Card className="max-w-4xl mx-auto">
+            <CardHeader>
+              <CardTitle>Beneficios de ser Organizador</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <div className="space-y-2">
+                  <Trophy className="h-8 w-8 text-amber-500 mx-auto md:mx-0" />
+                  <h3 className="font-semibold">Panel de Control</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Accede a herramientas profesionales para gestionar tus concursos
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Users className="h-8 w-8 text-blue-500 mx-auto md:mx-0" />
+                  <h3 className="font-semibold">Comunidad Activa</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Conecta con miles de fotógrafos apasionados
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Building className="h-8 w-8 text-green-500 mx-auto md:mx-0" />
+                  <h3 className="font-semibold">Visibilidad</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Promociona tu marca y eventos a nivel nacional
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

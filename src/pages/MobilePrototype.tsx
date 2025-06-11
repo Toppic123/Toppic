@@ -5,7 +5,7 @@ import { ArrowLeft, Search, Camera, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Import mobile screens
-import MobileHome from "@/components/mobile/MobileHome";
+import MobileGalleryHome from "@/components/mobile/MobileGalleryHome";
 import MobileRegister from "@/components/mobile/MobileRegister";
 import MobileLogin from "@/components/mobile/MobileLogin";
 import MobileContests from "@/components/mobile/MobileContests";
@@ -13,19 +13,19 @@ import MobileUpload from "@/components/mobile/MobileUpload";
 import MobileVoting from "@/components/mobile/MobileVoting";
 import MobileProfile from "@/components/mobile/MobileProfile";
 import MobileSwipeVoting from "@/components/mobile/MobileSwipeVoting";
+import MobileSettings from "@/components/mobile/MobileSettings";
 
 type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | 'settings';
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Set to true since home is now the same as contests
-  const [hasNotifications, setHasNotifications] = useState(false); // Changed to false by default
-  const [newCommentsCount, setNewCommentsCount] = useState(0); // Track new comments
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [hasNotifications, setHasNotifications] = useState(false);
+  const [newCommentsCount, setNewCommentsCount] = useState(0);
 
   const handleNavigation = (screen: MobileScreen) => {
     setCurrentScreen(screen);
     
-    // If navigating to profile, clear notifications
     if (screen === 'profile') {
       setHasNotifications(false);
       setNewCommentsCount(0);
@@ -34,7 +34,7 @@ const MobilePrototype = () => {
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    setCurrentScreen('contests');
+    setCurrentScreen('home');
   };
 
   const handleLogout = () => {
@@ -42,7 +42,6 @@ const MobilePrototype = () => {
     setCurrentScreen('home');
   };
 
-  // Simulate receiving a new comment (this would come from your backend)
   const simulateNewComment = () => {
     setNewCommentsCount(prev => prev + 1);
     setHasNotifications(true);
@@ -51,7 +50,7 @@ const MobilePrototype = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        return <MobileHome onNavigate={handleNavigation} />;
+        return <MobileGalleryHome onNavigate={handleNavigation} />;
       case 'register':
         return <MobileRegister onNavigate={handleNavigation} />;
       case 'login':
@@ -67,33 +66,9 @@ const MobilePrototype = () => {
       case 'profile':
         return <MobileProfile onNavigate={handleNavigation} />;
       case 'settings':
-        return (
-          <div className="h-full bg-gray-50 p-4">
-            <div className="bg-white rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleNavigation('profile')}
-                  className="text-gray-600 hover:bg-gray-100 p-2 mr-2"
-                >
-                  ← Volver
-                </Button>
-                <h1 className="text-xl font-semibold">Configuración</h1>
-              </div>
-              <p className="text-gray-600">Página de configuración en desarrollo...</p>
-              
-              {/* Demo button to simulate new comment notification */}
-              <div className="mt-6">
-                <Button onClick={simulateNewComment} variant="outline">
-                  Simular nuevo comentario (Demo)
-                </Button>
-              </div>
-            </div>
-          </div>
-        );
+        return <MobileSettings onNavigate={handleNavigation} />;
       default:
-        return <MobileHome onNavigate={handleNavigation} />;
+        return <MobileGalleryHome onNavigate={handleNavigation} />;
     }
   };
 
@@ -119,7 +94,6 @@ const MobilePrototype = () => {
       {/* Mobile Device Frame */}
       <div className="relative">
         <div className="w-[375px] h-[812px] bg-black rounded-[3rem] p-2 shadow-2xl">
-          {/* Screen */}
           <div className="w-full h-full bg-white rounded-[2.5rem] overflow-hidden relative">
             {/* Status Bar */}
             <div className="h-11 bg-white flex items-center justify-between px-6 text-black text-sm font-medium">
@@ -153,7 +127,16 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex flex-col items-center p-2 ${['home', 'contests'].includes(currentScreen) ? 'text-blue-600' : 'text-gray-500'}`}
+                      className={`flex flex-col items-center p-2 ${currentScreen === 'home' ? 'text-blue-600' : 'text-gray-500'}`}
+                      onClick={() => handleNavigation('home')}
+                    >
+                      <Camera className="h-5 w-5 mb-1" />
+                      <span className="text-xs">Inicio</span>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`flex flex-col items-center p-2 ${currentScreen === 'contests' ? 'text-blue-600' : 'text-gray-500'}`}
                       onClick={() => handleNavigation('contests')}
                     >
                       <Search className="h-5 w-5 mb-1" />
