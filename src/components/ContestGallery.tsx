@@ -211,7 +211,6 @@ const ContestGallery = ({
                 imageUrl={photo.imageUrl}
                 photographer={photo.photographer}
                 photographerAvatar={photo.photographerAvatar}
-                votes={photo.votes}
                 mode="grid"
                 expanded={false}
               />

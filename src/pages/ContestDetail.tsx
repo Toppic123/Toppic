@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -130,7 +131,6 @@ const ContestDetail = () => {
   const [contest, setContest] = useState(contestData);
   const [photos, setPhotos] = useState(photosData);
   const [activeTab, setActiveTab] = useState("photos");
-  const [votedPhotoId, setVotedPhotoId] = useState<string | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [viewPhotoMode, setViewPhotoMode] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
@@ -200,55 +200,6 @@ const ContestDetail = () => {
       return `${diffDays} ${diffDays === 1 ? 'día' : 'días'} y ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
     } else {
       return `${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`;
-    }
-  };
-  
-  const handleVote = (photoId: string, isUpvote: boolean) => {
-    if (!user) {
-      toast({
-        title: "Inicia sesión para votar",
-        description: "Solo los usuarios registrados pueden votar y optar a premios como votantes.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (votedPhotoId) {
-      if (votedPhotoId !== photoId) {
-        setPhotos(prevPhotos => 
-          prevPhotos.map(photo => 
-            photo.id === votedPhotoId
-              ? { ...photo, votes: photo.votes - 1 }
-              : photo
-          )
-        );
-        
-        toast({
-          title: "Voto cambiado",
-          description: "Tu voto anterior ha sido eliminado",
-        });
-      } else {
-        return;
-      }
-    }
-    
-    if (votedPhotoId !== photoId) {
-      if (isUpvote) {
-        setPhotos(prevPhotos => 
-          prevPhotos.map(photo => 
-            photo.id === photoId
-              ? { ...photo, votes: photo.votes + 1 }
-              : photo
-          )
-        );
-        
-        setVotedPhotoId(photoId);
-        
-        toast({
-          title: "Voto registrado",
-          description: "Has votado a favor de esta foto",
-        });
-      }
     }
   };
   
@@ -376,23 +327,16 @@ const ContestDetail = () => {
                       </Button>
                     </div>
                     
-                    {!user && (
-                      <Alert className="mb-4 bg-amber-50 border-amber-200">
-                        <AlertDescription className="text-amber-700">
-                          Solo los usuarios registrados pueden votar y optar a premios como votantes de fotos.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                    
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                       {photos.map((photo) => (
                         <div key={photo.id} className="relative group">
                           <div className="cursor-pointer" onClick={() => handleViewPhoto(photo, 'view')}>
                             <PhotoCard
-                              {...photo}
-                              onVote={handleVote}
+                              id={photo.id}
+                              imageUrl={photo.imageUrl}
+                              photographer={photo.photographer}
+                              photographerAvatar={photo.photographerAvatar}
                               onReport={handleReport}
-                              userVoted={votedPhotoId === photo.id}
                             />
                           </div>
                           <Button 
@@ -682,33 +626,6 @@ const ContestDetail = () => {
                 <DialogTitle className="text-base">Foto de {selectedPhoto?.photographer}</DialogTitle>
               </div>
               <div className="flex items-center gap-2">
-                {!user ? (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    asChild
-                  >
-                    <Link to="/login">
-                      <Heart className="h-4 w-4 mr-2 text-red-500" />
-                      Iniciar sesión para votar
-                    </Link>
-                  </Button>
-                ) : votedPhotoId !== selectedPhoto?.id ? (
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleVote(selectedPhoto?.id, true)}
-                    disabled={!!votedPhotoId}
-                  >
-                    <Heart className={`h-4 w-4 mr-2 ${votedPhotoId === selectedPhoto?.id ? "fill-red-500 text-red-500" : "text-red-500"}`} />
-                    Votar ({selectedPhoto?.votes})
-                  </Button>
-                ) : (
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Heart className="h-4 w-4 mr-2 fill-red-500 text-red-500" />
-                    Votada ({selectedPhoto?.votes})
-                  </div>
-                )}
                 <Button 
                   variant="ghost" 
                   size="icon"
