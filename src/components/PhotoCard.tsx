@@ -1,21 +1,19 @@
+
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { User, Heart, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
+import { User, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 
 type PhotoCardProps = {
   id: string;
   imageUrl: string;
   photographer: string;
   photographerAvatar?: string;
-  votes: number;
   mode?: "grid" | "swipe";
   onVote?: (id: string, vote: boolean) => void;
   onReport?: (id: string) => void;
   onShare?: (id: string) => void;
-  userVoted?: boolean;
   expanded?: boolean;
 };
 
@@ -24,60 +22,22 @@ const PhotoCard = ({
   imageUrl,
   photographer,
   photographerAvatar,
-  votes,
   mode = "grid",
   onVote,
   onReport,
   onShare,
-  userVoted = false,
   expanded = false,
 }: PhotoCardProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [direction, setDirection] = useState<number>(0);
-  const [isVoted, setIsVoted] = useState<boolean>(userVoted);
-  const [localVotes, setLocalVotes] = useState<number>(votes);
   const [lastTap, setLastTap] = useState<number>(0);
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.3 });
   const { toast } = useToast();
   
-  useEffect(() => {
-    setIsVoted(userVoted);
-  }, [userVoted]);
-
-  useEffect(() => {
-    setLocalVotes(votes);
-  }, [votes]);
-  
   const handleTapOrClick = () => {
     const now = Date.now();
-    const DOUBLE_TAP_DELAY = 300;
-    
-    if (now - lastTap < DOUBLE_TAP_DELAY) {
-      handleVoteToggle();
-    }
-    
     setLastTap(now);
-  };
-  
-  const handleVoteToggle = () => {
-    if (isVoted) {
-      toast({
-        title: "Ya has votado esta foto",
-        description: "Solo puedes votar una foto por concurso",
-      });
-      return;
-    }
-    
-    setIsVoted(true);
-    setLocalVotes(prev => prev + 1);
-    
-    onVote?.(id, true);
-    
-    toast({
-      title: "Voto registrado",
-      description: "Has votado a favor de esta foto",
-    });
   };
   
   const handleShare = (e: React.MouseEvent) => {
@@ -204,15 +164,7 @@ const PhotoCard = ({
             <span className="font-medium">{photographer}</span>
           </div>
           
-          <div className="flex items-center justify-between mt-2">
-            <button 
-              className="flex items-center space-x-1 group"
-              onClick={handleVoteToggle}
-              aria-label="Vote for this photo"
-            >
-              <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
-              <span className="text-sm">{localVotes}</span>
-            </button>
+          <div className="flex items-center justify-end mt-2">
             <div className="flex space-x-2">
               <button
                 onClick={handleShare}
@@ -256,11 +208,6 @@ const PhotoCard = ({
           )}
           onLoad={() => setImageLoaded(true)}
         />
-        {isVoted && (
-          <div className="absolute top-2 right-2 bg-primary/90 text-white p-1.5 rounded-full">
-            <Heart className="w-4 h-4 fill-white" />
-          </div>
-        )}
       </div>
       
       <div className="p-2">
@@ -281,15 +228,6 @@ const PhotoCard = ({
           </div>
           
           <div className="flex items-center space-x-2">
-            <button 
-              className="flex items-center space-x-1 group"
-              onClick={handleVoteToggle}
-              aria-label="Vote for this photo"
-            >
-              <Heart className={`w-4 h-4 ${isVoted ? "text-red-500 fill-red-500" : "text-red-500"} transition-colors`} />
-              <span className="text-xs text-muted-foreground">{localVotes}</span>
-            </button>
-            
             <button
               onClick={handleShare}
               className="text-muted-foreground hover:text-foreground transition-colors"

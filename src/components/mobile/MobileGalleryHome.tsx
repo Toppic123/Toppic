@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Heart, MessageCircle, X, Camera, Search } from "lucide-react";
+import { MessageCircle, Camera, Search } from "lucide-react";
+import MobilePhotoDetail from "./MobilePhotoDetail";
 
 interface MobileGalleryHomeProps {
   onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'profile') => void;
@@ -18,7 +18,8 @@ const featuredPhotos = [
     contest: "Primavera en Barcelona",
     likes: 145,
     comments: 23,
-    isRecent: true
+    isRecent: true,
+    description: "Una hermosa vista de los jardines primaverales de Barcelona con flores coloridas"
   },
   {
     id: 2,
@@ -27,7 +28,8 @@ const featuredPhotos = [
     contest: "Flores Urbanas",
     likes: 98,
     comments: 15,
-    isRecent: true
+    isRecent: true,
+    description: "Flores silvestres creciendo entre el concreto de la ciudad"
   },
   {
     id: 3,
@@ -36,7 +38,8 @@ const featuredPhotos = [
     contest: "Naturaleza Pura",
     likes: 167,
     comments: 31,
-    isRecent: false
+    isRecent: false,
+    description: "Paisaje natural preservado en su estado más puro"
   },
   {
     id: 4,
@@ -45,7 +48,8 @@ const featuredPhotos = [
     contest: "Bosques Mágicos",
     likes: 123,
     comments: 18,
-    isRecent: true
+    isRecent: true,
+    description: "Un sendero misterioso a través del bosque encantado"
   },
   {
     id: 5,
@@ -54,7 +58,8 @@ const featuredPhotos = [
     contest: "Aventura Natural",
     likes: 89,
     comments: 12,
-    isRecent: false
+    isRecent: false,
+    description: "Aventura en la naturaleza salvaje y montañosa"
   },
   {
     id: 6,
@@ -63,25 +68,31 @@ const featuredPhotos = [
     contest: "Atardeceres Únicos",
     likes: 201,
     comments: 28,
-    isRecent: true
+    isRecent: true,
+    description: "Un atardecer espectacular sobre el horizonte"
   }
 ];
 
 const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<typeof featuredPhotos[0] | null>(null);
-  const [likedPhotos, setLikedPhotos] = useState<Set<number>>(new Set());
 
-  const handleLike = (photoId: number) => {
-    setLikedPhotos(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(photoId)) {
-        newSet.delete(photoId);
-      } else {
-        newSet.add(photoId);
-      }
-      return newSet;
-    });
+  const handlePhotoClick = (photo: typeof featuredPhotos[0]) => {
+    setSelectedPhoto(photo);
   };
+
+  const handleBackFromDetail = () => {
+    setSelectedPhoto(null);
+  };
+
+  // Si hay una foto seleccionada, mostrar el detalle
+  if (selectedPhoto) {
+    return (
+      <MobilePhotoDetail 
+        photo={selectedPhoto}
+        onBack={handleBackFromDetail}
+      />
+    );
+  }
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
@@ -111,7 +122,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
                   src={photo.url} 
                   alt={`Foto de ${photo.author}`}
                   className="w-full h-48 object-cover cursor-pointer"
-                  onClick={() => setSelectedPhoto(photo)}
+                  onClick={() => handlePhotoClick(photo)}
                 />
                 {photo.isRecent && (
                   <div className="absolute top-2 left-2">
@@ -120,26 +131,6 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
                     </Badge>
                   </div>
                 )}
-                <div className="absolute top-2 right-2">
-                  <Button
-                    size="sm"
-                    variant={likedPhotos.has(photo.id) ? "default" : "secondary"}
-                    className={`h-8 w-8 p-0 rounded-full ${
-                      likedPhotos.has(photo.id) 
-                        ? "bg-red-500 hover:bg-red-600 text-white" 
-                        : "bg-white/80 hover:bg-white text-gray-600"
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLike(photo.id);
-                    }}
-                  >
-                    <Heart 
-                      size={16} 
-                      className={likedPhotos.has(photo.id) ? "fill-current" : ""} 
-                    />
-                  </Button>
-                </div>
               </div>
               
               <div className="p-3">
@@ -147,16 +138,11 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
                 <p className="text-xs text-gray-600 mb-2">{photo.contest}</p>
                 
                 <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <Heart size={12} />
-                      <span>{photo.likes + (likedPhotos.has(photo.id) ? 1 : 0)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MessageCircle size={12} />
-                      <span>{photo.comments}</span>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <MessageCircle size={12} />
+                    <span>{photo.comments}</span>
                   </div>
+                  <span className="text-xs text-gray-400">Toca para ver</span>
                 </div>
               </div>
             </div>
@@ -173,45 +159,6 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
           <Camera className="h-6 w-6" />
         </Button>
       </div>
-
-      {/* Photo Detail Dialog */}
-      <Dialog open={selectedPhoto !== null} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
-        <DialogContent className="sm:max-w-md p-0 bg-black">
-          {selectedPhoto && (
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedPhoto(null)}
-                className="absolute top-2 right-2 z-10 text-white hover:bg-white/20 h-8 w-8 p-0"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <img 
-                src={selectedPhoto.url} 
-                alt={`Foto de ${selectedPhoto.author}`}
-                className="w-full h-auto max-h-[80vh] object-contain"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                <div className="text-white">
-                  <h3 className="text-lg font-semibold">{selectedPhoto.author}</h3>
-                  <p className="text-sm opacity-90">{selectedPhoto.contest}</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm">
-                    <div className="flex items-center gap-1">
-                      <Heart size={14} />
-                      <span>{selectedPhoto.likes + (likedPhotos.has(selectedPhoto.id) ? 1 : 0)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MessageCircle size={14} />
-                      <span>{selectedPhoto.comments}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
