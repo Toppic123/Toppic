@@ -109,18 +109,16 @@ const CommandSeparator = React.forwardRef<
 ))
 CommandSeparator.displayName = CommandPrimitive.Separator.displayName
 
-// The error is likely happening here in the CommandItem component
-// Let's add safety checks for correct rendering
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => {
-  // Ensure we're not passing undefined/null values that might cause issues
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item> & {
+    alwaysVisible?: boolean;
+  }
+>(({ className, alwaysVisible = false, ...props }, ref) => {
   const safeProps = React.useMemo(() => {
-    // Filter out any null or undefined values that might cause Array.from issues
     const filtered = { ...props };
     if (filtered.value === null || filtered.value === undefined) {
-      filtered.value = ''; // Provide a safe default
+      filtered.value = '';
     }
     return filtered;
   }, [props]);
@@ -130,6 +128,7 @@ const CommandItem = React.forwardRef<
       ref={ref}
       className={cn(
         "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[selected='true']:bg-accent data-[selected=true]:text-accent-foreground data-[disabled=true]:opacity-50",
+        alwaysVisible && "[&[data-filtered='false']]:hidden",
         className
       )}
       {...safeProps}

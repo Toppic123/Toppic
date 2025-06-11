@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import UserRoleSelector from "./UserRoleSelector";
 
 interface ProfileSettingsProps {
   initialData: {
@@ -23,17 +22,12 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
   const [email, setEmail] = useState(initialData.email);
   const [bio, setBio] = useState(initialData.bio);
   const [website, setWebsite] = useState(initialData.website);
-  const [userRole, setUserRole] = useState<"participant" | "organizer">("participant");
 
   const handleProfileSave = () => {
     toast({
       title: "Perfil guardado",
       description: "Los cambios en tu perfil han sido guardados.",
     });
-  };
-
-  const handleRoleChange = (role: "participant" | "organizer") => {
-    setUserRole(role);
   };
 
   return (
@@ -96,11 +90,6 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
           </div>
         </CardContent>
       </Card>
-
-      <UserRoleSelector 
-        currentRole={userRole}
-        onRoleChange={handleRoleChange}
-      />
     </div>
   );
 };

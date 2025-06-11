@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Building, Users, Trophy, Calendar, Plus } from "lucide-react";
+import { Building, Users, Trophy, Calendar, Plus, Mail, User, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -17,42 +16,10 @@ const Organizers = () => {
   const [organizerEmail, setOrganizerEmail] = useState("");
   const [organizerCompany, setOrganizerCompany] = useState("");
 
-  // Mock data for organizers
-  const organizers = [
-    {
-      id: 1,
-      name: "PhotoEvents Madrid",
-      company: "Eventos Fotográficos S.L.",
-      activeContests: 3,
-      totalContests: 15,
-      participants: 1250,
-      since: "2022"
-    },
-    {
-      id: 2,
-      name: "Barcelona Photo Club",
-      company: "Club Fotográfico BCN",
-      activeContests: 2,
-      totalContests: 8,
-      participants: 890,
-      since: "2023"
-    },
-    {
-      id: 3,
-      name: "Natura Shots",
-      company: "Fotografía Natural",
-      activeContests: 1,
-      totalContests: 12,
-      participants: 650,
-      since: "2021"
-    }
-  ];
-
   const handleOrganizerRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRegistering(true);
 
-    // Simulate registration process
     setTimeout(() => {
       toast({
         title: "Registro exitoso",
@@ -72,165 +39,168 @@ const Organizers = () => {
       exit={{ opacity: 0 }}
       className="pt-24 pb-16"
     >
-      <div className="container max-w-6xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Organizadores de Concursos</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Conecta con los mejores organizadores de concursos fotográficos o únete como organizador profesional
+      <div className="container max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            ORGANIZADORES
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            Únete a nuestra plataforma como organizador profesional y crea experiencias fotográficas únicas
           </p>
         </div>
 
-        {/* Registration CTA */}
-        <div className="mb-12 text-center">
-          <Card className="max-w-2xl mx-auto">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-center gap-2">
-                <Building className="h-6 w-6" />
-                ¿Quieres organizar concursos?
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-6">
-                Únete a nuestra plataforma como organizador y crea concursos fotográficos profesionales
-              </p>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="lg" className="gap-2">
-                    <Plus className="h-5 w-5" />
-                    Registrarse como Organizador
+        {/* Main CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-20"
+        >
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-12 max-w-4xl mx-auto">
+            <Building className="h-16 w-16 text-primary mx-auto mb-6" />
+            <h2 className="text-3xl font-bold mb-4">¿Quieres organizar concursos?</h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Conecta con miles de fotógrafos apasionados y crea concursos que inspiren
+            </p>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button size="lg" className="text-lg px-12 py-6 rounded-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-xl">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Registrarse como Organizador
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <User className="h-5 w-5" />
+                    Registro de Organizador
+                  </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleOrganizerRegistration} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="organizer-name" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Nombre completo
+                    </Label>
+                    <Input
+                      id="organizer-name"
+                      value={organizerName}
+                      onChange={(e) => setOrganizerName(e.target.value)}
+                      placeholder="Tu nombre completo"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="organizer-email" className="flex items-center gap-2">
+                      <Mail className="h-4 w-4" />
+                      Email
+                    </Label>
+                    <Input
+                      id="organizer-email"
+                      type="email"
+                      value={organizerEmail}
+                      onChange={(e) => setOrganizerEmail(e.target.value)}
+                      placeholder="tu@email.com"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="organizer-company" className="flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Empresa/Organización
+                    </Label>
+                    <Input
+                      id="organizer-company"
+                      value={organizerCompany}
+                      onChange={(e) => setOrganizerCompany(e.target.value)}
+                      placeholder="Nombre de tu empresa"
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isRegistering}>
+                    {isRegistering ? "Enviando solicitud..." : "Enviar Solicitud"}
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Registro de Organizador</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={handleOrganizerRegistration} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="organizer-name">Nombre completo</Label>
-                      <Input
-                        id="organizer-name"
-                        value={organizerName}
-                        onChange={(e) => setOrganizerName(e.target.value)}
-                        placeholder="Tu nombre completo"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="organizer-email">Email</Label>
-                      <Input
-                        id="organizer-email"
-                        type="email"
-                        value={organizerEmail}
-                        onChange={(e) => setOrganizerEmail(e.target.value)}
-                        placeholder="tu@email.com"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="organizer-company">Empresa/Organización</Label>
-                      <Input
-                        id="organizer-company"
-                        value={organizerCompany}
-                        onChange={(e) => setOrganizerCompany(e.target.value)}
-                        placeholder="Nombre de tu empresa"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full" disabled={isRegistering}>
-                      {isRegistering ? "Enviando solicitud..." : "Enviar Solicitud"}
-                    </Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </CardContent>
-          </Card>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </motion.div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-center"
+          >
+            <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-8 mb-6">
+              <Trophy className="h-12 w-12 text-amber-600 mx-auto" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Panel de Control Profesional</h3>
+            <p className="text-muted-foreground">
+              Herramientas avanzadas para gestionar tus concursos de manera eficiente
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-center"
+          >
+            <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl p-8 mb-6">
+              <Users className="h-12 w-12 text-blue-600 mx-auto" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Comunidad Activa</h3>
+            <p className="text-muted-foreground">
+              Acceso a una red de fotógrafos profesionales y aficionados
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-center"
+          >
+            <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-8 mb-6">
+              <Building className="h-12 w-12 text-green-600 mx-auto" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Visibilidad Máxima</h3>
+            <p className="text-muted-foreground">
+              Promociona tu marca y eventos a nivel nacional e internacional
+            </p>
+          </motion.div>
         </div>
 
-        {/* Organizers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {organizers.map((organizer) => (
-            <motion.div
-              key={organizer.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: organizer.id * 0.1 }}
-            >
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{organizer.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{organizer.company}</p>
-                    </div>
-                    <Badge variant="secondary">
-                      Desde {organizer.since}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-amber-500" />
-                      <div>
-                        <p className="font-medium">{organizer.activeContests}</p>
-                        <p className="text-muted-foreground">Activos</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-blue-500" />
-                      <div>
-                        <p className="font-medium">{organizer.totalContests}</p>
-                        <p className="text-muted-foreground">Total</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 col-span-2">
-                      <Users className="h-4 w-4 text-green-500" />
-                      <div>
-                        <p className="font-medium">{organizer.participants.toLocaleString()}</p>
-                        <p className="text-muted-foreground">Participantes totales</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Info Section */}
-        <div className="mt-16 text-center">
-          <Card className="max-w-4xl mx-auto">
-            <CardHeader>
-              <CardTitle>Beneficios de ser Organizador</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
-                <div className="space-y-2">
-                  <Trophy className="h-8 w-8 text-amber-500 mx-auto md:mx-0" />
-                  <h3 className="font-semibold">Panel de Control</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Accede a herramientas profesionales para gestionar tus concursos
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Users className="h-8 w-8 text-blue-500 mx-auto md:mx-0" />
-                  <h3 className="font-semibold">Comunidad Activa</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Conecta con miles de fotógrafos apasionados
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Building className="h-8 w-8 text-green-500 mx-auto md:mx-0" />
-                  <h3 className="font-semibold">Visibilidad</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Promociona tu marca y eventos a nivel nacional
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-gradient-to-r from-primary/5 to-blue-600/5 rounded-3xl p-12 text-center"
+        >
+          <h2 className="text-3xl font-bold mb-8">La plataforma líder en concursos fotográficos</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">50+</div>
+              <div className="text-muted-foreground">Organizadores activos</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">200+</div>
+              <div className="text-muted-foreground">Concursos creados</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">10K+</div>
+              <div className="text-muted-foreground">Participantes registrados</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-primary mb-2">€500K+</div>
+              <div className="text-muted-foreground">En premios otorgados</div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </motion.div>
   );
