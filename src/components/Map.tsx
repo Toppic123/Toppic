@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useContestsData } from "@/hooks/useContestsData";
@@ -18,22 +17,57 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
+// Generate realistic coordinates based on location
+const getCoordinatesForLocation = (location: string) => {
+  const locationMap: { [key: string]: { lat: number, lng: number } } = {
+    'madrid': { lat: 40.4168, lng: -3.7038 },
+    'barcelona': { lat: 41.3851, lng: 2.1734 },
+    'valencia': { lat: 39.4699, lng: -0.3763 },
+    'sevilla': { lat: 37.3891, lng: -5.9845 },
+    'bilbao': { lat: 43.2627, lng: -2.9253 },
+    'escaldes': { lat: 42.5063, lng: 1.5218 }, // Escaldes-Engordany, Andorra
+    'andorra': { lat: 42.5063, lng: 1.5218 },
+    'zaragoza': { lat: 41.6488, lng: -0.8891 },
+    'málaga': { lat: 36.7213, lng: -4.4213 },
+    'palma': { lat: 39.5696, lng: 2.6502 }
+  };
+
+  const locationKey = location.toLowerCase();
+  
+  // Try to find exact match first
+  for (const [key, coords] of Object.entries(locationMap)) {
+    if (locationKey.includes(key)) {
+      return coords;
+    }
+  }
+  
+  // Default to Madrid with slight randomization if location not found
+  return { 
+    lat: 40.4168 + (Math.random() - 0.5) * 0.1, 
+    lng: -3.7038 + (Math.random() - 0.5) * 0.1 
+  };
+};
+
 // Convert contest data to map-compatible format
-const convertContestToMapFormat = (contest: any) => ({
-  id: contest.id,
-  title: contest.title,
-  location: contest.location,
-  coords: contest.coordinates || { lat: 40.4168 + (Math.random() - 0.5) * 0.1, lng: -3.7038 + (Math.random() - 0.5) * 0.1 },
-  description: contest.description || "Descripción del concurso disponible pronto.",
-  endDate: contest.endDate,
-  participants: contest.participants,
-  isActive: contest.isActive,
-  prize: contest.prize || "500€",
-  imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
-  organizer: contest.organizer,
-  photosCount: 0, // Add missing property with default value
-  isPrivate: contest.is_private || false // Add missing property from database field
-});
+const convertContestToMapFormat = (contest: any) => {
+  const coordinates = getCoordinatesForLocation(contest.location || "madrid");
+  
+  return {
+    id: contest.id,
+    title: contest.title,
+    location: contest.location,
+    coords: coordinates,
+    description: contest.description || "Descripción del concurso disponible pronto.",
+    endDate: contest.endDate,
+    participants: contest.participants,
+    isActive: contest.isActive,
+    prize: contest.prize || "500€",
+    imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
+    organizer: contest.organizer,
+    photosCount: 0,
+    isPrivate: contest.is_private || false
+  };
+};
 
 const Map = ({ showMustardButton = false }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -53,6 +87,9 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   // Convert real contests to map format
   const mapContests = realContests.map(convertContestToMapFormat);
   const activeMapContests = mapContests.filter(contest => contest.isActive);
+
+  console.log("Contests from database:", realContests);
+  console.log("Converted map contests:", mapContests);
 
   const initMap = async () => {
     if (!mapRef.current || mapInstanceRef.current || !leafletLoaded) return;
