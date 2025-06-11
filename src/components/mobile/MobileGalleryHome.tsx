@@ -13,7 +13,7 @@ interface MobileGalleryHomeProps {
 const featuredPhotos = [
   {
     id: 1,
-    url: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600",
+    url: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600",
     author: "María García",
     contest: "Primavera en Barcelona",
     likes: 145,
@@ -99,7 +99,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Galería Destacada</h1>
+          <h1 className="text-xl font-semibold text-gray-900">TOP PICS</h1>
           <Button
             variant="ghost"
             size="sm"
@@ -109,7 +109,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
             <Search className="h-5 w-5" />
           </Button>
         </div>
-        <p className="text-sm text-gray-600 mt-1">Las mejores fotos seleccionadas por nuestro equipo</p>
+        <p className="text-sm text-gray-600 mt-1">Las mejores fotos premiadas de nuestros concursos</p>
       </div>
 
       {/* Photo Grid */}

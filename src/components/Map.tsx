@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { mockContests, activeContests, Contest } from "./map/contestData";
+import { useContestsData } from "@/hooks/useContestsData";
 import { 
   loadLeaflet, 
   initializeMap, 
@@ -18,17 +18,39 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
+// Convert contest data to map-compatible format
+const convertContestToMapFormat = (contest: any) => ({
+  id: contest.id,
+  title: contest.title,
+  location: contest.location,
+  coords: contest.coordinates || { lat: 40.4168 + (Math.random() - 0.5) * 0.1, lng: -3.7038 + (Math.random() - 0.5) * 0.1 },
+  description: contest.description || "Descripción del concurso disponible pronto.",
+  endDate: contest.endDate,
+  participants: contest.participants,
+  isActive: contest.isActive,
+  prize: contest.prize || "500€",
+  imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
+  organizer: contest.organizer
+});
+
 const Map = ({ showMustardButton = false }: MapProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
-  const [selectedContest, setSelectedContest] = useState<Contest | null>(null);
+  const [selectedContest, setSelectedContest] = useState<any>(null);
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
-  const [nearbyContests, setNearbyContests] = useState<Contest[]>([]);
+  const [nearbyContests, setNearbyContests] = useState<any[]>([]);
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const { toast } = useToast();
+  
+  // Get real contests data from Supabase
+  const { contests: realContests, isLoading: contestsLoading } = useContestsData();
+
+  // Convert real contests to map format
+  const mapContests = realContests.map(convertContestToMapFormat);
+  const activeMapContests = mapContests.filter(contest => contest.isActive);
 
   const initMap = async () => {
     if (!mapRef.current || mapInstanceRef.current || !leafletLoaded) return;
@@ -45,7 +67,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   };
 
   const addContestMarkers = () => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || contestsLoading) return;
 
     // Clear existing markers
     markersRef.current.forEach(marker => {
@@ -53,13 +75,13 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     });
     markersRef.current = [];
 
-    // Add markers for all contests
-    const markers = createContestMarkers(mockContests, mapInstanceRef.current, setSelectedContest);
+    // Add markers for real contests from database
+    const markers = createContestMarkers(mapContests, mapInstanceRef.current, setSelectedContest);
     markersRef.current = markers;
   };
 
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
-    const nearby = activeContests.filter(contest => {
+    const nearby = activeMapContests.filter(contest => {
       const distance = calculateDistance(
         userLat, 
         userLng, 
@@ -140,8 +162,8 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   }, []);
 
   useEffect(() => {
-    if (leafletLoaded) {
-      // Initialize map after Leaflet is loaded and a brief delay to ensure the container is ready
+    if (leafletLoaded && !contestsLoading) {
+      // Initialize map after Leaflet is loaded and contests are loaded
       const timer = setTimeout(() => {
         initMap();
       }, 100);
@@ -155,12 +177,19 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         }
       };
     }
-  }, [leafletLoaded]);
+  }, [leafletLoaded, contestsLoading]);
+
+  // Re-add markers when contests data changes
+  useEffect(() => {
+    if (mapInstanceRef.current && !contestsLoading) {
+      addContestMarkers();
+    }
+  }, [realContests, contestsLoading]);
 
   return (
     <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden shadow-lg border border-gray-200">
       {/* Mostrar estado de carga */}
-      {isMapLoading && <MapLoadingState />}
+      {(isMapLoading || contestsLoading) && <MapLoadingState />}
 
       {/* Contenedor del mapa */}
       <div ref={mapRef} className="w-full h-full rounded-lg" />
@@ -168,7 +197,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       {/* Botón central para buscar concursos cercanos */}
       <SearchButton 
         isLocating={isLocating}
-        isMapLoading={isMapLoading}
+        isMapLoading={isMapLoading || contestsLoading}
         onLocateUser={locateUser}
       />
 
