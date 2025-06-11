@@ -30,7 +30,9 @@ const convertContestToMapFormat = (contest: any) => ({
   isActive: contest.isActive,
   prize: contest.prize || "500€",
   imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
-  organizer: contest.organizer
+  organizer: contest.organizer,
+  photosCount: 0, // Add missing property with default value
+  isPrivate: contest.is_private || false // Add missing property from database field
 });
 
 const Map = ({ showMustardButton = false }: MapProps) => {
