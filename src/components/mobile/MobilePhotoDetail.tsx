@@ -61,7 +61,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
   return (
     <div className="h-full bg-white flex flex-col">
       {/* Header */}
-      <div className="bg-white px-4 py-4 border-b border-gray-200 flex items-center">
+      <div className="bg-white px-4 py-4 border-b border-gray-200 flex items-center flex-shrink-0">
         <Button
           variant="ghost"
           size="sm"
@@ -74,7 +74,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
       </div>
 
       {/* Photo */}
-      <div className="bg-black flex items-center justify-center">
+      <div className="bg-black flex items-center justify-center flex-shrink-0">
         <img 
           src={photo.url} 
           alt={photo.description}
@@ -83,7 +83,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
       </div>
 
       {/* Photo Info */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold text-gray-900">{photo.author}</h3>
           <Button
@@ -106,7 +106,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
         <p className="text-gray-600 text-sm">{photo.description}</p>
       </div>
 
-      {/* Comments Section */}
+      {/* Comments Section - Scrollable */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-4">
           <h4 className="font-semibold text-gray-900 mb-4">Comentarios ({comments.length})</h4>
@@ -122,10 +122,13 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
             ))}
           </div>
         </div>
+        
+        {/* Spacer to ensure content is not hidden behind comment input */}
+        <div className="h-24"></div>
       </div>
 
-      {/* Add Comment */}
-      <div className="p-4 border-t border-gray-200 bg-white">
+      {/* Add Comment - Fixed at bottom */}
+      <div className="p-4 border-t border-gray-200 bg-white flex-shrink-0 pb-20">
         <div className="flex space-x-3">
           <Textarea
             placeholder="Escribe un comentario..."

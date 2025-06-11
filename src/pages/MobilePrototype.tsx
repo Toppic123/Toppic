@@ -19,10 +19,17 @@ type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'vot
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
   const [isLoggedIn, setIsLoggedIn] = useState(true); // Set to true since home is now the same as contests
-  const [hasNotifications, setHasNotifications] = useState(true); // Mock notification state
+  const [hasNotifications, setHasNotifications] = useState(false); // Changed to false by default
+  const [newCommentsCount, setNewCommentsCount] = useState(0); // Track new comments
 
   const handleNavigation = (screen: MobileScreen) => {
     setCurrentScreen(screen);
+    
+    // If navigating to profile, clear notifications
+    if (screen === 'profile') {
+      setHasNotifications(false);
+      setNewCommentsCount(0);
+    }
   };
 
   const handleLogin = () => {
@@ -33,6 +40,12 @@ const MobilePrototype = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentScreen('home');
+  };
+
+  // Simulate receiving a new comment (this would come from your backend)
+  const simulateNewComment = () => {
+    setNewCommentsCount(prev => prev + 1);
+    setHasNotifications(true);
   };
 
   const renderScreen = () => {
@@ -69,6 +82,13 @@ const MobilePrototype = () => {
                 <h1 className="text-xl font-semibold">Configuración</h1>
               </div>
               <p className="text-gray-600">Página de configuración en desarrollo...</p>
+              
+              {/* Demo button to simulate new comment notification */}
+              <div className="mt-6">
+                <Button onClick={simulateNewComment} variant="outline">
+                  Simular nuevo comentario (Demo)
+                </Button>
+              </div>
             </div>
           </div>
         );
@@ -156,8 +176,12 @@ const MobilePrototype = () => {
                     >
                       <div className="relative">
                         <User className="h-5 w-5 mb-1" />
-                        {hasNotifications && (
-                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                        {hasNotifications && newCommentsCount > 0 && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs font-bold" style={{ fontSize: '8px' }}>
+                              {newCommentsCount > 9 ? '9+' : newCommentsCount}
+                            </span>
+                          </div>
                         )}
                       </div>
                       <span className="text-xs">Perfil</span>

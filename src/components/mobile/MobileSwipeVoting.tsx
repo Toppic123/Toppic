@@ -224,7 +224,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         </div>
       </div>
 
-      {/* Photos Container - Fixed Horizontal Layout */}
+      {/* Photos Container - Horizontal Layout Fixed */}
       <div 
         ref={containerRef}
         className="flex h-full pt-20 pb-32"
@@ -232,8 +232,8 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Left Photo */}
-        <div className="w-1/2 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[0], 'left')}>
+        {/* Left Photo - 50% width */}
+        <div className="w-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[0], 'left')}>
           {/* Vote Indicator for Left Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
@@ -258,8 +258,8 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             <Badge className="mb-2 text-xs bg-white/20 text-white border-white/30">
               {currentPair[0].contest}
             </Badge>
-            <h3 className="text-lg font-semibold mb-1">{currentPair[0].title}</h3>
-            <p className="text-sm opacity-90">por {currentPair[0].photographer}</p>
+            <h3 className="text-sm font-semibold mb-1">{currentPair[0].title}</h3>
+            <p className="text-xs opacity-90">por {currentPair[0].photographer}</p>
             <div className="text-xs opacity-75 mt-1">
               Rating ELO: {currentPair[0].rating}
             </div>
@@ -269,8 +269,8 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         {/* Vertical Divider */}
         <div className="w-1 bg-white/30 flex-shrink-0"></div>
 
-        {/* Right Photo */}
-        <div className="w-1/2 relative overflow-hidden" onClick={() => handlePhotoClick(currentPair[1], 'right')}>
+        {/* Right Photo - 50% width */}
+        <div className="w-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[1], 'right')}>
           {/* Vote Indicator for Right Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
@@ -295,8 +295,8 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             <Badge className="mb-2 text-xs bg-white/20 text-white border-white/30">
               {currentPair[1].contest}
             </Badge>
-            <h3 className="text-lg font-semibold mb-1">{currentPair[1].title}</h3>
-            <p className="text-sm opacity-90">por {currentPair[1].photographer}</p>
+            <h3 className="text-sm font-semibold mb-1">{currentPair[1].title}</h3>
+            <p className="text-xs opacity-90">por {currentPair[1].photographer}</p>
             <div className="text-xs opacity-75 mt-1">
               Rating ELO: {currentPair[1].rating}
             </div>

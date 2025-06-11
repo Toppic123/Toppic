@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, Share2, MessageCircle, Trophy, Users } from "lucide-react";
 import MobilePhotoDetail from "./MobilePhotoDetail";
+import ContestAdBanner from "./ContestAdBanner";
 
 interface MobileVotingProps {
   onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
@@ -120,6 +121,9 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           <Badge className="bg-green-500 text-white">Activo</Badge>
         </div>
       </div>
+
+      {/* Advertisement Banner */}
+      <ContestAdBanner />
 
       {/* Photo Grid - Two photos horizontally */}
       <div className="p-4">

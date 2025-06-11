@@ -1,121 +1,71 @@
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthContextProvider } from "./contexts/AuthContext";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Profile from "./pages/Profile";
-import Dashboard from "./pages/Dashboard";
-import DashboardSettings from "./pages/DashboardSettings";
-import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 import Contests from "./pages/Contests";
 import ContestDetail from "./pages/ContestDetail";
-import ContestGalleryPage from "./pages/ContestGalleryPage";
 import Upload from "./pages/Upload";
-import GalleryPage from "./pages/GalleryPage";
-import GalleryManagement from "./pages/GalleryManagement";
-import Organizers from "./pages/Organizers";
-import Support from "./pages/Support";
+import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import VotingRules from "./pages/VotingRules";
+import ContestRules from "./pages/ContestRules";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
-import VotingRules from "./pages/VotingRules";
-import AdminDashboard from "./pages/AdminDashboard";
+import Support from "./pages/Support";
+import Organizers from "./pages/Organizers";
+import NotFound from "./pages/NotFound";
 import MobilePrototype from "./pages/MobilePrototype";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "@/components/ui/toaster";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { usePushNotification } from "@/components/PushNotification";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import RoleBasedRoute from "@/components/RoleBasedRoute";
+import GalleryPage from "./pages/GalleryPage";
+import ContestGalleryPage from "./pages/ContestGalleryPage";
+import GalleryManagement from "./pages/GalleryManagement";
+import DashboardSettings from "./pages/DashboardSettings";
 
-// Create React Query client
 const queryClient = new QueryClient();
 
-// Protected route component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, isLoading } = useAuth();
-  
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-  
-  return <>{children}</>;
-};
-
 function App() {
-  const { NotificationsRenderer } = usePushNotification();
-
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="light">
-        <AuthProvider>
-          <Router>
+      <AuthContextProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
-              {/* Mobile prototype route - no layout wrapper */}
-              <Route path="/mobile-prototype" element={<MobilePrototype />} />
-              
-              <Route element={<Layout />}>
-                <Route path="/" element={<Index />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/dashboard/settings" element={
-                  <ProtectedRoute>
-                    <DashboardSettings />
-                  </ProtectedRoute>
-                } />
-                {/* Admin Dashboard Route */}
-                <Route path="/admin" element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <AdminDashboard />
-                  </RoleBasedRoute>
-                } />
-                <Route path="/contests" element={<Contests />} />
-                <Route path="/contests/:id" element={<ContestDetail />} />
-                {/* New route for contest gallery */}
-                <Route path="/contests/:id/gallery" element={<ContestGalleryPage />} />
-                <Route path="/upload" element={
-                  <RoleBasedRoute allowedRoles={['participant', 'admin']}>
-                    <Upload />
-                  </RoleBasedRoute>
-                } />
-                <Route path="/gallery" element={<GalleryPage />} />
-                <Route path="/gallery/manage" element={
-                  <ProtectedRoute>
-                    <GalleryManagement />
-                  </ProtectedRoute>
-                } />
-                {/* Organizers page is accessible to everyone */}
-                <Route path="/organizers" element={<Organizers />} />
-                <Route path="/support" element={<Support />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/voting-rules" element={<VotingRules />} />
-                <Route path="*" element={<NotFound />} />
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Index />} />
+                <Route path="register" element={<Register />} />
+                <Route path="login" element={<Login />} />
+                <Route path="contests" element={<Contests />} />
+                <Route path="contests/:id" element={<ContestDetail />} />
+                <Route path="contests/:id/gallery" element={<ContestGalleryPage />} />
+                <Route path="upload" element={<Upload />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="admin" element={<AdminDashboard />} />
+                <Route path="voting-rules" element={<VotingRules />} />
+                <Route path="contest-rules" element={<ContestRules />} />
+                <Route path="terms" element={<Terms />} />
+                <Route path="privacy" element={<Privacy />} />
+                <Route path="support" element={<Support />} />
+                <Route path="organizers" element={<Organizers />} />
+                <Route path="gallery" element={<GalleryPage />} />
+                <Route path="gallery-management" element={<GalleryManagement />} />
+                <Route path="dashboard-settings" element={<DashboardSettings />} />
               </Route>
+              <Route path="/mobile-prototype" element={<MobilePrototype />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
-            
-            {/* Global notification system */}
-            <NotificationsRenderer />
-            
-            {/* Toast notifications */}
-            <Toaster />
-          </Router>
-        </AuthProvider>
-      </ThemeProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthContextProvider>
     </QueryClientProvider>
   );
 }
