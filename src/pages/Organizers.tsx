@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, Users, Trophy, Calendar, Plus, Mail, User, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import PricingPlans from "@/components/PricingPlans";
+import PricingPlans, { PricingPlan } from "@/components/PricingPlans";
 
 const Organizers = () => {
   const { toast } = useToast();
@@ -33,12 +33,58 @@ const Organizers = () => {
     }, 2000);
   };
 
-  const handlePlanSelection = (plan: any) => {
+  const handlePlanSelection = (plan: PricingPlan) => {
     toast({
       title: "Plan seleccionado",
       description: `Has seleccionado el plan ${plan.name}. Te contactaremos para proceder con el registro.`,
     });
   };
+
+  const customPlans: PricingPlan[] = [
+    {
+      name: "Básico",
+      price: "149€",
+      description: "Ideal para eventos pequeños y locales",
+      features: [
+        "Hasta 300 participantes",
+        "1 concurso fotográfico",
+        "Publicidad básica en la app",
+        "Derechos sobre 1 foto ganadora"
+      ],
+      buttonText: "Comenzar",
+      buttonVariant: "outline"
+    },
+    {
+      name: "Profesional",
+      price: "199€",
+      description: "Perfecto para eventos medianos y empresas",
+      features: [
+        "Hasta 1000 participantes",
+        "1 concurso fotográfico",
+        "Publicidad destacada en la app",
+        "Derechos sobre las 3 mejores fotos de cada concurso",
+        "Banner promocional en la app"
+      ],
+      recommended: true,
+      buttonText: "Seleccionar Plan",
+      buttonVariant: "default"
+    },
+    {
+      name: "Premium",
+      price: "149€",
+      description: "Para grandes eventos y marcas reconocidas",
+      features: [
+        "Participantes ilimitados",
+        "1 concurso fotográfico",
+        "Publicidad premium en toda la app",
+        "Derechos sobre las 5 mejores fotos",
+        "Banner destacado en página principal",
+        "Notificaciones push personalizadas"
+      ],
+      buttonText: "Contactanos",
+      buttonVariant: "secondary"
+    }
+  ];
 
   return (
     <motion.div
@@ -135,22 +181,7 @@ const Organizers = () => {
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-center"
-          >
-            <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-8 mb-6">
-              <Trophy className="h-12 w-12 text-amber-600 mx-auto" />
-            </div>
-            <h3 className="text-xl font-bold mb-3">Panel de Control Profesional</h3>
-            <p className="text-muted-foreground">
-              Herramientas avanzadas para gestionar tus concursos de manera eficiente
-            </p>
-          </motion.div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -189,7 +220,7 @@ const Organizers = () => {
           transition={{ delay: 0.4 }}
           className="mb-20"
         >
-          <PricingPlans onSelectPlan={handlePlanSelection} />
+          <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} />
         </motion.div>
 
         {/* Stats Section */}
