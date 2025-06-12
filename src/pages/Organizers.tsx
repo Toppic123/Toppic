@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building, Users, Trophy, Calendar, Plus, Mail, User, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import PricingPlans from "@/components/PricingPlans";
 
 const Organizers = () => {
   const { toast } = useToast();
@@ -30,6 +31,13 @@ const Organizers = () => {
       setOrganizerEmail("");
       setOrganizerCompany("");
     }, 2000);
+  };
+
+  const handlePlanSelection = (plan: any) => {
+    toast({
+      title: "Plan seleccionado",
+      description: `Has seleccionado el plan ${plan.name}. Te contactaremos para proceder con el registro.`,
+    });
   };
 
   return (
@@ -174,11 +182,21 @@ const Organizers = () => {
           </motion.div>
         </div>
 
-        {/* Stats Section */}
+        {/* Pricing Plans Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
+          className="mb-20"
+        >
+          <PricingPlans onSelectPlan={handlePlanSelection} />
+        </motion.div>
+
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
           className="bg-gradient-to-r from-primary/5 to-blue-600/5 rounded-3xl p-12 text-center"
         >
           <h2 className="text-3xl font-bold mb-8">La plataforma líder en concursos fotográficos</h2>
