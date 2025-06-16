@@ -18,6 +18,7 @@ const Organizers = () => {
   const [organizerName, setOrganizerName] = useState("");
   const [organizerEmail, setOrganizerEmail] = useState("");
   const [organizerCompany, setOrganizerCompany] = useState("");
+  const [showRegistrationDialog, setShowRegistrationDialog] = useState(false);
 
   const handleOrganizerRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,14 +33,12 @@ const Organizers = () => {
       setOrganizerName("");
       setOrganizerEmail("");
       setOrganizerCompany("");
+      setShowRegistrationDialog(false);
     }, 2000);
   };
 
   const handlePlanSelection = (plan: PricingPlan) => {
-    toast({
-      title: "Plan seleccionado",
-      description: `Has seleccionado el plan ${plan.name}. Te contactaremos para proceder con el registro.`,
-    });
+    setShowRegistrationDialog(true);
   };
 
   const handleCustomPlanRequest = () => {
@@ -57,7 +56,7 @@ const Organizers = () => {
         "Publicidad básica en la app",
         "Derechos sobre 1 foto ganadora"
       ],
-      buttonText: "Comenzar",
+      buttonText: "SELECCIONAR PLAN",
       buttonVariant: "outline"
     },
     {
@@ -72,7 +71,7 @@ const Organizers = () => {
         "Banner promocional en la app"
       ],
       recommended: true,
-      buttonText: "Seleccionar Plan",
+      buttonText: "SELECCIONAR PLAN",
       buttonVariant: "default"
     },
     {
@@ -87,7 +86,7 @@ const Organizers = () => {
         "Banner destacado en página principal",
         "Notificaciones push personalizadas"
       ],
-      buttonText: "Contactanos",
+      buttonText: "SELECCIONAR PLAN",
       buttonVariant: "secondary"
     }
   ];
@@ -109,99 +108,11 @@ const Organizers = () => {
           </p>
         </div>
 
-        {/* Pricing Plans Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-20"
-        >
-          <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
-        </motion.div>
-
-        {/* Main CTA Section - moved after pricing */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-center mb-20"
-        >
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-12 max-w-4xl mx-auto">
-            <Building className="h-16 w-16 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl font-bold mb-4">¿Quieres organizar concursos?</h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Conecta con miles de fotógrafos apasionados y crea concursos que inspiren
-            </p>
-            
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button size="lg" className="text-lg px-12 py-6 rounded-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-xl">
-                  <Plus className="h-5 w-5 mr-2" />
-                  Registrarse como Organizador
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    Registro de Organizador
-                  </DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleOrganizerRegistration} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="organizer-name" className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Nombre completo
-                    </Label>
-                    <Input
-                      id="organizer-name"
-                      value={organizerName}
-                      onChange={(e) => setOrganizerName(e.target.value)}
-                      placeholder="Tu nombre completo"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="organizer-email" className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      Email
-                    </Label>
-                    <Input
-                      id="organizer-email"
-                      type="email"
-                      value={organizerEmail}
-                      onChange={(e) => setOrganizerEmail(e.target.value)}
-                      placeholder="tu@email.com"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="organizer-company" className="flex items-center gap-2">
-                      <Building className="h-4 w-4" />
-                      Empresa/Organización
-                    </Label>
-                    <Input
-                      id="organizer-company"
-                      value={organizerCompany}
-                      onChange={(e) => setOrganizerCompany(e.target.value)}
-                      placeholder="Nombre de tu empresa"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isRegistering}>
-                    {isRegistering ? "Enviando solicitud..." : "Enviar Solicitud"}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </motion.div>
-
-        {/* New title before Features Grid */}
+        {/* Features Section - First */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-12"
         >
           <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
@@ -209,12 +120,11 @@ const Organizers = () => {
           </h2>
         </motion.div>
 
-        {/* Features Grid with updated content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.3 }}
             className="text-center"
           >
             <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl p-8 mb-6">
@@ -229,7 +139,7 @@ const Organizers = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.4 }}
             className="text-center"
           >
             <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-8 mb-6">
@@ -244,7 +154,7 @@ const Organizers = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+            transition={{ delay: 0.5 }}
             className="text-center"
           >
             <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 mb-6">
@@ -256,6 +166,41 @@ const Organizers = () => {
             </p>
           </motion.div>
         </div>
+
+        {/* Pricing Plans Section - Second */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="mb-20"
+        >
+          <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
+        </motion.div>
+
+        {/* Main CTA Section - Third */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="text-center mb-20"
+        >
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-12 max-w-4xl mx-auto">
+            <Building className="h-16 w-16 text-primary mx-auto mb-6" />
+            <h2 className="text-3xl font-bold mb-4">¿Quieres organizar concursos?</h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Conecta con miles de fotógrafos apasionados y crea concursos que inspiren
+            </p>
+            
+            <Button 
+              size="lg" 
+              className="text-lg px-12 py-6 rounded-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-xl"
+              onClick={() => setShowRegistrationDialog(true)}
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Registrarse como Organizador
+            </Button>
+          </div>
+        </motion.div>
 
         {/* Stats Section */}
         <motion.div
@@ -284,6 +229,63 @@ const Organizers = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* Registration Dialog */}
+        <Dialog open={showRegistrationDialog} onOpenChange={setShowRegistrationDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Registro de Organizador
+              </DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleOrganizerRegistration} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="organizer-name" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Nombre completo
+                </Label>
+                <Input
+                  id="organizer-name"
+                  value={organizerName}
+                  onChange={(e) => setOrganizerName(e.target.value)}
+                  placeholder="Tu nombre completo"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="organizer-email" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Email
+                </Label>
+                <Input
+                  id="organizer-email"
+                  type="email"
+                  value={organizerEmail}
+                  onChange={(e) => setOrganizerEmail(e.target.value)}
+                  placeholder="tu@email.com"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="organizer-company" className="flex items-center gap-2">
+                  <Building className="h-4 w-4" />
+                  Empresa/Organización
+                </Label>
+                <Input
+                  id="organizer-company"
+                  value={organizerCompany}
+                  onChange={(e) => setOrganizerCompany(e.target.value)}
+                  placeholder="Nombre de tu empresa"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={isRegistering}>
+                {isRegistering ? "Enviando solicitud..." : "Enviar Solicitud"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </motion.div>
   );
