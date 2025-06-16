@@ -1,4 +1,3 @@
-
 import { Check, Info } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ export interface PricingPlan {
 interface PricingPlansProps {
   plans: PricingPlan[];
   onSelectPlan?: (plan: PricingPlan) => void;
+  onCustomPlanRequest?: () => void;
 }
 
 const defaultPlans: PricingPlan[] = [
@@ -66,7 +66,7 @@ const defaultPlans: PricingPlan[] = [
   }
 ];
 
-const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps) => {
+const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest }: PricingPlansProps) => {
   return (
     <div className="container mx-auto py-12">
       <div className="text-center mb-12">
@@ -125,7 +125,11 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan }: PricingPlansProps)
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="link" className="text-base text-muted-foreground">
+              <Button 
+                variant="link" 
+                className="text-base text-muted-foreground"
+                onClick={onCustomPlanRequest}
+              >
                 <Info className="h-4 w-4 mr-1" />
                 ¿Necesitas un plan personalizado?
               </Button>

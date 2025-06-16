@@ -1,17 +1,18 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Users, Trophy, Calendar, Plus, Mail, User, MapPin } from "lucide-react";
+import { Building, Users, Trophy, Calendar, Plus, Mail, User, MapPin, Camera, Album } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import PricingPlans, { PricingPlan } from "@/components/PricingPlans";
+import { useNavigate } from "react-router-dom";
 
 const Organizers = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
   const [organizerName, setOrganizerName] = useState("");
   const [organizerEmail, setOrganizerEmail] = useState("");
@@ -38,6 +39,10 @@ const Organizers = () => {
       title: "Plan seleccionado",
       description: `Has seleccionado el plan ${plan.name}. Te contactaremos para proceder con el registro.`,
     });
+  };
+
+  const handleCustomPlanRequest = () => {
+    navigate("/support");
   };
 
   const customPlans: PricingPlan[] = [
@@ -71,7 +76,7 @@ const Organizers = () => {
     },
     {
       name: "Premium",
-      price: "149€",
+      price: "249€",
       description: "Para grandes eventos y marcas reconocidas",
       features: [
         "Participantes ilimitados",
@@ -181,7 +186,7 @@ const Organizers = () => {
         </motion.div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -189,11 +194,11 @@ const Organizers = () => {
             className="text-center"
           >
             <div className="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl p-8 mb-6">
-              <Users className="h-12 w-12 text-blue-600 mx-auto" />
+              <Camera className="h-12 w-12 text-blue-600 mx-auto" />
             </div>
-            <h3 className="text-xl font-bold mb-3">Comunidad Activa</h3>
+            <h3 className="text-xl font-bold mb-3">Sin Fotógrafos Externos</h3>
             <p className="text-muted-foreground">
-              Acceso a una red de fotógrafos profesionales y aficionados
+              Prescinde de contratar fotógrafos para eventos. Usa las mejores imágenes de los participantes
             </p>
           </motion.div>
 
@@ -211,6 +216,21 @@ const Organizers = () => {
               Promociona tu marca y eventos a nivel nacional e internacional
             </p>
           </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-center"
+          >
+            <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-8 mb-6">
+              <Album className="h-12 w-12 text-purple-600 mx-auto" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Álbumes Permanentes</h3>
+            <p className="text-muted-foreground">
+              Los concursos son álbumes de fotografías para ver las fotos del evento en cualquier momento
+            </p>
+          </motion.div>
         </div>
 
         {/* Pricing Plans Section */}
@@ -220,7 +240,7 @@ const Organizers = () => {
           transition={{ delay: 0.4 }}
           className="mb-20"
         >
-          <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} />
+          <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
         </motion.div>
 
         {/* Stats Section */}
