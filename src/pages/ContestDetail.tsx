@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -16,7 +15,8 @@ import {
   Upload,
   Share2,
   ImageIcon,
-  Heart
+  Heart,
+  Vote
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -233,6 +233,16 @@ const ContestDetail = () => {
     }
   };
   
+  const handleVoteClick = () => {
+    // Navigate to voting interface for this contest
+    window.location.href = `/contests/${id}/vote`;
+    
+    toast({
+      title: "Iniciando votación",
+      description: "Te llevamos a la interfaz de votación comparativa",
+    });
+  };
+  
   return (
     <div className="pt-24 pb-16">
       <div className="container max-w-7xl mx-auto px-4">
@@ -315,16 +325,26 @@ const ContestDetail = () => {
                   <div>
                     <div className="flex justify-between items-center mb-6">
                       <h3 className="text-xl font-bold">Fotografías participantes</h3>
-                      <Button 
-                        asChild 
-                        variant={isInRange && contest.status === "active" ? "default" : "outline"}
-                        disabled={!isInRange || contest.status !== "active"}
-                      >
-                        <Link to={`/upload/${id}`}>
-                          <Upload className="mr-2 h-4 w-4" />
-                          Subir foto
-                        </Link>
-                      </Button>
+                      <div className="flex gap-3">
+                        <Button 
+                          variant="outline"
+                          onClick={handleVoteClick}
+                          className="bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
+                        >
+                          <Vote className="mr-2 h-4 w-4" />
+                          Votar
+                        </Button>
+                        <Button 
+                          asChild 
+                          variant={isInRange && contest.status === "active" ? "default" : "outline"}
+                          disabled={!isInRange || contest.status !== "active"}
+                        >
+                          <Link to={`/upload/${id}`}>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Subir foto
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
@@ -545,6 +565,15 @@ const ContestDetail = () => {
                       ? "Concurso finalizado" 
                       : "Participar"
                     }
+                  </Button>
+                  
+                  <Button 
+                    variant="outline"
+                    className="w-full bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
+                    onClick={handleVoteClick}
+                  >
+                    <Vote className="mr-2 h-4 w-4" />
+                    Votar fotografías
                   </Button>
                 </div>
               </div>

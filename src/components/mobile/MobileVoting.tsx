@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Share2, MessageCircle, Trophy, Users } from "lucide-react";
+import { Heart, Share2, MessageCircle, Trophy, Users, Vote } from "lucide-react";
 import MobilePhotoDetail from "./MobilePhotoDetail";
 import ContestAdBanner from "./ContestAdBanner";
 
@@ -107,7 +107,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           <div></div>
         </div>
         
-        <div className="flex items-center justify-between text-sm text-gray-600">
+        <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Users size={16} />
@@ -120,6 +120,15 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           </div>
           <Badge className="bg-green-500 text-white">Activo</Badge>
         </div>
+
+        {/* Vote Button */}
+        <Button 
+          onClick={() => onNavigate('vote')}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+        >
+          <Vote className="mr-2 h-4 w-4" />
+          Votar fotografías
+        </Button>
       </div>
 
       {/* Advertisement Banner */}
@@ -201,7 +210,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           onClick={() => onNavigate('vote')}
           className="h-14 w-14 rounded-full bg-purple-600 hover:bg-purple-700 shadow-lg"
         >
-          <span className="text-2xl">🗳️</span>
+          <Vote className="h-6 w-6 text-white" />
         </Button>
       </div>
     </div>
