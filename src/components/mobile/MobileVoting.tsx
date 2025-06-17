@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Share2, MessageCircle, Trophy, Users, Vote } from "lucide-react";
+import { Share2, MessageCircle, Trophy, Users, Vote } from "lucide-react";
 import MobilePhotoDetail from "./MobilePhotoDetail";
 import ContestAdBanner from "./ContestAdBanner";
 
@@ -62,20 +62,7 @@ const mockPhotos = [
 ];
 
 const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
-  const [likedPhotos, setLikedPhotos] = useState<Set<number>>(new Set());
   const [selectedPhoto, setSelectedPhoto] = useState<typeof mockPhotos[0] | null>(null);
-
-  const handleLike = (photoId: number) => {
-    setLikedPhotos(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(photoId)) {
-        newSet.delete(photoId);
-      } else {
-        newSet.add(photoId);
-      }
-      return newSet;
-    });
-  };
 
   const handlePhotoClick = (photo: typeof mockPhotos[0]) => {
     setSelectedPhoto(photo);
@@ -146,26 +133,6 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                   className="w-full h-48 object-cover cursor-pointer"
                   onClick={() => handlePhotoClick(photo)}
                 />
-                <div className="absolute top-2 right-2">
-                  <Button
-                    size="sm"
-                    variant={likedPhotos.has(photo.id) ? "default" : "secondary"}
-                    className={`h-8 w-8 p-0 rounded-full ${
-                      likedPhotos.has(photo.id) 
-                        ? "bg-red-500 hover:bg-red-600 text-white" 
-                        : "bg-white/80 hover:bg-white text-gray-600"
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLike(photo.id);
-                    }}
-                  >
-                    <Heart 
-                      size={16} 
-                      className={likedPhotos.has(photo.id) ? "fill-current" : ""} 
-                    />
-                  </Button>
-                </div>
               </div>
               
               <div className="p-3">
@@ -174,10 +141,6 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
                 
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <Heart size={12} />
-                      <span>{photo.likes + (likedPhotos.has(photo.id) ? 1 : 0)}</span>
-                    </div>
                     <div className="flex items-center gap-1">
                       <MessageCircle size={12} />
                       <span>{photo.comments}</span>
