@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Heart, Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 
 interface MobilePhotoDetailProps {
   photo: {
@@ -39,7 +39,6 @@ const mockComments = [
 const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
   const [comments, setComments] = useState(mockComments);
   const [newComment, setNewComment] = useState("");
-  const [isLiked, setIsLiked] = useState(false);
 
   const handleAddComment = () => {
     if (newComment.trim()) {
@@ -52,10 +51,6 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
       setComments([comment, ...comments]);
       setNewComment("");
     }
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
   };
 
   return (
@@ -86,22 +81,9 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
       <div className="p-4 border-b border-gray-200 flex-shrink-0">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold text-gray-900">{photo.author}</h3>
-          <Button
-            size="sm"
-            variant={isLiked ? "default" : "outline"}
-            onClick={handleLike}
-            className={`h-8 px-3 ${
-              isLiked 
-                ? "bg-red-500 hover:bg-red-600 text-white" 
-                : "text-gray-600"
-            }`}
-          >
-            <Heart 
-              size={14} 
-              className={`mr-1 ${isLiked ? "fill-current" : ""}`} 
-            />
-            {photo.likes + (isLiked ? 1 : 0)}
-          </Button>
+          <div className="text-sm text-gray-500">
+            {photo.likes} me gusta
+          </div>
         </div>
         <p className="text-gray-600 text-sm">{photo.description}</p>
       </div>
