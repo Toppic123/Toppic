@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   MapPin, 
@@ -128,6 +129,7 @@ const photosData = [
 
 const ContestDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [contest, setContest] = useState(contestData);
   const [photos, setPhotos] = useState(photosData);
   const [activeTab, setActiveTab] = useState("photos");
@@ -229,13 +231,13 @@ const ContestDetail = () => {
     if (!isInRange && contest.status === "active") {
       setShowOutOfRangeDialog(true);
     } else if (isInRange && contest.status === "active") {
-      window.location.href = `/upload/${id}`;
+      navigate(`/upload/${id}`);
     }
   };
   
   const handleVoteClick = () => {
-    // Navigate to voting interface for this contest
-    window.location.href = `/contests/${id}/vote`;
+    // Navigate to mobile prototype voting interface for this contest
+    navigate('/mobile-prototype');
     
     toast({
       title: "Iniciando votación",
