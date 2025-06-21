@@ -7,9 +7,10 @@ import SocialSettings from "./settings/SocialSettings";
 import NotificationSettings from "./settings/NotificationSettings";
 import AppearanceSettings from "./settings/AppearanceSettings";
 import AccountSettings from "./settings/AccountSettings";
+import { useProfile } from "@/hooks/useProfile";
 
 interface ProfileSettingsTabsProps {
-  userData: {
+  userData?: {
     name: string;
     email: string;
     bio: string;
@@ -20,6 +21,8 @@ interface ProfileSettingsTabsProps {
 }
 
 const ProfileSettingsTabs = ({ userData, onDeleteAccount }: ProfileSettingsTabsProps) => {
+  const { profile } = useProfile();
+
   return (
     <Tabs defaultValue="profile">
       <TabsList className="mb-6">

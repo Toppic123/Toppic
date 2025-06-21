@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, Trophy, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useProfile } from "@/hooks/useProfile";
 
 // Import refactored components
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -15,35 +16,14 @@ import ProfileSettingsTabs from "@/components/profile/ProfileSettingsTabs";
 const Profile = () => {
   const { username } = useParams<{ username?: string }>();
   const { toast } = useToast();
+  const { profile, updateProfile } = useProfile();
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<"participant" | "organizer">("participant");
-
-  // Settings states  
-  const [name, setName] = useState("Usuario de Ejemplo");
-  const [email, setEmail] = useState("usuario@example.com");
-  const [bio, setBio] = useState("Fotógrafo aficionado y amante de la naturaleza");
-  const [website, setWebsite] = useState("www.mipaginaweb.com");
-  
-  // Mock user data - in a real app this would come from an API
-  const user = {
-    id: "1",
-    username: username || "usuario",
-    name: name,
-    bio: bio,
-    avatar: profileImagePreview || "https://i.pravatar.cc/150?img=8",
-    location: "Madrid, España",
-    stats: {
-      contests: 12,
-      wins: 3,
-      photos: 47
-    }
-  };
   
   // Mock photos data
   const photos = Array(6).fill(null).map((_, i) => ({
     id: i.toString(),
     title: `Foto ${i + 1}`,
-    imageUrl: `https://picsum.photos/seed/${user.username}${i}/500/300`,
+    imageUrl: `https://picsum.photos/seed/${username}${i}/500/300`,
     likes: Math.floor(Math.random() * 100),
     contestName: `Concurso de Fotografía ${i % 3 === 0 ? 'Urbana' : 'Natural'}`
   }));
@@ -54,18 +34,36 @@ const Profile = () => {
     title: `Concurso Fotográfico ${contest}`,
     date: new Date(2023, contest % 12, contest + 10),
     photos: Array(contest + 1).fill(null).map((_, i) => 
-      `https://picsum.photos/seed/${user.username}${contest}${i}/120/80`
+      `https://picsum.photos/seed/${username}${contest}${i}/120/80`
     ),
     isWinner: contest === 1
   }));
 
-  const handleProfileImageSelect = (file: File) => {
+  // Create user object from profile data
+  const user = {
+    id: profile?.id || "1",
+    username: profile?.username || username || "usuario",
+    name: profile?.name || "Usuario de Ejemplo",
+    bio: profile?.bio || "Fotógrafo aficionado y amante de la naturaleza",
+    avatar: profileImagePreview || profile?.avatar_url || "https://i.pravatar.cc/150?img=8",
+    location: "Madrid, España",
+    stats: {
+      contests: 12,
+      wins: 3,
+      photos: 47
+    }
+  };
+
+  const handleProfileImageSelect = async (file: File) => {
     const fileReader = new FileReader();
-    fileReader.onload = (e) => {
+    fileReader.onload = async (e) => {
       if (e.target?.result) {
-        setProfileImagePreview(e.target.result as string);
+        const imageUrl = e.target.result as string;
+        setProfileImagePreview(imageUrl);
         
-        // In a real app, this would upload the file to a server
+        // Update avatar in profile
+        await updateProfile({ avatar_url: imageUrl });
+        
         toast({
           title: "Foto de perfil actualizada",
           description: "Tu foto de perfil ha sido actualizada correctamente."
@@ -76,20 +74,18 @@ const Profile = () => {
   };
 
   const handleDeleteAccount = () => {
-    // In a real app, this would make an API call to delete the account
     toast({
       title: "Cuenta eliminada",
       description: "Tu cuenta ha sido eliminada correctamente.",
       variant: "destructive"
     });
     
-    // In a real app, this would redirect to home page or login page
     setTimeout(() => {
       window.location.href = "/";
     }, 2000);
   };
 
-  const isCurrentUser = !username || username === "usuario"; // In a real app, this would check if the profile belongs to the logged-in user
+  const isCurrentUser = !username || username === (profile?.username || "usuario");
 
   return (
     <motion.div
@@ -131,7 +127,13 @@ const Profile = () => {
 
         <TabsContent value="settings" className="space-y-6">
           <ProfileSettingsTabs 
-            userData={{ name, email, bio, website, username: user.username }}
+            userData={profile ? {
+              name: profile.name || "",
+              email: profile.email || "",
+              bio: profile.bio || "",
+              website: profile.website || "",
+              username: profile.username || ""
+            } : undefined}
             onDeleteAccount={handleDeleteAccount}
           />
         </TabsContent>

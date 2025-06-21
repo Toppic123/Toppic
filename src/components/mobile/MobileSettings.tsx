@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import ProfileSettingsTabs from "@/components/profile/ProfileSettingsTabs";
 import { AvatarUpload } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
+import { useProfile } from "@/hooks/useProfile";
 
 interface MobileSettingsProps {
   onNavigate: (screen: 'profile' | 'contests' | 'upload' | 'voting') => void;
@@ -12,22 +13,19 @@ interface MobileSettingsProps {
 
 const MobileSettings = ({ onNavigate }: MobileSettingsProps) => {
   const { toast } = useToast();
+  const { profile, updateProfile } = useProfile();
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
-  
-  // Mock user data - in a real app this would come from context/API
-  const userData = {
-    name: "María García",
-    email: "maria@example.com",
-    bio: "Fotógrafa aficionada",
-    website: "www.mariafotos.com",
-    username: "maria_photos"
-  };
 
-  const handleProfileImageSelect = (file: File) => {
+  const handleProfileImageSelect = async (file: File) => {
     const fileReader = new FileReader();
-    fileReader.onload = (e) => {
+    fileReader.onload = async (e) => {
       if (e.target?.result) {
-        setProfileImagePreview(e.target.result as string);
+        const imageUrl = e.target.result as string;
+        setProfileImagePreview(imageUrl);
+        
+        // Update avatar in profile
+        await updateProfile({ avatar_url: imageUrl });
+        
         toast({
           title: "Foto de perfil actualizada",
           description: "Tu foto de perfil ha sido actualizada correctamente."
@@ -70,7 +68,7 @@ const MobileSettings = ({ onNavigate }: MobileSettingsProps) => {
           <h3 className="text-lg font-medium mb-4">Foto de Perfil</h3>
           <AvatarUpload 
             size="lg"
-            previewUrl={profileImagePreview || "https://i.pravatar.cc/150?img=8"}
+            previewUrl={profileImagePreview || profile?.avatar_url || "https://i.pravatar.cc/150?img=8"}
             onImageSelect={handleProfileImageSelect}
           />
         </div>
@@ -79,7 +77,13 @@ const MobileSettings = ({ onNavigate }: MobileSettingsProps) => {
       {/* Settings Tabs */}
       <div className="p-4">
         <ProfileSettingsTabs 
-          userData={userData}
+          userData={profile ? {
+            name: profile.name || "",
+            email: profile.email || "",
+            bio: profile.bio || "",
+            website: profile.website || "",
+            username: profile.username || ""
+          } : undefined}
           onDeleteAccount={handleDeleteAccount}
         />
       </div>

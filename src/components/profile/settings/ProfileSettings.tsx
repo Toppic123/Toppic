@@ -1,13 +1,14 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useProfile } from "@/hooks/useProfile";
+import { Loader2 } from "lucide-react";
 
 interface ProfileSettingsProps {
-  initialData: {
+  initialData?: {
     name: string;
     email: string;
     bio: string;
@@ -17,18 +18,49 @@ interface ProfileSettingsProps {
 }
 
 const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
-  const { toast } = useToast();
-  const [name, setName] = useState(initialData.name);
-  const [email, setEmail] = useState(initialData.email);
-  const [bio, setBio] = useState(initialData.bio);
-  const [website, setWebsite] = useState(initialData.website);
+  const { profile, loading, updateProfile } = useProfile();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
+  const [website, setWebsite] = useState("");
+  const [username, setUsername] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleProfileSave = () => {
-    toast({
-      title: "Perfil guardado",
-      description: "Los cambios en tu perfil han sido guardados.",
+  useEffect(() => {
+    if (profile) {
+      setName(profile.name || "");
+      setEmail(profile.email || "");
+      setBio(profile.bio || "");
+      setWebsite(profile.website || "");
+      setUsername(profile.username || "");
+    } else if (initialData) {
+      setName(initialData.name);
+      setEmail(initialData.email);
+      setBio(initialData.bio);
+      setWebsite(initialData.website);
+      setUsername(initialData.username);
+    }
+  }, [profile, initialData]);
+
+  const handleProfileSave = async () => {
+    setIsSaving(true);
+    const success = await updateProfile({
+      name,
+      email,
+      bio,
+      website,
+      username
     });
+    setIsSaving(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -54,8 +86,8 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                 <Label htmlFor="username">Nombre de usuario</Label>
                 <Input
                   id="username"
-                  value={initialData.username}
-                  readOnly
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
@@ -86,7 +118,16 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
             </div>
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleProfileSave}>Guardar cambios</Button>
+            <Button onClick={handleProfileSave} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                'Guardar cambios'
+              )}
+            </Button>
           </div>
         </CardContent>
       </Card>
