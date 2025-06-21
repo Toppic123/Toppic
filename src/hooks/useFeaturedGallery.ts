@@ -2,21 +2,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
 
-export interface FeaturedPhoto {
-  id: string;
-  photo_id: string;
-  title: string;
-  description?: string;
-  display_order: number;
-  is_active: boolean;
-  created_at: string;
-  contest_photos?: {
-    image_url: string;
-    photographer_name: string;
-    photographer_avatar?: string;
-    contest_id: string;
-  };
+type FeaturedGalleryRow = Database['public']['Tables']['featured_gallery']['Row'];
+type ContestPhotoRow = Database['public']['Tables']['contest_photos']['Row'];
+
+export interface FeaturedPhoto extends FeaturedGalleryRow {
+  contest_photos?: ContestPhotoRow;
 }
 
 export const useFeaturedGallery = () => {
@@ -32,7 +24,7 @@ export const useFeaturedGallery = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('featured_gallery' as any)
+        .from('featured_gallery')
         .select(`
           *,
           contest_photos (
@@ -56,7 +48,7 @@ export const useFeaturedGallery = () => {
       }
       
       if (data) {
-        setFeaturedPhotos(data as FeaturedPhoto[]);
+        setFeaturedPhotos(data);
       }
     } catch (error) {
       console.error('Error fetching featured photos:', error);
@@ -74,7 +66,7 @@ export const useFeaturedGallery = () => {
     try {
       // Get the next display order
       const { data: maxOrder } = await supabase
-        .from('featured_gallery' as any)
+        .from('featured_gallery')
         .select('display_order')
         .order('display_order', { ascending: false })
         .limit(1)
@@ -83,7 +75,7 @@ export const useFeaturedGallery = () => {
       const nextOrder = (maxOrder?.display_order || 0) + 1;
 
       const { error } = await supabase
-        .from('featured_gallery' as any)
+        .from('featured_gallery')
         .insert({
           photo_id: photoId,
           title,
@@ -113,7 +105,7 @@ export const useFeaturedGallery = () => {
   const removeFromFeatured = async (featuredId: string) => {
     try {
       const { error } = await supabase
-        .from('featured_gallery' as any)
+        .from('featured_gallery')
         .update({ is_active: false })
         .eq('id', featuredId);
 

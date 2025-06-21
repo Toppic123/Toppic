@@ -2,20 +2,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Database } from "@/integrations/supabase/types";
 
-export interface ContestPhoto {
-  id: string;
-  contest_id: string;
-  image_url: string;
-  photographer_name: string;
-  photographer_avatar?: string;
-  description?: string;
-  votes: number;
-  ai_score?: number;
-  is_featured: boolean;
-  status: "pending" | "approved" | "rejected";
-  created_at: string;
-}
+type ContestPhotoRow = Database['public']['Tables']['contest_photos']['Row'];
+
+export interface ContestPhoto extends ContestPhotoRow {}
 
 export const useContestPhotos = (contestId?: string) => {
   const [photos, setPhotos] = useState<ContestPhoto[]>([]);
@@ -34,7 +25,7 @@ export const useContestPhotos = (contestId?: string) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('contest_photos' as any)
+        .from('contest_photos')
         .select('*')
         .eq('contest_id', contestId)
         .eq('status', 'approved')
@@ -51,7 +42,7 @@ export const useContestPhotos = (contestId?: string) => {
       }
       
       if (data) {
-        setPhotos(data as ContestPhoto[]);
+        setPhotos(data);
       }
     } catch (error) {
       console.error('Error fetching contest photos:', error);
@@ -87,7 +78,7 @@ export const useContestPhotos = (contestId?: string) => {
 
       // Insert photo record
       const { data, error } = await supabase
-        .from('contest_photos' as any)
+        .from('contest_photos')
         .insert({
           contest_id: contestId,
           image_url: publicUrl,
@@ -125,7 +116,7 @@ export const useContestPhotos = (contestId?: string) => {
     try {
       const { error } = await supabase.rpc('increment_photo_votes', {
         photo_id: photoId
-      } as any);
+      });
 
       if (error) throw error;
 
