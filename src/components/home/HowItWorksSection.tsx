@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Camera, Users, Trophy, Sparkles, ArrowRight } from "lucide-react";
+import { Camera, Users, Trophy, Sparkles, ArrowRight, Upload, ThumbsUp, Award } from "lucide-react";
 
 interface HowItWorksSectionProps {
   texts: {
@@ -20,51 +20,76 @@ interface HowItWorksSectionProps {
 const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
   const steps = [
     {
-      icon: Camera,
+      icon: Upload,
       title: texts.participate,
       description: texts.participateDesc,
       gradient: "from-blue-500 to-cyan-500",
       bgPattern: "bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 to-cyan-950/30",
-      accentColor: "blue"
+      accentColor: "blue",
+      number: "01"
     },
     {
-      icon: Users,
+      icon: ThumbsUp,
       title: texts.vote,
       description: texts.voteDesc,
       gradient: "from-purple-500 to-pink-500",
       bgPattern: "bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 to-pink-950/30",
-      accentColor: "purple"
+      accentColor: "purple",
+      number: "02"
     },
     {
-      icon: Trophy,
+      icon: Award,
       title: texts.win,
       description: texts.winDesc,
       gradient: "from-amber-500 to-orange-500",
       bgPattern: "bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 to-orange-950/30",
-      accentColor: "amber"
+      accentColor: "amber",
+      number: "03"
     }
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-background dark:via-gray-950/50 dark:to-background relative overflow-hidden">
-      {/* Enhanced background decorative elements */}
+    <section className="py-32 bg-gradient-to-b from-white via-gray-50/50 to-white dark:from-background dark:via-gray-950/50 dark:to-background relative overflow-hidden">
+      {/* Enhanced infographic background decorative elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
+      {/* Infographic connection lines */}
+      <div className="absolute inset-0 hidden lg:block">
+        <svg className="w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
+              <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.3" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M 300 400 Q 600 300 900 400"
+            stroke="url(#pathGradient)"
+            strokeWidth="4"
+            fill="none"
+            strokeDasharray="10,5"
+            className="animate-pulse"
+          />
+        </svg>
+      </div>
+
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        <div className="text-center mb-20">
+        {/* Infographic header */}
+        <div className="text-center mb-24">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center justify-center mb-6"
+            className="flex items-center justify-center mb-8"
           >
-            <div className="flex items-center bg-gradient-to-r from-primary/10 to-blue-600/10 rounded-full px-6 py-3 border border-primary/20">
-              <Sparkles className="w-6 h-6 text-primary mr-3 animate-pulse" />
-              <span className="text-primary font-semibold text-lg">Proceso Simple y Efectivo</span>
+            <div className="flex items-center bg-gradient-to-r from-primary/10 to-blue-600/10 rounded-full px-8 py-4 border border-primary/20">
+              <Sparkles className="w-7 h-7 text-primary mr-4 animate-pulse" />
+              <span className="text-primary font-bold text-xl">Proceso Simple en 3 Pasos</span>
             </div>
           </motion.div>
           
@@ -72,7 +97,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
             initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-bold mb-6 tracking-tight"
+            className="text-6xl md:text-8xl font-black mb-8 tracking-tight"
           >
             <span className="bg-gradient-to-r from-gray-900 via-primary to-blue-600 dark:from-white dark:via-primary dark:to-blue-400 bg-clip-text text-transparent">
               {texts.howItWorks}
@@ -84,58 +109,78 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed"
+            className="text-2xl md:text-3xl text-muted-foreground max-w-5xl mx-auto leading-relaxed font-medium"
           >
             Únete a nuestra comunidad de fotógrafos y participa en concursos emocionantes
           </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 mb-16">
+        {/* Infographic steps */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-20 mb-20">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <motion.div 
                 key={index}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 80 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.2, duration: 0.6 }}
+                transition={{ delay: index * 0.3, duration: 0.8 }}
                 className="relative group"
               >
-                {/* Enhanced connection line for desktop */}
+                {/* Infographic connection arrow for desktop */}
                 {index < 2 && (
-                  <div className="hidden lg:block absolute top-24 -right-4 xl:-right-6 w-8 xl:w-12">
-                    <ArrowRight className="w-8 h-8 xl:w-12 xl:h-12 text-gray-300 dark:text-gray-600 opacity-60" />
+                  <div className="hidden lg:block absolute top-32 -right-8 xl:-right-10 w-16 xl:w-20 z-20">
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: (index + 1) * 0.3 }}
+                      className="relative"
+                    >
+                      <ArrowRight className="w-12 h-12 xl:w-16 xl:h-16 text-primary/60 drop-shadow-lg" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-full blur-xl"></div>
+                    </motion.div>
                   </div>
                 )}
                 
-                <div className={`${step.bgPattern} rounded-3xl p-8 pt-16 pb-8 relative overflow-hidden border border-white/40 dark:border-gray-800/40 shadow-2xl hover:shadow-3xl transition-all duration-700 group-hover:scale-105 group-hover:-translate-y-2`}>
+                {/* Infographic card with enhanced styling */}
+                <div className={`${step.bgPattern} rounded-3xl p-10 pt-20 pb-12 relative overflow-hidden border border-white/60 dark:border-gray-800/60 shadow-2xl hover:shadow-3xl transition-all duration-700 group-hover:scale-105 group-hover:-translate-y-3`}>
                   {/* Enhanced floating elements */}
-                  <div className="absolute -top-4 -right-4 w-32 h-32 bg-white/20 dark:bg-white/10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
-                  <div className="absolute -bottom-6 -left-6 w-40 h-40 bg-white/10 dark:bg-white/5 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700"></div>
+                  <div className="absolute -top-6 -right-6 w-40 h-40 bg-white/30 dark:bg-white/20 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
+                  <div className="absolute -bottom-8 -left-8 w-48 h-48 bg-white/20 dark:bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
                   
-                  {/* Enhanced step number */}
-                  <div className={`absolute top-4 left-4 w-14 h-14 bg-gradient-to-br ${step.gradient} rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-2xl border-4 border-white/50 backdrop-blur-sm z-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
-                    {index + 1}
+                  {/* Large infographic step number */}
+                  <div className={`absolute top-6 left-6 w-20 h-20 bg-gradient-to-br ${step.gradient} rounded-3xl flex items-center justify-center text-white font-black text-2xl shadow-2xl border-4 border-white/60 backdrop-blur-sm z-10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                    {step.number}
                   </div>
                   
-                  {/* Enhanced icon */}
-                  <div className={`w-20 h-20 bg-gradient-to-br ${step.gradient} rounded-3xl flex items-center justify-center mb-6 shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                    <Icon className="w-10 h-10 text-white" />
+                  {/* Enhanced icon with infographic styling */}
+                  <div className={`w-28 h-28 bg-gradient-to-br ${step.gradient} rounded-full flex items-center justify-center mb-8 shadow-2xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 border-4 border-white/40`}>
+                    <Icon className="w-14 h-14 text-white" />
                   </div>
                   
-                  {/* Enhanced content */}
-                  <h3 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900 dark:text-white group-hover:text-primary transition-colors duration-300">
+                  {/* Enhanced content with infographic typography */}
+                  <h3 className="text-3xl md:text-4xl font-black mb-6 text-gray-900 dark:text-white group-hover:text-primary transition-colors duration-300 leading-tight">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-xl font-medium">
                     {step.description}
                   </p>
                   
-                  {/* Enhanced decorative arrow */}
-                  <div className="absolute bottom-6 right-6 opacity-30 group-hover:opacity-60 transition-all duration-300 group-hover:translate-x-1">
-                    <div className={`w-10 h-10 bg-gradient-to-br ${step.gradient} rounded-2xl flex items-center justify-center`}>
-                      <ArrowRight className="w-5 h-5 text-white" />
+                  {/* Enhanced decorative element */}
+                  <div className="absolute bottom-8 right-8 opacity-40 group-hover:opacity-70 transition-all duration-300 group-hover:translate-x-1">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${step.gradient} rounded-2xl flex items-center justify-center shadow-xl`}>
+                      <ArrowRight className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  
+                  {/* Infographic decorative dots */}
+                  <div className="absolute top-4 right-4 opacity-20">
+                    <div className="grid grid-cols-3 gap-1">
+                      {[...Array(9)].map((_, i) => (
+                        <div key={i} className={`w-2 h-2 bg-gradient-to-br ${step.gradient} rounded-full`}></div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -144,29 +189,33 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
           })}
         </div>
         
+        {/* Enhanced CTA with infographic styling */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.8 }}
-          className="text-center"
+          transition={{ delay: 1.2 }}
+          className="text-center relative"
         >
-          <Button 
-            asChild 
-            size="lg" 
-            className="rounded-full px-16 py-8 text-xl font-bold bg-gradient-to-r from-primary via-blue-600 to-purple-600 hover:from-primary/90 hover:via-blue-600/90 hover:to-purple-600/90 shadow-2xl hover:shadow-3xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-500 border-2 border-white/20"
-          >
-            <Link to="/contests" className="flex items-center">
-              <span>{texts.startNow}</span>
-              <Sparkles className="ml-3 w-6 h-6 animate-pulse" />
-            </Link>
-          </Button>
-          
-          {/* Enhanced floating elements around button */}
-          <div className="absolute -z-10 animate-pulse">
-            <div className="w-4 h-4 bg-primary/30 rounded-full absolute -top-4 -left-4"></div>
-            <div className="w-3 h-3 bg-blue-500/30 rounded-full absolute -bottom-2 -right-6"></div>
-            <div className="w-2 h-2 bg-purple-500/30 rounded-full absolute top-2 -right-2"></div>
+          <div className="relative inline-block">
+            <Button 
+              asChild 
+              size="lg" 
+              className="rounded-full px-20 py-10 text-2xl font-black bg-gradient-to-r from-primary via-blue-600 to-purple-600 hover:from-primary/90 hover:via-blue-600/90 hover:to-purple-600/90 shadow-2xl hover:shadow-3xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-500 border-4 border-white/30"
+            >
+              <Link to="/contests" className="flex items-center">
+                <span>{texts.startNow}</span>
+                <Sparkles className="ml-4 w-8 h-8 animate-pulse" />
+              </Link>
+            </Button>
+            
+            {/* Enhanced floating elements around button with infographic style */}
+            <div className="absolute -z-10">
+              <div className="w-6 h-6 bg-primary/40 rounded-full absolute -top-6 -left-6 animate-bounce"></div>
+              <div className="w-4 h-4 bg-blue-500/40 rounded-full absolute -bottom-4 -right-8 animate-bounce" style={{ animationDelay: '0.5s' }}></div>
+              <div className="w-3 h-3 bg-purple-500/40 rounded-full absolute top-4 -right-4 animate-bounce" style={{ animationDelay: '1s' }}></div>
+              <div className="w-5 h-5 bg-amber-500/40 rounded-full absolute -bottom-2 -left-4 animate-bounce" style={{ animationDelay: '1.5s' }}></div>
+            </div>
           </div>
         </motion.div>
       </div>

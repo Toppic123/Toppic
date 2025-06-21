@@ -49,8 +49,8 @@ export const useContestForm = (onSuccess?: () => void) => {
 
   const handleEditContest = (contest: any) => {
     console.log("Editando concurso:", contest); // Debug log
-    setFormData({
-      id: contest.id, // Asegurar que el ID se establece correctamente
+    const editFormData = {
+      id: contest.id, // Preservar el ID correctamente
       title: contest.title || "",
       organizer: contest.organizer || "",
       description: contest.description || "",
@@ -65,7 +65,10 @@ export const useContestForm = (onSuccess?: () => void) => {
       photoOwnership: contest.photo_ownership !== false,
       commercialUse: contest.commercial_use !== false,
       imageUrl: contest.image_url || ""
-    });
+    };
+    
+    console.log("FormData con ID:", editFormData); // Debug log adicional
+    setFormData(editFormData);
     setIsDialogOpen(true);
   };
 
@@ -75,7 +78,11 @@ export const useContestForm = (onSuccess?: () => void) => {
   };
 
   const handleFormChange = (newData: Partial<ContestFormData>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
+    setFormData(prev => {
+      const updated = { ...prev, ...newData };
+      console.log("FormData actualizado:", updated); // Debug log
+      return updated;
+    });
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
@@ -106,7 +113,7 @@ export const useContestForm = (onSuccess?: () => void) => {
 
   const handleSaveChanges = async (imageFile?: File) => {
     try {
-      console.log("Guardando cambios con formData:", formData); // Debug log
+      console.log("Guardando cambios - FormData actual:", formData); // Debug log
       
       let imageUrl = formData.imageUrl;
 
@@ -136,21 +143,21 @@ export const useContestForm = (onSuccess?: () => void) => {
       };
 
       let result;
-      if (formData.id) {
-        // Update existing contest - ASEGURAR que el ID existe
-        console.log("Actualizando concurso existente con ID:", formData.id);
+      
+      // Verificar explícitamente si tenemos un ID válido para actualización
+      if (formData.id && formData.id.trim() !== "") {
+        console.log("ACTUALIZANDO concurso existente con ID:", formData.id);
         result = await supabase
           .from('contests')
           .update(contestData)
           .eq('id', formData.id)
-          .select(); // Agregar select() para obtener la respuesta
+          .select();
       } else {
-        // Create new contest
-        console.log("Creando nuevo concurso");
+        console.log("CREANDO nuevo concurso - no hay ID válido");
         result = await supabase
           .from('contests')
           .insert([contestData])
-          .select(); // Agregar select() para obtener la respuesta
+          .select();
       }
 
       if (result.error) {
