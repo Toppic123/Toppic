@@ -234,6 +234,42 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          updated_at: string
+          username: string | null
+          website: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string | null
+          updated_at?: string
+          username?: string | null
+          website?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string
+          username?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       support_messages: {
         Row: {
           created_at: string | null

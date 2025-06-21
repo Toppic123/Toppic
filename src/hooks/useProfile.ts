@@ -33,8 +33,7 @@ export const useProfile = () => {
         return;
       }
 
-      // Type assertion to work around missing profiles table in generated types
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
@@ -48,7 +47,7 @@ export const useProfile = () => {
           variant: "destructive"
         });
       } else {
-        setProfile(data as Profile);
+        setProfile(data);
       }
     } catch (error) {
       console.error('Error in fetchProfile:', error);
@@ -70,8 +69,7 @@ export const useProfile = () => {
         return false;
       }
 
-      // Type assertion to work around missing profiles table in generated types
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('profiles')
         .update({
           ...updates,
