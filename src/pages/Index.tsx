@@ -8,6 +8,7 @@ import NearbyContestsSection from "@/components/home/NearbyContestsSection";
 import EventTypesSection from "@/components/home/EventTypesSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
 import { homeTexts } from "@/components/home/HomeTexts";
+import { heroImages, popularContests, winningPhotos } from "@/components/home/HomeData";
 
 const Index = () => {
   return (
@@ -17,10 +18,10 @@ const Index = () => {
       exit={{ opacity: 0 }}
       className="min-h-screen"
     >
-      <HeroSection texts={homeTexts} />
+      <HeroSection heroImages={heroImages} texts={homeTexts} />
       <HowItWorksSection texts={homeTexts} />
-      <WinningGallerySection texts={homeTexts} />
-      <PopularContestsSection texts={homeTexts} />
+      <WinningGallerySection photos={winningPhotos} texts={homeTexts} />
+      <PopularContestsSection contests={popularContests} texts={homeTexts} />
       <NearbyContestsSection texts={homeTexts} />
       <EventTypesSection texts={homeTexts} />
       <OrganizerSection texts={homeTexts} />
