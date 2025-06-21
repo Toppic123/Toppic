@@ -20,19 +20,18 @@ export const useProfile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
+      console.log('Fetching user profile...');
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
+        console.log('No authenticated user found');
         setLoading(false);
         return;
       }
 
+      console.log('User found, fetching profile for:', user.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -47,6 +46,7 @@ export const useProfile = () => {
           variant: "destructive"
         });
       } else {
+        console.log('Profile fetched successfully:', data);
         setProfile(data);
       }
     } catch (error) {
@@ -56,11 +56,17 @@ export const useProfile = () => {
     }
   };
 
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   const updateProfile = async (updates: Partial<Profile>) => {
     try {
+      console.log('Starting profile update with:', updates);
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
+        console.error('No authenticated user for profile update');
         toast({
           title: "Error",
           description: "Debes estar autenticado para actualizar tu perfil.",
@@ -69,6 +75,7 @@ export const useProfile = () => {
         return false;
       }
 
+      console.log('Updating profile for user:', user.id);
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -87,6 +94,7 @@ export const useProfile = () => {
         return false;
       }
 
+      console.log('Profile updated successfully, refreshing data...');
       await fetchProfile(); // Refresh profile data
       
       toast({

@@ -1,13 +1,80 @@
 
-import { ArrowLeft, Users, Clock, Trophy, Shield } from "lucide-react";
+import { ArrowLeft, Users, Trophy, Shield, Zap, BarChart3, Vote, Clock, Award, Brain, Eye, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const VotingRules = () => {
-  const rules = [
+  const votingFeatures = [
     {
       icon: Users,
+      title: "Votación Democrática",
+      description: "Cada usuario registrado tiene un voto por concurso, garantizando un proceso justo y transparente.",
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      icon: Zap,
+      title: "Sistema ELO",
+      description: "Utilizamos algoritmos avanzados de ranking como ELO Rating para comparar y clasificar fotografías de manera objetiva.",
+      color: "from-purple-500 to-pink-500"
+    },
+    {
+      icon: BarChart3,
+      title: "Comparación por Pares",
+      description: "Los usuarios comparan fotografías de dos en dos, creando un sistema de votación más preciso y considerado.",
+      color: "from-amber-500 to-orange-500"
+    },
+    {
+      icon: Shield,
+      title: "Anti-Fraude",
+      description: "Detección automática de votos fraudulentos y prevención de múltiples cuentas para mantener la integridad.",
+      color: "from-green-500 to-teal-500"
+    },
+    {
+      icon: Eye,
+      title: "Transparencia Total",
+      description: "Sistema de puntuación visible y auditable que garantiza que los mejores trabajos sean reconocidos.",
+      color: "from-indigo-500 to-purple-500"
+    },
+    {
+      icon: Vote,
+      title: "Interfaz Intuitiva",
+      description: "Proceso de votación simple y rápido, diseñado para maximizar la participación de los usuarios.",
+      color: "from-pink-500 to-rose-500"
+    }
+  ];
+
+  const votingProcess = [
+    {
+      step: "1",
+      title: "Regístrate",
+      description: "Crea tu cuenta gratuita para participar en las votaciones",
+      icon: Users
+    },
+    {
+      step: "2",
+      title: "Explora",
+      description: "Navega por las fotografías participantes en los concursos activos",
+      icon: Eye
+    },
+    {
+      step: "3",
+      title: "Compara y Vota",
+      description: "Elige entre pares de fotografías usando nuestro sistema de comparación",
+      icon: Vote
+    },
+    {
+      step: "4",
+      title: "Ve los Resultados",
+      description: "Sigue los rankings en tiempo real y descubre a los ganadores",
+      icon: Trophy
+    }
+  ];
+
+  const rules = [
+    {
+      icon: CheckCircle,
       title: "Voto democrático",
       description: "Cada usuario registrado puede votar una vez por concurso. Tu voto cuenta igual que el de todos los demás participantes."
     },
@@ -29,124 +96,253 @@ const VotingRules = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="container max-w-4xl mx-auto px-4 py-4">
+      <div className="bg-white/80 backdrop-blur-sm shadow-sm border-b">
+        <div className="container max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center">
             <Button
               variant="ghost"
               size="sm"
               asChild
-              className="mr-3"
+              className="mr-4 hover:bg-primary/10"
             >
               <Link to="/contests">
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 Volver
               </Link>
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">Reglas de Votación</h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Sistema de Votación</h1>
+              <p className="text-gray-600 mt-1">Votación justa, transparente y moderna</p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="container max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Sistema de Votación</h2>
-          <p className="text-xl text-gray-600">
-            Conoce cómo funciona nuestro sistema de votación transparente y justo
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-primary/10 via-blue-50 to-purple-50 py-20">
+        <div className="container max-w-6xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+              Votación del Futuro
+            </h2>
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed">
+              Nuestro sistema combina tecnología avanzada con principios democráticos 
+              para garantizar que las mejores fotografías sean reconocidas de manera justa y transparente.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Features Grid */}
+      <div className="container max-w-6xl mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+            Tecnología de Vanguardia
+          </h3>
+          <p className="text-lg text-gray-600">
+            Características que hacen nuestro sistema único
           </p>
         </div>
 
-        {/* Rules Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          {rules.map((rule, index) => (
-            <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <rule.icon className="h-6 w-6 text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {votingFeatures.map((feature, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full group hover:-translate-y-1">
+                <CardContent className="p-8">
+                  <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <feature.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="text-xl font-semibold mb-4 text-gray-900">
+                    {feature.title}
+                  </h4>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* How It Works */}
+      <div className="bg-white py-20">
+        <div className="container max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Cómo Funciona
+            </h3>
+            <p className="text-lg text-gray-600">
+              Un proceso simple en cuatro pasos
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {votingProcess.map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="text-center relative"
+              >
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto shadow-lg">
+                    {step.step}
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-blue-600/20 rounded-full blur-xl"></div>
+                </div>
+                <step.icon className="w-8 h-8 text-primary mx-auto mb-4" />
+                <h4 className="text-xl font-semibold mb-3 text-gray-900">
+                  {step.title}
+                </h4>
+                <p className="text-gray-600">
+                  {step.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Voting Rules */}
+      <div className="bg-gradient-to-br from-gray-50 to-white py-20">
+        <div className="container max-w-6xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Reglas de Votación
+            </h3>
+            <p className="text-lg text-gray-600">
+              Normas claras para un proceso transparente
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            {rules.map((rule, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-8">
+                    <div className="flex items-start space-x-6">
+                      <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <rule.icon className="h-7 w-7 text-primary" />
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-semibold mb-3 text-gray-900">{rule.title}</h4>
+                        <p className="text-gray-600 leading-relaxed">{rule.description}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* ELO Algorithm Explanation */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <CardContent className="p-10">
+                <div className="flex items-start space-x-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <Brain className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2 text-gray-900">{rule.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{rule.description}</p>
+                    <h4 className="text-2xl font-bold mb-4 text-gray-900">
+                      Sistema ELO: La Ciencia Detrás de la Votación
+                    </h4>
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      Utilizamos el sistema de puntuación ELO, similar al usado en ajedrez y deportes profesionales. 
+                      Este algoritmo matemático garantiza rankings justos y precisos:
+                    </p>
+                    <ul className="space-y-2 text-gray-700">
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Cada fotografía comienza con una puntuación base equilibrada</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Ganar contra una foto con alta puntuación otorga más puntos</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>El sistema se auto-equilibra con más votaciones para mayor precisión</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Resultados completamente objetivos basados en preferencias reales</span>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
+          </motion.div>
         </div>
+      </div>
 
-        {/* Voting Process */}
-        <Card className="border-0 shadow-lg">
-          <CardContent className="p-8">
-            <h3 className="text-2xl font-bold mb-6 text-center text-gray-900">Proceso de Votación</h3>
-            <div className="space-y-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
-                  1
-                </div>
-                <div>
-                  <h4 className="font-semibold text-lg mb-2">Explora las fotos</h4>
-                  <p className="text-gray-600">Navega por todas las fotos participantes en el concurso. Tómate tu tiempo para apreciar cada una.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
-                  2
-                </div>
-                <div>
-                  <h4 className="font-semibold text-lg mb-2">Selecciona tu favorita</h4>
-                  <p className="text-gray-600">Haz clic en el corazón de la foto que más te guste. Solo puedes votar una vez por concurso.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
-                  3
-                </div>
-                <div>
-                  <h4 className="font-semibold text-lg mb-2">Confirma tu voto</h4>
-                  <p className="text-gray-600">Una vez que votes, tu elección quedará registrada. No podrás cambiar tu voto después.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-4">
-                <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm">
-                  4
-                </div>
-                <div>
-                  <h4 className="font-semibold text-lg mb-2">Espera los resultados</h4>
-                  <p className="text-gray-600">Al finalizar el período de votación, se anunciarán los ganadores basándose en el número total de votos.</p>
-                </div>
-              </div>
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 py-20">
+        <div className="container max-w-4xl mx-auto px-4 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-4xl font-bold text-white mb-6">
+              ¿Listo para Participar?
+            </h3>
+            <p className="text-xl text-white/90 mb-10 leading-relaxed">
+              Únete a nuestra comunidad y ayuda a decidir qué fotografías merecen ser reconocidas. 
+              Tu voto cuenta y hace la diferencia.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="bg-white text-primary hover:bg-gray-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <Link to="/contests">
+                  Comenzar a Votar
+                  <Vote className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold"
+              >
+                <Link to="/contests">
+                  Ver Concursos
+                  <Award className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Additional Information */}
-        <div className="mt-12 bg-blue-50 rounded-lg p-8">
-          <h3 className="text-xl font-bold mb-4 text-gray-900">Información Adicional</h3>
-          <ul className="space-y-3 text-gray-700">
-            <li className="flex items-start space-x-2">
-              <span className="text-primary">•</span>
-              <span>Los votos son anónimos y no se muestran públicamente quién votó por cada foto.</span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <span className="text-primary">•</span>
-              <span>Puedes comentar en las fotos sin necesidad de votar por ellas.</span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <span className="text-primary">•</span>
-              <span>El sistema detecta automáticamente comportamientos sospechosos como votos múltiples o cuentas falsas.</span>
-            </li>
-            <li className="flex items-start space-x-2">
-              <span className="text-primary">•</span>
-              <span>Los organizadores del concurso no pueden influir en el resultado de la votación.</span>
-            </li>
-          </ul>
+          </motion.div>
         </div>
       </div>
     </div>
