@@ -48,8 +48,9 @@ export const useContestForm = (onSuccess?: () => void) => {
   };
 
   const handleEditContest = (contest: any) => {
+    console.log("Editando concurso:", contest); // Debug log
     setFormData({
-      id: contest.id,
+      id: contest.id, // Asegurar que el ID se establece correctamente
       title: contest.title || "",
       organizer: contest.organizer || "",
       description: contest.description || "",
@@ -105,6 +106,8 @@ export const useContestForm = (onSuccess?: () => void) => {
 
   const handleSaveChanges = async (imageFile?: File) => {
     try {
+      console.log("Guardando cambios con formData:", formData); // Debug log
+      
       let imageUrl = formData.imageUrl;
 
       // Upload image if provided
@@ -134,16 +137,20 @@ export const useContestForm = (onSuccess?: () => void) => {
 
       let result;
       if (formData.id) {
-        // Update existing contest
+        // Update existing contest - ASEGURAR que el ID existe
+        console.log("Actualizando concurso existente con ID:", formData.id);
         result = await supabase
           .from('contests')
           .update(contestData)
-          .eq('id', formData.id);
+          .eq('id', formData.id)
+          .select(); // Agregar select() para obtener la respuesta
       } else {
         // Create new contest
+        console.log("Creando nuevo concurso");
         result = await supabase
           .from('contests')
-          .insert([contestData]);
+          .insert([contestData])
+          .select(); // Agregar select() para obtener la respuesta
       }
 
       if (result.error) {
@@ -155,6 +162,8 @@ export const useContestForm = (onSuccess?: () => void) => {
         });
         return;
       }
+
+      console.log("Operación exitosa:", result.data); // Debug log
 
       toast({
         title: "Éxito",

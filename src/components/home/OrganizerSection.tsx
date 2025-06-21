@@ -14,7 +14,7 @@ interface OrganizerSectionProps {
 
 const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
   return (
-    <section className="py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 relative overflow-hidden">
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full blur-3xl"></div>
@@ -29,11 +29,11 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
           viewport={{ once: true }}
           className="text-center"
         >
-          <h2 className="text-6xl font-bold mb-8 tracking-tight bg-gradient-to-r from-gray-900 via-primary to-blue-600 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 tracking-tight bg-gradient-to-r from-gray-900 via-primary to-blue-600 bg-clip-text text-transparent leading-tight">
             ¿Eres organizador?
           </h2>
           
-          <p className="text-3xl mb-16 leading-relaxed max-w-4xl mx-auto text-gray-700 font-medium">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto text-gray-700 font-medium px-4">
             OFRECE UNA EXPERIENCIA ÚNICA A LOS ASISTENTES
           </p>
           
@@ -42,15 +42,16 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.3 }}
+            className="px-4"
           >
             <Button 
               asChild 
               size="lg" 
-              className="rounded-full px-16 py-8 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-2xl hover:shadow-3xl transition-all duration-300 text-2xl font-bold transform hover:scale-105 hover:-translate-y-1"
+              className="rounded-full px-8 sm:px-12 md:px-16 py-6 md:py-8 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-2xl hover:shadow-3xl transition-all duration-300 text-base sm:text-lg md:text-xl lg:text-2xl font-bold transform hover:scale-105 hover:-translate-y-1 w-full sm:w-auto"
             >
-              <Link to="/organizers">
-                <Building className="mr-4 h-8 w-8" />
-                CREA AQUÍ TUS CONCURSOS
+              <Link to="/organizers" className="flex items-center justify-center">
+                <Building className="mr-2 sm:mr-3 md:mr-4 h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8" />
+                <span className="break-words text-center">CREA AQUÍ TUS CONCURSOS</span>
               </Link>
             </Button>
           </motion.div>
