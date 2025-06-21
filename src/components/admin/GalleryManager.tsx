@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
@@ -9,11 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
-import { WinningPhoto, useWinningPhotos } from "@/hooks/use-winning-photos";
+import { WinningPhoto, useWinningPhotosSimple } from "@/hooks/useWinningPhotosSimple";
 
 const GalleryManager = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { photos, updatePhoto, addPhoto, removePhoto, reorderPhotos, loading } = useWinningPhotos();
+  const { photos, updatePhoto, addPhoto, removePhoto, reorderPhotos, loading } = useWinningPhotosSimple();
   const [editingPhoto, setEditingPhoto] = useState<WinningPhoto | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newPhoto, setNewPhoto] = useState<Omit<WinningPhoto, "id">>({
@@ -25,9 +24,10 @@ const GalleryManager = () => {
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const handleUpdatePhoto = () => {
+  const handleUpdatePhoto = async () => {
     if (editingPhoto) {
-      updatePhoto(
+      console.log('Updating photo with data:', editingPhoto);
+      await updatePhoto(
         editingPhoto.id, 
         {
           title: editingPhoto.title,
@@ -41,9 +41,10 @@ const GalleryManager = () => {
     }
   };
 
-  const handleAddPhoto = () => {
+  const handleAddPhoto = async () => {
     if (newPhoto.title && (newPhoto.imageUrl || selectedFile)) {
-      addPhoto(newPhoto, selectedFile || undefined);
+      console.log('Adding new photo:', newPhoto);
+      await addPhoto(newPhoto, selectedFile || undefined);
       setIsAddDialogOpen(false);
       setNewPhoto({
         imageUrl: '',
@@ -56,7 +57,7 @@ const GalleryManager = () => {
     }
   };
 
-  const handleMovePhoto = (index: number, direction: 'up' | 'down') => {
+  const handleMovePhoto = async (index: number, direction: 'up' | 'down') => {
     if (!photos) return;
     
     const newIndex = direction === 'up' ? index - 1 : index + 1;
@@ -69,10 +70,10 @@ const GalleryManager = () => {
     const [movedItem] = newOrder.splice(index, 1);
     newOrder.splice(newIndex, 0, movedItem);
     
-    reorderPhotos(newOrder);
+    await reorderPhotos(newOrder);
   };
 
-  const handleDragEnd = (result: any) => {
+  const handleDragEnd = async (result: any) => {
     if (!result.destination || !photos) {
       return;
     }
@@ -81,13 +82,19 @@ const GalleryManager = () => {
     const [movedItem] = newOrder.splice(result.source.index, 1);
     newOrder.splice(result.destination.index, 0, movedItem);
 
-    reorderPhotos(newOrder);
+    await reorderPhotos(newOrder);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+      console.log('File selected:', e.target.files[0].name);
     }
+  };
+
+  const handleRemovePhoto = async (photoId: string | number) => {
+    console.log('Removing photo:', photoId);
+    await removePhoto(photoId);
   };
 
   if (!photos || loading) {
@@ -177,7 +184,7 @@ const GalleryManager = () => {
                                   <Button
                                     variant="destructive"
                                     size="sm"
-                                    onClick={() => removePhoto(photo.id)}
+                                    onClick={() => handleRemovePhoto(photo.id)}
                                   >
                                     <Trash className="h-4 w-4" />
                                   </Button>

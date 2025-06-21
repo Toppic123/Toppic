@@ -27,6 +27,7 @@ export const useProfile = () => {
       
       if (!user) {
         console.log('No authenticated user found');
+        setProfile(null);
         setLoading(false);
         return;
       }
@@ -39,18 +40,57 @@ export const useProfile = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching profile:', error);
-        toast({
-          title: "Error",
-          description: "No se pudo cargar el perfil.",
-          variant: "destructive"
-        });
+        if (error.code === 'PGRST116') {
+          // No profile found, create one
+          console.log('No profile found, creating new profile');
+          const newProfile = {
+            id: user.id,
+            email: user.email,
+            name: user.user_metadata?.name || null,
+            bio: null,
+            website: null,
+            username: null,
+            avatar_url: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          };
+          
+          const { data: createdProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+            
+          if (createError) {
+            console.error('Error creating profile:', createError);
+            toast({
+              title: "Error",
+              description: "No se pudo crear el perfil.",
+              variant: "destructive"
+            });
+          } else {
+            console.log('Profile created successfully:', createdProfile);
+            setProfile(createdProfile);
+          }
+        } else {
+          console.error('Error fetching profile:', error);
+          toast({
+            title: "Error",
+            description: "No se pudo cargar el perfil.",
+            variant: "destructive"
+          });
+        }
       } else {
         console.log('Profile fetched successfully:', data);
         setProfile(data);
       }
     } catch (error) {
       console.error('Error in fetchProfile:', error);
+      toast({
+        title: "Error",
+        description: "Error inesperado al cargar el perfil.",
+        variant: "destructive"
+      });
     } finally {
       setLoading(false);
     }
@@ -75,14 +115,22 @@ export const useProfile = () => {
         return false;
       }
 
-      console.log('Updating profile for user:', user.id);
-      const { error } = await supabase
+      // Remove any undefined or null values that shouldn't be updated
+      const cleanUpdates = Object.fromEntries(
+        Object.entries(updates).filter(([_, value]) => value !== undefined)
+      );
+
+      console.log('Updating profile for user:', user.id, 'with clean data:', cleanUpdates);
+      
+      const { data, error } = await supabase
         .from('profiles')
         .update({
-          ...updates,
+          ...cleanUpdates,
           updated_at: new Date().toISOString()
         })
-        .eq('id', user.id);
+        .eq('id', user.id)
+        .select()
+        .single();
 
       if (error) {
         console.error('Error updating profile:', error);
@@ -94,8 +142,8 @@ export const useProfile = () => {
         return false;
       }
 
-      console.log('Profile updated successfully, refreshing data...');
-      await fetchProfile(); // Refresh profile data
+      console.log('Profile updated successfully:', data);
+      setProfile(data); // Update local state immediately
       
       toast({
         title: "Éxito",

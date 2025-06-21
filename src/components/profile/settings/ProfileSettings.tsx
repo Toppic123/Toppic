@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProfileSettingsProps {
   initialData?: {
@@ -19,6 +20,7 @@ interface ProfileSettingsProps {
 
 const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
   const { profile, loading, updateProfile } = useProfile();
+  const { toast } = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
@@ -27,6 +29,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
+    console.log('Profile data updated:', profile);
     if (profile) {
       setName(profile.name || "");
       setEmail(profile.email || "");
@@ -43,15 +46,40 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
   }, [profile, initialData]);
 
   const handleProfileSave = async () => {
+    console.log('Saving profile with data:', { name, email, bio, website, username });
     setIsSaving(true);
-    const success = await updateProfile({
-      name,
-      email,
-      bio,
-      website,
-      username
-    });
-    setIsSaving(false);
+    
+    try {
+      const success = await updateProfile({
+        name: name.trim(),
+        email: email.trim(),
+        bio: bio.trim(),
+        website: website.trim(),
+        username: username.trim()
+      });
+      
+      if (success) {
+        toast({
+          title: "Perfil actualizado",
+          description: "Los cambios se han guardado correctamente.",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "No se pudieron guardar los cambios. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: "Error",
+        description: "Ocurrió un error inesperado al guardar los cambios.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (loading) {
@@ -80,6 +108,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  placeholder="Tu nombre completo"
                 />
               </div>
               <div className="space-y-2">
@@ -88,6 +117,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                   id="username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
+                  placeholder="tu_usuario"
                 />
               </div>
             </div>
@@ -98,6 +128,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@email.com"
               />
             </div>
             <div className="space-y-2">
@@ -106,6 +137,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                 id="bio"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
+                placeholder="Cuéntanos sobre ti..."
               />
             </div>
             <div className="space-y-2">
@@ -114,6 +146,7 @@ const ProfileSettings = ({ initialData }: ProfileSettingsProps) => {
                 id="website"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
+                placeholder="https://tuweb.com"
               />
             </div>
           </div>
