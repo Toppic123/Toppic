@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -38,6 +37,7 @@ import { useToast } from "@/hooks/use-toast";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import ContestAdBanner from "@/components/contests/ContestAdBanner";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
 
 const contestData = {
   id: "1",
@@ -131,7 +131,7 @@ const ContestDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [contest, setContest] = useState(contestData);
-  const [photos, setPhotos] = useState(photosData);
+  const { photos, isLoading: photosLoading, votePhoto } = useContestPhotos(id);
   const [activeTab, setActiveTab] = useState("photos");
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const [viewPhotoMode, setViewPhotoMode] = useState<string | null>(null);
@@ -245,6 +245,19 @@ const ContestDetail = () => {
     });
   };
   
+  const handleVote = async (photoId: string) => {
+    if (!user) {
+      toast({
+        title: "Inicia sesión para votar",
+        description: "Necesitas una cuenta para votar por las fotografías.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    await votePhoto(photoId);
+  };
+  
   return (
     <div className="pt-24 pb-16">
       <div className="container max-w-7xl mx-auto px-4">
@@ -349,29 +362,57 @@ const ContestDetail = () => {
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-                      {photos.map((photo) => (
-                        <div key={photo.id} className="relative group">
-                          <div className="cursor-pointer" onClick={() => handleViewPhoto(photo, 'view')}>
-                            <PhotoCard
-                              id={photo.id}
-                              imageUrl={photo.imageUrl}
-                              photographer={photo.photographer}
-                              photographerAvatar={photo.photographerAvatar}
-                              onReport={handleReport}
-                            />
+                    {photosLoading ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        {[...Array(6)].map((_, i) => (
+                          <div key={i} className="animate-pulse">
+                            <div className="bg-gray-200 aspect-[3/4] rounded-xl mb-2"></div>
+                            <div className="bg-gray-200 h-4 rounded mb-1"></div>
+                            <div className="bg-gray-200 h-3 rounded w-2/3"></div>
                           </div>
-                          <Button 
-                            variant="outline"
-                            size="sm"
-                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-white/80 hover:bg-white"
-                            onClick={() => handleShare(photo)}
-                          >
-                            <Share2 size={16} />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        {photos.map((photo) => (
+                          <div key={photo.id} className="relative group">
+                            <div className="cursor-pointer" onClick={() => handleViewPhoto(photo, 'view')}>
+                              <PhotoCard
+                                id={photo.id}
+                                imageUrl={photo.image_url}
+                                photographer={photo.photographer_name}
+                                photographerAvatar={photo.photographer_avatar}
+                                onReport={handleReport}
+                              />
+                            </div>
+                            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                              <div className="bg-black/70 text-white px-2 py-1 rounded text-sm">
+                                {photo.votes} votos
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => handleVote(photo.id)}
+                                  disabled={!user}
+                                >
+                                  <Heart size={16} />
+                                </Button>
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => handleShare(photo)}
+                                >
+                                  <Share2 size={16} />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
                 
