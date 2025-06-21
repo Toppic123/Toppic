@@ -9,6 +9,88 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_photo_analysis: {
+        Row: {
+          ai_score: number
+          analysis_data: Json | null
+          id: string
+          photo_id: string
+          processed_at: string
+        }
+        Insert: {
+          ai_score: number
+          analysis_data?: Json | null
+          id?: string
+          photo_id: string
+          processed_at?: string
+        }
+        Update: {
+          ai_score?: number
+          analysis_data?: Json | null
+          id?: string
+          photo_id?: string
+          processed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_photo_analysis_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "contest_photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contest_photos: {
+        Row: {
+          ai_score: number | null
+          contest_id: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          is_featured: boolean
+          photographer_avatar: string | null
+          photographer_name: string
+          status: string
+          votes: number
+        }
+        Insert: {
+          ai_score?: number | null
+          contest_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_featured?: boolean
+          photographer_avatar?: string | null
+          photographer_name: string
+          status?: string
+          votes?: number
+        }
+        Update: {
+          ai_score?: number | null
+          contest_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_featured?: boolean
+          photographer_avatar?: string | null
+          photographer_name?: string
+          status?: string
+          votes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_photos_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contests: {
         Row: {
           commercial_use: boolean | null
@@ -65,6 +147,44 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      featured_gallery: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          photo_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          photo_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          photo_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_gallery_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "contest_photos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       locations: {
         Row: {
@@ -149,7 +269,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_photo_votes: {
+        Args: { photo_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

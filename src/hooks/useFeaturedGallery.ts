@@ -32,7 +32,7 @@ export const useFeaturedGallery = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('featured_gallery')
+        .from('featured_gallery' as any)
         .select(`
           *,
           contest_photos (
@@ -56,7 +56,7 @@ export const useFeaturedGallery = () => {
       }
       
       if (data) {
-        setFeaturedPhotos(data);
+        setFeaturedPhotos(data as FeaturedPhoto[]);
       }
     } catch (error) {
       console.error('Error fetching featured photos:', error);
@@ -74,7 +74,7 @@ export const useFeaturedGallery = () => {
     try {
       // Get the next display order
       const { data: maxOrder } = await supabase
-        .from('featured_gallery')
+        .from('featured_gallery' as any)
         .select('display_order')
         .order('display_order', { ascending: false })
         .limit(1)
@@ -83,7 +83,7 @@ export const useFeaturedGallery = () => {
       const nextOrder = (maxOrder?.display_order || 0) + 1;
 
       const { error } = await supabase
-        .from('featured_gallery')
+        .from('featured_gallery' as any)
         .insert({
           photo_id: photoId,
           title,
@@ -113,7 +113,7 @@ export const useFeaturedGallery = () => {
   const removeFromFeatured = async (featuredId: string) => {
     try {
       const { error } = await supabase
-        .from('featured_gallery')
+        .from('featured_gallery' as any)
         .update({ is_active: false })
         .eq('id', featuredId);
 

@@ -34,7 +34,7 @@ export const useContestPhotos = (contestId?: string) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
-        .from('contest_photos')
+        .from('contest_photos' as any)
         .select('*')
         .eq('contest_id', contestId)
         .eq('status', 'approved')
@@ -51,7 +51,7 @@ export const useContestPhotos = (contestId?: string) => {
       }
       
       if (data) {
-        setPhotos(data);
+        setPhotos(data as ContestPhoto[]);
       }
     } catch (error) {
       console.error('Error fetching contest photos:', error);
@@ -87,7 +87,7 @@ export const useContestPhotos = (contestId?: string) => {
 
       // Insert photo record
       const { data, error } = await supabase
-        .from('contest_photos')
+        .from('contest_photos' as any)
         .insert({
           contest_id: contestId,
           image_url: publicUrl,
@@ -125,7 +125,7 @@ export const useContestPhotos = (contestId?: string) => {
     try {
       const { error } = await supabase.rpc('increment_photo_votes', {
         photo_id: photoId
-      });
+      } as any);
 
       if (error) throw error;
 
