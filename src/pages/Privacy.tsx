@@ -102,7 +102,7 @@ const Privacy = () => {
           
           {content.sections.map((section, index) => (
             <div key={index}>
-              <h2>{section.title}</h2>
+              <h2 className="font-bold">{section.title}</h2>
               <p>
                 {section.content}
               </p>
