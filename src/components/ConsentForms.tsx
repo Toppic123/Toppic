@@ -3,9 +3,8 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Camera, Users, Shield, AlertTriangle } from "lucide-react";
+import { Camera, Users, Shield, AlertTriangle, ExternalLink } from "lucide-react";
 
 interface ConsentFormProps {
   contestType: "landscape" | "people" | "public_event";
@@ -41,7 +40,6 @@ const ConsentForms = ({ contestType, onConsentGiven }: ConsentFormProps) => {
   const isFormValid = () => {
     const requiredConsents = [
       consents.photographerConsent,
-      consents.imageRightsOwnership,
       consents.gdprCompliance
     ];
 
@@ -59,20 +57,19 @@ const ConsentForms = ({ contestType, onConsentGiven }: ConsentFormProps) => {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto p-6">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-2">Formularios de Consentimiento</h2>
-        <p className="text-muted-foreground">
-          Complete todos los consentimientos requeridos antes de participar en el concurso
+    <div className="space-y-6 max-w-3xl mx-auto p-6">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-2">Consentimientos</h2>
+        <p className="text-muted-foreground text-sm">
+          Complete los consentimientos requeridos para participar
         </p>
       </div>
 
-      {/* Consentimiento del Fotógrafo */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <Camera className="h-5 w-5" />
-            Consentimiento del Fotógrafo
+            Derechos de la fotografía
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -85,49 +82,30 @@ const ConsentForms = ({ contestType, onConsentGiven }: ConsentFormProps) => {
               }
             />
             <div className="space-y-1">
-              <label htmlFor="photographer-consent" className="text-sm font-medium leading-none">
-                Soy el autor original de esta fotografía
+              <label htmlFor="photographer-consent" className="text-sm font-medium leading-none cursor-pointer">
+                Soy el autor original de esta fotografía y acepto los términos de uso
               </label>
-              <p className="text-sm text-muted-foreground">
-                Confirmo que he tomado esta fotografía personalmente y poseo todos los derechos sobre la misma.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="image-rights"
-              checked={consents.imageRightsOwnership}
-              onCheckedChange={(checked) => 
-                handleConsentChange('imageRightsOwnership', checked as boolean)
-              }
-            />
-            <div className="space-y-1">
-              <label htmlFor="image-rights" className="text-sm font-medium leading-none">
-                Derechos de propiedad intelectual
-              </label>
-              <p className="text-sm text-muted-foreground">
-                Confirmo que la imagen no infringe derechos de terceros y otorgo licencia para su uso según las condiciones del concurso.
+              <p className="text-xs text-muted-foreground">
+                Confirmo que he tomado esta fotografía y otorgo licencia según las condiciones del concurso.
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Consentimiento de Personas Fotografiadas */}
       {contestType === "people" && (
         <Card className="border-orange-200">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
-              Consentimiento de Personas Fotografiadas
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Users className="h-5 w-5 text-orange-500" />
+              Personas fotografiadas
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Alert>
+            <Alert className="border-orange-200 bg-orange-50">
               <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Importante:</strong> Esta sección es obligatoria cuando la fotografía incluye personas identificables.
+              <AlertDescription className="text-sm">
+                <strong>Obligatorio:</strong> Su fotografía incluye personas identificables.
               </AlertDescription>
             </Alert>
 
@@ -140,29 +118,11 @@ const ConsentForms = ({ contestType, onConsentGiven }: ConsentFormProps) => {
                 }
               />
               <div className="space-y-1">
-                <label htmlFor="people-consent" className="text-sm font-medium leading-none">
-                  Consentimiento de las personas fotografiadas
+                <label htmlFor="people-consent" className="text-sm font-medium leading-none cursor-pointer">
+                  He obtenido consentimiento de todas las personas fotografiadas
                 </label>
-                <p className="text-sm text-muted-foreground">
-                  Confirmo que he obtenido el consentimiento explícito de todas las personas identificables en la fotografía para su uso en este concurso.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3">
-              <Checkbox
-                id="minor-consent"
-                checked={consents.minorConsent}
-                onCheckedChange={(checked) => 
-                  handleConsentChange('minorConsent', checked as boolean)
-                }
-              />
-              <div className="space-y-1">
-                <label htmlFor="minor-consent" className="text-sm font-medium leading-none">
-                  Consentimiento de menores (si aplica)
-                </label>
-                <p className="text-sm text-muted-foreground">
-                  Si la fotografía incluye menores de edad, confirmo que he obtenido el consentimiento de sus padres o tutores legales.
+                <p className="text-xs text-muted-foreground">
+                  Incluye consentimiento para uso promocional y comercial. Para menores, consentimiento de padres/tutores.
                 </p>
               </div>
             </div>
@@ -170,70 +130,22 @@ const ConsentForms = ({ contestType, onConsentGiven }: ConsentFormProps) => {
         </Card>
       )}
 
-      {/* Consentimiento de Uso Comercial */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Consentimiento de Uso
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Shield className="h-5 w-5 text-green-600" />
+            Uso y protección de datos
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">Tipos de Uso Permitidos:</h4>
-            <ul className="text-sm space-y-1 text-muted-foreground">
-              <li>• <strong>Promoción de marca:</strong> Uso en redes sociales, sitio web de la empresa, material corporativo</li>
-              <li>• <strong>Publicidad comercial:</strong> Campañas publicitarias pagadas, material promocional masivo, vallas publicitarias</li>
+          <div className="bg-blue-50 p-3 rounded-lg text-sm">
+            <p className="font-medium mb-1">Su fotografía podrá ser utilizada para:</p>
+            <ul className="text-muted-foreground space-y-1 text-xs">
+              <li>• Promoción en redes sociales y sitio web</li>
+              <li>• Material corporativo y campañas publicitarias</li>
             </ul>
           </div>
 
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="brand-promotion"
-              checked={consents.brandPromotionConsent}
-              onCheckedChange={(checked) => 
-                handleConsentChange('brandPromotionConsent', checked as boolean)
-              }
-            />
-            <div className="space-y-1">
-              <label htmlFor="brand-promotion" className="text-sm font-medium leading-none">
-                Promoción de marca
-              </label>
-              <p className="text-sm text-muted-foreground">
-                Acepto que mi fotografía sea utilizada para promoción de la marca organizadora en redes sociales, sitio web y material corporativo.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-3">
-            <Checkbox
-              id="commercial-use"
-              checked={consents.commercialUseConsent}
-              onCheckedChange={(checked) => 
-                handleConsentChange('commercialUseConsent', checked as boolean)
-              }
-            />
-            <div className="space-y-1">
-              <label htmlFor="commercial-use" className="text-sm font-medium leading-none">
-                Uso comercial ampliado
-              </label>
-              <p className="text-sm text-muted-foreground">
-                Acepto que mi fotografía sea utilizada para publicidad comercial, incluyendo campañas pagadas y material promocional masivo.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Cumplimiento GDPR */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            Protección de Datos (GDPR)
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
           <div className="flex items-start space-x-3">
             <Checkbox
               id="gdpr-compliance"
@@ -243,37 +155,49 @@ const ConsentForms = ({ contestType, onConsentGiven }: ConsentFormProps) => {
               }
             />
             <div className="space-y-1">
-              <label htmlFor="gdpr-compliance" className="text-sm font-medium leading-none">
-                Consentimiento para el tratamiento de datos personales
+              <label htmlFor="gdpr-compliance" className="text-sm font-medium leading-none cursor-pointer">
+                Acepto el tratamiento de datos y uso de mi fotografía
               </label>
-              <p className="text-sm text-muted-foreground">
-                Acepto el tratamiento de mis datos personales según la Política de Privacidad y el cumplimiento del GDPR. 
-                Entiendo mis derechos de acceso, rectificación, cancelación y oposición.
+              <p className="text-xs text-muted-foreground">
+                Según Política de Privacidad y GDPR. Conservo mis derechos de acceso, rectificación y cancelación.
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Separator />
-
       <div className="flex flex-col gap-4">
         <Button 
           onClick={handleSubmit} 
           disabled={!isFormValid()}
           className="w-full"
+          size="lg"
         >
-          Confirmar Consentimientos y Continuar
+          Confirmar y Continuar
         </Button>
         
         {!isFormValid() && (
           <Alert>
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              Debe completar todos los consentimientos obligatorios para continuar.
+            <AlertDescription className="text-sm">
+              Complete todos los consentimientos obligatorios para continuar.
             </AlertDescription>
           </Alert>
         )}
+
+        <div className="text-center pt-4 border-t">
+          <p className="text-xs text-muted-foreground">
+            Para información detallada sobre derechos de imagen y condiciones, consulte nuestros{" "}
+            <a 
+              href="/terms" 
+              target="_blank" 
+              className="text-blue-600 hover:underline inline-flex items-center gap-1"
+            >
+              Términos y Condiciones
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
