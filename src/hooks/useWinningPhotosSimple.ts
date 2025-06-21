@@ -20,8 +20,8 @@ export const useWinningPhotosSimple = () => {
   const initialPhotos: WinningPhoto[] = [
     {
       id: 1,
-      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
-      title: "Atardecer urbano",
+      imageUrl: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+      title: "Evento deportivo comunitario",
       photographer: "María García",
       photographerAvatar: "https://i.pravatar.cc/150?img=1",
       likes: 124

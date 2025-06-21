@@ -67,7 +67,7 @@ const VotingRulesPage = () => {
             transition={{ duration: 0.6 }}
           >
             <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Votación del Futuro
+              Sistema de votación único
             </h2>
             <p className="text-xl text-gray-600 max-w-4xl mx-auto mb-8 leading-relaxed">
               Nuestro sistema combina tecnología avanzada con principios democráticos 
