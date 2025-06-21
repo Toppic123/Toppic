@@ -5,10 +5,17 @@ import { useToast } from "@/hooks/use-toast";
 import type { Database } from "@/integrations/supabase/types";
 
 type FeaturedGalleryRow = Database['public']['Tables']['featured_gallery']['Row'];
-type ContestPhotoRow = Database['public']['Tables']['contest_photos']['Row'];
+
+// Create a specific interface for the contest photo data we actually select
+export interface FeaturedContestPhoto {
+  image_url: string;
+  photographer_name: string;
+  photographer_avatar: string | null;
+  contest_id: string;
+}
 
 export interface FeaturedPhoto extends FeaturedGalleryRow {
-  contest_photos?: ContestPhotoRow;
+  contest_photos?: FeaturedContestPhoto;
 }
 
 export const useFeaturedGallery = () => {
