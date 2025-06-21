@@ -2,6 +2,8 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import ProhibitedConduct from "@/components/ProhibitedConduct";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle, Users, Camera, Shield } from "lucide-react";
 
 const Terms = () => {
   const [language, setLanguage] = useState<"es">("es");
@@ -46,18 +48,40 @@ const Terms = () => {
         content: "Al subir fotografías a TOPPICS, conservas tus derechos de autor, pero nos otorgas una licencia para mostrar, promocionar y utilizar tu contenido en conexión con los servicios de la plataforma. Además, otorgas a los organizadores del concurso los derechos especificados en las reglas de cada concurso."
       },
       {
-        title: "6. Propiedad de Fotos y Derechos Comerciales",
+        title: "6. Consentimiento de Personas Fotografiadas y Derechos de Imagen",
+        content: "El participante es completamente responsable de obtener todos los consentimientos necesarios:",
+        list: [
+          "Para fotografías que incluyan personas identificables, el participante debe obtener consentimiento explícito de cada persona antes de subir la imagen.",
+          "Para menores de edad, se requiere consentimiento de padres o tutores legales.",
+          "El participante debe poder demostrar que posee estos consentimientos si se le solicita.",
+          "TOPPICS no se hace responsable por el uso de imágenes sin el consentimiento adecuado.",
+          "El incumplimiento de estas obligaciones puede resultar en descalificación y responsabilidad legal del participante."
+        ]
+      },
+      {
+        title: "7. Tipos de Uso de Fotografías y Consentimiento Requerido",
+        content: "Distinguimos entre diferentes tipos de uso, todos los cuales requieren consentimiento de las personas fotografiadas:",
+        list: [
+          "**Promoción de marca:** Uso en redes sociales oficiales, sitio web corporativo, material institucional y presentaciones de la empresa organizadora.",
+          "**Publicidad comercial:** Uso en campañas publicitarias pagadas, material promocional masivo, vallas publicitarias, anuncios en medios de comunicación y cualquier uso con fines lucrativos directos.",
+          "**Ambos usos requieren consentimiento explícito** de las personas identificables en las fotografías, aunque el nivel de exposición y alcance difiere.",
+          "Los participantes pueden optar por autorizar solo promoción de marca o ambos tipos de uso durante el proceso de consentimiento.",
+          "El organizador debe respetar las limitaciones de uso especificadas por cada participante."
+        ]
+      },
+      {
+        title: "8. Propiedad de Fotos y Derechos Comerciales",
         content: "Al participar en concursos en TOPPICS:",
         list: [
           "Entiendes que las fotos ganadoras pueden convertirse en propiedad del organizador del concurso si así se especifica en las reglas del concurso.",
-          "Consientes que tus fotografías ganadoras sean utilizadas con fines comerciales por el organizador del concurso si así se especifica en las reglas del concurso.",
+          "Consientes que tus fotografías ganadoras sean utilizadas según el tipo de consentimiento otorgado (promoción de marca y/o uso comercial).",
           "Confirmas que has obtenido los permisos apropiados de cualquier persona identificable que aparezca en tus fotos.",
-          "Consientes aparecer en fotografías que pueden ser utilizadas con fines comerciales si eres visible en fotos ganadoras.",
+          "Consientes aparecer en fotografías que pueden ser utilizadas según los términos especificados si eres visible en fotos ganadoras.",
           "Reconoces que los organizadores del concurso pueden optar por no reclamar la propiedad de las fotos y, en esos casos, conservas todos los derechos sobre tus imágenes."
         ]
       },
       {
-        title: "7. Sistema de Votación y Selección",
+        title: "9. Sistema de Votación y Selección",
         content: "El sistema de votación y selección de TOPPICS funciona de la siguiente manera:",
         list: [
           "Inicialmente, nuestra inteligencia artificial realiza un primer filtrado de fotografías basado en criterios técnicos y estéticos de calidad.",
@@ -70,7 +94,7 @@ const Terms = () => {
         ]
       },
       {
-        title: "8. Almacenamiento y Calidad de Imagen",
+        title: "10. Almacenamiento y Calidad de Imagen",
         content: "Para garantizar la mejor experiencia posible en la plataforma:",
         list: [
           "Las fotografías subidas se comprimen para optimizar el rendimiento de la aplicación durante la visualización y votación.",
@@ -80,7 +104,7 @@ const Terms = () => {
         ]
       },
       {
-        title: "9. Requisitos de las Fotografías",
+        title: "11. Requisitos de las Fotografías y Consentimientos",
         content: "Respecto a las fotografías subidas a la plataforma:",
         list: [
           "Las fotografías pueden ser tomadas con teléfonos móviles o cámaras.",
@@ -88,30 +112,60 @@ const Terms = () => {
           "Los organizadores también indicarán en sus reglas si se permiten fotografías editadas y en qué medida.",
           "No se aceptan imágenes generadas por IA.",
           "Las fotografías deben ser tomadas por el usuario que las sube.",
-          "El usuario reconoce ser el propietario de los derechos de las imágenes subidas a la plataforma."
+          "El usuario reconoce ser el propietario de los derechos de las imágenes subidas a la plataforma.",
+          "**Obligatorio:** Completar los formularios de consentimiento apropiados antes de participar, especialmente para fotografías con personas identificables."
         ]
       },
       {
-        title: "10. Organizadores y Colaboradores",
+        title: "12. Cumplimiento del GDPR y Protección de Datos",
+        content: "TOPPICS cumple con el Reglamento General de Protección de Datos (GDPR):",
+        list: [
+          "Todos los datos personales se procesan con base legal adecuada (consentimiento, interés legítimo, etc.).",
+          "Los usuarios tienen derecho al acceso, rectificación, cancelación y oposición de sus datos.",
+          "Los datos se conservan solo durante el tiempo necesario para cumplir con los fines especificados.",
+          "Implementamos medidas técnicas y organizativas apropiadas para proteger los datos personales.",
+          "Los usuarios pueden retirar su consentimiento en cualquier momento, aunque esto puede afectar su capacidad de participar en concursos.",
+          "Para ejercer sus derechos GDPR, contacte: privacy@toppics.com"
+        ]
+      },
+      {
+        title: "13. Organizadores y Colaboradores",
         content: "Para los organizadores de concursos:",
         list: [
           "Los organizadores pueden elegir si permiten colaboradores en su concurso.",
           "Los colaboradores son empresas que pueden hacer publicidad en la aplicación a cambio de proporcionar recompensas para los participantes.",
           "La publicidad del organizador principal siempre será más destacada que la de los colaboradores.",
-          "Los términos específicos de colaboración serán acordados entre el organizador y los colaboradores."
+          "Los términos específicos de colaboración serán acordados entre el organizador y los colaboradores.",
+          "Los organizadores deben respetar los tipos de consentimiento otorgados por cada participante."
         ]
       },
       {
-        title: "11. Limitación de Responsabilidad",
-        content: "TOPPICS no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, incluida la pérdida de beneficios, derivados del uso de nuestros servicios."
+        title: "14. Responsabilidades del Participante",
+        content: "Cada participante es responsable de:",
+        list: [
+          "Obtener todos los consentimientos necesarios antes de subir fotografías.",
+          "Guardar evidencia de los consentimientos obtenidos durante al menos 3 años.",
+          "Proporcionar dicha evidencia si es requerida por TOPPICS o el organizador.",
+          "Cumplir con todas las leyes aplicables de protección de datos y derechos de imagen.",
+          "Notificar inmediatamente si una persona fotografiada retira su consentimiento."
+        ]
       },
       {
-        title: "12. Ley Aplicable",
-        content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de TOPPICS, sin tener en cuenta sus principios de conflicto de leyes."
+        title: "15. Limitación de Responsabilidad",
+        content: "TOPPICS no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, incluida la pérdida de beneficios, derivados del uso de nuestros servicios. Sin embargo, esto no limita nuestra responsabilidad por violaciones graves del GDPR o derechos fundamentales."
       },
       {
-        title: "13. Contacto",
-        content: "Si tienes preguntas sobre estos Términos y Condiciones, contáctanos en: terminos@toppics.com"
+        title: "16. Ley Aplicable",
+        content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de TOPPICS, sin tener en cuenta sus principios de conflicto de leyes. Para asuntos relacionados con el GDPR, se aplicará la legislación europea."
+      },
+      {
+        title: "17. Contacto",
+        content: "Si tienes preguntas sobre estos Términos y Condiciones o necesitas ejercer tus derechos GDPR, contáctanos en:",
+        list: [
+          "Términos generales: terminos@toppics.com",
+          "Protección de datos: privacy@toppics.com",
+          "Consentimientos y derechos de imagen: consent@toppics.com"
+        ]
       }
     ]
   };
@@ -127,6 +181,37 @@ const Terms = () => {
         >
           {content.title}
         </motion.h1>
+        
+        {/* Alertas importantes sobre consentimientos */}
+        <div className="mb-8 space-y-4">
+          <Alert className="border-orange-200 bg-orange-50">
+            <Users className="h-4 w-4" />
+            <AlertTitle>Importante: Consentimiento de Personas Fotografiadas</AlertTitle>
+            <AlertDescription>
+              <strong>Todos los usos requieren consentimiento:</strong> Tanto la promoción de marca como la publicidad comercial 
+              requieren consentimiento explícito de las personas identificables en las fotografías. 
+              La diferencia está en el alcance y tipo de exposición.
+            </AlertDescription>
+          </Alert>
+
+          <Alert className="border-blue-200 bg-blue-50">
+            <Camera className="h-4 w-4" />
+            <AlertTitle>Formularios de Consentimiento Obligatorios</AlertTitle>
+            <AlertDescription>
+              Antes de participar en cualquier concurso, debe completar los formularios de consentimiento apropiados, 
+              especialmente para fotografías que incluyan personas identificables.
+            </AlertDescription>
+          </Alert>
+
+          <Alert className="border-green-200 bg-green-50">
+            <Shield className="h-4 w-4" />
+            <AlertTitle>Cumplimiento GDPR</AlertTitle>
+            <AlertDescription>
+              Esta plataforma cumple con el GDPR. Usted tiene derechos sobre sus datos personales 
+              y puede ejercerlos contactando privacy@toppics.com
+            </AlertDescription>
+          </Alert>
+        </div>
         
         <div className="prose prose-sm sm:prose lg:prose-lg mx-auto mb-12">
           <p>{content.lastUpdated}: {new Date().toLocaleDateString()}</p>
