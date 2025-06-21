@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Users, Trophy, Shield, Zap, BarChart3, Vote, Clock, Award, Brain, Eye, CheckCircle } from "lucide-react";
+import { ArrowLeft, Users, Trophy, Shield, Zap, BarChart3, Vote, Award, Brain, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -112,6 +112,55 @@ const VotingRulesPage = () => {
               </Card>
             </motion.div>
           ))}
+        </div>
+      </div>
+
+      {/* ELO Algorithm Explanation */}
+      <div className="bg-gradient-to-br from-gray-50 to-white py-20">
+        <div className="container max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
+              <CardContent className="p-10">
+                <div className="flex items-start space-x-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <Brain className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-bold mb-4 text-gray-900">
+                      Sistema ELO: La Ciencia Detrás de la Votación
+                    </h4>
+                    <p className="text-gray-700 leading-relaxed mb-4">
+                      Utilizamos el sistema de puntuación ELO, similar al usado en ajedrez y deportes profesionales. 
+                      Este algoritmo matemático garantiza rankings justos y precisos:
+                    </p>
+                    <ul className="space-y-2 text-gray-700">
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Cada fotografía comienza con una puntuación base equilibrada</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Ganar contra una foto con alta puntuación otorga más puntos</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>El sistema se auto-equilibra con más votaciones para mayor precisión</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Resultados completamente objetivos basados en preferencias reales</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
 

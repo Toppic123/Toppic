@@ -25,7 +25,7 @@ const Footer = ({ texts }: FooterProps) => {
             <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {texts.terms}
             </Link>
-            <Link to="/voting-system" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/voting-rules" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {texts.votingSystem}
             </Link>
           </div>
