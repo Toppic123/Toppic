@@ -16,8 +16,8 @@ export const useWinningPhotosSimple = () => {
   const [photos, setPhotos] = useState<WinningPhoto[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock data inicial para propósitos de demostración
-  const initialPhotos: WinningPhoto[] = [
+  // Datos de fotos ganadoras sincronizados con la homepage
+  const defaultWinningPhotos: WinningPhoto[] = [
     {
       id: 1,
       imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
@@ -41,6 +41,30 @@ export const useWinningPhotosSimple = () => {
       photographer: "Ana López",
       photographerAvatar: "https://i.pravatar.cc/150?img=3",
       likes: 156
+    },
+    {
+      id: 4,
+      imageUrl: "https://images.unsplash.com/photo-1540553016722-983e48a2cd10?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+      title: "Deliciosa comida local",
+      photographer: "Carlos Martín",
+      photographerAvatar: "https://i.pravatar.cc/150?img=4",
+      likes: 201
+    },
+    {
+      id: 5,
+      imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+      title: "Arquitectura moderna",
+      photographer: "Elena Ruiz",
+      photographerAvatar: "https://i.pravatar.cc/150?img=5",
+      likes: 143
+    },
+    {
+      id: 6,
+      imageUrl: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+      title: "Concierto nocturno",
+      photographer: "Diego Herrera",
+      photographerAvatar: "https://i.pravatar.cc/150?img=6",
+      likes: 178
     }
   ];
 
@@ -51,7 +75,7 @@ export const useWinningPhotosSimple = () => {
   const loadPhotos = () => {
     setLoading(true);
     setTimeout(() => {
-      const savedPhotos = localStorage.getItem('winningPhotos');
+      const savedPhotos = localStorage.getItem('homeWinningPhotos');
       if (savedPhotos) {
         try {
           const parsedPhotos = JSON.parse(savedPhotos);
@@ -59,12 +83,12 @@ export const useWinningPhotosSimple = () => {
           console.log('Photos loaded from localStorage:', parsedPhotos);
         } catch (error) {
           console.error('Error parsing saved photos:', error);
-          setPhotos(initialPhotos);
-          savePhotosToStorage(initialPhotos);
+          setPhotos(defaultWinningPhotos);
+          savePhotosToStorage(defaultWinningPhotos);
         }
       } else {
-        setPhotos(initialPhotos);
-        savePhotosToStorage(initialPhotos);
+        setPhotos(defaultWinningPhotos);
+        savePhotosToStorage(defaultWinningPhotos);
       }
       setLoading(false);
     }, 500);
@@ -72,8 +96,14 @@ export const useWinningPhotosSimple = () => {
 
   const savePhotosToStorage = (newPhotos: WinningPhoto[]) => {
     try {
-      localStorage.setItem('winningPhotos', JSON.stringify(newPhotos));
+      // Guardar en la clave correcta que usa la homepage
+      localStorage.setItem('homeWinningPhotos', JSON.stringify(newPhotos));
       console.log('Photos saved to localStorage:', newPhotos);
+      
+      // También actualizar el evento para sincronizar con otros componentes
+      window.dispatchEvent(new CustomEvent('winningPhotosUpdated', { 
+        detail: newPhotos 
+      }));
     } catch (error) {
       console.error('Error saving photos to localStorage:', error);
       toast({
@@ -109,7 +139,7 @@ export const useWinningPhotosSimple = () => {
       
       toast({
         title: "Foto actualizada",
-        description: "Los cambios se han guardado correctamente."
+        description: "Los cambios se han guardado correctamente y se reflejarán en la homepage."
       });
       
       console.log('Photo updated successfully:', updatedPhotos);
@@ -145,7 +175,7 @@ export const useWinningPhotosSimple = () => {
       
       toast({
         title: "Foto añadida",
-        description: "La nueva foto se ha agregado correctamente."
+        description: "La nueva foto se ha agregado correctamente y aparecerá en la homepage."
       });
       
       console.log('Photo added successfully:', updatedPhotos);
@@ -168,7 +198,7 @@ export const useWinningPhotosSimple = () => {
       
       toast({
         title: "Foto eliminada",
-        description: "La foto se ha eliminado correctamente."
+        description: "La foto se ha eliminado correctamente de la homepage."
       });
       
       console.log('Photo removed successfully:', updatedPhotos);
@@ -190,7 +220,7 @@ export const useWinningPhotosSimple = () => {
       
       toast({
         title: "Orden actualizado",
-        description: "El orden de las fotos se ha actualizado."
+        description: "El orden de las fotos se ha actualizado en la homepage."
       });
       
       console.log('Photos reordered successfully:', newOrder);
