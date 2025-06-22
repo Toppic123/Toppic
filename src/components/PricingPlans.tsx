@@ -1,3 +1,4 @@
+
 import { Check, Info } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,9 @@ const defaultPlans: PricingPlan[] = [
       "Hasta 300 participantes",
       "1 concurso de fotos",
       "Publicidad básica en la app",
-      "Derechos de 1 foto ganadora"
+      "Derechos de 1 foto ganadora",
+      "1 año de almacenamiento incluido",
+      "Renovación: 10€/año"
     ],
     buttonText: "Comenzar",
     buttonVariant: "outline"
@@ -43,7 +46,9 @@ const defaultPlans: PricingPlan[] = [
       "3 concursos de fotos",
       "Publicidad destacada en la app",
       "Derechos de 3 fotos ganadoras de cada concurso",
-      "Banner promocional en la app"
+      "Banner promocional en la app",
+      "1 año de almacenamiento incluido",
+      "Renovación: 15€/año"
     ],
     recommended: true,
     buttonText: "Seleccionar Plan",
@@ -59,7 +64,9 @@ const defaultPlans: PricingPlan[] = [
       "Publicidad premium en toda la app",
       "Derechos de las 9 mejores fotos",
       "Banner destacado en página principal",
-      "Notificaciones push personalizadas"
+      "Notificaciones push personalizadas",
+      "1 año de almacenamiento incluido",
+      "Renovación: 20€/año"
     ],
     buttonText: "Contactanos",
     buttonVariant: "secondary"
@@ -74,6 +81,12 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
           Elige el plan que mejor se adapte a tus necesidades.
         </p>
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 max-w-4xl mx-auto">
+          <p className="text-sm text-blue-800">
+            <strong>Almacenamiento incluido:</strong> Todos los planes incluyen 1 año de almacenamiento gratuito. 
+            Después del primer año, puedes renovar por una tarifa anual reducida según tu plan.
+          </p>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
