@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -19,7 +20,7 @@ export const useWinningPhotosSimple = () => {
   const initialPhotos: WinningPhoto[] = [
     {
       id: 1,
-      imageUrl: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+      imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
       title: "Evento deportivo comunitario",
       photographer: "María García",
       photographerAvatar: "https://i.pravatar.cc/150?img=1",
@@ -44,29 +45,30 @@ export const useWinningPhotosSimple = () => {
   ];
 
   useEffect(() => {
-    // Simular carga de datos
-    const loadPhotos = () => {
-      setLoading(true);
-      setTimeout(() => {
-        const savedPhotos = localStorage.getItem('winningPhotos');
-        if (savedPhotos) {
-          try {
-            setPhotos(JSON.parse(savedPhotos));
-          } catch (error) {
-            console.error('Error parsing saved photos:', error);
-            setPhotos(initialPhotos);
-            localStorage.setItem('winningPhotos', JSON.stringify(initialPhotos));
-          }
-        } else {
-          setPhotos(initialPhotos);
-          localStorage.setItem('winningPhotos', JSON.stringify(initialPhotos));
-        }
-        setLoading(false);
-      }, 500);
-    };
-
     loadPhotos();
   }, []);
+
+  const loadPhotos = () => {
+    setLoading(true);
+    setTimeout(() => {
+      const savedPhotos = localStorage.getItem('winningPhotos');
+      if (savedPhotos) {
+        try {
+          const parsedPhotos = JSON.parse(savedPhotos);
+          setPhotos(parsedPhotos);
+          console.log('Photos loaded from localStorage:', parsedPhotos);
+        } catch (error) {
+          console.error('Error parsing saved photos:', error);
+          setPhotos(initialPhotos);
+          savePhotosToStorage(initialPhotos);
+        }
+      } else {
+        setPhotos(initialPhotos);
+        savePhotosToStorage(initialPhotos);
+      }
+      setLoading(false);
+    }, 500);
+  };
 
   const savePhotosToStorage = (newPhotos: WinningPhoto[]) => {
     try {
@@ -74,6 +76,11 @@ export const useWinningPhotosSimple = () => {
       console.log('Photos saved to localStorage:', newPhotos);
     } catch (error) {
       console.error('Error saving photos to localStorage:', error);
+      toast({
+        title: "Error de almacenamiento",
+        description: "No se pudieron guardar los cambios localmente.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -87,7 +94,6 @@ export const useWinningPhotosSimple = () => {
       
       let imageUrl = updates.imageUrl;
       if (file) {
-        // En un caso real, aquí subirías el archivo a un servicio como Supabase Storage
         imageUrl = URL.createObjectURL(file);
         console.log('File uploaded, new URL:', imageUrl);
       }
@@ -105,6 +111,8 @@ export const useWinningPhotosSimple = () => {
         title: "Foto actualizada",
         description: "Los cambios se han guardado correctamente."
       });
+      
+      console.log('Photo updated successfully:', updatedPhotos);
     } catch (error) {
       console.error('Error updating photo:', error);
       toast({
@@ -139,6 +147,8 @@ export const useWinningPhotosSimple = () => {
         title: "Foto añadida",
         description: "La nueva foto se ha agregado correctamente."
       });
+      
+      console.log('Photo added successfully:', updatedPhotos);
     } catch (error) {
       console.error('Error adding photo:', error);
       toast({
@@ -160,6 +170,8 @@ export const useWinningPhotosSimple = () => {
         title: "Foto eliminada",
         description: "La foto se ha eliminado correctamente."
       });
+      
+      console.log('Photo removed successfully:', updatedPhotos);
     } catch (error) {
       console.error('Error removing photo:', error);
       toast({
@@ -180,6 +192,8 @@ export const useWinningPhotosSimple = () => {
         title: "Orden actualizado",
         description: "El orden de las fotos se ha actualizado."
       });
+      
+      console.log('Photos reordered successfully:', newOrder);
     } catch (error) {
       console.error('Error reordering photos:', error);
       toast({

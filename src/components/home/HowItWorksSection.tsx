@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Camera, Users, Trophy, Sparkles, ArrowRight, Upload, ThumbsUp, Award } from "lucide-react";
+import { Camera, Users, Trophy, Sparkles, Upload, ThumbsUp, Award } from "lucide-react";
 
 interface HowItWorksSectionProps {
   texts: {
@@ -57,27 +57,6 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      {/* Infographic connection lines */}
-      <div className="absolute inset-0 hidden lg:block">
-        <svg className="w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
-              <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0.3" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M 300 400 Q 600 300 900 400"
-            stroke="url(#pathGradient)"
-            strokeWidth="4"
-            fill="none"
-            strokeDasharray="10,5"
-            className="animate-pulse"
-          />
-        </svg>
-      </div>
-
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
         {/* Infographic header */}
         <div className="text-center mb-24">
@@ -115,7 +94,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
           </motion.p>
         </div>
         
-        {/* Infographic steps */}
+        {/* Infographic steps without arrow icons */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-20 mb-20">
           {steps.map((step, index) => {
             const Icon = step.icon;
@@ -128,22 +107,6 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                 transition={{ delay: index * 0.3, duration: 0.8 }}
                 className="relative group"
               >
-                {/* Infographic connection arrow for desktop */}
-                {index < 2 && (
-                  <div className="hidden lg:block absolute top-32 -right-8 xl:-right-10 w-16 xl:w-20 z-20">
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: (index + 1) * 0.3 }}
-                      className="relative"
-                    >
-                      <ArrowRight className="w-12 h-12 xl:w-16 xl:h-16 text-primary/60 drop-shadow-lg" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-full blur-xl"></div>
-                    </motion.div>
-                  </div>
-                )}
-                
                 {/* Infographic card with enhanced styling */}
                 <div className={`${step.bgPattern} rounded-3xl p-10 pt-20 pb-12 relative overflow-hidden border border-white/60 dark:border-gray-800/60 shadow-2xl hover:shadow-3xl transition-all duration-700 group-hover:scale-105 group-hover:-translate-y-3`}>
                   {/* Enhanced floating elements */}
@@ -167,13 +130,6 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-xl font-medium">
                     {step.description}
                   </p>
-                  
-                  {/* Enhanced decorative element */}
-                  <div className="absolute bottom-8 right-8 opacity-40 group-hover:opacity-70 transition-all duration-300 group-hover:translate-x-1">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${step.gradient} rounded-2xl flex items-center justify-center shadow-xl`}>
-                      <ArrowRight className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
                   
                   {/* Infographic decorative dots */}
                   <div className="absolute top-4 right-4 opacity-20">
