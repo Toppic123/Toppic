@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Camera, Building, Album, TrendingUp, Users, Zap } from "lucide-react";
+import { Camera, TrendingUp, Album } from "lucide-react";
 
 const FeaturesSection = () => {
   const features = [
@@ -27,19 +27,6 @@ const FeaturesSection = () => {
     }
   ];
 
-  const additionalBenefits = [
-    {
-      icon: Users,
-      title: "Mayor participación",
-      description: "Los asistentes se involucran más al ser protagonistas"
-    },
-    {
-      icon: Zap,
-      title: "Proceso automatizado",
-      description: "Sistema completamente automatizado de votación y ranking"
-    }
-  ];
-
   return (
     <>
       <motion.div
@@ -57,7 +44,7 @@ const FeaturesSection = () => {
       </motion.div>
 
       {/* Main Features - 3D Card Style */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
         {features.map((feature, index) => (
           <motion.div
             key={feature.title}
@@ -99,40 +86,6 @@ const FeaturesSection = () => {
           </motion.div>
         ))}
       </div>
-
-      {/* Additional Benefits */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8 }}
-        className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-3xl p-8 mb-20"
-      >
-        <h3 className="text-3xl font-bold text-center mb-8 text-gray-900">
-          Beneficios adicionales
-        </h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {additionalBenefits.map((benefit, index) => (
-            <motion.div
-              key={benefit.title}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1 + index * 0.2 }}
-              className="flex items-start space-x-4 p-4 rounded-xl bg-white/70 backdrop-blur-sm"
-            >
-              <div className="flex-shrink-0">
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-                  <benefit.icon className="h-6 w-6 text-white" />
-                </div>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-900 mb-1">{benefit.title}</h4>
-                <p className="text-gray-600 text-sm">{benefit.description}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
     </>
   );
 };

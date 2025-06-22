@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Users, Trophy, Shield, Zap, BarChart3, Vote, Clock, Award, Brain, Eye, CheckCircle } from "lucide-react";
+import { ArrowLeft, Users, Shield, Zap, BarChart3, Brain, Eye, CheckCircle, Vote, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -42,56 +42,6 @@ const VotingRules = () => {
       title: "Interfaz Intuitiva",
       description: "Proceso de votación simple y rápido, diseñado para maximizar la participación de los usuarios.",
       color: "from-pink-500 to-rose-500"
-    }
-  ];
-
-  const votingProcess = [
-    {
-      step: "1",
-      title: "Regístrate",
-      description: "Crea tu cuenta gratuita para participar en las votaciones",
-      icon: Users
-    },
-    {
-      step: "2",
-      title: "Explora",
-      description: "Navega por las fotografías participantes en los concursos activos",
-      icon: Eye
-    },
-    {
-      step: "3",
-      title: "Compara y Vota",
-      description: "Elige entre pares de fotografías usando nuestro sistema de comparación",
-      icon: Vote
-    },
-    {
-      step: "4",
-      title: "Ve los Resultados",
-      description: "Sigue los rankings en tiempo real y descubre a los ganadores",
-      icon: Trophy
-    }
-  ];
-
-  const rules = [
-    {
-      icon: CheckCircle,
-      title: "Voto democrático",
-      description: "Cada usuario registrado puede votar una vez por concurso. Tu voto cuenta igual que el de todos los demás participantes."
-    },
-    {
-      icon: Clock,
-      title: "Período de votación",
-      description: "La votación comienza cuando se publican las fotos y termina en la fecha límite del concurso. No se pueden cambiar los votos una vez emitidos."
-    },
-    {
-      icon: Trophy,
-      title: "Criterios de evaluación",
-      description: "Vota por las fotos que consideres más creativas, técnicamente mejores o que mejor representen el tema del concurso."
-    },
-    {
-      icon: Shield,
-      title: "Fair play",
-      description: "Está prohibido crear múltiples cuentas para votar. Los votos fraudulentos serán detectados y eliminados automáticamente."
     }
   ];
 
@@ -177,86 +127,9 @@ const VotingRules = () => {
         </div>
       </div>
 
-      {/* How It Works */}
-      <div className="bg-white py-20">
-        <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              Cómo Funciona
-            </h3>
-            <p className="text-lg text-gray-600">
-              Un proceso simple en cuatro pasos
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {votingProcess.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center relative"
-              >
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto shadow-lg">
-                    {step.step}
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-blue-600/20 rounded-full blur-xl"></div>
-                </div>
-                <step.icon className="w-8 h-8 text-primary mx-auto mb-4" />
-                <h4 className="text-xl font-semibold mb-3 text-gray-900">
-                  {step.title}
-                </h4>
-                <p className="text-gray-600">
-                  {step.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Voting Rules */}
+      {/* ELO Algorithm Explanation */}
       <div className="bg-gradient-to-br from-gray-50 to-white py-20">
         <div className="container max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              Reglas de Votación
-            </h3>
-            <p className="text-lg text-gray-600">
-              Normas claras para un proceso transparente
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-            {rules.map((rule, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <CardContent className="p-8">
-                    <div className="flex items-start space-x-6">
-                      <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <rule.icon className="h-7 w-7 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-semibold mb-3 text-gray-900">{rule.title}</h4>
-                        <p className="text-gray-600 leading-relaxed">{rule.description}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* ELO Algorithm Explanation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

@@ -21,7 +21,6 @@ import VotingRules from "./pages/VotingRules";
 import Organizers from "./pages/Organizers";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import GalleryManagement from "./pages/GalleryManagement";
 import ContestRules from "./pages/ContestRules";
 import ContestGalleryPage from "./pages/ContestGalleryPage";
 import GalleryPage from "./pages/GalleryPage";
@@ -70,14 +69,6 @@ function App() {
                     element={
                       <RoleBasedRoute allowedRoles={['admin']}>
                         <AdminDashboard />
-                      </RoleBasedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="admin/gallery" 
-                    element={
-                      <RoleBasedRoute allowedRoles={['admin']}>
-                        <GalleryManagement />
                       </RoleBasedRoute>
                     } 
                   />
