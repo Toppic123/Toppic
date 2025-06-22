@@ -77,12 +77,14 @@ export const useContestForm = (onSuccess?: () => void) => {
     setIsDialogOpen(true);
   };
 
-  const handleFormChange = (newData: Partial<ContestFormData>) => {
-    setFormData(prev => {
-      const updated = { ...prev, ...newData };
-      console.log("FormData actualizado:", updated); // Debug log
-      return updated;
-    });
+  // Update the function signature to match the expected type
+  const handleFormChange = (data: ContestFormData | ((prev: ContestFormData) => ContestFormData)) => {
+    if (typeof data === 'function') {
+      setFormData(data);
+    } else {
+      setFormData(data);
+    }
+    console.log("FormData actualizado:", typeof data === 'function' ? 'function update' : data); // Debug log
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
