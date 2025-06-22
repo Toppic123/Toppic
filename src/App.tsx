@@ -20,7 +20,6 @@ import Privacy from "./pages/Privacy";
 import VotingRules from "./pages/VotingRules";
 import Organizers from "./pages/Organizers";
 import Dashboard from "./pages/Dashboard";
-import DashboardSettings from "./pages/DashboardSettings";
 import AdminDashboard from "./pages/AdminDashboard";
 import GalleryManagement from "./pages/GalleryManagement";
 import ContestRules from "./pages/ContestRules";
@@ -63,14 +62,6 @@ function App() {
                     element={
                       <RoleBasedRoute allowedRoles={['organizer', 'admin']}>
                         <Dashboard />
-                      </RoleBasedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="dashboard/settings" 
-                    element={
-                      <RoleBasedRoute allowedRoles={['organizer', 'admin']}>
-                        <DashboardSettings />
                       </RoleBasedRoute>
                     } 
                   />
