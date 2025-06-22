@@ -51,7 +51,7 @@ const VotingRulesPage = () => {
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Sistema de Votación</h1>
+              <h1 className="text-3xl font-bold text-gray-900">Sistema de votación único</h1>
               <p className="text-gray-600 mt-1">Votación justa, transparente y moderna</p>
             </div>
           </div>
@@ -88,7 +88,7 @@ const VotingRulesPage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {votingFeatures.map((feature, index) => (
             <motion.div
               key={index}

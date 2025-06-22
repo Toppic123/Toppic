@@ -52,8 +52,8 @@ export const useWinningPhotosSimple = () => {
     },
     {
       id: 5,
-      imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
-      title: "Arquitectura moderna",
+      imageUrl: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
+      title: "Momento especial de boda",
       photographer: "Elena Ruiz",
       photographerAvatar: "https://i.pravatar.cc/150?img=5",
       likes: 143
