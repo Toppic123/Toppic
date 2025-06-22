@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 export interface AlbumStorage {
@@ -30,23 +29,9 @@ export const useAlbumStorage = () => {
 
   const getStorageInfo = async (contestId: string): Promise<AlbumStorage | null> => {
     try {
-      const { data, error } = await supabase
-        .from('album_storage')
-        .select('*')
-        .eq('contest_id', contestId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') { // Not found error is ok
-        console.error('Error fetching album storage:', error);
-        toast({
-          title: "Error",
-          description: "No se pudo cargar la información de almacenamiento",
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      return data;
+      // For now, return null until the album_storage table is created
+      console.log("Album storage table not yet created. Contest ID:", contestId);
+      return null;
     } catch (error) {
       console.error('Error in getStorageInfo:', error);
       return null;
@@ -56,19 +41,11 @@ export const useAlbumStorage = () => {
   const updateAutoRenewal = async (albumStorageId: string, enabled: boolean) => {
     try {
       setIsLoading(true);
-      const { error } = await supabase
-        .from('album_storage')
-        .update({ 
-          auto_renewal_enabled: enabled,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', albumStorageId);
-
-      if (error) throw error;
-
+      
+      // Placeholder implementation until database table is created
       toast({
-        title: "Configuración actualizada",
-        description: `Renovación automática ${enabled ? 'activada' : 'desactivada'} correctamente`,
+        title: "Info",
+        description: "La funcionalidad de almacenamiento se activará cuando se configure la base de datos",
       });
 
       return true;
@@ -89,32 +66,10 @@ export const useAlbumStorage = () => {
     try {
       setIsLoading(true);
       
-      // First get current expiration date
-      const { data: current, error: fetchError } = await supabase
-        .from('album_storage')
-        .select('storage_expires_at')
-        .eq('id', albumStorageId)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      // Calculate new expiration date
-      const currentExpiration = new Date(current.storage_expires_at);
-      const newExpiration = new Date(currentExpiration.getTime() + (months * 30 * 24 * 60 * 60 * 1000));
-
-      const { error } = await supabase
-        .from('album_storage')
-        .update({ 
-          storage_expires_at: newExpiration.toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', albumStorageId);
-
-      if (error) throw error;
-
+      // Placeholder implementation until database table is created
       toast({
-        title: "Almacenamiento extendido",
-        description: `El almacenamiento se ha extendido ${months} meses`,
+        title: "Info",
+        description: "La funcionalidad de almacenamiento se activará cuando se configure la base de datos",
       });
 
       return true;

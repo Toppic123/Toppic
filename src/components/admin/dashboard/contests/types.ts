@@ -18,6 +18,7 @@ export interface Contest {
 }
 
 export interface ContestFormData {
+  id?: string; // Make id optional since it may not exist for new contests
   title: string;
   description: string;
   status: ContestStatus;
@@ -53,6 +54,6 @@ export interface ContestFormProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   contestFormData: ContestFormData;
-  setContestFormData: (data: Partial<ContestFormData>) => void;
+  setContestFormData: (data: ContestFormData | ((prev: ContestFormData) => ContestFormData)) => void;
   handleSaveChanges: (file?: File) => void;
 }
