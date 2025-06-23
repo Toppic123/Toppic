@@ -1,111 +1,96 @@
 
-import { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { User, Users, Camera, Flag, Image } from "lucide-react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, Trophy, MessageSquare, Star, Flag, Image } from "lucide-react";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
 import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
-import BannerManagement from "@/components/dashboard/banners/BannerManagement";
-
-// Credenciales de administrador
-const adminCredentials = {
-  email: 'pisillo@gmail.com',
-  password: 'Toppics2025'  // Nueva contraseña
-};
+import { BannerManagement } from "@/components/dashboard/banners/BannerManagement";
+import GalleryManager from "@/components/admin/GalleryManager";
+import PhotoReportsManagement from "@/components/admin/dashboard/PhotoReportsManagement";
+import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
 
 const AdminDashboard = () => {
-  const { userRole } = useAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // For development purposes, always allow access to admin page
-  const hasAccess = true; // For development, allow access
-  
-  useEffect(() => {
-    // Simulate checking permissions
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-    
-    // In a real app, check user permissions
-    // if (userRole !== "admin") {
-    //   toast({
-    //     title: "Acceso denegado",
-    //     description: "No tienes permisos para ver esta página",
-    //     variant: "destructive",
-    //   });
-    //   navigate("/dashboard");
-    // }
-  }, []);
-
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Verificando permisos...</div>;
-  }
+  const [activeTab, setActiveTab] = useState("contests");
 
   return (
-    <div className="pt-24 pb-16">
-      <div className="container max-w-7xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
-            <p className="text-muted-foreground max-w-2xl">
-              Gestiona todos los aspectos de la plataforma desde este panel centralizado.
-            </p>
-          </div>
+    <div className="min-h-screen bg-background pt-20">
+      <div className="container max-w-7xl mx-auto p-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
+          <p className="text-muted-foreground">
+            Gestiona concursos, usuarios y configuraciones de la plataforma
+          </p>
         </div>
 
-        <Tabs defaultValue="contests" className="mb-8">
-          <TabsList className="grid grid-cols-5 mb-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
             <TabsTrigger value="contests" className="flex items-center gap-2">
-              <Camera size={16} />
-              <span>Concursos</span>
+              <Trophy className="h-4 w-4" />
+              <span className="hidden sm:inline">Concursos</span>
+            </TabsTrigger>
+            <TabsTrigger value="featured" className="flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              <span className="hidden sm:inline">Destacados</span>
             </TabsTrigger>
             <TabsTrigger value="organizers" className="flex items-center gap-2">
-              <Flag size={16} />
-              <span>Organizadores</span>
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Organizadores</span>
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
-              <User size={16} />
-              <span>Usuarios</span>
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Usuarios</span>
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <Flag className="h-4 w-4" />
+              <span className="hidden sm:inline">Reportes</span>
+            </TabsTrigger>
+            <TabsTrigger value="gallery" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              <span className="hidden sm:inline">Galería</span>
             </TabsTrigger>
             <TabsTrigger value="support" className="flex items-center gap-2">
-              <Users size={16} />
-              <span>Soporte</span>
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Soporte</span>
             </TabsTrigger>
             <TabsTrigger value="banners" className="flex items-center gap-2">
-              <Image size={16} />
-              <span>Banners</span>
+              <Image className="h-4 w-4" />
+              <span className="hidden sm:inline">Banners</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* Contests Tab */}
-          <TabsContent value="contests" className="space-y-4">
+          <TabsContent value="contests" className="mt-6">
             <ContestManagement />
           </TabsContent>
 
-          {/* Organizers Tab */}
-          <TabsContent value="organizers" className="space-y-4">
+          <TabsContent value="featured" className="mt-6">
+            <FeaturedContestsManagement />
+          </TabsContent>
+
+          <TabsContent value="organizers" className="mt-6">
             <OrganizerManagement />
           </TabsContent>
 
-          {/* Users Tab */}
-          <TabsContent value="users" className="space-y-4">
+          <TabsContent value="users" className="mt-6">
             <UserManagement />
           </TabsContent>
 
-          {/* Support Messages Tab */}
-          <TabsContent value="support" className="space-y-4">
+          <TabsContent value="reports" className="mt-6">
+            <PhotoReportsManagement />
+          </TabsContent>
+
+          <TabsContent value="gallery" className="mt-6">
+            <GalleryManager />
+          </TabsContent>
+
+          <TabsContent value="support" className="mt-6">
             <SupportMessagesManagement />
           </TabsContent>
-          
-          {/* Banners Tab */}
-          <TabsContent value="banners" className="space-y-4">
-            <BannerManagement isAdmin={true} />
+
+          <TabsContent value="banners" className="mt-6">
+            <BannerManagement />
           </TabsContent>
         </Tabs>
       </div>

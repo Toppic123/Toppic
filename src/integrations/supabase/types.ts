@@ -101,7 +101,9 @@ export type Database = {
           id: string
           image_url: string | null
           is_private: boolean | null
+          latitude: number | null
           location: string | null
+          longitude: number | null
           minimum_distance_km: number | null
           organizer: string
           participants: number | null
@@ -120,7 +122,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_private?: boolean | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           minimum_distance_km?: number | null
           organizer: string
           participants?: number | null
@@ -139,7 +143,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_private?: boolean | null
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           minimum_distance_km?: number | null
           organizer?: string
           participants?: number | null
@@ -150,6 +156,38 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      featured_contests: {
+        Row: {
+          contest_id: string
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "featured_contests_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       featured_gallery: {
         Row: {
@@ -267,6 +305,42 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           username?: string
+        }
+        Relationships: []
+      }
+      photo_reports: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          photo_id: string
+          reason: string
+          reported_by_user_id: string | null
+          reviewed_at: string | null
+          reviewed_by_admin_id: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          photo_id: string
+          reason: string
+          reported_by_user_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by_admin_id?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          photo_id?: string
+          reason?: string
+          reported_by_user_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by_admin_id?: string | null
+          status?: string
         }
         Relationships: []
       }
