@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -98,7 +97,7 @@ const Upload = () => {
     );
     
     // Make it more permissive - allow up to 10km instead of the strict 1km
-    const maxDistance = Math.max(contest.minimumDistanceKm || 1, 10);
+    const maxDistance = Math.max(contest.minimum_distance_km || 1, 10);
     return distance <= maxDistance;
   }).map(contest => ({
     id: contest.id,
