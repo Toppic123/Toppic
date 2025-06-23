@@ -1,7 +1,11 @@
 
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Share2, MessageCircle } from "lucide-react";
 import PhotoComments from "@/components/PhotoComments";
+import SocialShareButtons from "@/components/SocialShareButtons";
+import ReportPhotoDialog from "@/components/ReportPhotoDialog";
 
 interface Photo {
   id: string;
@@ -60,6 +64,20 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
                   <h3 className="text-white font-medium truncate">{photo.title || 'Sin título'}</h3>
                   <p className="text-white/80 text-sm truncate">{photo.contestName || 'Concurso'}</p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePhotoClick(photo);
+                      }}
+                    >
+                      <MessageCircle className="h-3 w-3" />
+                      Comentarios
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -67,24 +85,34 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
         })}
       </div>
 
-      {/* Photo Detail Dialog with Comments */}
+      {/* Photo Detail Dialog with Comments and Actions */}
       <Dialog 
         open={selectedPhoto !== null} 
         onOpenChange={(open) => !open && setSelectedPhoto(null)}
       >
-        <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
+        <DialogContent className="sm:max-w-4xl h-[85vh] max-h-[900px] flex flex-col p-0 gap-0">
           {selectedPhoto && (
             <>
-              <DialogHeader className="px-4 py-2 border-b">
+              <DialogHeader className="px-4 py-3 border-b">
                 <div className="flex items-center justify-between">
                   <DialogTitle className="text-base">{selectedPhoto.title || 'Sin título'}</DialogTitle>
-                  <div className="text-sm text-muted-foreground">
-                    {selectedPhoto.contestName || 'Concurso'}
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm text-muted-foreground">
+                      {selectedPhoto.contestName || 'Concurso'}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <SocialShareButtons 
+                        url={window.location.href}
+                        title={selectedPhoto.title || 'Sin título'}
+                        imageUrl={selectedPhoto.imageUrl}
+                      />
+                      <ReportPhotoDialog photoId={selectedPhoto.id} />
+                    </div>
                   </div>
                 </div>
               </DialogHeader>
               
-              <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full">
+              <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full min-h-0">
                 <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
                   <img 
                     src={selectedPhoto.imageUrl} 

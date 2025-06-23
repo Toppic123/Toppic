@@ -4,6 +4,8 @@ import { motion, useInView } from "framer-motion";
 import { User, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import SocialShareButtons from "@/components/SocialShareButtons";
+import ReportPhotoDialog from "@/components/ReportPhotoDialog";
 
 type PhotoCardProps = {
   id: string;
@@ -31,6 +33,7 @@ const PhotoCard = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [direction, setDirection] = useState<number>(0);
   const [lastTap, setLastTap] = useState<number>(0);
+  const [showActions, setShowActions] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.3 });
   const { toast } = useToast();
@@ -173,13 +176,17 @@ const PhotoCard = ({
               >
                 <Share2 className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => onReport?.(id)}
-                className="text-white/80 hover:text-white transition-colors"
-                aria-label="Report photo"
-              >
-                <Flag className="w-4 h-4" />
-              </button>
+              <ReportPhotoDialog 
+                photoId={id}
+                trigger={
+                  <button
+                    className="text-white/80 hover:text-white transition-colors"
+                    aria-label="Report photo"
+                  >
+                    <Flag className="w-4 h-4" />
+                  </button>
+                }
+              />
             </div>
           </div>
         </div>
@@ -194,9 +201,11 @@ const PhotoCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.5, delay: 0.1 }}
+      onMouseEnter={() => setShowActions(true)}
+      onMouseLeave={() => setShowActions(false)}
     >
       <div 
-        className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative"
+        className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative group"
         onClick={handleTapOrClick}
       >
         <img
@@ -208,6 +217,21 @@ const PhotoCard = ({
           )}
           onLoad={() => setImageLoaded(true)}
         />
+        
+        {/* Action overlay */}
+        <div className={cn(
+          "absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 transition-opacity",
+          (showActions || expanded) && "opacity-100"
+        )}>
+          <div className="flex gap-2">
+            <SocialShareButtons 
+              url={window.location.href}
+              title={`Photo by ${photographer}`}
+              imageUrl={imageUrl}
+            />
+            <ReportPhotoDialog photoId={id} />
+          </div>
+        </div>
       </div>
       
       <div className="p-2">

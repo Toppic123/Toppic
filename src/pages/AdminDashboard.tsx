@@ -11,6 +11,7 @@ import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 import GalleryManager from "@/components/admin/GalleryManager";
 import PhotoReportsManagement from "@/components/admin/dashboard/PhotoReportsManagement";
 import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
+import FeaturedGalleryManagement from "@/components/admin/dashboard/FeaturedGalleryManagement";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("contests");
@@ -26,7 +27,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
             <TabsTrigger value="contests" className="flex items-center gap-2">
               <Trophy className="h-4 w-4" />
               <span className="hidden sm:inline">Concursos</span>
@@ -34,6 +35,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="featured" className="flex items-center gap-2">
               <Star className="h-4 w-4" />
               <span className="hidden sm:inline">Destacados</span>
+            </TabsTrigger>
+            <TabsTrigger value="featured-gallery" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              <span className="hidden sm:inline">Galería</span>
             </TabsTrigger>
             <TabsTrigger value="organizers" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
@@ -49,7 +54,7 @@ const AdminDashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="gallery" className="flex items-center gap-2">
               <Image className="h-4 w-4" />
-              <span className="hidden sm:inline">Galería</span>
+              <span className="hidden sm:inline">Fotos</span>
             </TabsTrigger>
             <TabsTrigger value="support" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
@@ -67,6 +72,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="featured" className="mt-6">
             <FeaturedContestsManagement />
+          </TabsContent>
+
+          <TabsContent value="featured-gallery" className="mt-6">
+            <FeaturedGalleryManagement />
           </TabsContent>
 
           <TabsContent value="organizers" className="mt-6">
