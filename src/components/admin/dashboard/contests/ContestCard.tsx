@@ -2,7 +2,7 @@
 import { Camera, Edit, Trash } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Contest } from "./types";
+import { Contest } from "@/hooks/useContestsData";
 
 interface ContestCardProps {
   contest: Contest;

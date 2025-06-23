@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Contest } from "../types";
+import { Contest } from "@/hooks/useContestsData";
 import { filterContests, mockContests } from "../contestUtils";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -47,13 +47,22 @@ export const useContests = () => {
           id: contest.id,
           title: contest.title,
           organizer: contest.organizer,
-          status: contest.status as "pending" | "active" | "finished",
+          location: contest.location || "Madrid, España",
+          category: "Fotografía",
+          description: contest.description || "Descripción del concurso disponible pronto.",
+          imageUrl: contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
+          prize: "500€",
           participants: contest.participants || 0,
-          location: contest.location || undefined,
-          description: contest.description || undefined,
-          imageUrl: contest.image_url || undefined,
+          isActive: contest.status === "active",
+          endDate: contest.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          startDate: contest.start_date || new Date().toISOString(),
+          photoDeadline: contest.photo_deadline || new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+          status: contest.status as "pending" | "active" | "finished",
           is_private: contest.is_private || false,
-          contest_password: contest.contest_password || undefined
+          contest_password: contest.contest_password || undefined,
+          coordinates: { lat: 40.4168, lng: -3.7038 },
+          created_at: contest.created_at,
+          minimum_distance_km: contest.minimum_distance_km || 0,
         }));
         
         setContests(formattedContests);

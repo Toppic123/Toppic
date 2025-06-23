@@ -1,5 +1,5 @@
 
-import { Contest } from "./types";
+import { Contest } from "@/hooks/useContestsData";
 import ContestCard from "./ContestCard";
 import { useEffect } from "react";
 

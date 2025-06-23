@@ -26,14 +26,7 @@ export const ContestManagement = () => {
     handleSaveChanges
   } = useContestForm(fetchContests);
 
-  // Create wrapper functions to handle the type conversions
-  const handleEditById = (id: string) => {
-    const contest = filteredContests.find(c => c.id === id);
-    if (contest) {
-      handleEditContest(contest);
-    }
-  };
-
+  // Create wrapper function to handle the form data changes
   const handleFormDataChange = (data: any) => {
     if (typeof data === 'function') {
       handleFormChange(data(formData));
@@ -55,7 +48,12 @@ export const ContestManagement = () => {
         contests={filteredContests}
         isLoading={isLoading}
         searchQuery={searchQuery}
-        onEdit={handleEditById}
+        onEdit={(id: string) => {
+          const contest = filteredContests.find(c => c.id === id);
+          if (contest) {
+            handleEditContest(contest);
+          }
+        }}
         onDelete={handleDeleteContest}
       />
 
