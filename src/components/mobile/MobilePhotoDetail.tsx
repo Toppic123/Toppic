@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Share2 } from "lucide-react";
+import { ArrowLeft, Share2, Flag } from "lucide-react";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ReportPhotoDialog from "@/components/ReportPhotoDialog";
@@ -40,7 +40,16 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
             title={`Foto de ${photo.author}`}
             imageUrl={photo.url}
           />
-          <ReportPhotoDialog photoId={photo.id} />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-red-500 hover:bg-red-50 p-2"
+          >
+            <ReportPhotoDialog 
+              photoId={photo.id}
+              trigger={<Flag className="h-4 w-4" />}
+            />
+          </Button>
         </div>
       </div>
 

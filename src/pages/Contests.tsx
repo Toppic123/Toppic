@@ -109,7 +109,7 @@ const Contests = () => {
 
   if (isLoading) {
     return (
-      <div className="pt-24 pb-16">
+      <div className="pt-24 pb-16 min-h-screen">
         <div className="container max-w-7xl mx-auto px-4">
           <div className="flex justify-center items-center min-h-[400px]">
             <p className="text-lg text-muted-foreground">Cargando concursos...</p>
@@ -120,7 +120,7 @@ const Contests = () => {
   }
   
   return (
-    <div className="pt-24 pb-16">
+    <div className="pt-24 pb-16 min-h-screen">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
           <div>
@@ -132,19 +132,21 @@ const Contests = () => {
         </div>
         
         {/* Search and filters */}
-        <ContestFilters
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-          activeLocation={activeLocation}
-          setActiveLocation={setActiveLocation}
-          contestStatus={contestStatus}
-          setContestStatus={setContestStatus}
-          categories={categories}
-          locations={locations}
-          clearFilters={clearFilters}
-        />
+        <div className="mb-6">
+          <ContestFilters
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+            activeLocation={activeLocation}
+            setActiveLocation={setActiveLocation}
+            contestStatus={contestStatus}
+            setContestStatus={setContestStatus}
+            categories={categories}
+            locations={locations}
+            clearFilters={clearFilters}
+          />
+        </div>
         
         {/* View mode tabs - Both Grid and Map buttons with consistent styling */}
         <Tabs defaultValue="grid" value={viewMode} onValueChange={setViewMode} className="mb-8">
@@ -173,16 +175,20 @@ const Contests = () => {
           <Separator className="my-4" />
           
           <TabsContent value="grid" className="mt-6">
-            <ContestGrid
-              contests={displayedContests}
-              userLocation={userLocation}
-              calculateDistance={calculateDistance}
-              clearFilters={clearFilters}
-            />
+            <div className="min-h-[400px]">
+              <ContestGrid
+                contests={displayedContests}
+                userLocation={userLocation}
+                calculateDistance={calculateDistance}
+                clearFilters={clearFilters}
+              />
+            </div>
           </TabsContent>
           
-          <TabsContent value="map">
-            <ContestMapView />
+          <TabsContent value="map" className="mt-6">
+            <div className="min-h-[600px]">
+              <ContestMapView />
+            </div>
           </TabsContent>
         </Tabs>
 

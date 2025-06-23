@@ -76,13 +76,28 @@ export const usePhotoComments = (photoId: string) => {
     }
 
     try {
+      // Get user name from multiple sources, prioritizing display name over email
+      let displayName = user.user_metadata?.name || 
+                       user.user_metadata?.full_name || 
+                       user.user_metadata?.display_name;
+      
+      // If no name in metadata, try to extract name from email
+      if (!displayName && user.email) {
+        displayName = user.email.split('@')[0];
+      }
+      
+      // Final fallback
+      if (!displayName) {
+        displayName = 'Usuario';
+      }
+
       const { data, error } = await supabase
         .from('photo_comments')
         .insert({
           photo_id: photoId,
           user_id: user.id,
-          username: user.user_metadata?.name || user.email || 'Usuario',
-          avatar_url: user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`,
+          username: displayName,
+          avatar_url: user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${displayName}`,
           comment_text: commentText.trim()
         })
         .select()

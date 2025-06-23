@@ -17,14 +17,7 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import ConsentForms from "@/components/ConsentForms";
-
-// Concursos cercanos de ejemplo
-const nearbyContests = [
-  { id: "1", name: "Verano en Barcelona", distance: "0.5 km", type: "landscape" as const },
-  { id: "2", name: "Arquitectura Urbana", distance: "1.2 km", type: "landscape" as const },
-  { id: "3", name: "Vida en la Playa", distance: "3.4 km", type: "people" as const },
-  { id: "4", name: "Eventos Públicos", distance: "2.1 km", type: "public_event" as const },
-];
+import { useContestsData } from "@/hooks/useContestsData";
 
 interface ConsentData {
   photographerConsent: boolean;
@@ -45,11 +38,78 @@ const Upload = () => {
   const [selectedContest, setSelectedContest] = useState<string>(contestId || "");
   const [currentStep, setCurrentStep] = useState<"upload" | "consent" | "details">("upload");
   const [consents, setConsents] = useState<ConsentData | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { contests: allContests } = useContestsData();
   
-  // Redireccionar si no está logueado
+  // Get user location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          // Set a default location (Barcelona) for testing
+          setUserLocation({
+            lat: 41.3851,
+            lng: 2.1734
+          });
+        }
+      );
+    } else {
+      // Default to Barcelona if geolocation is not available
+      setUserLocation({
+        lat: 41.3851,
+        lng: 2.1734
+      });
+    }
+  }, []);
+  
+  // Calculate distance between two points
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    return distance;
+  };
+
+  // Filter contests based on user location and make it more permissive
+  const nearbyContests = allContests.filter(contest => {
+    if (!userLocation || !contest.coordinates) return true; // Show all if no location data
+    
+    const distance = calculateDistance(
+      userLocation.lat,
+      userLocation.lng,
+      contest.coordinates.lat,
+      contest.coordinates.lng
+    );
+    
+    // Make it more permissive - allow up to 10km instead of the strict 1km
+    const maxDistance = Math.max(contest.minimumDistanceKm || 1, 10);
+    return distance <= maxDistance;
+  }).map(contest => ({
+    id: contest.id,
+    name: contest.title,
+    distance: userLocation && contest.coordinates ? 
+      `${calculateDistance(userLocation.lat, userLocation.lng, contest.coordinates.lat, contest.coordinates.lng).toFixed(1)} km` : 
+      "Calculando...",
+    type: contest.category as "landscape" | "people" | "public_event"
+  }));
+  
+  // Redirect if not logged in
   useEffect(() => {
     if (!user) {
       toast({
@@ -73,7 +133,6 @@ const Upload = () => {
           let width = img.width;
           let height = img.height;
           
-          // Reducir si el ancho excede maxWidth
           if (width > maxWidth) {
             const ratio = maxWidth / width;
             width = maxWidth;
@@ -88,7 +147,7 @@ const Upload = () => {
           canvas.toBlob((blob) => {
             if (blob) resolve(blob);
             else reject(new Error('Error en la conversión de Canvas a Blob'));
-          }, 'image/jpeg', 0.8); // 0.8 de calidad para JPEG
+          }, 'image/jpeg', 0.8);
         };
         img.onerror = () => reject(new Error('Error al cargar la imagen'));
       };
@@ -100,7 +159,6 @@ const Upload = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Comprobar tamaño del archivo (5MB máx)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "Archivo demasiado grande",
@@ -111,10 +169,7 @@ const Upload = () => {
       }
       
       try {
-        // Guardar archivo original para envío posterior
         setOriginalFile(file);
-        
-        // Comprimir para la vista previa
         const compressedBlob = await compressImage(file);
         const compressedUrl = URL.createObjectURL(compressedBlob);
         setPreviewUrl(compressedUrl);
@@ -180,7 +235,6 @@ const Upload = () => {
       return;
     }
     
-    // Aquí subirías tanto el originalFile (para almacenamiento) como los metadatos
     console.log("Foto enviada al concurso:", selectedContest);
     console.log("Archivo original a almacenar:", originalFile);
     console.log("Título:", title);
@@ -254,21 +308,28 @@ const Upload = () => {
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="contest">Selecciona un concurso cercano</Label>
-                <Select 
-                  value={selectedContest} 
-                  onValueChange={handleContestSelection}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona un concurso" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {nearbyContests.map(contest => (
-                      <SelectItem key={contest.id} value={contest.id}>
-                        {contest.name} ({contest.distance})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                {nearbyContests.length > 0 ? (
+                  <Select 
+                    value={selectedContest} 
+                    onValueChange={handleContestSelection}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un concurso" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {nearbyContests.map(contest => (
+                        <SelectItem key={contest.id} value={contest.id}>
+                          {contest.name} ({contest.distance})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="p-4 border border-gray-200 rounded-lg text-center text-gray-500">
+                    <p>No hay concursos disponibles en tu área.</p>
+                    <p className="text-sm mt-1">Verifica tu ubicación o intenta más tarde.</p>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -342,7 +403,7 @@ const Upload = () => {
 
       {/* Step 3: Details */}
       {currentStep === "details" && (
-        <Card>
+        <Card className="max-h-screen overflow-y-auto">
           <CardHeader>
             <CardTitle>Detalles de la Foto</CardTitle>
             <CardDescription>

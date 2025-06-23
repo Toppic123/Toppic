@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Facebook, Twitter } from "lucide-react";
+import { Facebook, Twitter, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SocialShareButtonsProps {
@@ -22,22 +22,43 @@ const SocialShareButtons = ({ url, title, imageUrl }: SocialShareButtonsProps) =
     window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank');
   };
 
-  // Function to copy image URL to clipboard
-  const copyImageUrl = () => {
-    if (imageUrl) {
-      navigator.clipboard.writeText(imageUrl).then(() => {
-        toast({
-          title: "URL copiada",
-          description: "La URL de la imagen ha sido copiada al portapapeles"
+  // Function to copy URL to clipboard or use native share
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: title,
+          text: title,
+          url: url,
         });
-      });
-    } else {
-      navigator.clipboard.writeText(url).then(() => {
+        toast({
+          title: "Compartido exitosamente",
+          description: "El contenido ha sido compartido"
+        });
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(url);
         toast({
           title: "URL copiada",
           description: "La URL ha sido copiada al portapapeles"
         });
-      });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Final fallback
+      try {
+        await navigator.clipboard.writeText(url);
+        toast({
+          title: "URL copiada",
+          description: "La URL ha sido copiada al portapapeles"
+        });
+      } catch (clipboardError) {
+        toast({
+          title: "Error al compartir",
+          description: "No se pudo compartir el contenido",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -50,7 +71,7 @@ const SocialShareButtons = ({ url, title, imageUrl }: SocialShareButtonsProps) =
         onClick={shareOnFacebook}
       >
         <Facebook size={16} />
-        <span>Facebook</span>
+        <span className="hidden sm:inline">Facebook</span>
       </Button>
       <Button
         variant="outline"
@@ -59,15 +80,16 @@ const SocialShareButtons = ({ url, title, imageUrl }: SocialShareButtonsProps) =
         onClick={shareOnTwitter}
       >
         <Twitter size={16} />
-        <span>Twitter</span>
+        <span className="hidden sm:inline">Twitter</span>
       </Button>
       <Button
         variant="outline"
         size="sm"
         className="flex items-center gap-2"
-        onClick={copyImageUrl}
+        onClick={handleShare}
       >
-        <span>Copiar enlace</span>
+        <Share2 size={16} />
+        <span className="hidden sm:inline">Compartir</span>
       </Button>
     </div>
   );

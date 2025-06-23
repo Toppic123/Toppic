@@ -12,9 +12,11 @@ import GalleryManager from "@/components/admin/GalleryManager";
 import PhotoReportsManagement from "@/components/admin/dashboard/PhotoReportsManagement";
 import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
 import FeaturedGalleryManagement from "@/components/admin/dashboard/FeaturedGalleryManagement";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("contests");
+  const { toast } = useToast();
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -27,79 +29,169 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9">
-            <TabsTrigger value="contests" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 overflow-x-auto">
+            <TabsTrigger value="contests" className="flex items-center gap-2 whitespace-nowrap">
               <Trophy className="h-4 w-4" />
               <span className="hidden sm:inline">Concursos</span>
             </TabsTrigger>
-            <TabsTrigger value="featured" className="flex items-center gap-2">
+            <TabsTrigger value="featured" className="flex items-center gap-2 whitespace-nowrap">
               <Star className="h-4 w-4" />
               <span className="hidden sm:inline">Destacados</span>
             </TabsTrigger>
-            <TabsTrigger value="featured-gallery" className="flex items-center gap-2">
+            <TabsTrigger value="featured-gallery" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />
               <span className="hidden sm:inline">Galería</span>
             </TabsTrigger>
-            <TabsTrigger value="organizers" className="flex items-center gap-2">
+            <TabsTrigger value="organizers" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Organizadores</span>
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
+            <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Usuarios</span>
             </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
+            <TabsTrigger value="reports" className="flex items-center gap-2 whitespace-nowrap">
               <Flag className="h-4 w-4" />
               <span className="hidden sm:inline">Reportes</span>
             </TabsTrigger>
-            <TabsTrigger value="gallery" className="flex items-center gap-2">
+            <TabsTrigger value="gallery" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />
               <span className="hidden sm:inline">Fotos</span>
             </TabsTrigger>
-            <TabsTrigger value="support" className="flex items-center gap-2">
+            <TabsTrigger value="support" className="flex items-center gap-2 whitespace-nowrap">
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">Soporte</span>
             </TabsTrigger>
-            <TabsTrigger value="banners" className="flex items-center gap-2">
+            <TabsTrigger value="banners" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />
               <span className="hidden sm:inline">Banners</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="contests" className="mt-6">
-            <ContestManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Concursos</CardTitle>
+                <CardDescription>
+                  Administra todos los concursos de la plataforma
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ContestManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="featured" className="mt-6">
-            <FeaturedContestsManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Concursos Destacados</CardTitle>
+                <CardDescription>
+                  Gestiona qué concursos aparecen destacados en la página principal
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FeaturedContestsManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="featured-gallery" className="mt-6">
-            <FeaturedGalleryManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Galería Destacada</CardTitle>
+                <CardDescription>
+                  Gestiona las fotos que aparecen en la galería destacada
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FeaturedGalleryManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="organizers" className="mt-6">
-            <OrganizerManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Organizadores</CardTitle>
+                <CardDescription>
+                  Administra las cuentas de organizadores
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <OrganizerManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="users" className="mt-6">
-            <UserManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Usuarios</CardTitle>
+                <CardDescription>
+                  Administra las cuentas de usuarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <UserManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="reports" className="mt-6">
-            <PhotoReportsManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Reportes de Fotos</CardTitle>
+                <CardDescription>
+                  Revisa y gestiona los reportes de contenido inapropiado
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <PhotoReportsManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="gallery" className="mt-6">
-            <GalleryManager />
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestor de Galería</CardTitle>
+                <CardDescription>
+                  Administra todas las fotos de la plataforma
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GalleryManager />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="support" className="mt-6">
-            <SupportMessagesManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Mensajes de Soporte</CardTitle>
+                <CardDescription>
+                  Gestiona las consultas y mensajes de soporte
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SupportMessagesManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="banners" className="mt-6">
-            <BannerManagement />
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Banners</CardTitle>
+                <CardDescription>
+                  Administra los banners publicitarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BannerManagement />
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
