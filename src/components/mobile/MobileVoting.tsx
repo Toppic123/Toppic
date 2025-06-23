@@ -12,7 +12,7 @@ interface MobileVotingProps {
 
 const mockPhotos = [
   {
-    id: 1,
+    id: "1",
     url: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600",
     author: "María García",
     likes: 45,
@@ -20,7 +20,7 @@ const mockPhotos = [
     description: "Flores de primavera en el Parque Güell"
   },
   {
-    id: 2,
+    id: "2",
     url: "https://images.unsplash.com/photo-1464822759844-d150baec81f2?w=600",
     author: "Carlos López",
     likes: 38,
@@ -28,7 +28,7 @@ const mockPhotos = [
     description: "Jardines de Barcelona en flor"
   },
   {
-    id: 3,
+    id: "3",
     url: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=600",
     author: "Ana Rodríguez",
     likes: 52,
@@ -36,7 +36,7 @@ const mockPhotos = [
     description: "Tulipanes en el amanecer"
   },
   {
-    id: 4,
+    id: "4",
     url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600",
     author: "David Martín",
     likes: 41,
@@ -44,7 +44,7 @@ const mockPhotos = [
     description: "Bosque primaveral"
   },
   {
-    id: 5,
+    id: "5",
     url: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600",
     author: "Laura Sánchez",
     likes: 47,
@@ -52,7 +52,7 @@ const mockPhotos = [
     description: "Naturaleza en estado puro"
   },
   {
-    id: 6,
+    id: "6",
     url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600",
     author: "Roberto Jiménez",
     likes: 63,
