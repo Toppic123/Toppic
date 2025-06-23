@@ -102,6 +102,7 @@ export type Database = {
           image_url: string | null
           is_private: boolean | null
           location: string | null
+          minimum_distance_km: number | null
           organizer: string
           participants: number | null
           photo_deadline: string | null
@@ -120,6 +121,7 @@ export type Database = {
           image_url?: string | null
           is_private?: boolean | null
           location?: string | null
+          minimum_distance_km?: number | null
           organizer: string
           participants?: number | null
           photo_deadline?: string | null
@@ -138,6 +140,7 @@ export type Database = {
           image_url?: string | null
           is_private?: boolean | null
           location?: string | null
+          minimum_distance_km?: number | null
           organizer?: string
           participants?: number | null
           photo_deadline?: string | null
@@ -231,6 +234,39 @@ export type Database = {
           name?: string
           plan?: string | null
           total_contests?: number | null
+        }
+        Relationships: []
+      }
+      photo_comments: {
+        Row: {
+          avatar_url: string | null
+          comment_text: string
+          created_at: string
+          id: string
+          photo_id: string
+          updated_at: string
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          comment_text: string
+          created_at?: string
+          id?: string
+          photo_id: string
+          updated_at?: string
+          user_id?: string | null
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          comment_text?: string
+          created_at?: string
+          id?: string
+          photo_id?: string
+          updated_at?: string
+          user_id?: string | null
+          username?: string
         }
         Relationships: []
       }

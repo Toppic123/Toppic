@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, 
   DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { ContestFormProps } from "./types";
 import LocationCombobox from "./LocationCombobox";
 import AlbumStorageInfo from "./AlbumStorageInfo";
-import { Image, Upload, Lock } from "lucide-react";
+import { Image, Upload, Lock, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -285,6 +286,27 @@ export const ContestFormDialog = ({
                           className="mt-1"
                         />
                       </div>
+                    </div>
+                    
+                    {/* Minimum Distance Field */}
+                    <div>
+                      <Label htmlFor="minimumDistance" className="flex items-center gap-1">
+                        <MapPin size={16} />
+                        Distancia mínima de participación (km)
+                      </Label>
+                      <Input
+                        id="minimumDistance"
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={contestFormData.minimumDistanceKm}
+                        onChange={(e) => setContestFormData({...contestFormData, minimumDistanceKm: parseInt(e.target.value) || 0})}
+                        className="mt-1"
+                        placeholder="0"
+                      />
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Los participantes deben estar dentro de este radio del lugar del evento para poder participar
+                      </p>
                     </div>
                     
                     <Separator className="my-2" />

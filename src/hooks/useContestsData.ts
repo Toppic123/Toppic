@@ -22,6 +22,7 @@ export interface Contest {
   contest_password?: string;
   coordinates?: { lat: number; lng: number };
   created_at?: string;
+  minimum_distance_km?: number;
 }
 
 export const useContestsData = () => {
@@ -70,7 +71,8 @@ export const useContestsData = () => {
           is_private: contest.is_private || false,
           contest_password: contest.contest_password || undefined,
           coordinates: { lat: 40.4168, lng: -3.7038 },
-          created_at: contest.created_at
+          created_at: contest.created_at,
+          minimum_distance_km: contest.minimum_distance_km || 0,
         }));
         
         console.log("Concursos formateados:", formattedContests);
