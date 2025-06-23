@@ -64,7 +64,7 @@ export const useContestForm = (refreshContests: () => void) => {
       contestPassword: contest.contest_password || "",
       photoOwnership: true,
       commercialUse: true,
-      minimumDistanceKm: 0, // Will be updated when we fetch from the database
+      minimumDistanceKm: contest.minimum_distance_km || 0,
     });
     setIsDialogOpen(true);
   };

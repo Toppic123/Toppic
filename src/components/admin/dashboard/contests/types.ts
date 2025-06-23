@@ -33,6 +33,7 @@ export interface ContestFormData {
   imageUrl?: string;
   isPrivate?: boolean; // New field for private contests
   contestPassword?: string; // New field for contest password
+  minimumDistanceKm: number; // Add the missing property
 }
 
 export interface ContestCardProps {
