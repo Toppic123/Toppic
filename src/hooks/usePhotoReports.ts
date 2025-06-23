@@ -43,7 +43,8 @@ export const usePhotoReports = () => {
       }
       
       if (data) {
-        setReports(data);
+        // Cast the data to our PhotoReport type to ensure proper typing
+        setReports(data as PhotoReport[]);
       }
     } catch (error) {
       console.error('Error fetching photo reports:', error);

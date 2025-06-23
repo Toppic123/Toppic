@@ -7,7 +7,7 @@ import ContestManagement from "@/components/admin/dashboard/ContestManagement";
 import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
-import { BannerManagement } from "@/components/dashboard/banners/BannerManagement";
+import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 import GalleryManager from "@/components/admin/GalleryManager";
 import PhotoReportsManagement from "@/components/admin/dashboard/PhotoReportsManagement";
 import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
