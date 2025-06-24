@@ -36,21 +36,19 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     setShowFilters(false);
   };
 
-  // Convert contests to mobile format and use real data
+  // Convert contests to mobile format
   const mobileContests = allContests.map(contest => ({
-    id: parseInt(contest.id.slice(0, 8), 16),
+    id: parseInt(contest.id.slice(0, 8), 16), // Convert UUID to number for mobile compatibility
     title: contest.title,
     location: contest.location,
-    distance: "0.5 km",
+    distance: "0.5 km", // Default distance
     endDate: contest.endDate,
     participants: contest.participants,
-    prize: "500€",
+    prize: contest.prize || "500€",
     image: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
     topics: [contest.category],
     isActive: contest.isActive,
-    proximityKm: 0.5,
-    organizer: contest.organizer,
-    description: contest.description
+    proximityKm: 0.5
   }));
 
   const filteredContests = mobileContests
@@ -76,7 +74,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
 
   if (isLoading) {
     return (
-      <div className="h-full bg-white flex items-center justify-center">
+      <div className="h-full bg-gray-50 flex items-center justify-center">
         <p className="text-gray-500">Cargando concursos...</p>
       </div>
     );
@@ -120,7 +118,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             >
               ← Volver
             </Button>
-            <h1 className="text-lg font-semibold text-gray-900">Mapa de Concursos</h1>
+            <h1 className="text-lg font-semibold">Mapa de Concursos</h1>
             <div></div>
           </div>
         </div>
@@ -132,7 +130,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
   }
 
   return (
-    <div className="h-full bg-white overflow-y-auto">
+    <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">
@@ -141,7 +139,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
         <Button
           variant="outline"
           onClick={() => setShowSearch(true)}
-          className="w-full justify-start text-gray-500 bg-white border-gray-300 hover:bg-gray-50"
+          className="w-full justify-start text-gray-500"
         >
           <Search className="h-4 w-4 mr-2" />
           Buscar lugares o temas...
@@ -155,7 +153,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             variant="outline"
             size="sm"
             onClick={() => setShowFilters(true)}
-            className="flex-1 bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="flex-1"
           >
             <Filter className="h-4 w-4 mr-2" />
             Filtros
@@ -164,7 +162,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             variant="outline"
             size="sm"
             onClick={() => setShowMap(true)}
-            className="flex-1 bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="flex-1"
           >
             <MapIcon className="h-4 w-4 mr-2" />
             Mapa
@@ -178,22 +176,22 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
           <div className="text-sm text-gray-600 mb-2">Filtros activos:</div>
           <div className="flex flex-wrap gap-2">
             {activeFilters.map((filter, index) => (
-              <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
+              <Badge key={index} variant="secondary">
                 {filter}
               </Badge>
             ))}
             {locationFilter && (
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              <Badge variant="secondary">
                 Ubicación: {locationFilter}
               </Badge>
             )}
             {themeFilter && (
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              <Badge variant="secondary">
                 Tema: {themeFilter}
               </Badge>
             )}
             {statusFilter !== "all" && (
-              <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+              <Badge variant="secondary">
                 {statusFilter === "active" ? "Activos" : "Finalizados"}
               </Badge>
             )}
@@ -202,11 +200,11 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
       )}
 
       {/* Contests List */}
-      <div className="p-4 space-y-4 bg-white">
+      <div className="p-4 space-y-4">
         {filteredContests.length > 0 ? (
           filteredContests.map((contest, index) => (
             <div key={contest.id}>
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div className="relative">
                   <img 
                     src={contest.image} 
@@ -221,7 +219,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                   </div>
                 </div>
                 
-                <div className="p-4 bg-white">
+                <div className="p-4">
                   <h3 className="font-semibold text-lg text-gray-900 mb-2">{contest.title}</h3>
                   
                   <div className="space-y-2 mb-4">
@@ -241,7 +239,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
 
                   <div className="flex flex-wrap gap-1 mb-4">
                     {contest.topics.map((topic, topicIndex) => (
-                      <Badge key={topicIndex} variant="outline" className="text-xs border-gray-300 text-gray-600">
+                      <Badge key={topicIndex} variant="outline" className="text-xs">
                         {topic}
                       </Badge>
                     ))}
@@ -265,7 +263,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                         size="sm" 
                         variant="outline"
                         onClick={() => onNavigate('voting')}
-                        className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                        className="flex-1"
                       >
                         Fotos
                       </Button>
@@ -284,7 +282,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             </div>
           ))
         ) : (
-          <div className="text-center py-8 bg-white">
+          <div className="text-center py-8">
             <p className="text-gray-500">No se encontraron concursos que coincidan con tu búsqueda</p>
           </div>
         )}

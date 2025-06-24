@@ -2,7 +2,7 @@
 import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Home, Heart, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, Home, Heart, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileSwipeVotingProps {
@@ -50,50 +50,79 @@ const mockVotingPhotos: VotingPhoto[] = [
     title: "Bosque misterioso",
     contest: "Naturaleza Salvaje",
     rating: 1220
+  },
+  {
+    id: 5,
+    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400",
+    photographer: "Sofia Chen",
+    title: "Refugio en la montaña",
+    contest: "Arquitectura Rural",
+    rating: 1100
+  },
+  {
+    id: 6,
+    image: "https://images.unsplash.com/photo-1544737151500-6e4b999de2a9?w=400",
+    photographer: "Roberto Silva",
+    title: "Reflejos urbanos",
+    contest: "Ciudad Nocturna",
+    rating: 1250
   }
 ];
 
 const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
   const { toast } = useToast();
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [votes, setVotes] = useState(0);
-  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<'top' | 'bottom' | null>(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const startX = useRef(0);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const [votedPhoto, setVotedPhoto] = useState<number | null>(null);
+  const startY = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const currentPhoto = mockVotingPhotos[currentPhotoIndex];
+  const createPhotoPairs = () => {
+    const pairs = [];
+    for (let i = 0; i < mockVotingPhotos.length - 1; i += 2) {
+      if (mockVotingPhotos[i + 1]) {
+        pairs.push([mockVotingPhotos[i], mockVotingPhotos[i + 1]]);
+      }
+    }
+    return pairs;
+  };
 
-  const handleVote = useCallback((liked: boolean) => {
-    const action = liked ? "Me gusta" : "No me gusta";
-    setSwipeDirection(liked ? 'right' : 'left');
+  const photoPairs = createPhotoPairs();
+  const currentPair = photoPairs[currentPairIndex];
+
+  const handleVote = useCallback((selectedPhoto: VotingPhoto, direction: 'top' | 'bottom') => {
+    setVotedPhoto(selectedPhoto.id);
+    setSwipeDirection(direction);
     
     setTimeout(() => {
       toast({
         title: "Voto registrado",
-        description: `${action}: "${currentPhoto.title}"`
+        description: `Has elegido "${selectedPhoto.title}"`
       });
       
       setVotes(votes + 1);
       setSwipeDirection(null);
       setSwipeDistance(0);
+      setVotedPhoto(null);
       
-      if (currentPhotoIndex < mockVotingPhotos.length - 1) {
-        setCurrentPhotoIndex(currentPhotoIndex + 1);
+      if (currentPairIndex < photoPairs.length - 1) {
+        setCurrentPairIndex(currentPairIndex + 1);
       } else {
-        setCurrentPhotoIndex(0);
+        setCurrentPairIndex(0);
         toast({
           title: "¡Votación completada!",
-          description: `Has votado ${votes + 1} fotos. Gracias por participar.`
+          description: `Has votado ${votes + 1} comparaciones. Gracias por participar.`
         });
       }
-    }, 300);
-  }, [currentPhotoIndex, currentPhoto, votes, toast]);
+    }, 800);
+  }, [currentPairIndex, photoPairs.length, votes, toast]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
-    startX.current = e.touches[0].clientX;
+    startY.current = e.touches[0].clientY;
     setSwipeDirection(null);
     setSwipeDistance(0);
   }, []);
@@ -101,17 +130,17 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDragging) return;
     
-    const currentX = e.touches[0].clientX;
-    const deltaX = currentX - startX.current;
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - startY.current;
     const maxSwipe = 150;
-    const normalizedDistance = Math.min(Math.abs(deltaX), maxSwipe);
+    const normalizedDistance = Math.min(Math.abs(deltaY), maxSwipe);
     
     setSwipeDistance(normalizedDistance);
     
-    if (deltaX > 20) {
-      setSwipeDirection('right');
-    } else if (deltaX < -20) {
-      setSwipeDirection('left');
+    if (deltaY > 20) {
+      setSwipeDirection('bottom');
+    } else if (deltaY < -20) {
+      setSwipeDirection('top');
     } else {
       setSwipeDirection(null);
     }
@@ -120,12 +149,18 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     if (!isDragging) return;
     
-    const currentX = e.changedTouches[0].clientX;
-    const deltaX = currentX - startX.current;
+    const currentY = e.changedTouches[0].clientY;
+    const deltaY = currentY - startY.current;
     const threshold = 80;
     
-    if (Math.abs(deltaX) > threshold) {
-      handleVote(deltaX > 0); // Right swipe = like, left swipe = dislike
+    if (Math.abs(deltaY) > threshold && currentPair) {
+      if (deltaY > 0) {
+        // Deslizó hacia abajo - vota por la foto inferior
+        handleVote(currentPair[1], 'bottom');
+      } else {
+        // Deslizó hacia arriba - vota por la foto superior
+        handleVote(currentPair[0], 'top');
+      }
     } else {
       // No se completó el deslizamiento, resetear
       setSwipeDirection(null);
@@ -133,14 +168,20 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     }
     
     setIsDragging(false);
+  }, [isDragging, currentPair, handleVote]);
+
+  const handlePhotoClick = useCallback((photo: VotingPhoto, side: 'top' | 'bottom') => {
+    if (!isDragging) {
+      handleVote(photo, side);
+    }
   }, [isDragging, handleVote]);
 
-  if (!currentPhoto) {
+  if (!currentPair) {
     return (
-      <div className="h-full bg-white flex items-center justify-center">
+      <div className="h-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">No hay más fotos para votar</p>
-          <Button onClick={() => onNavigate('contests')} className="bg-blue-600 hover:bg-blue-700">
+          <p className="text-gray-500 mb-4">No hay más fotos para comparar</p>
+          <Button onClick={() => onNavigate('contests')}>
             Volver a concursos
           </Button>
         </div>
@@ -148,126 +189,156 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     );
   }
 
-  const getSwipeOpacity = () => {
-    return Math.min(swipeDistance / 100, 0.8);
+  const getSwipeIndicatorOpacity = (side: 'top' | 'bottom') => {
+    if (swipeDirection === side) {
+      return Math.min(swipeDistance / 100, 1);
+    }
+    return 0;
   };
 
   return (
-    <div className="h-full bg-white overflow-hidden relative">
+    <div className="h-full bg-black overflow-hidden relative">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center justify-between">
+      <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-black/70 to-transparent">
+        <div className="flex items-center justify-between p-4 text-white">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onNavigate('contests')}
-            className="text-gray-600 hover:bg-gray-100 p-2"
+            className="text-white hover:bg-white/20 p-2"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="text-center">
-            <h1 className="text-lg font-semibold text-gray-900">Votación</h1>
-            <p className="text-sm text-gray-500">{votes} votos • {currentPhotoIndex + 1}/{mockVotingPhotos.length}</p>
+            <h1 className="text-lg font-semibold">Votación Comparativa</h1>
+            <p className="text-sm opacity-80">{votes} votos • {currentPairIndex + 1}/{photoPairs.length}</p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onNavigate('home')}
-            className="text-gray-600 hover:bg-gray-100 p-2"
+            className="text-white hover:bg-white/20 p-2"
           >
             <Home className="h-5 w-5" />
           </Button>
         </div>
       </div>
 
-      {/* Photo Card */}
-      <div className="flex-1 p-4 flex items-center justify-center">
-        <div 
-          ref={cardRef}
-          className="relative w-full max-w-sm bg-white rounded-2xl shadow-lg overflow-hidden"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          style={{
-            transform: swipeDirection ? `translateX(${swipeDirection === 'right' ? swipeDistance : -swipeDistance}px) rotate(${swipeDirection === 'right' ? swipeDistance / 10 : -swipeDistance / 10}deg)` : 'none',
-            transition: isDragging ? 'none' : 'transform 0.3s ease-out'
-          }}
-        >
-          {/* Like/Dislike Indicators */}
-          {swipeDirection === 'right' && (
-            <div 
-              className="absolute top-8 left-8 z-20 bg-green-500 text-white px-4 py-2 rounded-full font-bold text-lg transform rotate-12"
-              style={{ opacity: getSwipeOpacity() }}
-            >
-              ❤️ ME GUSTA
+      {/* Photos Container - Vertical Layout */}
+      <div 
+        ref={containerRef}
+        className="flex flex-col h-full pt-20 pb-32"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Top Photo - 50% height */}
+        <div className="h-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[0], 'top')}>
+          {/* Vote Indicator for Top Photo */}
+          <div 
+            className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
+            style={{ 
+              opacity: swipeDirection === 'top' ? getSwipeIndicatorOpacity('top') : 
+                      (votedPhoto === currentPair[0].id ? 1 : 0)
+            }}
+          >
+            <div className="bg-green-500 rounded-full p-6 animate-pulse">
+              <Heart className="h-10 w-10 text-white fill-white" />
             </div>
-          )}
-          
-          {swipeDirection === 'left' && (
-            <div 
-              className="absolute top-8 right-8 z-20 bg-red-500 text-white px-4 py-2 rounded-full font-bold text-lg transform -rotate-12"
-              style={{ opacity: getSwipeOpacity() }}
-            >
-              ❌ NO ME GUSTA
-            </div>
-          )}
+          </div>
           
           <img
-            src={currentPhoto.image}
-            alt={currentPhoto.title}
-            className="w-full h-96 object-cover"
+            src={currentPair[0].image}
+            alt={currentPair[0].title}
+            className="w-full h-full object-cover"
             draggable={false}
           />
           
-          <div className="p-4 bg-white">
-            <Badge className="mb-2 text-xs bg-blue-100 text-blue-800 border-blue-200">
-              {currentPhoto.contest}
+          <div className="absolute bottom-4 left-4 right-4 z-20 text-white">
+            <Badge className="mb-2 text-xs bg-white/20 text-white border-white/30">
+              {currentPair[0].contest}
             </Badge>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{currentPhoto.title}</h3>
-            <p className="text-gray-600 text-sm">por {currentPhoto.photographer}</p>
-            <div className="text-xs text-gray-500 mt-2">
-              Rating ELO: {currentPhoto.rating}
+            <h3 className="text-sm font-semibold mb-1">{currentPair[0].title}</h3>
+            <p className="text-xs opacity-90">por {currentPair[0].photographer}</p>
+            <div className="text-xs opacity-75 mt-1">
+              Rating ELO: {currentPair[0].rating}
+            </div>
+          </div>
+        </div>
+
+        {/* Horizontal Divider */}
+        <div className="h-1 bg-white/30 flex-shrink-0"></div>
+
+        {/* Bottom Photo - 50% height */}
+        <div className="h-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[1], 'bottom')}>
+          {/* Vote Indicator for Bottom Photo */}
+          <div 
+            className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
+            style={{ 
+              opacity: swipeDirection === 'bottom' ? getSwipeIndicatorOpacity('bottom') : 
+                      (votedPhoto === currentPair[1].id ? 1 : 0)
+            }}
+          >
+            <div className="bg-green-500 rounded-full p-6 animate-pulse">
+              <Heart className="h-10 w-10 text-white fill-white" />
+            </div>
+          </div>
+          
+          <img
+            src={currentPair[1].image}
+            alt={currentPair[1].title}
+            className="w-full h-full object-cover"
+            draggable={false}
+          />
+          
+          <div className="absolute bottom-4 left-4 right-4 z-20 text-white">
+            <Badge className="mb-2 text-xs bg-white/20 text-white border-white/30">
+              {currentPair[1].contest}
+            </Badge>
+            <h3 className="text-sm font-semibold mb-1">{currentPair[1].title}</h3>
+            <p className="text-xs opacity-90">por {currentPair[1].photographer}</p>
+            <div className="text-xs opacity-75 mt-1">
+              Rating ELO: {currentPair[1].rating}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="bg-white border-t border-gray-200 p-6">
-        <div className="flex justify-center space-x-8 mb-4">
-          <Button
-            onClick={() => handleVote(false)}
-            className="w-14 h-14 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
-            disabled={isDragging}
-          >
-            <X className="h-6 w-6" />
-          </Button>
-          
-          <Button
-            onClick={() => handleVote(true)}
-            className="w-14 h-14 rounded-full bg-red-500 hover:bg-red-600 text-white"
-            disabled={isDragging}
-          >
-            <Heart className="h-6 w-6" />
-          </Button>
-        </div>
-        
-        <div className="text-center">
-          <p className="text-sm text-gray-600 mb-2">
-            Desliza → para Me Gusta, ← para No Me Gusta
+      {/* Instructions */}
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+        <div className="text-center space-y-3">
+          <p className="text-lg font-medium">¿Cuál te gusta más?</p>
+          <p className="text-sm opacity-80">
+            Toca una foto o desliza hacia arriba/abajo para votar
           </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setSwipeDirection(null);
-              setSwipeDistance(0);
-            }}
-            className="text-gray-600 border-gray-300"
-          >
-            <RotateCcw className="h-4 w-4 mr-1" />
-            Reiniciar
-          </Button>
+          
+          {/* Visual Swipe Indicators */}
+          <div className="flex justify-center items-center space-y-4 mt-4 flex-col">
+            <div className="text-center">
+              <div className="text-xs opacity-60">↑ Desliza o toca</div>
+              <div className="text-xs opacity-60">Foto superior</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xs opacity-60">Toca o desliza ↓</div>
+              <div className="text-xs opacity-60">Foto inferior</div>
+            </div>
+          </div>
+          
+          {/* Reset Button */}
+          <div className="flex justify-center mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSwipeDirection(null);
+                setSwipeDistance(0);
+              }}
+              className="bg-white/10 border-white/30 text-white hover:bg-white/20"
+            >
+              <RotateCcw className="h-4 w-4 mr-1" />
+              Reiniciar
+            </Button>
+          </div>
         </div>
       </div>
     </div>
