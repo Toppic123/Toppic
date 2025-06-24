@@ -31,7 +31,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-lg font-semibold">Foto de {photo.author}</h1>
+          <h1 className="text-lg font-semibold text-gray-900">Foto de {photo.author}</h1>
         </div>
         
         <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
       </div>
 
       {/* Photo */}
-      <div className="bg-black flex items-center justify-center flex-shrink-0">
+      <div className="bg-gray-100 flex items-center justify-center flex-shrink-0">
         <img 
           src={photo.url} 
           alt={photo.description}
@@ -65,7 +65,7 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
       </div>
 
       {/* Photo Info */}
-      <div className="p-4 border-b border-gray-200 flex-shrink-0">
+      <div className="p-4 border-b border-gray-200 flex-shrink-0 bg-white">
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-semibold text-gray-900">{photo.author}</h3>
           <div className="text-sm text-gray-500">
@@ -75,8 +75,8 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
         <p className="text-gray-600 text-sm">{photo.description}</p>
       </div>
 
-      {/* Comments Section - Now using the real component */}
-      <div className="flex-1 overflow-hidden">
+      {/* Comments Section */}
+      <div className="flex-1 overflow-hidden bg-white">
         <PhotoComments photoId={photo.id} isEmbedded={true} />
       </div>
     </div>

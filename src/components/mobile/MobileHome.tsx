@@ -34,8 +34,8 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
   ];
 
   return (
-    <div className="h-full bg-gray-50 overflow-y-auto">
-      {/* Header */}
+    <div className="h-full bg-white overflow-y-auto">
+      {/* Header with gradient */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -63,11 +63,11 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
         />
       </div>
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 bg-white">
         {/* Winning Photos Gallery */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold flex items-center">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
               <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
               Fotos Ganadoras
             </h2>
@@ -75,7 +75,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
           
           <div className="grid grid-cols-2 gap-3">
             {winningPhotos.slice(0, 4).map((photo) => (
-              <div key={photo.id} className="relative rounded-lg overflow-hidden shadow-md">
+              <div key={photo.id} className="relative rounded-lg overflow-hidden shadow-md bg-white">
                 <img 
                   src={photo.url}
                   alt={photo.title}
@@ -85,7 +85,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
                 <div className="absolute bottom-2 left-2 right-2">
                   <h3 className="text-white text-sm font-medium truncate">{photo.title}</h3>
                   <p className="text-white/80 text-xs truncate">{photo.photographer}</p>
-                  <Badge variant="secondary" className="text-xs mt-1">
+                  <Badge variant="secondary" className="text-xs mt-1 bg-white/90 text-gray-800">
                     {photo.category}
                   </Badge>
                 </div>
@@ -100,7 +100,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
             <Button 
               variant="outline" 
               size="sm" 
-              className="w-full mt-3"
+              className="w-full mt-3 bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
               onClick={() => onNavigate('contests')}
             >
               Ver todas las fotos ganadoras
@@ -111,10 +111,11 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
         {/* Featured Contests */}
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Concursos Destacados</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Concursos Destacados</h2>
             <Button 
               variant="ghost" 
               size="sm"
+              className="text-blue-600 hover:bg-blue-50"
               onClick={() => onNavigate('contests')}
             >
               Ver todos
@@ -123,7 +124,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
           
           <div className="space-y-3">
             {featuredContests.map((contest) => (
-              <div key={contest.id} className="bg-white rounded-lg p-4 shadow-sm">
+              <div key={contest.id} className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
                 <div className="flex gap-3">
                   <img 
                     src={contest.image}
@@ -154,7 +155,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
 
         {/* Quick Actions */}
         <section>
-          <h2 className="text-lg font-semibold mb-4">Acciones Rápidas</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-900">Acciones Rápidas</h2>
           <div className="grid grid-cols-2 gap-3">
             <Button 
               onClick={() => onNavigate('contests')}

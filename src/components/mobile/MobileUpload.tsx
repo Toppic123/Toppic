@@ -11,24 +11,37 @@ interface MobileUploadProps {
 
 const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
   const [selectedContest, setSelectedContest] = useState("Primavera en Barcelona");
-  const [photoUploaded, setPhotoUploaded] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const handlePhotoSelect = () => {
-    setPhotoUploaded(true);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedFile) {
+      alert("Por favor selecciona una foto");
+      return;
+    }
     // Simulate upload
+    console.log("Uploading file:", selectedFile);
     onNavigate('contests');
   };
 
   return (
     <div className="h-full bg-white overflow-y-auto">
       {/* Header */}
-      <div className="bg-blue-600 text-white px-4 py-4">
+      <div className="bg-blue-600 text-white px-4 py-4 sticky top-0 z-10">
         <div className="flex items-center">
           <Button
             variant="ghost"
@@ -42,7 +55,7 @@ const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 pb-8">
         {/* Contest Selection */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -64,19 +77,10 @@ const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Selecciona tu foto
           </label>
-          {!photoUploaded ? (
-            <div 
-              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
-              onClick={handlePhotoSelect}
-            >
-              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">Toca para seleccionar una foto</p>
-              <p className="text-sm text-gray-500">JPG, PNG o GIF. Máximo 5MB</p>
-            </div>
-          ) : (
+          {previewUrl ? (
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400"
+                src={previewUrl}
                 alt="Foto seleccionada"
                 className="w-full h-48 object-cover rounded-lg"
               />
@@ -84,10 +88,32 @@ const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
                 size="sm" 
                 variant="secondary"
                 className="absolute top-2 right-2"
-                onClick={() => setPhotoUploaded(false)}
+                onClick={() => {
+                  setPreviewUrl(null);
+                  setSelectedFile(null);
+                }}
               >
                 Cambiar
               </Button>
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-2">Toca para seleccionar una foto</p>
+              <p className="text-sm text-gray-500 mb-4">JPG, PNG o GIF. Máximo 5MB</p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+                id="photo-input"
+              />
+              <label
+                htmlFor="photo-input"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition-colors inline-block"
+              >
+                Seleccionar foto
+              </label>
             </div>
           )}
         </div>
@@ -103,6 +129,8 @@ const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
               placeholder="Dale un título a tu foto"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="bg-white border-gray-300"
+              required
             />
           </div>
 
@@ -115,19 +143,20 @@ const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
               placeholder="Cuéntanos sobre tu foto..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              className="bg-white border-gray-300"
             />
           </div>
 
           {/* Location */}
-          <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+          <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-200">
             <MapPin className="h-4 w-4 mr-2" />
             <span>Tu ubicación se añadirá automáticamente</span>
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700 mt-6"
-            disabled={!photoUploaded}
+            className="w-full bg-blue-600 hover:bg-blue-700 mt-6 py-3"
+            disabled={!selectedFile || !title.trim()}
           >
             <Upload className="h-4 w-4 mr-2" />
             Subir foto al concurso
