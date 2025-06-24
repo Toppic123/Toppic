@@ -40,16 +40,18 @@ const MobilePhotoDetail = ({ photo, onBack }: MobilePhotoDetailProps) => {
             title={`Foto de ${photo.author}`}
             imageUrl={photo.url}
           />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-red-500 hover:bg-red-50 p-2"
-          >
-            <ReportPhotoDialog 
-              photoId={photo.id}
-              trigger={<Flag className="h-4 w-4" />}
-            />
-          </Button>
+          <ReportPhotoDialog 
+            photoId={photo.id}
+            trigger={
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-red-500 hover:bg-red-50 p-2"
+              >
+                <Flag className="h-4 w-4" />
+              </Button>
+            }
+          />
         </div>
       </div>
 
