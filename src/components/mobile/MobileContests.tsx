@@ -36,19 +36,21 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     setShowFilters(false);
   };
 
-  // Convert contests to mobile format
+  // Convert contests to mobile format and use real data
   const mobileContests = allContests.map(contest => ({
-    id: parseInt(contest.id.slice(0, 8), 16), // Convert UUID to number for mobile compatibility
+    id: parseInt(contest.id.slice(0, 8), 16),
     title: contest.title,
     location: contest.location,
-    distance: "0.5 km", // Default distance
+    distance: "0.5 km",
     endDate: contest.endDate,
     participants: contest.participants,
-    prize: contest.prize || "500€",
+    prize: "500€",
     image: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
     topics: [contest.category],
     isActive: contest.isActive,
-    proximityKm: 0.5
+    proximityKm: 0.5,
+    organizer: contest.organizer,
+    description: contest.description
   }));
 
   const filteredContests = mobileContests
