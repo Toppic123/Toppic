@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -85,9 +86,13 @@ const Upload = () => {
     return distance;
   };
 
-  // Filter contests based on user location and make it more permissive
+  // Filter contests based on user location - Fixed to show new contests and be more permissive
   const nearbyContests = allContests.filter(contest => {
-    if (!userLocation || !contest.coordinates) return true; // Show all if no location data
+    // Only show active contests
+    if (contest.status !== 'active') return false;
+    
+    // If no location data, show all active contests
+    if (!userLocation || !contest.coordinates) return true;
     
     const distance = calculateDistance(
       userLocation.lat,
@@ -96,8 +101,9 @@ const Upload = () => {
       contest.coordinates.lng
     );
     
-    // Make it more permissive - allow up to 10km instead of the strict 1km
-    const maxDistance = Math.max(contest.minimum_distance_km || 1, 10);
+    // Much more permissive distance - allow up to 50km or the contest's minimum distance, whichever is greater
+    const maxDistance = Math.max(contest.minimum_distance_km || 1, 50);
+    console.log(`Contest ${contest.title}: distance=${distance.toFixed(2)}km, maxDistance=${maxDistance}km`);
     return distance <= maxDistance;
   }).map(contest => ({
     id: contest.id,
@@ -242,8 +248,11 @@ const Upload = () => {
     
     toast({
       title: "¡Foto enviada!",
-      description: "Tu foto ha sido enviada al concurso"
+      description: "Tu foto ha sido enviada al concurso exitosamente"
     });
+    
+    // Navigate back to contests page
+    navigate('/contests');
   };
 
   const getSelectedContestType = () => {
@@ -325,8 +334,8 @@ const Upload = () => {
                   </Select>
                 ) : (
                   <div className="p-4 border border-gray-200 rounded-lg text-center text-gray-500">
-                    <p>No hay concursos disponibles en tu área.</p>
-                    <p className="text-sm mt-1">Verifica tu ubicación o intenta más tarde.</p>
+                    <p>No hay concursos activos disponibles en tu área.</p>
+                    <p className="text-sm mt-1">Los concursos deben estar activos para poder participar.</p>
                   </div>
                 )}
               </div>

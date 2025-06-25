@@ -1,74 +1,20 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, X, Share2, ArrowRight, Instagram } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight, Trophy, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { Separator } from "@/components/ui/separator";
-import PhotoComments from "@/components/PhotoComments";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useWinningPhotos } from "@/hooks/use-winning-photos";
+import { Badge } from "@/components/ui/badge";
 
-interface WinningGallerySectionProps {
-  photos: any[];  // Mantenemos esta prop para compatibilidad, pero usaremos los datos del hook
-  texts: {
-    winningGallery: string;
-    winningGalleryDesc: string;
-    viewGallery: string;
-  };
-}
+const WinningGallerySection = () => {
+  const { winningPhotos, isLoading } = useWinningPhotos();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
-  const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
-  const { toast } = useToast();
-  const { photos = [] } = useWinningPhotos(); // Provide default empty array
-
-  const handleSharePhoto = (photo: any, platform: 'native' | 'instagram' = 'native') => {
-    if (!photo) return; // Safety check
-    
-    if (platform === 'instagram') {
-      // Open Instagram share intent
-      const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
-      window.open(instagramUrl, '_blank');
-      toast({
-        title: "Abriendo Instagram",
-        description: "Redirigiendo a Instagram para compartir esta foto"
-      });
-      return;
-    }
-
-    if (navigator.share) {
-      navigator.share({
-        title: `Foto de ${photo.photographer || 'Usuario'}`,
-        text: `Mira esta increíble foto de ${photo.photographer || 'Usuario'}`,
-        url: window.location.href
-      }).catch(err => {
-        console.error('Error al compartir:', err);
-        toast({
-          title: "No se pudo compartir",
-          description: "Hubo un error al compartir esta foto."
-        });
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast({
-        title: "Enlace copiado",
-        description: "Enlace de la foto copiado al portapapeles"
-      });
-    }
-  };
-
-  // Safety check if photos array is not available or empty
-  if (!photos || photos.length === 0) {
+  if (isLoading) {
     return (
-      <section className="py-24 px-4 bg-white text-black">
-        <div className="container max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-6">{texts.winningGallery}</h2>
-          </div>
-          <div className="text-center py-8">
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center">
             <p>Cargando galería de fotos ganadoras...</p>
           </div>
         </div>
@@ -76,140 +22,150 @@ const WinningGallerySection = ({ texts }: WinningGallerySectionProps) => {
     );
   }
 
-  return (
-    <section className="py-24 px-4 bg-white text-black">
-      <div className="container max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-6">{texts.winningGallery}</h2>
+  if (!winningPhotos || winningPhotos.length === 0) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center">
+            <Trophy className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold mb-4">Galería de Fotos Ganadoras</h2>
+            <p className="text-gray-600">Próximamente se mostrarán las mejores fotografías de nuestros concursos.</p>
+          </div>
         </div>
-        
-        <div className="grid grid-cols-3 gap-1 md:gap-1.5 mb-8">
-          {photos.slice(0, 9).map((photo) => {
-            // Skip rendering if photo is missing critical data
-            if (!photo || !photo.id) {
-              console.warn("Invalid photo data found:", photo);
-              return null;
-            }
-            
-            return (
-              <motion.div 
-                key={photo.id}
-                whileHover={{ scale: 1.03 }}
-                transition={{ duration: 0.2 }}
-                className="aspect-square overflow-hidden relative group max-h-[200px] md:max-h-[250px] cursor-pointer"
-                onClick={() => setSelectedPhoto(photo)}
-              >
-                <img 
-                  src={photo.imageUrl} 
-                  alt={photo.title || 'Foto ganadora'} 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Silently replace with a placeholder image without showing toast
-                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 md:p-3">
-                  <p className="text-white font-medium text-xs md:text-sm truncate">{photo.title || 'Sin título'}</p>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center">
-                      <Avatar className="h-4 w-4 md:h-5 md:w-5 mr-1">
-                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer || 'Fotógrafo'} />
-                        <AvatarFallback>{(photo.photographer || '?').charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-white/90 text-xs truncate max-w-[70px]">{photo.photographer || 'Anónimo'}</span>
-                    </div>
-                    <div className="flex items-center text-white/90">
-                      <Heart className="h-3 w-3 md:h-3.5 md:w-3.5 mr-1 fill-white text-white" />
-                      <span className="text-sm">{photo.likes || 0}</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-        
-        <div className="text-center">
-          <Button asChild variant="outline" className="rounded-full px-8 border-primary/80 text-primary hover:bg-primary/10">
-            <Link to="/gallery">
-              <span>{texts.viewGallery}</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </div>
+      </section>
+    );
+  }
 
-      <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
-        <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-0 shadow-none">
-          {selectedPhoto && (
-            <div className="relative bg-black rounded-lg overflow-hidden">
-              <DialogClose className="absolute top-2 right-2 z-50 bg-black/60 text-white rounded-full p-1.5 hover:bg-black/80">
-                <X className="h-5 w-5" />
-              </DialogClose>
-              
-              <div className="flex flex-col md:flex-row max-h-[90vh]">
-                <div className="relative flex-1 flex items-center justify-center bg-black min-h-[300px] md:min-h-[400px]">
-                  <img 
-                    src={selectedPhoto.imageUrl} 
-                    alt={selectedPhoto.title || 'Foto seleccionada'} 
-                    className="max-w-full max-h-[70vh] object-contain"
-                    onError={(e) => {
-                      // Silently replace with a placeholder image without showing toast
-                      (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
-                    }}
-                  />
-                </div>
-                
-                <div className="w-full md:w-80 bg-white flex flex-col">
-                  <div className="mb-4 p-4">
-                    <h3 className="text-lg font-bold text-black">{selectedPhoto.title || 'Sin título'}</h3>
-                    <div className="flex items-center mt-2">
-                      <Avatar className="h-6 w-6 mr-2">
-                        <AvatarImage src={selectedPhoto.photographerAvatar} alt={selectedPhoto.photographer || 'Fotógrafo'} />
-                        <AvatarFallback>{(selectedPhoto.photographer || '?').charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm text-black">{selectedPhoto.photographer || 'Anónimo'}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between px-4">
-                    <div className="flex items-center">
-                      <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                      <span className="text-sm ml-1 text-black">{selectedPhoto.likes || 0} me gusta</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Button 
-                        variant="outline"
-                        size="sm" 
-                        onClick={() => handleSharePhoto(selectedPhoto, 'instagram')}
-                        className="flex items-center gap-1"
-                      >
-                        <Instagram className="h-4 w-4" />
-                        <span className="hidden sm:inline">Instagram</span>
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleSharePhoto(selectedPhoto)}
-                      >
-                        <Share2 className="h-4 w-4" />
-                        <span className="ml-1">Compartir</span>
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <Separator className="my-2" />
-                  
-                  <div className="flex-1 overflow-hidden">
-                    <PhotoComments photoId={selectedPhoto.id.toString()} isEmbedded={true} />
-                  </div>
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % winningPhotos.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + winningPhotos.length) % winningPhotos.length);
+  };
+
+  return (
+    <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+      <div className="container max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <div className="flex items-center justify-center mb-4">
+            <Trophy className="h-8 w-8 text-yellow-500 mr-3" />
+            <h2 className="text-4xl md:text-5xl font-bold">Galería de Fotos Ganadoras</h2>
+          </div>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Descubre las fotografías más extraordinarias seleccionadas por nuestra comunidad
+          </p>
+        </motion.div>
+
+        {/* Fixed gallery size - much larger now */}
+        <div className="relative max-w-6xl mx-auto">
+          <div className="relative h-[70vh] min-h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl">
+            <motion.img
+              key={currentIndex}
+              src={winningPhotos[currentIndex].url}
+              alt={winningPhotos[currentIndex].title}
+              className="w-full h-full object-cover"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            />
+            
+            {/* Overlay with photo info */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            
+            <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <Badge className="mb-3 bg-yellow-500 text-black font-semibold">
+                    <Star className="h-4 w-4 mr-1" />
+                    Foto Ganadora
+                  </Badge>
+                  <h3 className="text-3xl font-bold mb-2">{winningPhotos[currentIndex].title}</h3>
+                  <p className="text-xl text-gray-200 mb-4">
+                    por {winningPhotos[currentIndex].photographer}
+                  </p>
+                  <Badge variant="secondary" className="text-sm">
+                    {winningPhotos[currentIndex].category}
+                  </Badge>
                 </div>
               </div>
             </div>
-          )}
-        </DialogContent>
-      </Dialog>
+
+            {/* Navigation buttons */}
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm"
+              onClick={prevSlide}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            
+            <Button
+              variant="secondary"
+              size="icon"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm"
+              onClick={nextSlide}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+
+            {/* Dots indicator */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+              {winningPhotos.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentIndex ? 'bg-white' : 'bg-white/50'
+                  }`}
+                  onClick={() => setCurrentIndex(index)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Thumbnail strip below main image */}
+          <div className="mt-6 flex justify-center space-x-4 overflow-x-auto pb-4">
+            {winningPhotos.map((photo, index) => (
+              <button
+                key={photo.id}
+                className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all ${
+                  index === currentIndex ? 'border-yellow-500 scale-110' : 'border-transparent hover:border-gray-300'
+                }`}
+                onClick={() => setCurrentIndex(index)}
+              >
+                <img
+                  src={photo.url}
+                  alt={photo.title}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center mt-12"
+        >
+          <p className="text-gray-600 mb-6">
+            ¿Tienes una fotografía extraordinaria? ¡Participa en nuestros concursos!
+          </p>
+          <Button 
+            size="lg" 
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full text-lg font-semibold"
+          >
+            Explorar Concursos
+          </Button>
+        </motion.div>
+      </div>
     </section>
   );
 };

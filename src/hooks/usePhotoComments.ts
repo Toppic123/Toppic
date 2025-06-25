@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
 
 export interface PhotoComment {
   id: string;
@@ -19,7 +18,6 @@ export const usePhotoComments = (photoId: string) => {
   const [comments, setComments] = useState<PhotoComment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const { user } = useAuth();
 
   useEffect(() => {
     if (photoId) {
@@ -30,9 +28,19 @@ export const usePhotoComments = (photoId: string) => {
   const fetchComments = async () => {
     try {
       setIsLoading(true);
+      
+      // Join with profiles table to get user names instead of emails
       const { data, error } = await supabase
         .from('photo_comments')
-        .select('*')
+        .select(`
+          id,
+          photo_id,
+          user_id,
+          comment_text,
+          created_at,
+          updated_at,
+          profiles!inner(name, avatar_url)
+        `)
         .eq('photo_id', photoId)
         .order('created_at', { ascending: false });
 
@@ -46,9 +54,19 @@ export const usePhotoComments = (photoId: string) => {
         return;
       }
 
-      if (data) {
-        setComments(data);
-      }
+      // Transform the data to include profile information as username
+      const transformedComments = data?.map(comment => ({
+        id: comment.id,
+        photo_id: comment.photo_id,
+        user_id: comment.user_id,
+        username: comment.profiles?.name || 'Usuario Anónimo', // Use name instead of email
+        avatar_url: comment.profiles?.avatar_url,
+        comment_text: comment.comment_text,
+        created_at: comment.created_at,
+        updated_at: comment.updated_at,
+      })) || [];
+
+      setComments(transformedComments);
     } catch (error) {
       console.error('Error fetching comments:', error);
       toast({
@@ -62,46 +80,33 @@ export const usePhotoComments = (photoId: string) => {
   };
 
   const addComment = async (commentText: string) => {
-    if (!user) {
-      toast({
-        title: "Inicia sesión",
-        description: "Necesitas iniciar sesión para comentar.",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    if (!commentText.trim()) {
-      return false;
-    }
-
     try {
-      // Get user name from multiple sources, prioritizing display name over email
-      let displayName = user.user_metadata?.name || 
-                       user.user_metadata?.full_name || 
-                       user.user_metadata?.display_name;
-      
-      // If no name in metadata, try to extract name from email
-      if (!displayName && user.email) {
-        displayName = user.email.split('@')[0];
-      }
-      
-      // Final fallback
-      if (!displayName) {
-        displayName = 'Usuario';
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Debes iniciar sesión para comentar.",
+          variant: "destructive",
+        });
+        return;
       }
 
-      const { data, error } = await supabase
+      // Get user profile for the name
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('name, avatar_url')
+        .eq('id', user.id)
+        .single();
+
+      const { error } = await supabase
         .from('photo_comments')
         .insert({
           photo_id: photoId,
           user_id: user.id,
-          username: displayName,
-          avatar_url: user.user_metadata?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${displayName}`,
-          comment_text: commentText.trim()
-        })
-        .select()
-        .single();
+          username: profile?.name || 'Usuario Anónimo', // Store name instead of email
+          avatar_url: profile?.avatar_url,
+          comment_text: commentText,
+        });
 
       if (error) {
         console.error('Error adding comment:', error);
@@ -110,17 +115,16 @@ export const usePhotoComments = (photoId: string) => {
           description: error.message,
           variant: "destructive",
         });
-        return false;
+        return;
       }
 
-      if (data) {
-        setComments(prev => [data, ...prev]);
-        toast({
-          title: "Comentario añadido",
-          description: "Tu comentario ha sido publicado correctamente."
-        });
-        return true;
-      }
+      toast({
+        title: "Comentario añadido",
+        description: "Tu comentario ha sido publicado exitosamente.",
+      });
+
+      // Refresh comments
+      fetchComments();
     } catch (error) {
       console.error('Error adding comment:', error);
       toast({
@@ -129,88 +133,12 @@ export const usePhotoComments = (photoId: string) => {
         variant: "destructive",
       });
     }
-    
-    return false;
-  };
-
-  const updateComment = async (commentId: string, newText: string) => {
-    if (!user) return false;
-
-    try {
-      const { error } = await supabase
-        .from('photo_comments')
-        .update({ 
-          comment_text: newText.trim(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', commentId)
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error updating comment:', error);
-        toast({
-          title: "Error al actualizar comentario",
-          description: error.message,
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      setComments(prev => prev.map(comment => 
-        comment.id === commentId 
-          ? { ...comment, comment_text: newText.trim(), updated_at: new Date().toISOString() }
-          : comment
-      ));
-
-      toast({
-        title: "Comentario actualizado",
-        description: "Tu comentario ha sido actualizado correctamente."
-      });
-      return true;
-    } catch (error) {
-      console.error('Error updating comment:', error);
-      return false;
-    }
-  };
-
-  const deleteComment = async (commentId: string) => {
-    if (!user) return false;
-
-    try {
-      const { error } = await supabase
-        .from('photo_comments')
-        .delete()
-        .eq('id', commentId)
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error deleting comment:', error);
-        toast({
-          title: "Error al eliminar comentario",
-          description: error.message,
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      setComments(prev => prev.filter(comment => comment.id !== commentId));
-      toast({
-        title: "Comentario eliminado",
-        description: "Tu comentario ha sido eliminado correctamente."
-      });
-      return true;
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-      return false;
-    }
   };
 
   return {
     comments,
     isLoading,
     addComment,
-    updateComment,
-    deleteComment,
-    refreshComments: fetchComments
+    fetchComments
   };
 };

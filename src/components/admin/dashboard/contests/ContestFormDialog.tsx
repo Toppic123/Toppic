@@ -1,400 +1,282 @@
 
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, 
-  DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ContestFormProps } from "./types";
-import LocationCombobox from "./LocationCombobox";
-import AlbumStorageInfo from "./AlbumStorageInfo";
-import { Image, Upload, Lock, MapPin } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { LocationCombobox } from "./LocationCombobox";
+import { Contest } from "@/hooks/useContestsData";
+import { useContestForm } from "./hooks/useContestForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Contest form dialog component with improved scrolling and album storage management
-export const ContestFormDialog = ({ 
-  isOpen, 
-  setIsOpen, 
-  contestFormData, 
-  setContestFormData, 
-  handleSaveChanges 
-}: ContestFormProps) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [organizers, setOrganizers] = useState<{id: string, name: string}[]>([]);
-  const { toast } = useToast();
+interface ContestFormDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  contest?: Contest | null;
+  onSubmit: (contestData: any) => void;
+}
 
-  // Fetch organizers from the database
-  useEffect(() => {
-    async function fetchOrganizers() {
-      try {
-        const { data, error } = await supabase
-          .from('organizers')
-          .select('id, name')
-          .order('name');
-          
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          setOrganizers(data);
-        }
-      } catch (err) {
-        console.error('Error fetching organizers:', err);
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los organizadores",
-          variant: "destructive"
-        });
-      }
-    }
-    
-    if (isOpen) {
-      fetchOrganizers();
-    }
-  }, [toast, isOpen]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      
-      // Check if file is an image
-      if (!file.type.startsWith('image/')) {
-        toast({
-          title: "Archivo no válido",
-          description: "Por favor, selecciona una imagen (JPG, PNG, etc.)",
-          variant: "destructive"
-        });
-        return;
-      }
-      
-      // Store the file for later upload
-      setSelectedFile(file);
-      
-      // Show a preview URL for the UI
-      const imageUrl = URL.createObjectURL(file);
-      setContestFormData({...contestFormData, imageUrl: imageUrl});
-    }
-  };
-
-  const clearFileSelection = () => {
-    setSelectedFile(null);
-    setContestFormData({...contestFormData, imageUrl: ''});
-  };
-  
-  const handleFormSubmit = () => {
-    handleSaveChanges(selectedFile || undefined);
-  };
-
-  const isEditMode = !!contestFormData.id;
+export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: ContestFormDialogProps) => {
+  const {
+    formData,
+    setFormData,
+    selectedLocation,
+    setSelectedLocation,
+    handleLocationSelect,
+    handleSubmit,
+    isSubmitting
+  } = useContestForm(contest, onSubmit, onClose);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-2">
-          <DialogTitle>{isEditMode ? "Editar Concurso" : "Crear Nuevo Concurso"}</DialogTitle>
-          <DialogDescription>
-            {isEditMode ? "Modifica los detalles del concurso seleccionado." : "Introduce los datos para el nuevo concurso."}
-          </DialogDescription>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>
+            {contest ? 'Editar concurso' : 'Crear nuevo concurso'}
+          </DialogTitle>
         </DialogHeader>
         
-        <div className="px-6">
-          <Tabs defaultValue="general" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="general">Información General</TabsTrigger>
-              <TabsTrigger value="storage" disabled={!isEditMode}>
-                Almacenamiento
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="general">
-              <ScrollArea className="max-h-[50vh]">
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-1 gap-4">
-                    <div>
-                      <Label htmlFor="title">Título</Label>
-                      <Input
-                        id="title"
-                        value={contestFormData.title}
-                        onChange={(e) => setContestFormData({...contestFormData, title: e.target.value})}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="organizer">Organizador</Label>
-                      <Select 
-                        value={contestFormData.organizer}
-                        onValueChange={(value) => setContestFormData({...contestFormData, organizer: value})}
-                      >
-                        <SelectTrigger className="mt-1">
-                          <SelectValue placeholder="Seleccionar organizador" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {organizers.map(org => (
-                            <SelectItem key={org.id} value={org.name}>{org.name}</SelectItem>
-                          ))}
-                          <SelectItem value="TOPPICS">TOPPICS</SelectItem>
-                          <SelectItem value="FoodLens">FoodLens</SelectItem>
-                          <SelectItem value="CoastalShots">CoastalShots</SelectItem>
-                          <SelectItem value="NightOwl">NightOwl</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Descripción</Label>
-                      <Textarea
-                        id="description"
-                        value={contestFormData.description}
-                        onChange={(e) => setContestFormData({...contestFormData, description: e.target.value})}
-                        className="mt-1"
-                      />
-                    </div>
-                    
-                    {/* Campo para subir imagen */}
-                    <div>
-                      <Label htmlFor="imageUpload" className="flex items-center gap-1">
-                        <Image size={16} className="mr-1" />
-                        Imagen del concurso
-                      </Label>
-                      
-                      <div className="mt-1 flex flex-col space-y-4">
-                        {/* File input */}
-                        <div className="flex items-center justify-center w-full">
-                          <label
-                            htmlFor="imageUpload"
-                            className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600"
-                          >
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                              <Upload className="w-8 h-8 mb-3 text-gray-400" />
-                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                <span className="font-semibold">Haz clic para subir</span> o arrastra y suelta
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG o GIF</p>
-                            </div>
-                            <Input
-                              id="imageUpload"
-                              type="file"
-                              accept="image/*"
-                              onChange={handleFileChange}
-                              className="hidden"
-                            />
-                          </label>
-                        </div>
-                        
-                        {/* Preview or current image */}
-                        {contestFormData.imageUrl && (
-                          <div className="relative">
-                            <img
-                              src={contestFormData.imageUrl}
-                              alt="Vista previa"
-                              className="h-40 object-cover rounded-lg mx-auto"
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute top-2 right-2"
-                              onClick={clearFileSelection}
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
-                              <span className="sr-only">Eliminar</span>
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* Location field with predictive search */}
-                    <div>
-                      <Label htmlFor="location" className="flex items-center gap-1">
-                        Ubicación
-                        <span className="text-xs font-normal text-muted-foreground">(requerido)</span>
-                      </Label>
-                      <div className="mt-1">
-                        <LocationCombobox 
-                          value={contestFormData.location || ""}
-                          onChange={(value) => setContestFormData({...contestFormData, location: value})}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="startDate">Fecha de inicio</Label>
-                        <Input
-                          id="startDate"
-                          type="date"
-                          value={contestFormData.startDate}
-                          onChange={(e) => setContestFormData({...contestFormData, startDate: e.target.value})}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="photoDeadline">Fecha límite de fotos</Label>
-                        <Input
-                          id="photoDeadline"
-                          type="date"
-                          value={contestFormData.photoDeadline}
-                          onChange={(e) => setContestFormData({...contestFormData, photoDeadline: e.target.value})}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="endDate">Fecha de fin</Label>
-                        <Input
-                          id="endDate"
-                          type="date"
-                          value={contestFormData.endDate}
-                          onChange={(e) => setContestFormData({...contestFormData, endDate: e.target.value})}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="status">Estado</Label>
-                        <Select 
-                          value={contestFormData.status}
-                          onValueChange={(value: "active" | "pending" | "finished") => 
-                            setContestFormData({...contestFormData, status: value})
-                          }
-                        >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue placeholder="Seleccionar estado" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pendiente</SelectItem>
-                            <SelectItem value="active">Activo</SelectItem>
-                            <SelectItem value="finished">Finalizado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="maxParticipants">Participantes máximos</Label>
-                        <Input
-                          id="maxParticipants"
-                          type="number"
-                          value={contestFormData.maxParticipants}
-                          onChange={(e) => setContestFormData({...contestFormData, maxParticipants: parseInt(e.target.value)})}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Minimum Distance Field */}
-                    <div>
-                      <Label htmlFor="minimumDistance" className="flex items-center gap-1">
-                        <MapPin size={16} />
-                        Distancia mínima de participación (km)
-                      </Label>
-                      <Input
-                        id="minimumDistance"
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={contestFormData.minimumDistanceKm}
-                        onChange={(e) => setContestFormData({...contestFormData, minimumDistanceKm: parseInt(e.target.value) || 0})}
-                        className="mt-1"
-                        placeholder="0"
-                      />
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Los participantes deben estar dentro de este radio del lugar del evento para poder participar
-                      </p>
-                    </div>
-                    
-                    <Separator className="my-2" />
-                    
-                    <h3 className="text-sm font-semibold">Configuración de acceso</h3>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="isPrivate"
-                        checked={contestFormData.isPrivate || false}
-                        onCheckedChange={(checked) => setContestFormData({...contestFormData, isPrivate: checked})}
-                      />
-                      <Label htmlFor="isPrivate" className="flex items-center gap-2">
-                        <Lock size={16} />
-                        Concurso privado (requiere código de acceso)
-                      </Label>
-                    </div>
-                    
-                    {contestFormData.isPrivate && (
-                      <div>
-                        <Label htmlFor="contestPassword">Código de acceso</Label>
-                        <Input
-                          id="contestPassword"
-                          type="text"
-                          value={contestFormData.contestPassword || ''}
-                          onChange={(e) => setContestFormData({...contestFormData, contestPassword: e.target.value})}
-                          placeholder="Introduce un código para acceder al concurso"
-                          className="mt-1"
-                        />
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Los participantes necesitarán este código para acceder al concurso
-                        </p>
-                      </div>
-                    )}
-                    
-                    <Separator className="my-2" />
-                    
-                    <h3 className="text-sm font-semibold">Configuración de propiedad y uso</h3>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="photoOwnership"
-                        checked={contestFormData.photoOwnership}
-                        onCheckedChange={(checked) => setContestFormData({...contestFormData, photoOwnership: checked})}
-                      />
-                      <Label htmlFor="photoOwnership">Transferir propiedad de las fotos al organizador (el número de fotos puede variar según el tipo de suscripción)</Label>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        id="commercialUse"
-                        checked={contestFormData.commercialUse}
-                        onCheckedChange={(checked) => setContestFormData({...contestFormData, commercialUse: checked})}
-                      />
-                      <Label htmlFor="commercialUse">Permitir uso comercial de las fotos ganadoras</Label>
-                    </div>
-                    <p className="text-sm text-muted-foreground italic">
-                      Al activar esta opción, los participantes aceptan que las fotos ganadoras puedan ser utilizadas con fines comerciales
-                      y otorgan su consentimiento de derechos de imagen para aparecer en ellas.
-                    </p>
-                  </div>
-                </div>
-              </ScrollArea>
-            </TabsContent>
-            
-            <TabsContent value="storage">
-              <ScrollArea className="max-h-[50vh]">
-                <div className="py-4">
-                  {isEditMode && contestFormData.id ? (
-                    <AlbumStorageInfo 
-                      contestId={contestFormData.id}
-                      contestTitle={contestFormData.title}
+        {/* Fixed scrolling issue by adding ScrollArea */}
+        <ScrollArea className="flex-1 px-1">
+          <form onSubmit={handleSubmit} className="space-y-6 pr-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Título del concurso</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Ej: Fotografía de Primavera en Barcelona"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="organizer">Organizador</Label>
+                <Input
+                  id="organizer"
+                  value={formData.organizer}
+                  onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
+                  placeholder="Nombre del organizador"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Descripción</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Describe el concurso, las reglas, los premios..."
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Ubicación del concurso</Label>
+              <LocationCombobox
+                selectedLocation={selectedLocation}
+                onLocationSelect={handleLocationSelect}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="imageUrl">URL de imagen del concurso</Label>
+              <Input
+                id="imageUrl"
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                placeholder="https://ejemplo.com/imagen.jpg"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Fecha de inicio</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.startDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.startDate ? (
+                        format(formData.startDate, "PPP")
+                      ) : (
+                        <span>Selecciona fecha</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.startDate}
+                      onSelect={(date) => setFormData({ ...formData, startDate: date })}
+                      initialFocus
                     />
-                  ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      Guarda el concurso para ver la información de almacenamiento
-                    </div>
-                  )}
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Fecha límite para subir fotos</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.photoDeadline && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.photoDeadline ? (
+                        format(formData.photoDeadline, "PPP")
+                      ) : (
+                        <span>Selecciona fecha</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.photoDeadline}
+                      onSelect={(date) => setFormData({ ...formData, photoDeadline: date })}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Fecha de finalización</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.endDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.endDate ? (
+                        format(formData.endDate, "PPP")
+                      ) : (
+                        <span>Selecciona fecha</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.endDate}
+                      onSelect={(date) => setFormData({ ...formData, endDate: date })}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="status">Estado del concurso</Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => setFormData({ ...formData, status: value as "pending" | "active" | "finished" })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona el estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pendiente</SelectItem>
+                    <SelectItem value="active">Activo</SelectItem>
+                    <SelectItem value="finished">Finalizado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="minimumDistance">Distancia mínima (km)</Label>
+                <Input
+                  id="minimumDistance"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={formData.minimumDistanceKm}
+                  onChange={(e) => setFormData({ ...formData, minimumDistanceKm: parseInt(e.target.value) || 0 })}
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Configuración de privacidad</h3>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isPrivate"
+                  checked={formData.isPrivate}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isPrivate: checked })}
+                />
+                <Label htmlFor="isPrivate">Concurso privado</Label>
+              </div>
+
+              {formData.isPrivate && (
+                <div className="space-y-2">
+                  <Label htmlFor="contestPassword">Contraseña del concurso</Label>
+                  <Input
+                    id="contestPassword"
+                    type="password"
+                    value={formData.contestPassword}
+                    onChange={(e) => setFormData({ ...formData, contestPassword: e.target.value })}
+                    placeholder="Contraseña para acceder al concurso"
+                  />
                 </div>
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        </div>
-        
-        <DialogFooter className="p-6 pt-2">
-          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-          <Button onClick={handleFormSubmit}>Guardar</Button>
-        </DialogFooter>
+              )}
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="photoOwnership"
+                  checked={formData.photoOwnership}
+                  onCheckedChange={(checked) => setFormData({ ...formData, photoOwnership: checked })}
+                />
+                <Label htmlFor="photoOwnership">Los participantes mantienen la propiedad de sus fotos</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="commercialUse"
+                  checked={formData.commercialUse}
+                  onCheckedChange={(checked) => setFormData({ ...formData, commercialUse: checked })}
+                />
+                <Label htmlFor="commercialUse">Permitir uso comercial de las fotos</Label>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Guardando...' : (contest ? 'Actualizar' : 'Crear concurso')}
+              </Button>
+            </div>
+          </form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

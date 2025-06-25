@@ -83,7 +83,7 @@ const HeroSection = ({ heroImages, texts }: HeroSectionProps) => {
             </Button>
           </div>
 
-          {/* Mobile App Link */}
+          {/* Mobile App Link - Fixed to redirect to /mobile-prototype */}
           <div className="mt-8">
             <Button asChild variant="ghost" size="lg" className="rounded-full px-8 py-4 bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 text-lg font-medium h-auto">
               <Link to="/mobile-prototype">
