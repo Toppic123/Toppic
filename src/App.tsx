@@ -4,82 +4,85 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Layout from "./components/Layout";
-import Index from "./pages/Index";
-import Contests from "./pages/Contests";
-import Upload from "./pages/Upload";
-import Profile from "./pages/Profile";
-import ContestDetail from "./pages/ContestDetail";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Support from "./pages/Support";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
-import VotingRules from "./pages/VotingRules";
-import Organizers from "./pages/Organizers";
-import Dashboard from "./pages/Dashboard";
-import AdminDashboard from "./pages/AdminDashboard";
-import ContestRules from "./pages/ContestRules";
-import ContestGalleryPage from "./pages/ContestGalleryPage";
-import GalleryPage from "./pages/GalleryPage";
-import MobilePrototype from "./pages/MobilePrototype";
+import { lazy, Suspense } from "react";
 import NotFound from "./pages/NotFound";
-import RoleBasedRoute from "./components/RoleBasedRoute";
+
+// Lazy load pages for better performance
+const Index = lazy(() => import("./pages/Index"));
+const Contests = lazy(() => import("./pages/Contests"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Upload = lazy(() => import("./pages/Upload"));
+const ContestDetail = lazy(() => import("./pages/ContestDetail"));
+const ContestGalleryPage = lazy(() => import("./pages/ContestGalleryPage"));
+const GalleryPage = lazy(() => import("./pages/GalleryPage"));
+const VotingSystem = lazy(() => import("./pages/VotingSystem"));
+const VotingRulesPage = lazy(() => import("./pages/VotingRulesPage"));
+const ContestRules = lazy(() => import("./pages/ContestRules"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Support = lazy(() => import("./pages/Support"));
+const Organizers = lazy(() => import("./pages/Organizers"));
+const MobilePrototype = lazy(() => import("./pages/MobilePrototype"));
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AuthProvider>
         <TooltipProvider>
-          <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+              </div>
+            }>
               <Routes>
-                <Route path="/" element={<Layout />}>
-                  <Route index element={<Index />} />
-                  <Route path="contests" element={<Contests />} />
-                  <Route path="contests/:id" element={<ContestDetail />} />
-                  <Route path="contests/:id/gallery" element={<ContestGalleryPage />} />
-                  <Route path="contests/:id/rules" element={<ContestRules />} />
-                  <Route path="upload" element={<Upload />} />
-                  <Route path="profile" element={<Profile />} />
-                  <Route path="login" element={<Login />} />
-                  <Route path="register" element={<Register />} />
-                  <Route path="support" element={<Support />} />
-                  <Route path="terms" element={<Terms />} />
-                  <Route path="privacy" element={<Privacy />} />
-                  <Route path="voting-rules" element={<VotingRules />} />
-                  <Route path="organizers" element={<Organizers />} />
-                  <Route path="gallery" element={<GalleryPage />} />
-                  <Route 
-                    path="dashboard" 
-                    element={
-                      <RoleBasedRoute allowedRoles={['organizer', 'admin']}>
-                        <Dashboard />
-                      </RoleBasedRoute>
-                    } 
-                  />
-                  <Route 
-                    path="admin" 
-                    element={
-                      <RoleBasedRoute allowedRoles={['admin']}>
-                        <AdminDashboard />
-                      </RoleBasedRoute>
-                    } 
-                  />
-                  <Route path="mobile" element={<MobilePrototype />} />
-                  <Route path="*" element={<NotFound />} />
-                </Route>
+                {/* Main Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/contests" element={<Contests />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/upload" element={<Upload />} />
+                
+                {/* Contest Routes */}
+                <Route path="/contest/:id" element={<ContestDetail />} />
+                <Route path="/contest/:id/gallery" element={<ContestGalleryPage />} />
+                
+                {/* Gallery Routes */}
+                <Route path="/gallery" element={<GalleryPage />} />
+                
+                {/* Voting Routes */}
+                <Route path="/voting" element={<VotingSystem />} />
+                <Route path="/voting-rules" element={<VotingRulesPage />} />
+                
+                {/* Info Pages */}
+                <Route path="/contest-rules" element={<ContestRules />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/organizers" element={<Organizers />} />
+                
+                {/* Mobile App Route */}
+                <Route path="/mobile" element={<MobilePrototype />} />
+                
+                {/* 404 Route */}
+                <Route path="*" element={<NotFound />} />
               </Routes>
-            </BrowserRouter>
-          </AuthProvider>
+            </Suspense>
+          </BrowserRouter>
         </TooltipProvider>
-      </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
