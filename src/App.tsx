@@ -72,7 +72,7 @@ function App() {
                       </RoleBasedRoute>
                     } 
                   />
-                  <Route path="mobile" element={<MobilePrototype />} />
+                  <Route path="mobile-prototype" element={<MobilePrototype />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
