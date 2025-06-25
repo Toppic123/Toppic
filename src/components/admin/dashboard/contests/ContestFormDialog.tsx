@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +12,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { LocationCombobox } from "./LocationCombobox";
+import LocationCombobox from "./LocationCombobox";
 import { Contest } from "@/hooks/useContestsData";
-import { useContestForm } from "./hooks/useContestForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ContestFormDialogProps {
@@ -24,15 +24,47 @@ interface ContestFormDialogProps {
 }
 
 export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: ContestFormDialogProps) => {
-  const {
-    formData,
-    setFormData,
-    selectedLocation,
-    setSelectedLocation,
-    handleLocationSelect,
-    handleSubmit,
-    isSubmitting
-  } = useContestForm(contest, onSubmit, onClose);
+  // Simple form state management within the component
+  const [formData, setFormData] = React.useState({
+    title: contest?.title || '',
+    organizer: contest?.organizer || '',
+    description: contest?.description || '',
+    location: contest?.location || '',
+    imageUrl: contest?.image_url || '',
+    startDate: contest?.start_date ? new Date(contest.start_date) : undefined,
+    photoDeadline: contest?.photo_deadline ? new Date(contest.photo_deadline) : undefined,
+    endDate: contest?.end_date ? new Date(contest.end_date) : undefined,
+    status: contest?.status || 'pending' as "pending" | "active" | "finished",
+    minimumDistanceKm: contest?.minimum_distance_km || 0,
+    isPrivate: contest?.is_private || false,
+    contestPassword: contest?.contest_password || '',
+    photoOwnership: contest?.photo_ownership || true,
+    commercialUse: contest?.commercial_use || true
+  });
+
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+      onClose();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleLocationSelect = (location: any) => {
+    setFormData({ 
+      ...formData, 
+      location: location.display_name,
+      latitude: location.lat,
+      longitude: location.lon
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -43,7 +75,6 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
           </DialogTitle>
         </DialogHeader>
         
-        {/* Fixed scrolling issue by adding ScrollArea */}
         <ScrollArea className="flex-1 px-1">
           <form onSubmit={handleSubmit} className="space-y-6 pr-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -84,7 +115,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
             <div className="space-y-2">
               <Label>Ubicación del concurso</Label>
               <LocationCombobox
-                selectedLocation={selectedLocation}
+                selectedLocation={formData.location}
                 onLocationSelect={handleLocationSelect}
               />
             </div>

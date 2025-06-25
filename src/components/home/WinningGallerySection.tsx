@@ -7,7 +7,7 @@ import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import { Badge } from "@/components/ui/badge";
 
 const WinningGallerySection = () => {
-  const { winningPhotos, isLoading } = useWinningPhotos();
+  const { photos: winningPhotos, loading: isLoading } = useWinningPhotos();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (isLoading) {

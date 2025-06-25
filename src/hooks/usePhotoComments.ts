@@ -29,18 +29,10 @@ export const usePhotoComments = (photoId: string) => {
     try {
       setIsLoading(true);
       
-      // Join with profiles table to get user names instead of emails
+      // Simplified query without joining profiles table to avoid relation issues
       const { data, error } = await supabase
         .from('photo_comments')
-        .select(`
-          id,
-          photo_id,
-          user_id,
-          comment_text,
-          created_at,
-          updated_at,
-          profiles!inner(name, avatar_url)
-        `)
+        .select('*')
         .eq('photo_id', photoId)
         .order('created_at', { ascending: false });
 
@@ -54,19 +46,7 @@ export const usePhotoComments = (photoId: string) => {
         return;
       }
 
-      // Transform the data to include profile information as username
-      const transformedComments = data?.map(comment => ({
-        id: comment.id,
-        photo_id: comment.photo_id,
-        user_id: comment.user_id,
-        username: comment.profiles?.name || 'Usuario Anónimo', // Use name instead of email
-        avatar_url: comment.profiles?.avatar_url,
-        comment_text: comment.comment_text,
-        created_at: comment.created_at,
-        updated_at: comment.updated_at,
-      })) || [];
-
-      setComments(transformedComments);
+      setComments(data || []);
     } catch (error) {
       console.error('Error fetching comments:', error);
       toast({
@@ -79,7 +59,7 @@ export const usePhotoComments = (photoId: string) => {
     }
   };
 
-  const addComment = async (commentText: string) => {
+  const addComment = async (commentText: string): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -88,7 +68,7 @@ export const usePhotoComments = (photoId: string) => {
           description: "Debes iniciar sesión para comentar.",
           variant: "destructive",
         });
-        return;
+        return false;
       }
 
       // Get user profile for the name
@@ -103,7 +83,7 @@ export const usePhotoComments = (photoId: string) => {
         .insert({
           photo_id: photoId,
           user_id: user.id,
-          username: profile?.name || 'Usuario Anónimo', // Store name instead of email
+          username: profile?.name || 'Usuario Anónimo',
           avatar_url: profile?.avatar_url,
           comment_text: commentText,
         });
@@ -115,7 +95,7 @@ export const usePhotoComments = (photoId: string) => {
           description: error.message,
           variant: "destructive",
         });
-        return;
+        return false;
       }
 
       toast({
@@ -125,6 +105,7 @@ export const usePhotoComments = (photoId: string) => {
 
       // Refresh comments
       fetchComments();
+      return true;
     } catch (error) {
       console.error('Error adding comment:', error);
       toast({
@@ -132,6 +113,104 @@ export const usePhotoComments = (photoId: string) => {
         description: "Ha ocurrido un error al añadir el comentario.",
         variant: "destructive",
       });
+      return false;
+    }
+  };
+
+  const updateComment = async (commentId: string, newText: string): Promise<boolean> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Debes iniciar sesión para editar comentarios.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      const { error } = await supabase
+        .from('photo_comments')
+        .update({ 
+          comment_text: newText,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', commentId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating comment:', error);
+        toast({
+          title: "Error al actualizar comentario",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Comentario actualizado",
+        description: "Tu comentario ha sido actualizado exitosamente.",
+      });
+
+      // Refresh comments
+      fetchComments();
+      return true;
+    } catch (error) {
+      console.error('Error updating comment:', error);
+      toast({
+        title: "Error",
+        description: "Ha ocurrido un error al actualizar el comentario.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const deleteComment = async (commentId: string): Promise<boolean> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "Debes iniciar sesión para eliminar comentarios.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      const { error } = await supabase
+        .from('photo_comments')
+        .delete()
+        .eq('id', commentId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting comment:', error);
+        toast({
+          title: "Error al eliminar comentario",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Comentario eliminado",
+        description: "Tu comentario ha sido eliminado exitosamente.",
+      });
+
+      // Refresh comments
+      fetchComments();
+      return true;
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+      toast({
+        title: "Error",
+        description: "Ha ocurrido un error al eliminar el comentario.",
+        variant: "destructive",
+      });
+      return false;
     }
   };
 
@@ -139,6 +218,8 @@ export const usePhotoComments = (photoId: string) => {
     comments,
     isLoading,
     addComment,
+    updateComment,
+    deleteComment,
     fetchComments
   };
 };

@@ -22,18 +22,8 @@ export const ContestManagement = () => {
     setIsDialogOpen,
     handleEditContest,
     handleCreateNewContest,
-    handleFormChange,
     handleSaveChanges
   } = useContestForm(fetchContests);
-
-  // Create wrapper function to handle the form data changes
-  const handleFormDataChange = (data: any) => {
-    if (typeof data === 'function') {
-      handleFormChange(data(formData));
-    } else {
-      handleFormChange(data);
-    }
-  };
 
   return (
     <>
@@ -59,10 +49,9 @@ export const ContestManagement = () => {
 
       <ContestFormDialog 
         isOpen={isDialogOpen}
-        setIsOpen={setIsDialogOpen}
-        contestFormData={formData}
-        setContestFormData={handleFormDataChange}
-        handleSaveChanges={handleSaveChanges}
+        onClose={() => setIsDialogOpen(false)}
+        contest={formData.contest}
+        onSubmit={handleSaveChanges}
       />
     </>
   );
