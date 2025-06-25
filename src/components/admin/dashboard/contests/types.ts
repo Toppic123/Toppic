@@ -8,17 +8,24 @@ export interface Contest {
   status: ContestStatus;
   organizer?: string;
   startDate?: string;
+  start_date?: string;
   endDate?: string;
+  end_date?: string;
+  photoDeadline?: string;
+  photo_deadline?: string;
   participants?: number;
   location?: string;
   imageUrl?: string;
-  image_url?: string; // Add this field to match the database column
-  is_private?: boolean; // New field for private contests
-  contest_password?: string; // New field for contest password
+  image_url?: string;
+  is_private?: boolean;
+  contest_password?: string;
+  photo_ownership?: boolean;
+  commercial_use?: boolean;
+  minimum_distance_km?: number;
 }
 
 export interface ContestFormData {
-  id?: string; // Make id optional since it may not exist for new contests
+  id?: string;
   title: string;
   description: string;
   status: ContestStatus;
@@ -31,9 +38,9 @@ export interface ContestFormData {
   commercialUse: boolean;
   location: string;
   imageUrl?: string;
-  isPrivate?: boolean; // New field for private contests
-  contestPassword?: string; // New field for contest password
-  minimumDistanceKm: number; // Add the missing property
+  isPrivate?: boolean;
+  contestPassword?: string;
+  minimumDistanceKm: number;
 }
 
 export interface ContestCardProps {

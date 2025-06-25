@@ -6,10 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 export interface WinningPhoto {
   id: number;
   imageUrl: string;
+  image_url?: string;
   title: string;
   photographer: string;
+  photographer_name?: string;
   photographerAvatar: string;
   likes: number;
+  description?: string;
 }
 
 // Import the default photos directly to ensure correct typing

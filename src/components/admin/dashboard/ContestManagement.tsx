@@ -50,7 +50,7 @@ export const ContestManagement = () => {
       <ContestFormDialog 
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        contest={formData.editingContest}
+        contest={null}
         onSubmit={handleSaveChanges}
       />
     </>

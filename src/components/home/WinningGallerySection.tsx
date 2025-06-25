@@ -44,6 +44,9 @@ const WinningGallerySection = () => {
     setCurrentIndex((prev) => (prev - 1 + winningPhotos.length) % winningPhotos.length);
   };
 
+  const getCurrentPhoto = () => winningPhotos[currentIndex];
+  const currentPhoto = getCurrentPhoto();
+
   return (
     <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
       <div className="container max-w-7xl mx-auto">
@@ -67,8 +70,8 @@ const WinningGallerySection = () => {
           <div className="relative h-[70vh] min-h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl">
             <motion.img
               key={currentIndex}
-              src={winningPhotos[currentIndex].image_url}
-              alt={winningPhotos[currentIndex].title}
+              src={currentPhoto.imageUrl || currentPhoto.image_url}
+              alt={currentPhoto.title}
               className="w-full h-full object-cover"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -85,13 +88,15 @@ const WinningGallerySection = () => {
                     <Star className="h-4 w-4 mr-1" />
                     Foto Ganadora
                   </Badge>
-                  <h3 className="text-3xl font-bold mb-2">{winningPhotos[currentIndex].title}</h3>
+                  <h3 className="text-3xl font-bold mb-2">{currentPhoto.title}</h3>
                   <p className="text-xl text-gray-200 mb-4">
-                    por {winningPhotos[currentIndex].photographer_name}
+                    por {currentPhoto.photographer || currentPhoto.photographer_name}
                   </p>
-                  <Badge variant="secondary" className="text-sm">
-                    {winningPhotos[currentIndex].description}
-                  </Badge>
+                  {currentPhoto.description && (
+                    <Badge variant="secondary" className="text-sm">
+                      {currentPhoto.description}
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
@@ -140,7 +145,7 @@ const WinningGallerySection = () => {
                 onClick={() => setCurrentIndex(index)}
               >
                 <img
-                  src={photo.image_url}
+                  src={photo.imageUrl || photo.image_url}
                   alt={photo.title}
                   className="w-full h-full object-cover"
                 />
