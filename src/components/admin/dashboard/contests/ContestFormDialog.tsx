@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationCombobox from "./LocationCombobox";
-import { Contest } from "@/hooks/useContestsData";
+import { Contest } from "./types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ContestFormDialogProps {
