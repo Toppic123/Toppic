@@ -28,27 +28,21 @@ const defaultPlans: PricingPlan[] = [
     description: "Ideal para eventos pequeños y locales",
     features: [
       "Hasta 300 participantes",
-      "1 concurso de fotos",
-      "Publicidad básica en la app",
-      "Derechos de 1 foto ganadora",
-      "1 año de almacenamiento incluido",
-      "Renovación: 10€/año"
+      "1 concurso fotográfico",
+      "Derechos sobre 1 foto ganadora"
     ],
     buttonText: "Comenzar",
     buttonVariant: "outline"
   },
   {
     name: "Profesional",
-    price: "149€",
+    price: "119€",
     description: "Perfecto para eventos medianos y empresas",
     features: [
-      "Hasta 1000 participantes",
-      "3 concursos de fotos",
-      "Publicidad destacada en la app",
-      "Derechos de 3 fotos ganadoras de cada concurso",
-      "Banner promocional en la app",
-      "1 año de almacenamiento incluido",
-      "Renovación: 15€/año"
+      "Hasta 700 participantes",
+      "1 concurso fotográfico",
+      "Publicidad en la app (banners en el concurso)",
+      "Derechos sobre las 3 mejores fotos de cada concurso"
     ],
     recommended: true,
     buttonText: "Seleccionar Plan",
@@ -56,17 +50,13 @@ const defaultPlans: PricingPlan[] = [
   },
   {
     name: "Premium",
-    price: "199€",
-    description: "Para eventos grandes y marcas reconocidas",
+    price: "159€",
+    description: "Para grandes eventos y marcas reconocidas",
     features: [
       "Participantes ilimitados",
-      "5 concursos de fotos",
-      "Publicidad premium en toda la app",
-      "Derechos de las 9 mejores fotos",
-      "Banner destacado en página principal",
-      "Notificaciones push personalizadas",
-      "1 año de almacenamiento incluido",
-      "Renovación: 20€/año"
+      "1 concurso fotográfico",
+      "Publicidad en la app",
+      "Derechos sobre las 3 mejores fotos"
     ],
     buttonText: "Contactanos",
     buttonVariant: "secondary"
@@ -81,12 +71,6 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
           Elige el plan que mejor se adapte a tus necesidades.
         </p>
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200 max-w-4xl mx-auto">
-          <p className="text-sm text-blue-800">
-            <strong>Almacenamiento incluido:</strong> Todos los planes incluyen 1 año de almacenamiento gratuito. 
-            Después del primer año, puedes renovar por una tarifa anual reducida según tu plan.
-          </p>
-        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

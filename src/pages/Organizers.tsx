@@ -23,12 +23,11 @@ const Organizers = () => {
   const customPlans: PricingPlan[] = [
     {
       name: "Básico",
-      price: "149€",
+      price: "89€",
       description: "Ideal para eventos pequeños y locales",
       features: [
         "Hasta 300 participantes",
         "1 concurso fotográfico",
-        "Publicidad básica en la app",
         "Derechos sobre 1 foto ganadora"
       ],
       buttonText: "SELECCIONAR PLAN",
@@ -36,14 +35,13 @@ const Organizers = () => {
     },
     {
       name: "Profesional",
-      price: "199€",
+      price: "119€",
       description: "Perfecto para eventos medianos y empresas",
       features: [
-        "Hasta 1000 participantes",
+        "Hasta 700 participantes",
         "1 concurso fotográfico",
-        "Publicidad destacada en la app",
-        "Derechos sobre las 3 mejores fotos de cada concurso",
-        "Banner promocional en la app"
+        "Publicidad en la app (banners en el concurso)",
+        "Derechos sobre las 3 mejores fotos de cada concurso"
       ],
       recommended: true,
       buttonText: "SELECCIONAR PLAN",
@@ -51,15 +49,13 @@ const Organizers = () => {
     },
     {
       name: "Premium",
-      price: "249€",
+      price: "159€",
       description: "Para grandes eventos y marcas reconocidas",
       features: [
         "Participantes ilimitados",
         "1 concurso fotográfico",
-        "Publicidad premium en toda la app",
-        "Derechos sobre las 5 mejores fotos",
-        "Banner destacado en página principal",
-        "Notificaciones push personalizadas"
+        "Publicidad en la app",
+        "Derechos sobre las 3 mejores fotos"
       ],
       buttonText: "SELECCIONAR PLAN",
       buttonVariant: "secondary"
