@@ -67,7 +67,7 @@ const WinningGallerySection = () => {
           <div className="relative h-[70vh] min-h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl">
             <motion.img
               key={currentIndex}
-              src={winningPhotos[currentIndex].url}
+              src={winningPhotos[currentIndex].image_url}
               alt={winningPhotos[currentIndex].title}
               className="w-full h-full object-cover"
               initial={{ opacity: 0 }}
@@ -87,10 +87,10 @@ const WinningGallerySection = () => {
                   </Badge>
                   <h3 className="text-3xl font-bold mb-2">{winningPhotos[currentIndex].title}</h3>
                   <p className="text-xl text-gray-200 mb-4">
-                    por {winningPhotos[currentIndex].photographer}
+                    por {winningPhotos[currentIndex].photographer_name}
                   </p>
                   <Badge variant="secondary" className="text-sm">
-                    {winningPhotos[currentIndex].category}
+                    {winningPhotos[currentIndex].description}
                   </Badge>
                 </div>
               </div>
@@ -140,7 +140,7 @@ const WinningGallerySection = () => {
                 onClick={() => setCurrentIndex(index)}
               >
                 <img
-                  src={photo.url}
+                  src={photo.image_url}
                   alt={photo.title}
                   className="w-full h-full object-cover"
                 />

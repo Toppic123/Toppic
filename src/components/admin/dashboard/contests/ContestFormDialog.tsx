@@ -30,19 +30,65 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     organizer: contest?.organizer || '',
     description: contest?.description || '',
     location: contest?.location || '',
-    imageUrl: contest?.image_url || '',
-    startDate: contest?.start_date ? new Date(contest.start_date) : undefined,
-    photoDeadline: contest?.photo_deadline ? new Date(contest.photo_deadline) : undefined,
-    endDate: contest?.end_date ? new Date(contest.end_date) : undefined,
+    imageUrl: contest?.imageUrl || contest?.image_url || '',
+    startDate: contest?.startDate ? new Date(contest.startDate) : contest?.start_date ? new Date(contest.start_date) : undefined,
+    photoDeadline: contest?.photoDeadline ? new Date(contest.photoDeadline) : contest?.photo_deadline ? new Date(contest.photo_deadline) : undefined,
+    endDate: contest?.endDate ? new Date(contest.endDate) : contest?.end_date ? new Date(contest.end_date) : undefined,
     status: contest?.status || 'pending' as "pending" | "active" | "finished",
     minimumDistanceKm: contest?.minimum_distance_km || 0,
     isPrivate: contest?.is_private || false,
     contestPassword: contest?.contest_password || '',
     photoOwnership: contest?.photo_ownership || true,
-    commercialUse: contest?.commercial_use || true
+    commercialUse: contest?.commercial_use || true,
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Update form data when contest prop changes
+  React.useEffect(() => {
+    if (contest) {
+      setFormData({
+        title: contest.title || '',
+        organizer: contest.organizer || '',
+        description: contest.description || '',
+        location: contest.location || '',
+        imageUrl: contest.imageUrl || contest.image_url || '',
+        startDate: contest.startDate ? new Date(contest.startDate) : contest.start_date ? new Date(contest.start_date) : undefined,
+        photoDeadline: contest.photoDeadline ? new Date(contest.photoDeadline) : contest.photo_deadline ? new Date(contest.photo_deadline) : undefined,
+        endDate: contest.endDate ? new Date(contest.endDate) : contest.end_date ? new Date(contest.end_date) : undefined,
+        status: contest.status || 'pending' as "pending" | "active" | "finished",
+        minimumDistanceKm: contest.minimum_distance_km || 0,
+        isPrivate: contest.is_private || false,
+        contestPassword: contest.contest_password || '',
+        photoOwnership: contest.photo_ownership || true,
+        commercialUse: contest.commercial_use || true,
+        latitude: undefined,
+        longitude: undefined
+      });
+    } else {
+      // Reset form for new contest
+      setFormData({
+        title: '',
+        organizer: '',
+        description: '',
+        location: '',
+        imageUrl: '',
+        startDate: undefined,
+        photoDeadline: undefined,
+        endDate: undefined,
+        status: 'pending' as "pending" | "active" | "finished",
+        minimumDistanceKm: 0,
+        isPrivate: false,
+        contestPassword: '',
+        photoOwnership: true,
+        commercialUse: true,
+        latitude: undefined,
+        longitude: undefined
+      });
+    }
+  }, [contest]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,8 +107,8 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     setFormData({ 
       ...formData, 
       location: location.display_name,
-      latitude: location.lat,
-      longitude: location.lon
+      latitude: location.lat ? parseFloat(location.lat) : undefined,
+      longitude: location.lon ? parseFloat(location.lon) : undefined
     });
   };
 
@@ -115,8 +161,9 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
             <div className="space-y-2">
               <Label>Ubicación del concurso</Label>
               <LocationCombobox
-                selectedLocation={formData.location}
-                onLocationSelect={handleLocationSelect}
+                value={formData.location}
+                onChange={(value) => setFormData({ ...formData, location: value })}
+                placeholder="Buscar ubicación..."
               />
             </div>
 
