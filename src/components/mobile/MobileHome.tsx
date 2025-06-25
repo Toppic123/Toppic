@@ -4,62 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Users, Search, Trophy, Star } from "lucide-react";
 import LocationSearchInput from "./LocationSearchInput";
-import { useWinningPhotosSimple } from "@/hooks/useWinningPhotosSimple";
-import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
-import MobileLogin from "./MobileLogin";
+import { winningPhotos } from "@/components/home/WinningPhotosData";
 
 interface MobileHomeProps {
-  onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile' | 'login') => void;
+  onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
 }
 
 const MobileHome = ({ onNavigate }: MobileHomeProps) => {
   const [location, setLocation] = useState("Barcelona, España");
   const [searchQuery, setSearchQuery] = useState("");
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { photos: winningPhotos, loading: photosLoading } = useWinningPhotosSimple();
-
-  useEffect(() => {
-    // Check current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
-        setIsLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleLogin = () => {
-    setIsLoading(false);
-  };
-
-  // Show login screen if user is not authenticated
-  if (!user && !isLoading) {
-    return (
-      <MobileLogin 
-        onNavigate={onNavigate} 
-        onLogin={handleLogin}
-      />
-    );
-  }
-
-  // Loading state
-  if (isLoading || photosLoading) {
-    return (
-      <div className="h-full bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Cargando...</p>
-      </div>
-    );
-  }
 
   const featuredContests = [
     {
@@ -124,7 +77,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
             {winningPhotos.slice(0, 4).map((photo) => (
               <div key={photo.id} className="relative rounded-lg overflow-hidden shadow-md">
                 <img 
-                  src={photo.imageUrl}
+                  src={photo.url}
                   alt={photo.title}
                   className="w-full h-32 object-cover"
                 />
@@ -132,15 +85,12 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
                 <div className="absolute bottom-2 left-2 right-2">
                   <h3 className="text-white text-sm font-medium truncate">{photo.title}</h3>
                   <p className="text-white/80 text-xs truncate">{photo.photographer}</p>
+                  <Badge variant="secondary" className="text-xs mt-1">
+                    {photo.category}
+                  </Badge>
                 </div>
                 <div className="absolute top-2 right-2">
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                </div>
-                <div className="absolute top-2 left-2">
-                  <div className="flex items-center text-white text-xs bg-black/30 rounded px-1">
-                    <Heart className="h-3 w-3 mr-1 text-red-400" />
-                    {photo.likes}
-                  </div>
                 </div>
               </div>
             ))}

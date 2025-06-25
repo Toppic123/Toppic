@@ -5,7 +5,7 @@ import { ArrowLeft, Search, Camera, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Import mobile screens
-import MobileHome from "@/components/mobile/MobileHome";
+import MobileGalleryHome from "@/components/mobile/MobileGalleryHome";
 import MobileRegister from "@/components/mobile/MobileRegister";
 import MobileLogin from "@/components/mobile/MobileLogin";
 import MobileContests from "@/components/mobile/MobileContests";
@@ -19,7 +19,7 @@ type MobileScreen = 'home' | 'register' | 'login' | 'contests' | 'upload' | 'vot
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<MobileScreen>('home');
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Changed to false to show login by default
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [hasNotifications, setHasNotifications] = useState(false);
   const [newCommentsCount, setNewCommentsCount] = useState(0);
 
@@ -50,7 +50,7 @@ const MobilePrototype = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        return <MobileHome onNavigate={handleNavigation} />;
+        return <MobileGalleryHome onNavigate={handleNavigation} />;
       case 'register':
         return <MobileRegister onNavigate={handleNavigation} />;
       case 'login':
@@ -68,7 +68,7 @@ const MobilePrototype = () => {
       case 'settings':
         return <MobileSettings onNavigate={handleNavigation} />;
       default:
-        return <MobileHome onNavigate={handleNavigation} />;
+        return <MobileGalleryHome onNavigate={handleNavigation} />;
     }
   };
 
