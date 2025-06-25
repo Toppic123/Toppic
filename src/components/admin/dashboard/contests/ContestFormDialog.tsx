@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -38,8 +37,8 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     minimumDistanceKm: contest?.minimum_distance_km || 0,
     isPrivate: contest?.is_private || false,
     contestPassword: contest?.contest_password || '',
-    photoOwnership: contest?.photo_ownership || true,
-    commercialUse: contest?.commercial_use || true,
+    photoOwnership: contest?.photo_ownership !== undefined ? contest.photo_ownership : true,
+    commercialUse: contest?.commercial_use !== undefined ? contest.commercial_use : true,
     latitude: undefined as number | undefined,
     longitude: undefined as number | undefined
   });
@@ -62,8 +61,8 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         minimumDistanceKm: contest.minimum_distance_km || 0,
         isPrivate: contest.is_private || false,
         contestPassword: contest.contest_password || '',
-        photoOwnership: contest.photo_ownership || true,
-        commercialUse: contest.commercial_use || true,
+        photoOwnership: contest.photo_ownership !== undefined ? contest.photo_ownership : true,
+        commercialUse: contest.commercial_use !== undefined ? contest.commercial_use : true,
         latitude: undefined,
         longitude: undefined
       });
@@ -307,7 +306,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               <div className="flex items-center space-x-2">
                 <Switch
                   id="isPrivate"
-                  checked={formData.isPrivate}
+                  checked={!!formData.isPrivate}
                   onCheckedChange={(checked) => setFormData({ ...formData, isPrivate: checked })}
                 />
                 <Label htmlFor="isPrivate">Concurso privado</Label>
@@ -329,7 +328,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               <div className="flex items-center space-x-2">
                 <Switch
                   id="photoOwnership"
-                  checked={formData.photoOwnership}
+                  checked={!!formData.photoOwnership}
                   onCheckedChange={(checked) => setFormData({ ...formData, photoOwnership: checked })}
                 />
                 <Label htmlFor="photoOwnership">Los participantes mantienen la propiedad de sus fotos</Label>
@@ -338,7 +337,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               <div className="flex items-center space-x-2">
                 <Switch
                   id="commercialUse"
-                  checked={formData.commercialUse}
+                  checked={!!formData.commercialUse}
                   onCheckedChange={(checked) => setFormData({ ...formData, commercialUse: checked })}
                 />
                 <Label htmlFor="commercialUse">Permitir uso comercial de las fotos</Label>
