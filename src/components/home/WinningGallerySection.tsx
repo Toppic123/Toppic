@@ -1,17 +1,16 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Trophy, Star, X, Heart, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Trophy, Star, X, Heart, User } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import PhotoComments from "@/components/PhotoComments";
 
 const WinningGallerySection = () => {
   const { photos: winningPhotos, loading: isLoading } = useWinningPhotos();
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
 
   if (isLoading) {
@@ -40,17 +39,6 @@ const WinningGallerySection = () => {
     );
   }
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % winningPhotos.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + winningPhotos.length) % winningPhotos.length);
-  };
-
-  const getCurrentPhoto = () => winningPhotos[currentIndex];
-  const currentPhoto = getCurrentPhoto();
-
   const handlePhotoClick = (photo: any) => {
     setSelectedPhoto(photo);
   };
@@ -74,104 +62,6 @@ const WinningGallerySection = () => {
             </p>
           </motion.div>
 
-          {/* Main featured photo */}
-          <div className="relative max-w-6xl mx-auto mb-12">
-            <div 
-              className="relative h-[70vh] min-h-[500px] bg-black rounded-2xl overflow-hidden shadow-2xl cursor-pointer"
-              onClick={() => handlePhotoClick(currentPhoto)}
-            >
-              <motion.img
-                key={currentIndex}
-                src={currentPhoto.imageUrl || currentPhoto.image_url}
-                alt={currentPhoto.title}
-                className="w-full h-full object-cover"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              />
-              
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <Badge className="mb-3 bg-yellow-500 text-black font-semibold">
-                      <Star className="h-4 w-4 mr-1" />
-                      Foto Ganadora
-                    </Badge>
-                    <h3 className="text-3xl font-bold mb-2">{currentPhoto.title}</h3>
-                    <p className="text-xl text-gray-200 mb-4">
-                      por {currentPhoto.photographer || currentPhoto.photographer_name}
-                    </p>
-                    {currentPhoto.description && (
-                      <Badge variant="secondary" className="text-sm">
-                        {currentPhoto.description}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  prevSlide();
-                }}
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </Button>
-              
-              <Button
-                variant="secondary"
-                size="icon"
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  nextSlide();
-                }}
-              >
-                <ChevronRight className="h-6 w-6" />
-              </Button>
-
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                {winningPhotos.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      index === currentIndex ? 'bg-white' : 'bg-white/50'
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentIndex(index);
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Thumbnail strip */}
-            <div className="mt-6 flex justify-center space-x-4 overflow-x-auto pb-4">
-              {winningPhotos.map((photo, index) => (
-                <button
-                  key={photo.id}
-                  className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all ${
-                    index === currentIndex ? 'border-yellow-500 scale-110' : 'border-transparent hover:border-gray-300'
-                  }`}
-                  onClick={() => setCurrentIndex(index)}
-                >
-                  <img
-                    src={photo.imageUrl || photo.image_url}
-                    alt={photo.title}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Gallery grid */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -179,7 +69,7 @@ const WinningGallerySection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            {winningPhotos.slice(0, 6).map((photo) => (
+            {winningPhotos.map((photo) => (
               <motion.div
                 key={photo.id}
                 whileHover={{ y: -5 }}

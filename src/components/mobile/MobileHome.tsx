@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Users, Search, Trophy, Star } from "lucide-react";
 import LocationSearchInput from "./LocationSearchInput";
-import { winningPhotos } from "@/components/home/WinningPhotosData";
+import { useWinningPhotos } from "@/hooks/use-winning-photos";
 
 interface MobileHomeProps {
   onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
@@ -13,6 +13,7 @@ interface MobileHomeProps {
 const MobileHome = ({ onNavigate }: MobileHomeProps) => {
   const [location, setLocation] = useState("Barcelona, España");
   const [searchQuery, setSearchQuery] = useState("");
+  const { photos: winningPhotos, loading: isLoadingWinning } = useWinningPhotos();
 
   const featuredContests = [
     {
@@ -73,28 +74,38 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
             </h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-3">
-            {winningPhotos.slice(0, 4).map((photo) => (
-              <div key={photo.id} className="relative rounded-lg overflow-hidden shadow-md">
-                <img 
-                  src={photo.url}
-                  alt={photo.title}
-                  className="w-full h-32 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <h3 className="text-white text-sm font-medium truncate">{photo.title}</h3>
-                  <p className="text-white/80 text-xs truncate">{photo.photographer}</p>
-                  <Badge variant="secondary" className="text-xs mt-1">
-                    {photo.category}
-                  </Badge>
+          {isLoadingWinning ? (
+            <div className="grid grid-cols-2 gap-3">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="relative rounded-lg overflow-hidden shadow-md animate-pulse">
+                  <div className="w-full h-32 bg-gray-200"></div>
                 </div>
-                <div className="absolute top-2 right-2">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {winningPhotos.slice(0, 4).map((photo) => (
+                <div key={photo.id} className="relative rounded-lg overflow-hidden shadow-md">
+                  <img 
+                    src={photo.imageUrl || photo.image_url}
+                    alt={photo.title}
+                    className="w-full h-32 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2">
+                    <h3 className="text-white text-sm font-medium truncate">{photo.title}</h3>
+                    <p className="text-white/80 text-xs truncate">{photo.photographer || photo.photographer_name}</p>
+                    <Badge variant="secondary" className="text-xs mt-1">
+                      Ganadora
+                    </Badge>
+                  </div>
+                  <div className="absolute top-2 right-2">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           
           {winningPhotos.length > 4 && (
             <Button 
