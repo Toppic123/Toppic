@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map as MapIcon } from "lucide-react";
 import MobileSearchBar from "./MobileSearchBar";
 import MobileFilters from "./MobileFilters";
+import MobileContestDetail from "./MobileContestDetail";
 import Map from "@/components/Map";
 import { useContestsData } from "@/hooks/useContestsData";
 
@@ -19,6 +20,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
   const [showSearch, setShowSearch] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [selectedContestId, setSelectedContestId] = useState<string | null>(null);
   const [locationFilter, setLocationFilter] = useState("");
   const [themeFilter, setThemeFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -36,9 +38,17 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     setShowFilters(false);
   };
 
+  const handleContestClick = (contestId: string) => {
+    setSelectedContestId(contestId);
+  };
+
+  const handleBackFromDetail = () => {
+    setSelectedContestId(null);
+  };
+
   // Convert contests to mobile format
   const mobileContests = allContests.map(contest => ({
-    id: parseInt(contest.id.slice(0, 8), 16), // Convert UUID to number for mobile compatibility
+    id: contest.id,
     title: contest.title,
     location: contest.location,
     distance: "0.5 km", // Default distance
@@ -77,6 +87,21 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
       <div className="h-full bg-gray-50 flex items-center justify-center">
         <p className="text-gray-500">Cargando concursos...</p>
       </div>
+    );
+  }
+
+  if (selectedContestId) {
+    return (
+      <MobileContestDetail 
+        contestId={selectedContestId}
+        onNavigate={(screen) => {
+          if (screen === 'contests') {
+            handleBackFromDetail();
+          } else {
+            onNavigate(screen);
+          }
+        }}
+      />
     );
   }
 
@@ -210,7 +235,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     src={contest.image} 
                     alt={contest.title}
                     className="w-full h-40 object-cover cursor-pointer"
-                    onClick={() => onNavigate('voting')}
+                    onClick={() => handleContestClick(contest.id)}
                   />
                   <div className="absolute top-3 right-3">
                     <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
@@ -220,7 +245,12 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                 </div>
                 
                 <div className="p-4">
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2">{contest.title}</h3>
+                  <h3 
+                    className="font-semibold text-lg text-gray-900 mb-2 cursor-pointer hover:text-blue-600"
+                    onClick={() => handleContestClick(contest.id)}
+                  >
+                    {contest.title}
+                  </h3>
                   
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center text-gray-600 text-sm">

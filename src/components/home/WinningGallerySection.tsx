@@ -1,13 +1,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Star, X, Heart, User } from "lucide-react";
+import { Trophy, Star, Heart, User, Share2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import PhotoComments from "@/components/PhotoComments";
+import SocialShareButtons from "@/components/SocialShareButtons";
 
 const WinningGallerySection = () => {
   const { photos: winningPhotos, loading: isLoading } = useWinningPhotos();
@@ -143,14 +144,13 @@ const WinningGallerySection = () => {
               <DialogHeader className="px-4 py-3 border-b">
                 <div className="flex items-center justify-between">
                   <DialogTitle className="text-base">{selectedPhoto.title}</DialogTitle>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedPhoto(null)}
-                    className="h-8 w-8 p-0"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <SocialShareButtons 
+                      url={window.location.href}
+                      title={selectedPhoto.title}
+                      imageUrl={selectedPhoto.imageUrl || selectedPhoto.image_url}
+                    />
+                  </div>
                 </div>
               </DialogHeader>
               
