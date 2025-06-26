@@ -12,6 +12,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import LocationCombobox from "./LocationCombobox";
+import OrganizerSelect from "./OrganizerSelect";
+import ContestImageUpload from "./ContestImageUpload";
 import { Contest } from "./types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -135,13 +137,11 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="organizer">Organizador</Label>
-                <Input
-                  id="organizer"
+                <Label>Organizador</Label>
+                <OrganizerSelect
                   value={formData.organizer}
-                  onChange={(e) => setFormData({ ...formData, organizer: e.target.value })}
-                  placeholder="Nombre del organizador"
-                  required
+                  onChange={(value) => setFormData({ ...formData, organizer: value })}
+                  placeholder="Selecciona un organizador"
                 />
               </div>
             </div>
@@ -166,15 +166,10 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="imageUrl">URL de imagen del concurso</Label>
-              <Input
-                id="imageUrl"
-                value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                placeholder="https://ejemplo.com/imagen.jpg"
-              />
-            </div>
+            <ContestImageUpload
+              value={formData.imageUrl}
+              onChange={(value) => setFormData({ ...formData, imageUrl: value })}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
