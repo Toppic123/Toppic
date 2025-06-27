@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, MapPin, Calendar, Users, Trophy } from "lucide-react";
@@ -66,7 +65,7 @@ const NearbyContestsSection = () => {
           </p>
         </motion.div>
 
-        {/* Nearby Contests Button */}
+        {/* Nearby Contests Button with new animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -74,32 +73,37 @@ const NearbyContestsSection = () => {
           className="mb-16 text-center"
         >
           <motion.div
-            whileHover={{ scale: 1.05 }}
+            animate={{ 
+              scale: [1, 1.05, 1],
+              rotate: [0, 2, -2, 0],
+              boxShadow: [
+                "0 10px 30px rgba(240, 193, 75, 0.4)",
+                "0 15px 40px rgba(240, 193, 75, 0.6)",
+                "0 10px 30px rgba(240, 193, 75, 0.4)"
+              ]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut"
+            }}
+            whileHover={{ 
+              scale: 1.1,
+              rotate: 0,
+              transition: { duration: 0.3 }
+            }}
             whileTap={{ scale: 0.95 }}
           >
             <Button 
               onClick={() => setShowNearbyContests(!showNearbyContests)}
-              className="bg-gradient-to-r from-[#F0C14B] to-[#FFD700] hover:from-[#F0C14B]/90 hover:to-[#FFD700]/90 text-black font-bold px-12 py-6 rounded-full shadow-xl text-xl border-2 border-yellow-300 hover:border-yellow-400 transition-all duration-300"
+              className="bg-gradient-to-r from-[#F0C14B] to-[#FFD700] hover:from-[#F0C14B]/90 hover:to-[#FFD700]/90 text-black font-bold px-12 py-6 rounded-full shadow-xl text-xl border-2 border-yellow-300 hover:border-yellow-400 transition-colors duration-300"
               style={{
                 background: 'linear-gradient(135deg, #F0C14B 0%, #FFD700 100%)',
-                boxShadow: '0 10px 30px rgba(240, 193, 75, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
               }}
             >
-              <motion.div
-                animate={{ 
-                  rotate: [0, 5, -5, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
-                className="flex items-center"
-              >
-                <MapPin className="w-6 h-6 mr-3" />
-                <span className="font-extrabold tracking-wide">CONCURSOS CERCA DE TI</span>
-              </motion.div>
+              <MapPin className="w-6 h-6 mr-3" />
+              <span className="font-extrabold tracking-wide">CONCURSOS CERCA DE TI</span>
             </Button>
           </motion.div>
         </motion.div>

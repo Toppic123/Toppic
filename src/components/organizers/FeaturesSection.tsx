@@ -20,7 +20,7 @@ const FeaturesSection = () => {
     },
     {
       icon: Album,
-      title: "Álbumes perpetuos",
+      title: "Álbumes de Fotos",
       description: "Las fotos de los eventos podrán consultarse en cualquier momento para siempre",
       color: "from-purple-500 to-pink-500",
       stats: "Acceso ilimitado"
