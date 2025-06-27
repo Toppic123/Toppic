@@ -65,45 +65,39 @@ const NearbyContestsSection = () => {
           </p>
         </motion.div>
 
-        {/* Nearby Contests Button with new animation */}
+        {/* Nearby Contests Button with modern subtle animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-16 text-center"
+          className="mb-16 text-center px-4"
         >
           <motion.div
-            animate={{ 
-              scale: [1, 1.05, 1],
-              rotate: [0, 2, -2, 0],
-              boxShadow: [
-                "0 10px 30px rgba(240, 193, 75, 0.4)",
-                "0 15px 40px rgba(240, 193, 75, 0.6)",
-                "0 10px 30px rgba(240, 193, 75, 0.4)"
-              ]
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut"
-            }}
             whileHover={{ 
-              scale: 1.1,
-              rotate: 0,
-              transition: { duration: 0.3 }
+              scale: 1.02,
+              transition: { duration: 0.2 }
             }}
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.98 }}
           >
             <Button 
               onClick={() => setShowNearbyContests(!showNearbyContests)}
-              className="bg-gradient-to-r from-[#F0C14B] to-[#FFD700] hover:from-[#F0C14B]/90 hover:to-[#FFD700]/90 text-black font-bold px-12 py-6 rounded-full shadow-xl text-xl border-2 border-yellow-300 hover:border-yellow-400 transition-colors duration-300"
+              className="relative overflow-hidden bg-gradient-to-r from-[#F0C14B] to-[#FFD700] hover:from-[#E6B84A] hover:to-[#F0C14B] text-black font-bold px-8 md:px-12 py-4 md:py-6 rounded-full shadow-lg text-base md:text-xl border-2 border-yellow-300 hover:border-yellow-400 transition-all duration-300 max-w-full break-words"
               style={{
                 background: 'linear-gradient(135deg, #F0C14B 0%, #FFD700 100%)',
               }}
             >
-              <MapPin className="w-6 h-6 mr-3" />
-              <span className="font-extrabold tracking-wide">CONCURSOS CERCA DE TI</span>
+              {/* Subtle shine effect on hover */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+                whileHover={{
+                  translateX: "200%",
+                  transition: { duration: 0.6, ease: "easeInOut" }
+                }}
+              />
+              <MapPin className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3 flex-shrink-0" />
+              <span className="font-extrabold tracking-wide text-sm md:text-xl whitespace-nowrap">
+                CONCURSOS CERCA DE TI
+              </span>
             </Button>
           </motion.div>
         </motion.div>

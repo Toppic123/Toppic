@@ -85,7 +85,7 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
         })}
       </div>
 
-      {/* Photo Detail Dialog with Comments and Actions */}
+      {/* Photo Detail Dialog with Contest Name and Comments */}
       <Dialog 
         open={selectedPhoto !== null} 
         onOpenChange={(open) => !open && setSelectedPhoto(null)}
@@ -95,19 +95,19 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
             <>
               <DialogHeader className="px-4 py-3 border-b">
                 <div className="flex items-center justify-between">
-                  <DialogTitle className="text-base">{selectedPhoto.title || 'Sin título'}</DialogTitle>
+                  <div className="flex flex-col items-start">
+                    <DialogTitle className="text-base">{selectedPhoto.title || 'Sin título'}</DialogTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Concurso: {selectedPhoto.contestName || 'Sin especificar'}
+                    </p>
+                  </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-sm text-muted-foreground">
-                      {selectedPhoto.contestName || 'Concurso'}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <SocialShareButtons 
-                        url={window.location.href}
-                        title={selectedPhoto.title || 'Sin título'}
-                        imageUrl={selectedPhoto.imageUrl}
-                      />
-                      <ReportPhotoDialog photoId={selectedPhoto.id} />
-                    </div>
+                    <SocialShareButtons 
+                      url={window.location.href}
+                      title={selectedPhoto.title || 'Sin título'}
+                      imageUrl={selectedPhoto.imageUrl}
+                    />
+                    <ReportPhotoDialog photoId={selectedPhoto.id} />
                   </div>
                 </div>
               </DialogHeader>
