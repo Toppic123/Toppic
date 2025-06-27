@@ -6,6 +6,7 @@ import { Share2, MessageCircle } from "lucide-react";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ReportPhotoDialog from "@/components/ReportPhotoDialog";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 
 interface Photo {
   id: string;
@@ -13,6 +14,8 @@ interface Photo {
   imageUrl: string;
   likes: number;
   contestName: string;
+  photographer?: string;
+  photographerAvatar?: string;
 }
 
 interface PhotoGalleryProps {
@@ -80,6 +83,17 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
                   </div>
                 </div>
               </div>
+              
+              {/* Add clickable photographer name if available */}
+              {photo.photographer && (
+                <div className="px-2">
+                  <ClickableUserProfile 
+                    photographer={photo.photographer}
+                    photographerAvatar={photo.photographerAvatar}
+                    size="sm"
+                  />
+                </div>
+              )}
             </div>
           );
         })}
@@ -100,6 +114,15 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
                     <p className="text-sm text-muted-foreground mt-1">
                       Concurso: {selectedPhoto.contestName || 'Sin especificar'}
                     </p>
+                    {selectedPhoto.photographer && (
+                      <div className="mt-2">
+                        <ClickableUserProfile 
+                          photographer={selectedPhoto.photographer}
+                          photographerAvatar={selectedPhoto.photographerAvatar}
+                          size="sm"
+                        />
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <SocialShareButtons 

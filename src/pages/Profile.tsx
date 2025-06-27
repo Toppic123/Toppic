@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -18,13 +17,15 @@ const Profile = () => {
   const { profile, updateProfile } = useProfile();
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   
-  // Mock photos data with contest names
+  // Mock photos data with contest names and photographer info
   const photos = Array(6).fill(null).map((_, i) => ({
     id: i.toString(),
     title: `Foto ${i + 1}`,
     imageUrl: `https://picsum.photos/seed/${username}${i}/500/300`,
     likes: Math.floor(Math.random() * 100),
-    contestName: `Concurso de Fotografía ${i % 3 === 0 ? 'Urbana' : i % 3 === 1 ? 'Natural' : 'Retratos'}`
+    contestName: `Concurso de Fotografía ${i % 3 === 0 ? 'Urbana' : i % 3 === 1 ? 'Natural' : 'Retratos'}`,
+    photographer: profile?.name || username || "Usuario",
+    photographerAvatar: profileImagePreview || profile?.avatar_url || "https://i.pravatar.cc/150?img=8"
   }));
 
   // Create user object from profile data

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
@@ -6,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ReportPhotoDialog from "@/components/ReportPhotoDialog";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 
 type PhotoCardProps = {
   id: string;
@@ -152,19 +152,12 @@ const PhotoCard = ({
         </div>
         
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white z-10">
-          <div className="flex items-center space-x-2">
-            {photographerAvatar ? (
-              <img
-                src={photographerAvatar}
-                alt={photographer}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                <User className="w-4 h-4" />
-              </div>
-            )}
-            <span className="font-medium">{photographer}</span>
+          <div className="flex items-center space-x-2 pointer-events-auto">
+            <ClickableUserProfile
+              photographer={photographer}
+              photographerAvatar={photographerAvatar}
+              size="sm"
+            />
           </div>
           
           <div className="flex items-center justify-end mt-2">
@@ -236,20 +229,11 @@ const PhotoCard = ({
       
       <div className="p-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {photographerAvatar ? (
-              <img
-                src={photographerAvatar}
-                alt={photographer}
-                className="w-6 h-6 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                <User className="w-3 h-3" />
-              </div>
-            )}
-            <span className="text-sm font-medium">{photographer}</span>
-          </div>
+          <ClickableUserProfile
+            photographer={photographer}
+            photographerAvatar={photographerAvatar}
+            size="sm"
+          />
           
           <div className="flex items-center space-x-2">
             <button

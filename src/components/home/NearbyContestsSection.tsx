@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, MapPin, Calendar, Users, Trophy } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Calendar, Users, Trophy, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,7 +40,7 @@ const NearbyContestsSection = () => {
 
   if (isLoading) {
     return (
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-yellow-50">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center">
             <p>Cargando concursos activos...</p>
@@ -51,21 +51,65 @@ const NearbyContestsSection = () => {
   }
 
   return (
-    <section className="py-20 px-4 bg-white">
-      <div className="container max-w-7xl mx-auto">
+    <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-yellow-50 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 to-yellow-100/20"></div>
+      <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-200/30 rounded-full blur-3xl"></div>
+      
+      <div className="container max-w-7xl mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Concursos Activos</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Participa en los concursos destacados seleccionados por nuestros administradores
+          <div className="flex items-center justify-center mb-6">
+            <motion.div
+              animate={{ 
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            >
+              <Sparkles className="w-8 h-8 text-yellow-500 mr-3" />
+            </motion.div>
+            <h2 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-yellow-600 bg-clip-text text-transparent">
+              CONCURSOS ACTIVOS
+            </h2>
+            <motion.div
+              animate={{ 
+                rotate: [0, -10, 10, 0],
+                scale: [1, 1.1, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+                delay: 0.5
+              }}
+            >
+              <Trophy className="w-8 h-8 text-yellow-500 ml-3" />
+            </motion.div>
+          </div>
+          
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "200px" }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="h-2 bg-gradient-to-r from-blue-500 to-yellow-500 rounded-full mx-auto mb-6"
+          ></motion.div>
+          
+          <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto font-medium leading-relaxed">
+            🎯 Participa en los concursos destacados seleccionados por nuestros administradores
           </p>
         </motion.div>
 
-        {/* Nearby Contests Button with modern subtle animation */}
+        {/* Enhanced Nearby Contests Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -74,30 +118,33 @@ const NearbyContestsSection = () => {
         >
           <motion.div
             whileHover={{ 
-              scale: 1.02,
+              scale: 1.05,
               transition: { duration: 0.2 }
             }}
-            whileTap={{ scale: 0.98 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Button 
-              onClick={() => setShowNearbyContests(!showNearbyContests)}
-              className="relative overflow-hidden bg-gradient-to-r from-[#F0C14B] to-[#FFD700] hover:from-[#E6B84A] hover:to-[#F0C14B] text-black font-bold px-8 md:px-12 py-4 md:py-6 rounded-full shadow-lg text-base md:text-xl border-2 border-yellow-300 hover:border-yellow-400 transition-all duration-300 max-w-full break-words"
+              asChild
+              className="relative overflow-hidden bg-gradient-to-r from-[#F0C14B] via-[#FFD700] to-[#F0C14B] hover:from-[#E6B84A] hover:to-[#F0C14B] text-black font-bold px-12 md:px-16 py-6 md:py-8 rounded-full shadow-2xl text-lg md:text-2xl border-4 border-yellow-300 hover:border-yellow-400 transition-all duration-300 max-w-full break-words animate-pulse"
               style={{
-                background: 'linear-gradient(135deg, #F0C14B 0%, #FFD700 100%)',
+                background: 'linear-gradient(135deg, #F0C14B 0%, #FFD700 50%, #F0C14B 100%)',
+                boxShadow: '0 10px 30px rgba(240, 193, 75, 0.4), 0 0 20px rgba(255, 215, 0, 0.3)'
               }}
             >
-              {/* Subtle shine effect on hover */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
-                whileHover={{
-                  translateX: "200%",
-                  transition: { duration: 0.6, ease: "easeInOut" }
-                }}
-              />
-              <MapPin className="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3 flex-shrink-0" />
-              <span className="font-extrabold tracking-wide text-sm md:text-xl whitespace-nowrap">
-                CONCURSOS CERCA DE TI
-              </span>
+              <Link to="/contests">
+                {/* Enhanced shine effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full"
+                  whileHover={{
+                    translateX: "200%",
+                    transition: { duration: 0.8, ease: "easeInOut" }
+                  }}
+                />
+                <MapPin className="w-6 h-6 md:w-8 md:h-8 mr-3 md:mr-4 flex-shrink-0" />
+                <span className="font-black tracking-widest text-lg md:text-2xl whitespace-nowrap drop-shadow-sm">
+                  🌟 CONCURSOS CERCA DE TI 🌟
+                </span>
+              </Link>
             </Button>
           </motion.div>
         </motion.div>
