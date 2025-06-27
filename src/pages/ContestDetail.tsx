@@ -72,7 +72,7 @@ const ContestDetail = () => {
       {/* Contest Hero */}
       <div className="relative h-80 md:h-96 overflow-hidden">
         <img
-          src={contest.imageUrl || contest.image_url}
+          src={contest.imageUrl}
           alt={contest.title}
           className="w-full h-full object-cover"
         />
@@ -84,7 +84,7 @@ const ContestDetail = () => {
             </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{contest.title}</h1>
             {/* Show contest description if available */}
-            {(contest.description || contest.description) && (
+            {contest.description && (
               <p className="text-lg opacity-90 max-w-4xl">{contest.description}</p>
             )}
           </div>
@@ -111,7 +111,7 @@ const ContestDetail = () => {
                 </div>
                 <div className="text-center">
                   <Trophy className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-2xl font-bold">{contest.prize}</p>
+                  <p className="text-2xl font-bold">{contest.prize || "Por determinar"}</p>
                   <p className="text-sm text-muted-foreground">Premio</p>
                 </div>
                 <div className="text-center">

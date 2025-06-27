@@ -77,27 +77,29 @@ export const useContestForm = (onSuccess?: () => void) => {
     setIsDialogOpen(true);
   };
 
-  const handleSaveChanges = async (data: ContestFormData) => {
+  const handleSaveChanges = async (data: any) => {
     try {
-      if (data.id) {
-        // Editar concurso existente
+      const contestData = {
+        title: data.title,
+        organizer: data.organizer,
+        location: data.location,
+        description: data.description,
+        image_url: data.imageUrl,
+        start_date: data.startDate instanceof Date ? data.startDate.toISOString() : data.startDate,
+        end_date: data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate,
+        photo_deadline: data.photoDeadline instanceof Date ? data.photoDeadline.toISOString() : data.photoDeadline,
+        status: data.status,
+        is_private: data.isPrivate,
+        contest_password: data.contestPassword,
+        minimum_distance_km: data.minimumDistanceKm,
+      };
+
+      if (formData.id) {
+        // Editar concurso existente - usar el ID del formData, no crear uno nuevo
         const { error } = await supabase
           .from('contests')
-          .update({
-            title: data.title,
-            organizer: data.organizer,
-            location: data.location,
-            description: data.description,
-            image_url: data.imageUrl,
-            start_date: data.startDate,
-            end_date: data.endDate,
-            photo_deadline: data.photoDeadline,
-            status: data.status,
-            is_private: data.is_private,
-            contest_password: data.contest_password,
-            minimum_distance_km: data.minimum_distance_km,
-          })
-          .eq('id', data.id);
+          .update(contestData)
+          .eq('id', formData.id);
 
         if (error) throw error;
 
@@ -109,20 +111,7 @@ export const useContestForm = (onSuccess?: () => void) => {
         // Crear nuevo concurso
         const { error } = await supabase
           .from('contests')
-          .insert({
-            title: data.title,
-            organizer: data.organizer,
-            location: data.location,
-            description: data.description,
-            image_url: data.imageUrl,
-            start_date: data.startDate,
-            end_date: data.endDate,
-            photo_deadline: data.photoDeadline,
-            status: data.status,
-            is_private: data.is_private,
-            contest_password: data.contest_password,
-            minimum_distance_km: data.minimum_distance_km,
-          });
+          .insert(contestData);
 
         if (error) throw error;
 

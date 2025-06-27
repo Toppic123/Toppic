@@ -63,7 +63,7 @@ const NearbyContestsSection = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <span className="text-primary">
               Concursos cerca de ti
             </span>
           </motion.h2>
@@ -89,7 +89,7 @@ const NearbyContestsSection = () => {
             <Button
               size="lg"
               onClick={handleViewContests}
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-12 py-6 text-xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-primary/20 hover:border-primary/40"
+              className="bg-primary hover:bg-primary/90 text-white px-12 py-6 text-xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-primary/20 hover:border-primary/40"
             >
               <Camera className="mr-3 h-6 w-6" />
               CONCURSOS CERCA DE TI
