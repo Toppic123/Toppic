@@ -1,10 +1,10 @@
 
-// Mock data for contests with isActive flag
+// Mock data for contests with isActive flag - Updated with theme-appropriate images
 export const allContests = [
   {
     id: "1",
     title: "Festival de Fotografía Urbana",
-    imageUrl: "https://images.unsplash.com/photo-1514565131-fce0801e5785?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2532&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
     location: "Barcelona",
     locationCoords: { lat: 41.3851, lng: 2.1734 },
     maxDistance: 1,
@@ -46,7 +46,7 @@ export const allContests = [
   {
     id: "4",
     title: "Arquitectura Moderna",
-    imageUrl: "https://images.unsplash.com/photo-1496564203457-11bb12075d90?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2276&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1486718448742-163732cd1544?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
     location: "Valencia",
     locationCoords: { lat: 39.4699, lng: -0.3763 },
     maxDistance: 0.5,

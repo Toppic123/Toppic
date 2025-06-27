@@ -2,7 +2,7 @@
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images - Updated with Torre Eiffel replacing Sagrada Familia
+// Hero section carousel images - Updated with mobile photography at events
 export const heroImages = [
   {
     url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
@@ -17,12 +17,12 @@ export const heroImages = [
     category: "Torre Eiffel París"
   },
   {
-    url: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Fotógrafo con cámara"
+    url: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Personas tomando fotos con móviles en evento"
   }
 ];
 
-// Popular contests section
+// Popular contests section with theme-appropriate images
 export const popularContests = [
   {
     id: "1",
@@ -56,7 +56,7 @@ export const popularContests = [
   }
 ];
 
-// Export winning photos with Torre Eiffel replacing Sagrada Familia
+// Export winning photos with updated mobile photography theme
 export const winningPhotos: WinningPhoto[] = [
   {
     id: 1,
@@ -124,8 +124,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 9,
-    imageUrl: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Fotógrafo profesional",
+    imageUrl: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    title: "Fotografía móvil en evento",
     photographer: "Teresa Luna",
     photographerAvatar: "https://i.pravatar.cc/150?img=9",
     likes: 329
