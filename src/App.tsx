@@ -22,7 +22,6 @@ import Organizers from "./pages/Organizers";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ContestRules from "./pages/ContestRules";
-import ContestGalleryPage from "./pages/ContestGalleryPage";
 import GalleryPage from "./pages/GalleryPage";
 import MobilePrototype from "./pages/MobilePrototype";
 import NotFound from "./pages/NotFound";
@@ -44,7 +43,6 @@ function App() {
                   <Route index element={<Index />} />
                   <Route path="contests" element={<Contests />} />
                   <Route path="contests/:id" element={<ContestDetail />} />
-                  <Route path="contests/:id/gallery" element={<ContestGalleryPage />} />
                   <Route path="contests/:id/rules" element={<ContestRules />} />
                   <Route path="upload" element={<Upload />} />
                   <Route path="profile" element={<Profile />} />
