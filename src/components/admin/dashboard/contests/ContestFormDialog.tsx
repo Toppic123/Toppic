@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     description: contest?.description || '',
     location: contest?.location || '',
     imageUrl: contest?.imageUrl || contest?.image_url || '',
+    prize: contest?.prize || '',
     startDate: contest?.startDate ? new Date(contest.startDate) : contest?.start_date ? new Date(contest.start_date) : undefined,
     photoDeadline: contest?.photoDeadline ? new Date(contest.photoDeadline) : contest?.photo_deadline ? new Date(contest.photo_deadline) : undefined,
     endDate: contest?.endDate ? new Date(contest.endDate) : contest?.end_date ? new Date(contest.end_date) : undefined,
@@ -56,6 +58,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         description: contest.description || '',
         location: contest.location || '',
         imageUrl: contest.imageUrl || contest.image_url || '',
+        prize: contest.prize || '',
         startDate: contest.startDate ? new Date(contest.startDate) : contest.start_date ? new Date(contest.start_date) : undefined,
         photoDeadline: contest.photoDeadline ? new Date(contest.photoDeadline) : contest.photo_deadline ? new Date(contest.photo_deadline) : undefined,
         endDate: contest.endDate ? new Date(contest.endDate) : contest.end_date ? new Date(contest.end_date) : undefined,
@@ -76,6 +79,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         description: '',
         location: '',
         imageUrl: '',
+        prize: '',
         startDate: undefined,
         photoDeadline: undefined,
         endDate: undefined,
@@ -154,6 +158,16 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Describe el concurso, las reglas, los premios..."
                 rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="prize">Premio</Label>
+              <Input
+                id="prize"
+                value={formData.prize}
+                onChange={(e) => setFormData({ ...formData, prize: e.target.value })}
+                placeholder="Ej: 500€, Cámara profesional, Viaje a París..."
               />
             </div>
 
@@ -339,12 +353,12 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               </div>
             </div>
 
-            <div className="flex justify-end space-x-2 pt-4">
+            <div className="flex justify-end space-x-2 pt-4 border-t">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Guardando...' : (contest ? 'Actualizar' : 'Crear concurso')}
+                {isSubmitting ? 'Guardando...' : (contest ? 'Guardar cambios' : 'Crear concurso')}
               </Button>
             </div>
           </form>

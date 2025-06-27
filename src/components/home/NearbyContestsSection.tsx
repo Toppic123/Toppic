@@ -2,36 +2,20 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { MapPin, Camera, Navigation } from "lucide-react";
+import { Camera, Navigation } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const NearbyContestsSection = () => {
-  const [location, setLocation] = useState<string>("Madrid, España");
   const navigate = useNavigate();
 
   const handleViewContests = () => {
     navigate("/contests");
   };
 
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // In a real app, you would reverse geocode these coordinates
-          setLocation("Tu ubicación actual");
-        },
-        () => {
-          // Keep default location if geolocation fails
-          setLocation("Madrid, España");
-        }
-      );
-    }
-  }, []);
-
   return (
-    <section className="py-20 bg-gradient-to-br from-primary/5 via-secondary/10 to-primary/10 relative overflow-hidden">
+    <section className="py-20 bg-white relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
+      <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 bg-primary rounded-full blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-40 h-40 bg-secondary rounded-full blur-3xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-primary/20 rounded-full blur-3xl"></div>
@@ -85,7 +69,7 @@ const NearbyContestsSection = () => {
           </motion.h2>
           
           <motion.p 
-            className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -94,18 +78,6 @@ const NearbyContestsSection = () => {
             Descubre concursos de fotografía en tu área y participa desde tu ubicación actual. 
             ¡La aventura fotográfica te está esperando!
           </motion.p>
-          
-          {/* Location Display */}
-          <motion.div 
-            className="flex items-center justify-center gap-3 mb-10 bg-white/70 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-primary/20 inline-flex"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <MapPin className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-gray-800 text-lg">{location}</span>
-          </motion.div>
 
           {/* CTA Button */}
           <motion.div
@@ -117,7 +89,7 @@ const NearbyContestsSection = () => {
             <Button
               size="lg"
               onClick={handleViewContests}
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-12 py-6 text-xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl"
+              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-12 py-6 text-xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-primary/20 hover:border-primary/40"
             >
               <Camera className="mr-3 h-6 w-6" />
               CONCURSOS CERCA DE TI

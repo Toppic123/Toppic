@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { usePhotoComments } from "@/hooks/usePhotoComments";
 import { useAuth } from "@/contexts/AuthContext";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 
 interface PhotoCommentsProps {
   photoId: string;
@@ -168,7 +169,14 @@ const PhotoComments = ({ photoId, onClose, isEmbedded = false }: PhotoCommentsPr
                   </Avatar>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium">@{comment.username}</p>
+                      <div className="flex items-center gap-2">
+                        <ClickableUserProfile
+                          photographer={comment.username}
+                          photographerAvatar={comment.avatar_url}
+                          size="sm"
+                          showAvatar={false}
+                        />
+                      </div>
                       <div className="flex items-center space-x-2">
                         <span className="text-xs text-muted-foreground">
                           {formatTimestamp(comment.created_at)}

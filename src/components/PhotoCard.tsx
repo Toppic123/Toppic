@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
@@ -6,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ReportPhotoDialog from "@/components/ReportPhotoDialog";
 import ClickableUserProfile from "@/components/ClickableUserProfile";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 
 type PhotoCardProps = {
   id: string;
@@ -33,12 +35,15 @@ const PhotoCard = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [direction, setDirection] = useState<number>(0);
   const [lastTap, setLastTap] = useState<number>(0);
-  const [showActions, setShowActions] = useState(false);
+  const [showPhotoDialog, setShowPhotoDialog] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true, amount: 0.3 });
   const { toast } = useToast();
   
   const handleTapOrClick = () => {
+    if (mode === "grid") {
+      setShowPhotoDialog(true);
+    }
     const now = Date.now();
     setLastTap(now);
   };
@@ -188,65 +193,72 @@ const PhotoCard = ({
   }
   
   return (
-    <motion.div
-      ref={cardRef}
-      className="contest-card"
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
-      onMouseEnter={() => setShowActions(true)}
-      onMouseLeave={() => setShowActions(false)}
-    >
-      <div 
-        className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative group"
-        onClick={handleTapOrClick}
+    <>
+      <motion.div
+        ref={cardRef}
+        className="contest-card"
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <img
-          src={imageUrl}
-          alt={`Photo by ${photographer}`}
-          className={cn(
-            "contest-card-image",
-            imageLoaded ? "opacity-100" : "opacity-0"
-          )}
-          onLoad={() => setImageLoaded(true)}
-        />
-        
-        {/* Action overlay */}
-        <div className={cn(
-          "absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 transition-opacity",
-          (showActions || expanded) && "opacity-100"
-        )}>
-          <div className="flex gap-2">
-            <SocialShareButtons 
-              url={window.location.href}
-              title={`Photo by ${photographer}`}
-              imageUrl={imageUrl}
-            />
-            <ReportPhotoDialog photoId={id} />
-          </div>
+        <div 
+          className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative group cursor-pointer"
+          onClick={handleTapOrClick}
+        >
+          <img
+            src={imageUrl}
+            alt={`Photo by ${photographer}`}
+            className={cn(
+              "contest-card-image",
+              imageLoaded ? "opacity-100" : "opacity-0"
+            )}
+            onLoad={() => setImageLoaded(true)}
+          />
         </div>
-      </div>
-      
-      <div className="p-2">
-        <div className="flex items-center justify-between">
+        
+        <div className="p-2">
           <ClickableUserProfile
             photographer={photographer}
             photographerAvatar={photographerAvatar}
             size="sm"
           />
-          
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handleShare}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Share photo"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+
+      {/* Photo Detail Dialog */}
+      <Dialog open={showPhotoDialog} onOpenChange={setShowPhotoDialog}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden p-0">
+          <div className="relative w-full h-full bg-black flex flex-col">
+            <DialogClose className="absolute top-2 right-2 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80" />
+            
+            <div className="flex-1 overflow-hidden flex items-center justify-center p-4">
+              <img 
+                src={imageUrl} 
+                alt={`Foto de ${photographer}`} 
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            
+            <div className="bg-white w-full p-4 flex justify-between items-center">
+              <ClickableUserProfile
+                photographer={photographer}
+                photographerAvatar={photographerAvatar}
+                size="md"
+              />
+              
+              <div className="flex items-center gap-2">
+                <SocialShareButtons 
+                  url={window.location.href}
+                  title={`Photo by ${photographer}`}
+                  imageUrl={imageUrl}
+                />
+                <ReportPhotoDialog photoId={id} />
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
