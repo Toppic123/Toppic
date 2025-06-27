@@ -83,7 +83,10 @@ const ContestDetail = () => {
               {contest.isActive ? "Activo" : "Finalizado"}
             </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{contest.title}</h1>
-            <p className="text-lg opacity-90">{contest.description}</p>
+            {/* Show contest description if available */}
+            {contest.description && (
+              <p className="text-lg opacity-90 max-w-4xl">{contest.description}</p>
+            )}
           </div>
         </div>
       </div>

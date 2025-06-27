@@ -4,17 +4,17 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const prohibitedConductRules = [
-  "No uploading, copying or stealing any other Users' or individuals' work and/or Content.",
-  "Using the Services solely for personal, non-commercial purposes.",
-  "No reverse engineering, data-mining, scraping, exploiting or overloading our systems or software.",
-  "No replicating or copying any portion of our Services.",
-  "No using bots to use or access the Services.",
-  "Using the Services for lawful purposes only, and not breaking any local laws or regulations.",
-  "No using the Services to harm others, including but not limited to prohibited activities like spreading hate, engaging in any form of harassment or submitting harmful or inappropriate Content.",
-  "No using the Services to discriminate, incite or promote discrimination or violence based on sex, sexual orientation, age, race, religion, disability, nationality or ancestry or any other personal characteristic.",
-  "No promoting any other website, service or business via the Services.",
-  "Abiding by and adhering to any and all rules or policies.",
-  "No uploading or submitting content containing nudity or sexual activity, including photos, videos, and digitally-created content that show genitals, sexual intercourse, close-ups of fully-nude buttocks, or sexually explicit/suggestive material."
+  "No subir, copiar o robar el trabajo y/o contenido de otros usuarios o individuos.",
+  "Usar los servicios únicamente para fines personales y no comerciales.",
+  "No realizar ingeniería inversa, minería de datos, scraping, explotación o sobrecarga de nuestros sistemas o software.",
+  "No replicar o copiar ninguna parte de nuestros servicios.",
+  "No usar bots para usar o acceder a los servicios.",
+  "Usar los servicios únicamente para fines legales y no quebrantar leyes o regulaciones locales.",
+  "No usar los servicios para dañar a otros, incluyendo pero no limitándose a actividades prohibidas como difundir odio, participar en cualquier forma de acoso o enviar contenido dañino o inapropiado.",
+  "No usar los servicios para discriminar, incitar o promover discriminación o violencia basada en sexo, orientación sexual, edad, raza, religión, discapacidad, nacionalidad o ascendencia o cualquier otra característica personal.",
+  "No promover ningún otro sitio web, servicio o negocio a través de los servicios.",
+  "Cumplir y adherirse a todas las reglas o políticas.",
+  "No subir o enviar contenido que contenga desnudez o actividad sexual, incluyendo fotos, videos y contenido creado digitalmente que muestre genitales, relaciones sexuales, primeros planos de glúteos completamente desnudos, o material sexualmente explícito/sugestivo."
 ];
 
 interface ProhibitedConductProps {
@@ -28,19 +28,19 @@ const ProhibitedConduct = ({ compact = false }: ProhibitedConductProps) => {
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center">
             <Shield className="h-4 w-4 mr-2 text-destructive" />
-            Prohibited conduct
+            Conducta Prohibida
           </CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-muted-foreground">
           <p>
-            All users must comply with our prohibited conduct rules.
-            This includes not sharing inappropriate content, respecting the work of other users, 
-            and using the platform only for permitted purposes.
+            Todos los usuarios deben cumplir con nuestras reglas de conducta prohibida.
+            Esto incluye no compartir contenido inapropiado, respetar el trabajo de otros usuarios, 
+            y usar la plataforma solo para propósitos permitidos.
           </p>
           <Alert className="mt-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              Failing to comply with these rules may result in account suspension or termination.
+              El incumplimiento de estas reglas puede resultar en la suspensión o terminación de la cuenta.
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -52,15 +52,15 @@ const ProhibitedConduct = ({ compact = false }: ProhibitedConductProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-3">
         <Shield className="h-6 w-6 text-destructive" />
-        <h3 className="text-xl font-bold">Prohibited Conduct</h3>
+        <h3 className="text-xl font-bold">Conducta Prohibida</h3>
       </div>
       
       <Alert variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Important</AlertTitle>
+        <AlertTitle>Importante</AlertTitle>
         <AlertDescription>
-          By using the Services, you are solely responsible for all of your Account's activities 
-          and agree to not engage in the following prohibited user conduct ("Prohibited Conduct"):
+          Al usar los servicios, eres únicamente responsable de todas las actividades de tu cuenta 
+          y aceptas no participar en la siguiente conducta prohibida de usuario ("Conducta Prohibida"):
         </AlertDescription>
       </Alert>
       
@@ -76,9 +76,9 @@ const ProhibitedConduct = ({ compact = false }: ProhibitedConductProps) => {
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription className="text-sm">
-          If you fail to adhere to any of the provisions in our Prohibited Conduct policy, 
-          we may, in our sole discretion and without notice, delete any violating Content 
-          or suspend or terminate any violating User's Account.
+          Si no cumples con alguna de las disposiciones de nuestra política de Conducta Prohibida, 
+          podemos, a nuestra sola discreción y sin previo aviso, eliminar cualquier contenido que viole 
+          estas normas o suspender o terminar la cuenta de cualquier usuario que las incumpla.
         </AlertDescription>
       </Alert>
     </div>
