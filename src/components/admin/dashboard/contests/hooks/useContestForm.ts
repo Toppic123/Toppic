@@ -1,178 +1,144 @@
 
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { Contest } from "@/hooks/useContestsData";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 export interface ContestFormData {
   id?: string;
   title: string;
   organizer: string;
-  description: string;
   location: string;
+  description: string;
+  imageUrl: string;
+  prize: string;
   startDate: string;
   endDate: string;
   photoDeadline: string;
   status: "pending" | "active" | "finished";
-  maxParticipants: number;
-  imageUrl: string;
-  isPrivate?: boolean;
-  contestPassword?: string;
-  photoOwnership: boolean;
-  commercialUse: boolean;
-  minimumDistanceKm: number;
+  is_private: boolean;
+  contest_password?: string;
+  minimum_distance_km: number;
 }
 
-const defaultFormData: ContestFormData = {
-  title: "",
-  organizer: "",
-  description: "",
-  location: "",
-  startDate: "",
-  endDate: "",
-  photoDeadline: "",
-  status: "pending",
-  maxParticipants: 100,
-  imageUrl: "",
-  isPrivate: false,
-  contestPassword: "",
-  photoOwnership: true,
-  commercialUse: true,
-  minimumDistanceKm: 0,
-};
-
-export const useContestForm = (refreshContests: () => void) => {
-  const [formData, setFormData] = useState<ContestFormData>(defaultFormData);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+export const useContestForm = (onSuccess?: () => void) => {
   const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState<ContestFormData>({
+    title: "",
+    organizer: "",
+    location: "",
+    description: "",
+    imageUrl: "",
+    prize: "",
+    startDate: new Date().toISOString().slice(0, 16),
+    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+    photoDeadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+    status: "pending",
+    is_private: false,
+    minimum_distance_km: 0,
+  });
 
-  const handleEditContest = (contest: Contest) => {
-    console.log("Editing contest:", contest);
+  const handleCreateNewContest = () => {
     setFormData({
-      id: contest.id,
-      title: contest.title,
-      organizer: contest.organizer,
-      description: contest.description || "",
-      location: contest.location,
-      startDate: contest.startDate ? new Date(contest.startDate).toISOString().split('T')[0] : "",
-      endDate: contest.endDate ? new Date(contest.endDate).toISOString().split('T')[0] : "",
-      photoDeadline: contest.photoDeadline ? new Date(contest.photoDeadline).toISOString().split('T')[0] : "",
-      status: contest.status,
-      maxParticipants: contest.participants,
-      imageUrl: contest.imageUrl || "",
-      isPrivate: contest.is_private || false,
-      contestPassword: contest.contest_password || "",
-      photoOwnership: true,
-      commercialUse: true,
-      minimumDistanceKm: contest.minimum_distance_km || 0,
+      title: "",
+      organizer: "",
+      location: "",
+      description: "",
+      imageUrl: "",
+      prize: "",
+      startDate: new Date().toISOString().slice(0, 16),
+      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      photoDeadline: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      status: "pending",
+      is_private: false,
+      minimum_distance_km: 0,
     });
     setIsDialogOpen(true);
   };
 
-  const handleCreateNewContest = () => {
-    setFormData(defaultFormData);
+  const handleEditContest = (contest: Contest) => {
+    setFormData({
+      id: contest.id,
+      title: contest.title,
+      organizer: contest.organizer,
+      location: contest.location,
+      description: contest.description || "",
+      imageUrl: contest.imageUrl || "",
+      prize: contest.prize || "",
+      startDate: contest.startDate ? new Date(contest.startDate).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+      endDate: contest.endDate ? new Date(contest.endDate).toISOString().slice(0, 16) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      photoDeadline: contest.photoDeadline ? new Date(contest.photoDeadline).toISOString().slice(0, 16) : new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      status: contest.status,
+      is_private: contest.is_private || false,
+      contest_password: contest.contest_password || "",
+      minimum_distance_km: contest.minimum_distance_km || 0,
+    });
     setIsDialogOpen(true);
   };
 
-  const handleFormChange = (newData: Partial<ContestFormData>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
-  };
-
-  const handleSaveChanges = async (imageFile?: File) => {
+  const handleSaveChanges = async (data: ContestFormData) => {
     try {
-      let imageUrl = formData.imageUrl;
-      
-      // Upload image if provided
-      if (imageFile) {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `contest-${Date.now()}.${fileExt}`;
-        const filePath = `contest-images/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('contest-images')
-          .upload(filePath, imageFile);
-
-        if (uploadError) {
-          console.error('Error uploading image:', uploadError);
-          toast({
-            title: "Error al subir imagen",
-            description: uploadError.message,
-            variant: "destructive",
-          });
-          return;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('contest-images')
-          .getPublicUrl(filePath);
-
-        imageUrl = publicUrl;
-      }
-
-      const contestData = {
-        title: formData.title,
-        organizer: formData.organizer,
-        description: formData.description,
-        location: formData.location,
-        start_date: formData.startDate ? new Date(formData.startDate).toISOString() : null,
-        end_date: formData.endDate ? new Date(formData.endDate).toISOString() : null,
-        photo_deadline: formData.photoDeadline ? new Date(formData.photoDeadline).toISOString() : null,
-        status: formData.status,
-        participants: formData.maxParticipants,
-        image_url: imageUrl,
-        is_private: formData.isPrivate,
-        contest_password: formData.contestPassword,
-        photo_ownership: formData.photoOwnership,
-        commercial_use: formData.commercialUse,
-        minimum_distance_km: formData.minimumDistanceKm,
-      };
-
-      let result;
-      
-      if (formData.id) {
-        // Update existing contest
-        console.log("Updating contest with ID:", formData.id, "Data:", contestData);
-        result = await supabase
+      if (data.id) {
+        // Editar concurso existente
+        const { error } = await supabase
           .from('contests')
-          .update(contestData)
-          .eq('id', formData.id)
-          .select();
+          .update({
+            title: data.title,
+            organizer: data.organizer,
+            location: data.location,
+            description: data.description,
+            image_url: data.imageUrl,
+            start_date: data.startDate,
+            end_date: data.endDate,
+            photo_deadline: data.photoDeadline,
+            status: data.status,
+            is_private: data.is_private,
+            contest_password: data.contest_password,
+            minimum_distance_km: data.minimum_distance_km,
+          })
+          .eq('id', data.id);
+
+        if (error) throw error;
+
+        toast({
+          title: "Concurso actualizado",
+          description: "Los datos del concurso se han actualizado correctamente.",
+        });
       } else {
-        // Create new contest
-        console.log("Creating new contest with data:", contestData);
-        result = await supabase
+        // Crear nuevo concurso
+        const { error } = await supabase
           .from('contests')
-          .insert(contestData)
-          .select();
-      }
+          .insert({
+            title: data.title,
+            organizer: data.organizer,
+            location: data.location,
+            description: data.description,
+            image_url: data.imageUrl,
+            start_date: data.startDate,
+            end_date: data.endDate,
+            photo_deadline: data.photoDeadline,
+            status: data.status,
+            is_private: data.is_private,
+            contest_password: data.contest_password,
+            minimum_distance_km: data.minimum_distance_km,
+          });
 
-      const { data, error } = result;
+        if (error) throw error;
 
-      if (error) {
-        console.error('Error saving contest:', error);
         toast({
-          title: "Error al guardar concurso",
-          description: error.message,
-          variant: "destructive",
+          title: "Concurso creado",
+          description: "El concurso se ha creado correctamente.",
         });
-        return;
       }
 
-      if (data && data.length > 0) {
-        toast({
-          title: formData.id ? "Concurso actualizado" : "Concurso creado",
-          description: formData.id ? "El concurso ha sido actualizado correctamente." : "El concurso ha sido creado correctamente.",
-        });
-        
-        setIsDialogOpen(false);
-        setFormData(defaultFormData);
-        refreshContests();
-      }
-    } catch (error) {
-      console.error('Error in handleSaveChanges:', error);
+      setIsDialogOpen(false);
+      onSuccess?.();
+    } catch (error: any) {
+      console.error('Error saving contest:', error);
       toast({
-        title: "Error",
-        description: "Ha ocurrido un error inesperado.",
+        title: "Error al guardar",
+        description: error.message || "Ha ocurrido un error al guardar el concurso.",
         variant: "destructive",
       });
     }
@@ -184,7 +150,6 @@ export const useContestForm = (refreshContests: () => void) => {
     setIsDialogOpen,
     handleEditContest,
     handleCreateNewContest,
-    handleFormChange,
-    handleSaveChanges,
+    handleSaveChanges
   };
 };

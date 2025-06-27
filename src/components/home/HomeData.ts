@@ -1,7 +1,7 @@
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images - Updated with gastronomic dish replacing music studio
+// Hero section carousel images - Updated with high-end gourmet gastronomic dish
 export const heroImages = [
   {
     url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
@@ -16,8 +16,8 @@ export const heroImages = [
     category: "Torre Eiffel París"
   },
   {
-    url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2274&q=80",
-    category: "Plato gastronómico elegante"
+    url: "https://images.unsplash.com/photo-1574484284002-952d92456975?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Alta cocina gourmet exclusiva"
   }
 ];
 

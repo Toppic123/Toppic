@@ -1,341 +1,62 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, MapPin, Calendar, Users, Trophy, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
-import { useFeaturedContests } from "@/hooks/useFeaturedContests";
+import { MapPin, Camera } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const NearbyContestsSection = () => {
-  const { featuredContests, isLoading } = useFeaturedContests();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showNearbyContests, setShowNearbyContests] = useState(false);
+  const [location, setLocation] = useState<string>("Madrid, España");
+  const navigate = useNavigate();
 
-  // Filter only active featured contests and get contest data
-  const activeContests = featuredContests
-    .filter(featured => featured.is_active && featured.contests)
-    .map(featured => featured.contests!)
-    .filter(contest => contest.status === 'active');
-
-  const nextSlide = () => {
-    if (activeContests.length > 0) {
-      setCurrentIndex((prev) => (prev + 1) % activeContests.length);
-    }
+  const handleViewContests = () => {
+    navigate("/contests");
   };
 
-  const prevSlide = () => {
-    if (activeContests.length > 0) {
-      setCurrentIndex((prev) => (prev - 1 + activeContests.length) % activeContests.length);
-    }
-  };
-
-  // Auto-advance slides
   useEffect(() => {
-    if (activeContests.length > 1) {
-      const interval = setInterval(nextSlide, 5000);
-      return () => clearInterval(interval);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // In a real app, you would reverse geocode these coordinates
+          setLocation("Tu ubicación actual");
+        },
+        () => {
+          // Keep default location if geolocation fails
+          setLocation("Madrid, España");
+        }
+      );
     }
-  }, [activeContests.length]);
-
-  if (isLoading) {
-    return (
-      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-yellow-50">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center">
-            <p>Cargando concursos activos...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  }, []);
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-yellow-50 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 to-yellow-100/20"></div>
-      <div className="absolute top-10 left-10 w-32 h-32 bg-blue-200/30 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-10 right-10 w-40 h-40 bg-yellow-200/30 rounded-full blur-3xl"></div>
-      
-      <div className="container max-w-7xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <div className="flex items-center justify-center mb-6">
-            <motion.div
-              animate={{ 
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            >
-              <Sparkles className="w-8 h-8 text-yellow-500 mr-3" />
-            </motion.div>
-            <h2 className="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-yellow-600 bg-clip-text text-transparent">
-              CONCURSOS ACTIVOS
-            </h2>
-            <motion.div
-              animate={{ 
-                rotate: [0, -10, 10, 0],
-                scale: [1, 1.1, 1]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "reverse",
-                delay: 0.5
-              }}
-            >
-              <Trophy className="w-8 h-8 text-yellow-500 ml-3" />
-            </motion.div>
-          </div>
-          
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: "200px" }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="h-2 bg-gradient-to-r from-blue-500 to-yellow-500 rounded-full mx-auto mb-6"
-          ></motion.div>
-          
-          <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto font-medium leading-relaxed">
-            🎯 Participa en los concursos destacados seleccionados por nuestros administradores
-          </p>
-        </motion.div>
-
-        {/* Enhanced Nearby Contests Button */}
+    <section className="py-16 bg-gradient-to-r from-primary/10 to-secondary/10">
+      <div className="container mx-auto px-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-16 text-center px-4"
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
         >
-          <motion.div
-            whileHover={{ 
-              scale: 1.05,
-              transition: { duration: 0.2 }
-            }}
-            whileTap={{ scale: 0.95 }}
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Concursos cerca de ti
+          </h2>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Descubre concursos de fotografía en tu área y participa desde tu ubicación actual
+          </p>
+          
+          <div className="flex items-center justify-center gap-2 mb-8 text-gray-700">
+            <MapPin className="h-5 w-5 text-primary" />
+            <span className="font-medium">{location}</span>
+          </div>
+
+          <Button
+            size="lg"
+            onClick={handleViewContests}
+            className="bg-primary hover:bg-primary/80 text-white px-8 py-4 text-lg font-semibold transition-colors duration-200"
           >
-            <Button 
-              asChild
-              className="relative overflow-hidden bg-gradient-to-r from-[#F0C14B] via-[#FFD700] to-[#F0C14B] hover:from-[#E6B84A] hover:to-[#F0C14B] text-black font-bold px-12 md:px-16 py-6 md:py-8 rounded-full shadow-2xl text-lg md:text-2xl border-4 border-yellow-300 hover:border-yellow-400 transition-all duration-300 max-w-full break-words animate-pulse"
-              style={{
-                background: 'linear-gradient(135deg, #F0C14B 0%, #FFD700 50%, #F0C14B 100%)',
-                boxShadow: '0 10px 30px rgba(240, 193, 75, 0.4), 0 0 20px rgba(255, 215, 0, 0.3)'
-              }}
-            >
-              <Link to="/contests">
-                {/* Enhanced shine effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full"
-                  whileHover={{
-                    translateX: "200%",
-                    transition: { duration: 0.8, ease: "easeInOut" }
-                  }}
-                />
-                <MapPin className="w-6 h-6 md:w-8 md:h-8 mr-3 md:mr-4 flex-shrink-0" />
-                <span className="font-black tracking-widest text-lg md:text-2xl whitespace-nowrap drop-shadow-sm">
-                  🌟 CONCURSOS CERCA DE TI 🌟
-                </span>
-              </Link>
-            </Button>
-          </motion.div>
+            <Camera className="mr-2 h-5 w-5" />
+            CONCURSOS CERCA DE TI
+          </Button>
         </motion.div>
-
-        {/* Nearby Contests Grid */}
-        {showNearbyContests && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-16"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeContests.slice(0, 3).map((contest) => (
-                <Card key={contest.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="aspect-video relative">
-                    <img
-                      src={contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`}
-                      alt={contest.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <Badge className="bg-green-500 text-white">
-                        Activo
-                      </Badge>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-bold mb-2">{contest.title}</h3>
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span>{contest.location}</span>
-                      </div>
-                      <div className="flex items-center text-gray-600 text-sm">
-                        <Users className="h-4 w-4 mr-2" />
-                        <span>Organizado por {contest.organizer}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button asChild size="sm" className="flex-1">
-                        <Link to={`/contests/${contest.id}`}>
-                          Ver Detalles
-                        </Link>
-                      </Button>
-                      <Button asChild variant="outline" size="sm" className="flex-1">
-                        <Link to="/upload">
-                          Participar
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {activeContests.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center"
-          >
-            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-              <Link to="/contests">
-                Explorar Todos los Concursos
-              </Link>
-            </Button>
-          </motion.div>
-        ) : (
-          <>
-            <div className="relative">
-              {/* Contest Cards Slider */}
-              <div className="overflow-hidden">
-                <motion.div
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-                >
-                  {activeContests.map((contest, index) => (
-                    <div key={contest.id} className="w-full flex-shrink-0 px-4">
-                      <Card className="max-w-4xl mx-auto overflow-hidden shadow-xl">
-                        <div className="md:flex">
-                          <div className="md:w-1/2">
-                            <img
-                              src={contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600`}
-                              alt={contest.title}
-                              className="w-full h-64 md:h-full object-cover"
-                            />
-                          </div>
-                          <CardContent className="md:w-1/2 p-8">
-                            <div className="flex items-center mb-4">
-                              <Badge className="bg-green-500 text-white mr-3">
-                                Activo
-                              </Badge>
-                              <Badge variant="outline" className="bg-yellow-50 text-yellow-800 border-yellow-200">
-                                <Trophy className="h-3 w-3 mr-1" />
-                                Destacado
-                              </Badge>
-                            </div>
-                            
-                            <h3 className="text-2xl font-bold mb-4">{contest.title}</h3>
-                            <p className="text-gray-600 mb-6">
-                              Organizado por {contest.organizer}
-                            </p>
-
-                            <div className="space-y-3 mb-6">
-                              <div className="flex items-center text-gray-600">
-                                <MapPin className="h-4 w-4 mr-2" />
-                                <span>{contest.location}</span>
-                              </div>
-                              <div className="flex items-center text-gray-600">
-                                <Users className="h-4 w-4 mr-2" />
-                                <span>Participantes esperados</span>
-                              </div>
-                            </div>
-
-                            <div className="flex gap-3">
-                              <Button asChild className="flex-1">
-                                <Link to={`/contests/${contest.id}`}>
-                                  Ver Detalles
-                                </Link>
-                              </Button>
-                              <Button asChild variant="outline" className="flex-1">
-                                <Link to="/upload">
-                                  Participar
-                                </Link>
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </div>
-                      </Card>
-                    </div>
-                  ))}
-                </motion.div>
-              </div>
-
-              {/* Navigation buttons */}
-              {activeContests.length > 1 && (
-                <>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg z-10"
-                    onClick={prevSlide}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 hover:bg-white shadow-lg z-10"
-                    onClick={nextSlide}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </>
-              )}
-
-              {/* Dots indicator */}
-              {activeContests.length > 1 && (
-                <div className="flex justify-center mt-8 space-x-2">
-                  {activeContests.map((_, index) => (
-                    <button
-                      key={index}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        index === currentIndex ? 'bg-blue-600' : 'bg-gray-300'
-                      }`}
-                      onClick={() => setCurrentIndex(index)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-center mt-12"
-            >
-              <Button asChild size="lg" variant="outline">
-                <Link to="/contests">
-                  Ver Todos los Concursos
-                </Link>
-              </Button>
-            </motion.div>
-          </>
-        )}
       </div>
     </section>
   );

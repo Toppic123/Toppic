@@ -114,8 +114,10 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
                     <p className="text-sm text-muted-foreground mt-1">
                       Concurso: {selectedPhoto.contestName || 'Sin especificar'}
                     </p>
+                    {/* Nombre clicable del propietario en el modal */}
                     {selectedPhoto.photographer && (
                       <div className="mt-2">
+                        <p className="text-xs text-muted-foreground mb-1">Fotógrafo:</p>
                         <ClickableUserProfile 
                           photographer={selectedPhoto.photographer}
                           photographerAvatar={selectedPhoto.photographerAvatar}
