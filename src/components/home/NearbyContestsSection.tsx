@@ -73,13 +73,35 @@ const NearbyContestsSection = () => {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-16 text-center"
         >
-          <Button 
-            onClick={() => setShowNearbyContests(!showNearbyContests)}
-            className="bg-[#F0C14B] hover:bg-[#F0C14B]/90 text-black font-medium px-8 py-4 rounded-full shadow-lg text-lg"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <MapPin className="w-5 h-5 mr-2" />
-            CONCURSOS CERCA DE TI
-          </Button>
+            <Button 
+              onClick={() => setShowNearbyContests(!showNearbyContests)}
+              className="bg-gradient-to-r from-[#F0C14B] to-[#FFD700] hover:from-[#F0C14B]/90 hover:to-[#FFD700]/90 text-black font-bold px-12 py-6 rounded-full shadow-xl text-xl border-2 border-yellow-300 hover:border-yellow-400 transition-all duration-300"
+              style={{
+                background: 'linear-gradient(135deg, #F0C14B 0%, #FFD700 100%)',
+                boxShadow: '0 10px 30px rgba(240, 193, 75, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+              }}
+            >
+              <motion.div
+                animate={{ 
+                  rotate: [0, 5, -5, 0],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+                className="flex items-center"
+              >
+                <MapPin className="w-6 h-6 mr-3" />
+                <span className="font-extrabold tracking-wide">CONCURSOS CERCA DE TI</span>
+              </motion.div>
+            </Button>
+          </motion.div>
         </motion.div>
 
         {/* Nearby Contests Grid */}
@@ -90,7 +112,7 @@ const NearbyContestsSection = () => {
             transition={{ duration: 0.5 }}
             className="mb-16"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeContests.slice(0, 3).map((contest) => (
                 <Card key={contest.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                   <div className="aspect-video relative">
@@ -132,14 +154,6 @@ const NearbyContestsSection = () => {
                   </CardContent>
                 </Card>
               ))}
-            </div>
-            
-            <div className="text-center">
-              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-                <Link to="/contests">
-                  EXPLORAR CONCURSOS
-                </Link>
-              </Button>
             </div>
           </motion.div>
         )}

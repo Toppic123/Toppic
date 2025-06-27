@@ -36,7 +36,7 @@ const staticWinningPhotos = [
   {
     id: "w3",
     imageUrl: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Momento Especial",
+    title: "Bodorrio",
     photographer: "Ana Martínez",
     photographerAvatar: "https://randomuser.me/api/portraits/women/25.jpg",
     contestName: "Bodas y Celebraciones",
