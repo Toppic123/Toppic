@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Camera, Trophy, User, Heart, Filter, Share2, X, Instagram } from "lucide-react";
 import { motion } from "framer-motion";
@@ -69,14 +68,14 @@ const winningPhotos = [
   },
   {
     id: "w6",
-    imageUrl: "https://images.unsplash.com/photo-1533105079780-92b9be482077?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=768&q=80",
-    title: "Arquitectura Moderna",
-    photographer: "David García",
+    imageUrl: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&auto=format&fit=crop&q=60",
+    title: "Momento Especial",
+    photographer: "Javier Acosta",
     photographerAvatar: "https://randomuser.me/api/portraits/men/22.jpg",
-    contestName: "Líneas y Formas",
+    contestName: "Celebraciones",
     likes: 387,
     date: "2023-09-05",
-    category: "urban"
+    category: "event"
   },
   {
     id: "w7",

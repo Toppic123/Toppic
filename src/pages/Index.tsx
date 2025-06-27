@@ -19,7 +19,7 @@ const Index = () => {
     >
       <HeroSection heroImages={heroImages} texts={homeTexts} />
       <PopularContestsSection contests={popularContests} texts={homeTexts} />
-      <NearbyContestsSection texts={homeTexts} />
+      <NearbyContestsSection />
       <HowItWorksSection texts={homeTexts} />
       <WinningGallerySection />
       <OrganizerSection texts={homeTexts} />

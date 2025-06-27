@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { useFeaturedContests } from "@/hooks/useFeaturedContests";
+import NearbyMap from "@/components/Map";
 
 const NearbyContestsSection = () => {
   const { featuredContests, isLoading } = useFeaturedContests();
@@ -88,6 +89,25 @@ const NearbyContestsSection = () => {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Participa en los concursos destacados seleccionados por nuestros administradores
           </p>
+        </motion.div>
+
+        {/* Map Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-16"
+        >
+          <div className="relative h-[40vh] w-full rounded-lg overflow-hidden border border-border shadow-lg">
+            <div className="absolute z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <Button 
+                className="flex items-center justify-center bg-[#F0C14B] hover:bg-[#F0C14B]/90 text-black font-medium px-6 py-3 rounded-full shadow-lg"
+              >
+                <span>Concursos cercanos</span>
+              </Button>
+            </div>
+            <NearbyMap />
+          </div>
         </motion.div>
 
         <div className="relative">
