@@ -7,11 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { useFeaturedContests } from "@/hooks/useFeaturedContests";
-import NearbyMap from "@/components/Map";
 
 const NearbyContestsSection = () => {
   const { featuredContests, isLoading } = useFeaturedContests();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showNearbyContests, setShowNearbyContests] = useState(false);
 
   // Filter only active featured contests and get contest data
   const activeContests = featuredContests
@@ -66,24 +66,83 @@ const NearbyContestsSection = () => {
           </p>
         </motion.div>
 
-        {/* Map Section */}
+        {/* Nearby Contests Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-16"
+          className="mb-16 text-center"
         >
-          <div className="relative h-[40vh] w-full rounded-lg overflow-hidden border border-border shadow-lg">
-            <div className="absolute z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              <Button 
-                className="flex items-center justify-center bg-[#F0C14B] hover:bg-[#F0C14B]/90 text-black font-medium px-6 py-3 rounded-full shadow-lg"
-              >
-                <span>Concursos cercanos</span>
+          <Button 
+            onClick={() => setShowNearbyContests(!showNearbyContests)}
+            className="bg-[#F0C14B] hover:bg-[#F0C14B]/90 text-black font-medium px-8 py-4 rounded-full shadow-lg text-lg"
+          >
+            <MapPin className="w-5 h-5 mr-2" />
+            CONCURSOS CERCA DE TI
+          </Button>
+        </motion.div>
+
+        {/* Nearby Contests Grid */}
+        {showNearbyContests && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-16"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {activeContests.slice(0, 3).map((contest) => (
+                <Card key={contest.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="aspect-video relative">
+                    <img
+                      src={contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`}
+                      alt={contest.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <Badge className="bg-green-500 text-white">
+                        Activo
+                      </Badge>
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <h3 className="text-lg font-bold mb-2">{contest.title}</h3>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        <span>{contest.location}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <Users className="h-4 w-4 mr-2" />
+                        <span>Organizado por {contest.organizer}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button asChild size="sm" className="flex-1">
+                        <Link to={`/contests/${contest.id}`}>
+                          Ver Detalles
+                        </Link>
+                      </Button>
+                      <Button asChild variant="outline" size="sm" className="flex-1">
+                        <Link to="/upload">
+                          Participar
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            
+            <div className="text-center">
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+                <Link to="/contests">
+                  EXPLORAR CONCURSOS
+                </Link>
               </Button>
             </div>
-            <NearbyMap />
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
         {activeContests.length === 0 ? (
           <motion.div
