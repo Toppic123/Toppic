@@ -10,9 +10,49 @@ import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 
+// Static photos with the corrected wedding photo
+const staticWinningPhotos = [
+  {
+    id: "w1",
+    imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Valle del Amanecer",
+    photographer: "Carlos Montoya",
+    photographerAvatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    contestName: "Paisajes Naturales 2023",
+    likes: 542,
+    date: "2023-05-15",
+    category: "nature"
+  },
+  {
+    id: "w2",
+    imageUrl: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    title: "Reflejos Urbanos",
+    photographer: "María Sánchez",
+    photographerAvatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    contestName: "Fotografía Urbana",
+    likes: 478,
+    date: "2023-07-22",
+    category: "urban"
+  },
+  {
+    id: "w3",
+    imageUrl: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?ixlib=rb-4.0.3&auto=format&fit=crop&w=2965&q=80",
+    title: "Momento Especial",
+    photographer: "Ana Martínez",
+    photographerAvatar: "https://randomuser.me/api/portraits/women/25.jpg",
+    contestName: "Bodas y Celebraciones",
+    likes: 624,
+    date: "2023-08-12",
+    category: "wedding"
+  }
+];
+
 const WinningGallerySection = () => {
-  const { photos: winningPhotos, loading: isLoading } = useWinningPhotos();
+  const { photos: dbPhotos, loading: isLoading } = useWinningPhotos();
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+
+  // Use database photos if available, otherwise use static photos
+  const winningPhotos = dbPhotos && dbPhotos.length > 0 ? dbPhotos : staticWinningPhotos;
 
   if (isLoading) {
     return (

@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { User, Mail, Building } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { User, Mail, Building, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface RegistrationDialogProps {
@@ -18,20 +19,30 @@ const RegistrationDialog = ({ open, onOpenChange }: RegistrationDialogProps) => 
   const [organizerName, setOrganizerName] = useState("");
   const [organizerEmail, setOrganizerEmail] = useState("");
   const [organizerCompany, setOrganizerCompany] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState("");
+
+  const plans = [
+    { value: "basico", label: "Básico - €89", description: "Hasta 300 participantes" },
+    { value: "profesional", label: "Profesional - €119", description: "Hasta 700 participantes" },
+    { value: "premium", label: "Premium - €159", description: "Participantes ilimitados" }
+  ];
 
   const handleOrganizerRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRegistering(true);
 
+    // Simulate sending to admin panel or email
     setTimeout(() => {
       toast({
         title: "Registro exitoso",
-        description: "Tu solicitud como organizador ha sido enviada. Te contactaremos pronto.",
+        description: `Tu solicitud como organizador con el plan ${selectedPlan} ha sido enviada. Las solicitudes se revisan en el panel de administración y también recibirás un email de confirmación.`,
+        duration: 5000,
       });
       setIsRegistering(false);
       setOrganizerName("");
       setOrganizerEmail("");
       setOrganizerCompany("");
+      setSelectedPlan("");
       onOpenChange(false);
     }, 2000);
   };
@@ -86,9 +97,33 @@ const RegistrationDialog = ({ open, onOpenChange }: RegistrationDialogProps) => 
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isRegistering}>
+          <div className="space-y-2">
+            <Label htmlFor="plan-select" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Plan seleccionado
+            </Label>
+            <Select value={selectedPlan} onValueChange={setSelectedPlan} required>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona un plan" />
+              </SelectTrigger>
+              <SelectContent>
+                {plans.map((plan) => (
+                  <SelectItem key={plan.value} value={plan.value}>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{plan.label}</span>
+                      <span className="text-xs text-muted-foreground">{plan.description}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button type="submit" className="w-full" disabled={isRegistering || !selectedPlan}>
             {isRegistering ? "Enviando solicitud..." : "Enviar Solicitud"}
           </Button>
+          <p className="text-xs text-muted-foreground text-center">
+            Tu solicitud será revisada por nuestro equipo. Recibirás una confirmación por email y podrás seguir el estado en el panel de administración.
+          </p>
         </form>
       </DialogContent>
     </Dialog>

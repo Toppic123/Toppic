@@ -2,16 +2,13 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Trophy, MessageSquare, Star, Flag, Image } from "lucide-react";
+import { Users, Trophy, MessageSquare, Image } from "lucide-react";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
 import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
 import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 import GalleryManager from "@/components/admin/GalleryManager";
-import PhotoReportsManagement from "@/components/admin/dashboard/PhotoReportsManagement";
-import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
-import FeaturedGalleryManagement from "@/components/admin/dashboard/FeaturedGalleryManagement";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
@@ -29,18 +26,10 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-6 overflow-x-auto">
             <TabsTrigger value="contests" className="flex items-center gap-2 whitespace-nowrap">
               <Trophy className="h-4 w-4" />
               <span className="hidden sm:inline">Concursos</span>
-            </TabsTrigger>
-            <TabsTrigger value="featured" className="flex items-center gap-2 whitespace-nowrap">
-              <Star className="h-4 w-4" />
-              <span className="hidden sm:inline">Destacados</span>
-            </TabsTrigger>
-            <TabsTrigger value="featured-gallery" className="flex items-center gap-2 whitespace-nowrap">
-              <Image className="h-4 w-4" />
-              <span className="hidden sm:inline">Galería</span>
             </TabsTrigger>
             <TabsTrigger value="organizers" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
@@ -49,10 +38,6 @@ const AdminDashboard = () => {
             <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Usuarios</span>
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2 whitespace-nowrap">
-              <Flag className="h-4 w-4" />
-              <span className="hidden sm:inline">Reportes</span>
             </TabsTrigger>
             <TabsTrigger value="gallery" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />
@@ -82,34 +67,6 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="featured" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Concursos Destacados</CardTitle>
-                <CardDescription>
-                  Gestiona qué concursos aparecen destacados en la página principal
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FeaturedContestsManagement />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="featured-gallery" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Galería Destacada</CardTitle>
-                <CardDescription>
-                  Gestiona las fotos que aparecen en la galería destacada
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FeaturedGalleryManagement />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
           <TabsContent value="organizers" className="mt-6">
             <Card>
               <CardHeader>
@@ -134,20 +91,6 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <UserManagement />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="reports" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Reportes de Fotos</CardTitle>
-                <CardDescription>
-                  Revisa y gestiona los reportes de contenido inapropiado
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PhotoReportsManagement />
               </CardContent>
             </Card>
           </TabsContent>
