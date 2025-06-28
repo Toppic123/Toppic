@@ -24,24 +24,17 @@ const ContestCard = ({
   participantsCount,
   photosCount,
 }: ContestCardProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  // Default fallback image for contests
-  const defaultImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=225&fit=crop&auto=format";
+  // Use a single fallback image
+  const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=225&fit=crop";
   
   const handleImageError = () => {
     setImageError(true);
-    setImageLoaded(true);
   };
   
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-    setImageError(false);
-  };
-  
-  // Use fallback image if original fails or is empty
-  const displayImage = imageError || !imageUrl || imageUrl.trim() === '' ? defaultImage : imageUrl;
+  // Use original image if available and no error, otherwise use fallback
+  const displayImage = (!imageUrl || imageError) ? fallbackImage : imageUrl;
   
   return (
     <motion.div
@@ -56,21 +49,10 @@ const ContestCard = ({
           <div className="aspect-[16/9] bg-muted overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-70 transition-opacity group-hover:opacity-90" />
             
-            {/* Loading placeholder */}
-            {!imageLoaded && (
-              <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-                <ImageIcon className="w-12 h-12 text-gray-400" />
-              </div>
-            )}
-            
             <img
               src={displayImage}
               alt={title}
-              className={cn(
-                "w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105",
-                imageLoaded ? "opacity-100" : "opacity-0"
-              )}
-              onLoad={handleImageLoad}
+              className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
               onError={handleImageError}
             />
           </div>

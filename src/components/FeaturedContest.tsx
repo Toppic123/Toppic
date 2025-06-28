@@ -1,9 +1,9 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Camera, User, ArrowRight, FileText, ImageIcon } from "lucide-react";
+import { Calendar, MapPin, Camera, User, ArrowRight, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 type FeaturedContestProps = {
   id: string;
@@ -28,24 +28,17 @@ const FeaturedContest = ({
   participantsCount,
   photosCount,
 }: FeaturedContestProps) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   
-  // Default fallback image for featured contests
-  const defaultImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop&auto=format";
+  // Use a single fallback image
+  const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
   
   const handleImageError = () => {
     setImageError(true);
-    setImageLoaded(true);
   };
   
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-    setImageError(false);
-  };
-  
-  // Use fallback image if original fails or is empty
-  const displayImage = imageError || !imageUrl || imageUrl.trim() === '' ? defaultImage : imageUrl;
+  // Use original image if available and no error, otherwise use fallback
+  const displayImage = (!imageUrl || imageError) ? fallbackImage : imageUrl;
   
   return (
     <div className="relative w-full min-h-[70vh] overflow-hidden">
@@ -53,21 +46,10 @@ const FeaturedContest = ({
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/95 to-transparent z-10" />
         
-        {/* Loading placeholder for background */}
-        {!imageLoaded && (
-          <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
-            <ImageIcon className="w-24 h-24 text-gray-400" />
-          </div>
-        )}
-        
         <img
           src={displayImage}
           alt={title}
-          className={cn(
-            "w-full h-full object-cover scale-105 blur-sm opacity-40 transition-opacity duration-1000",
-            imageLoaded ? "opacity-40" : "opacity-0"
-          )}
-          onLoad={handleImageLoad}
+          className="w-full h-full object-cover scale-105 blur-sm opacity-40"
           onError={handleImageError}
         />
       </div>
@@ -85,22 +67,11 @@ const FeaturedContest = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.4 }}
             className="mb-8 relative"
-          >
-            {/* Loading placeholder for main image */}
-            {!imageLoaded && (
-              <div className="w-full max-w-4xl h-[50vh] bg-gray-200 rounded-2xl shadow-2xl mx-auto animate-pulse flex items-center justify-center">
-                <ImageIcon className="w-16 h-16 text-gray-400" />
-              </div>
-            )}
-            
+          >            
             <img
               src={displayImage}
               alt={title}
-              className={cn(
-                "w-full max-w-4xl h-[50vh] object-cover rounded-2xl shadow-2xl mx-auto transition-opacity duration-700",
-                imageLoaded ? "opacity-100" : "opacity-0"
-              )}
-              onLoad={handleImageLoad}
+              className="w-full max-w-4xl h-[50vh] object-cover rounded-2xl shadow-2xl mx-auto"
               onError={handleImageError}
             />
           </motion.div>
