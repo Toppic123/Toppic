@@ -1,112 +1,143 @@
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/contexts/AuthContext";
-import { Navigate } from "react-router-dom";
-import UserManagement from "@/components/admin/dashboard/UserManagement";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, Trophy, MessageSquare, Image } from "lucide-react";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
-import PhotoReportsManagement from "@/components/admin/dashboard/PhotoReportsManagement";
+import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
+import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
-import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
-import FeaturedGalleryManagement from "@/components/admin/dashboard/FeaturedGalleryManagement";
-import { BannerManagement } from "@/components/dashboard/banners/BannerManagement";
+import BannerManagement from "@/components/dashboard/banners/BannerManagement";
+import GalleryManager from "@/components/admin/GalleryManager";
+import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
-  const { user, userRole } = useAuth();
-  const [activeTab, setActiveTab] = useState("overview");
-
-  // Redirect if not admin
-  if (!user || userRole !== 'admin') {
-    return <Navigate to="/login" replace />;
-  }
+  const [activeTab, setActiveTab] = useState("contests");
+  const { toast } = useToast();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Panel de Administración</h1>
-        <p className="text-muted-foreground">Gestiona usuarios, concursos y contenido de la plataforma</p>
+    <div className="min-h-screen bg-background pt-20">
+      <div className="container max-w-7xl mx-auto p-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Panel de Administración</h1>
+          <p className="text-muted-foreground">
+            Gestiona concursos, usuarios y configuraciones de la plataforma
+          </p>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-6 overflow-x-auto">
+            <TabsTrigger value="contests" className="flex items-center gap-2 whitespace-nowrap">
+              <Trophy className="h-4 w-4" />
+              <span className="hidden sm:inline">Concursos</span>
+            </TabsTrigger>
+            <TabsTrigger value="organizers" className="flex items-center gap-2 whitespace-nowrap">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Organizadores</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Usuarios</span>
+            </TabsTrigger>
+            <TabsTrigger value="gallery" className="flex items-center gap-2 whitespace-nowrap">
+              <Image className="h-4 w-4" />
+              <span className="hidden sm:inline">Fotos</span>
+            </TabsTrigger>
+            <TabsTrigger value="support" className="flex items-center gap-2 whitespace-nowrap">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Soporte</span>
+            </TabsTrigger>
+            <TabsTrigger value="banners" className="flex items-center gap-2 whitespace-nowrap">
+              <Image className="h-4 w-4" />
+              <span className="hidden sm:inline">Banners</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="contests" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Concursos</CardTitle>
+                <CardDescription>
+                  Administra todos los concursos de la plataforma
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ContestManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="organizers" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Organizadores</CardTitle>
+                <CardDescription>
+                  Administra las cuentas de organizadores
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <OrganizerManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Usuarios</CardTitle>
+                <CardDescription>
+                  Administra las cuentas de usuarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <UserManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="gallery" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestor de Galería</CardTitle>
+                <CardDescription>
+                  Administra todas las fotos de la plataforma
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GalleryManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="support" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Mensajes de Soporte</CardTitle>
+                <CardDescription>
+                  Gestiona las consultas y mensajes de soporte
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SupportMessagesManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="banners" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Banners</CardTitle>
+                <CardDescription>
+                  Administra los banners publicitarios
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BannerManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7">
-          <TabsTrigger value="overview">Resumen</TabsTrigger>
-          <TabsTrigger value="contests">Concursos</TabsTrigger>
-          <TabsTrigger value="featured-contests">Destacados</TabsTrigger>
-          <TabsTrigger value="featured-gallery">Galería</TabsTrigger>
-          <TabsTrigger value="users">Usuarios</TabsTrigger>
-          <TabsTrigger value="reports">Reportes</TabsTrigger>
-          <TabsTrigger value="support">Soporte</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Usuarios</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">1,234</div>
-                <p className="text-xs text-muted-foreground">+10% desde el mes pasado</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Concursos Activos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">23</div>
-                <p className="text-xs text-muted-foreground">+2 nuevos esta semana</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Fotos Subidas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">5,678</div>
-                <p className="text-xs text-muted-foreground">+15% esta semana</p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Reportes Pendientes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">3</div>
-                <p className="text-xs text-muted-foreground">Requieren atención</p>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="contests">
-          <ContestManagement />
-        </TabsContent>
-
-        <TabsContent value="featured-contests">
-          <FeaturedContestsManagement />
-        </TabsContent>
-
-        <TabsContent value="featured-gallery">
-          <FeaturedGalleryManagement />
-        </TabsContent>
-
-        <TabsContent value="users">
-          <UserManagement />
-        </TabsContent>
-
-        <TabsContent value="reports">
-          <PhotoReportsManagement />
-        </TabsContent>
-
-        <TabsContent value="support">
-          <SupportMessagesManagement />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };
