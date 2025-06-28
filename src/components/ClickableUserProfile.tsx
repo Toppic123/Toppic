@@ -33,8 +33,20 @@ const ClickableUserProfile = ({
 
   const currentSize = sizeClasses[size];
 
+  // Create a proper profile URL slug from the photographer name
+  const createProfileSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+  };
+
+  const profileSlug = createProfileSlug(photographer);
+
   return (
-    <Link to={`/profile/${photographer.toLowerCase().replace(/\s+/g, '')}`}>
+    <Link to={`/profile/${profileSlug}`}>
       <motion.div 
         className="flex items-center space-x-2 hover:bg-gray-100 rounded-lg p-1 transition-colors cursor-pointer"
         whileHover={{ scale: 1.02 }}

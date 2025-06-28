@@ -83,10 +83,6 @@ const ContestDetail = () => {
               {contest.isActive ? "Activo" : "Finalizado"}
             </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{contest.title}</h1>
-            {/* Show contest description if available */}
-            {contest.description && (
-              <p className="text-lg opacity-90 max-w-4xl">{contest.description}</p>
-            )}
           </div>
         </div>
       </div>
@@ -98,7 +94,7 @@ const ContestDetail = () => {
             {/* Contest Stats */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-4">Información del concurso</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div className="text-center">
                   <Users className="h-8 w-8 text-primary mx-auto mb-2" />
                   <p className="text-2xl font-bold">{contest.participants}</p>
@@ -122,6 +118,14 @@ const ContestDetail = () => {
                   <p className="text-sm text-muted-foreground">Días restantes</p>
                 </div>
               </div>
+              
+              {/* Contest Description */}
+              {contest.description && (
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold mb-2">Descripción</h3>
+                  <p className="text-muted-foreground">{contest.description}</p>
+                </div>
+              )}
             </div>
 
             {/* Photo Gallery */}

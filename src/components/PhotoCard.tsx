@@ -240,11 +240,14 @@ const PhotoCard = ({
             </div>
             
             <div className="bg-white w-full p-4 flex justify-between items-center">
-              <ClickableUserProfile
-                photographer={photographer}
-                photographerAvatar={photographerAvatar}
-                size="md"
-              />
+              <div className="flex flex-col">
+                <span className="text-sm text-muted-foreground mb-1">Fotógrafo:</span>
+                <ClickableUserProfile
+                  photographer={photographer}
+                  photographerAvatar={photographerAvatar}
+                  size="md"
+                />
+              </div>
               
               <div className="flex items-center gap-2">
                 <SocialShareButtons 

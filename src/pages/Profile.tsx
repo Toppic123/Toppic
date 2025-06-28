@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -17,22 +18,25 @@ const Profile = () => {
   const { profile, updateProfile } = useProfile();
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   
+  // Create username from URL parameter or profile data
+  const displayUsername = username || profile?.username || "usuario";
+  
   // Mock photos data with contest names and photographer info
   const photos = Array(6).fill(null).map((_, i) => ({
     id: i.toString(),
     title: `Foto ${i + 1}`,
-    imageUrl: `https://picsum.photos/seed/${username}${i}/500/300`,
+    imageUrl: `https://picsum.photos/seed/${displayUsername}${i}/500/300`,
     likes: Math.floor(Math.random() * 100),
     contestName: `Concurso de Fotografía ${i % 3 === 0 ? 'Urbana' : i % 3 === 1 ? 'Natural' : 'Retratos'}`,
-    photographer: profile?.name || username || "Usuario",
+    photographer: profile?.name || displayUsername || "Usuario",
     photographerAvatar: profileImagePreview || profile?.avatar_url || "https://i.pravatar.cc/150?img=8"
   }));
 
-  // Create user object from profile data
+  // Create user object from profile data or mock data based on username
   const user = {
     id: profile?.id || "1",
-    username: profile?.username || username || "usuario",
-    name: profile?.name || "Usuario de Ejemplo",
+    username: displayUsername,
+    name: profile?.name || displayUsername.charAt(0).toUpperCase() + displayUsername.slice(1),
     bio: profile?.bio || "Fotógrafo aficionado y amante de la naturaleza",
     avatar: profileImagePreview || profile?.avatar_url || "https://i.pravatar.cc/150?img=8",
     location: "Madrid, España",
@@ -96,28 +100,32 @@ const Profile = () => {
             <Camera className="h-4 w-4 mr-2" />
             Fotos
           </TabsTrigger>
-          <TabsTrigger value="settings">
-            <Settings className="h-4 w-4 mr-2" />
-            Ajustes
-          </TabsTrigger>
+          {isCurrentUser && (
+            <TabsTrigger value="settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Ajustes
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="photos">
           <PhotoGallery photos={photos} />
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6">
-          <ProfileSettingsTabs 
-            userData={profile ? {
-              name: profile.name || "",
-              email: profile.email || "",
-              bio: profile.bio || "",
-              website: profile.website || "",
-              username: profile.username || ""
-            } : undefined}
-            onDeleteAccount={handleDeleteAccount}
-          />
-        </TabsContent>
+        {isCurrentUser && (
+          <TabsContent value="settings" className="space-y-6">
+            <ProfileSettingsTabs 
+              userData={profile ? {
+                name: profile.name || "",
+                email: profile.email || "",
+                bio: profile.bio || "",
+                website: profile.website || "",
+                username: profile.username || ""
+              } : undefined}
+              onDeleteAccount={handleDeleteAccount}
+            />
+          </TabsContent>
+        )}
       </Tabs>
     </motion.div>
   );
