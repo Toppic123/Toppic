@@ -109,6 +109,7 @@ export type Database = {
           participants: number | null
           photo_deadline: string | null
           photo_ownership: boolean | null
+          prize: string | null
           start_date: string | null
           status: string
           title: string
@@ -130,6 +131,7 @@ export type Database = {
           participants?: number | null
           photo_deadline?: string | null
           photo_ownership?: boolean | null
+          prize?: string | null
           start_date?: string | null
           status?: string
           title: string
@@ -151,6 +153,7 @@ export type Database = {
           participants?: number | null
           photo_deadline?: string | null
           photo_ownership?: boolean | null
+          prize?: string | null
           start_date?: string | null
           status?: string
           title?: string
