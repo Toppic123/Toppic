@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload as UploadIcon, MapPin, Image as ImageIcon } from "lucide-react";
+import { Camera, Upload as UploadIcon, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Select,
@@ -17,6 +18,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import ConsentForms from "@/components/ConsentForms";
 import { useContestsData } from "@/hooks/useContestsData";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ConsentData {
   photographerConsent: boolean;
@@ -38,6 +40,7 @@ const Upload = () => {
   const [currentStep, setCurrentStep] = useState<"upload" | "consent" | "details">("upload");
   const [consents, setConsents] = useState<ConsentData | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -183,10 +186,10 @@ const Upload = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 10 * 1024 * 1024) { // Increased to 10MB since we're storing originals
         toast({
           title: "Archivo demasiado grande",
-          description: "Por favor selecciona una imagen de menos de 5MB",
+          description: "Por favor selecciona una imagen de menos de 10MB",
           variant: "destructive"
         });
         return;
@@ -229,7 +232,62 @@ const Upload = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const uploadToStorage = async (file: File, contestId: string): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+    const filePath = `${contestId}/${fileName}`;
+
+    console.log('Uploading file to storage:', { filePath, fileSize: file.size, fileType: file.type });
+
+    const { data, error } = await supabase.storage
+      .from('contest-photos')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      console.error('Storage upload error:', error);
+      throw error;
+    }
+
+    console.log('File uploaded successfully:', data);
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('contest-photos')
+      .getPublicUrl(filePath);
+
+    console.log('Public URL generated:', publicUrl);
+    return publicUrl;
+  };
+
+  const savePhotoToDatabase = async (imageUrl: string, contestId: string, title: string, description: string) => {
+    console.log('Saving photo to database:', { imageUrl, contestId, title, description });
+
+    const { data, error } = await supabase
+      .from('contest_photos')
+      .insert({
+        contest_id: contestId,
+        image_url: imageUrl,
+        photographer_name: user?.email || 'Anónimo',
+        description: description || title,
+        votes: 0,
+        is_featured: false,
+        status: 'approved' // Auto-approve for now
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Database insert error:', error);
+      throw error;
+    }
+
+    console.log('Photo saved to database:', data);
+    return data;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!originalFile) {
@@ -258,20 +316,47 @@ const Upload = () => {
       });
       return;
     }
+
+    if (!title.trim()) {
+      toast({
+        title: "Título requerido",
+        description: "Por favor añade un título a tu foto",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    console.log("Foto enviada al concurso:", selectedContest);
-    console.log("Archivo original a almacenar:", originalFile);
-    console.log("Título:", title);
-    console.log("Descripción:", description);
-    console.log("Consentimientos:", consents);
+    setIsUploading(true);
     
-    toast({
-      title: "¡Foto enviada!",
-      description: "Tu foto ha sido enviada al concurso exitosamente"
-    });
-    
-    // Navigate back to contests page
-    navigate('/contests');
+    try {
+      console.log("Starting photo upload process...");
+      
+      // Upload the original file to Supabase Storage
+      const imageUrl = await uploadToStorage(originalFile, selectedContest);
+      console.log("Image uploaded to storage:", imageUrl);
+      
+      // Save photo data to database
+      const photoData = await savePhotoToDatabase(imageUrl, selectedContest, title, description);
+      console.log("Photo data saved to database:", photoData);
+      
+      toast({
+        title: "¡Foto enviada exitosamente!",
+        description: "Tu foto ha sido enviada al concurso y ya está visible"
+      });
+      
+      // Navigate back to contests page
+      navigate('/contests');
+      
+    } catch (error: any) {
+      console.error("Error uploading photo:", error);
+      toast({
+        title: "Error al subir la foto",
+        description: error.message || "Ha ocurrido un error inesperado",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const getSelectedContestType = () => {
@@ -395,7 +480,7 @@ const Upload = () => {
                         </label>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        JPG, PNG o GIF. Máximo 5MB.
+                        JPG, PNG o GIF. Máximo 10MB.
                       </span>
                     </div>
                   </div>
@@ -447,7 +532,7 @@ const Upload = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="title">Título de la foto</Label>
+                <Label htmlFor="title">Título de la foto *</Label>
                 <Input 
                   id="title" 
                   placeholder="Añade un título descriptivo" 
@@ -478,12 +563,18 @@ const Upload = () => {
               variant="outline" 
               onClick={() => setCurrentStep("consent")}
               className="w-full"
+              disabled={isUploading}
             >
               Volver a Consentimientos
             </Button>
-            <Button type="submit" className="w-full" onClick={handleSubmit}>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              onClick={handleSubmit}
+              disabled={isUploading || !title.trim()}
+            >
               <UploadIcon className="mr-2 h-4 w-4" />
-              Subir foto
+              {isUploading ? "Subiendo..." : "Subir foto"}
             </Button>
           </CardFooter>
         </Card>

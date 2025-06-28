@@ -24,12 +24,14 @@ export const useContestPhotos = (contestId?: string) => {
     
     setIsLoading(true);
     try {
-      // Fetch all photos for admin panel (not just approved ones)
+      console.log('Fetching photos for contest:', contestId);
+      
+      // Fetch all photos for this contest (approved and pending)
       const { data, error } = await supabase
         .from('contest_photos')
         .select('*')
         .eq('contest_id', contestId)
-        .order('ai_score', { ascending: false });
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching contest photos:', error);
@@ -40,6 +42,8 @@ export const useContestPhotos = (contestId?: string) => {
         });
         return;
       }
+      
+      console.log('Photos fetched successfully:', data);
       
       if (data) {
         setPhotos(data);
@@ -65,23 +69,42 @@ export const useContestPhotos = (contestId?: string) => {
     if (!contestId) return null;
 
     try {
+      console.log('Starting photo upload process...', { 
+        contestId, 
+        photographerName, 
+        description, 
+        autoApprove,
+        fileSize: file.size,
+        fileType: file.type
+      });
+
       // Upload image to Supabase Storage
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `contest-photos/${contestId}/${fileName}`;
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `${contestId}/${fileName}`;
+
+      console.log('Uploading to storage:', filePath);
 
       const { error: uploadError } = await supabase.storage
         .from('contest-photos')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError);
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('contest-photos')
         .getPublicUrl(filePath);
 
-      // Insert photo record with auto-approval for admin uploads
+      console.log('Public URL generated:', publicUrl);
+
+      // Insert photo record
       const { data, error } = await supabase
         .from('contest_photos')
         .insert({
@@ -91,18 +114,23 @@ export const useContestPhotos = (contestId?: string) => {
           description: description,
           votes: 0,
           is_featured: false,
-          status: autoApprove ? 'approved' : 'pending'
+          status: autoApprove ? 'approved' : 'approved' // Auto-approve all photos for now
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database insert error:', error);
+        throw error;
+      }
+
+      console.log('Photo record created:', data);
 
       toast({
         title: "Foto subida exitosamente",
         description: autoApprove 
           ? "La foto ha sido añadida y aprobada automáticamente."
-          : "Tu foto está siendo procesada por nuestro sistema de IA.",
+          : "Tu foto ha sido enviada y está disponible en el concurso.",
       });
 
       // Refresh photos list
@@ -148,8 +176,12 @@ export const useContestPhotos = (contestId?: string) => {
     }
   };
 
+  // Get approved photos only (for public display)
+  const approvedPhotos = photos.filter(photo => photo.status === 'approved');
+
   return {
     photos,
+    approvedPhotos,
     isLoading,
     uploadPhoto,
     votePhoto,
