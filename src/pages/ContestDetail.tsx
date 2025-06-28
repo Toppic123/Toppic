@@ -107,9 +107,7 @@ const ContestDetail = () => {
                 </div>
                 <div className="text-center">
                   <Trophy className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-primary">{contest.prize || "Por determinar"}</p>
-                  </div>
+                  <p className="text-lg font-bold text-primary">{contest.prize || "Por determinar"}</p>
                   <p className="text-sm text-muted-foreground">Premio</p>
                 </div>
                 <div className="text-center">
@@ -187,15 +185,6 @@ const ContestDetail = () => {
                     <p className="text-sm text-muted-foreground">{contest.organizer}</p>
                   </div>
                 </div>
-                {contest.prize && (
-                  <div className="flex items-start gap-3">
-                    <Trophy className="h-5 w-5 text-yellow-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">Premio</p>
-                      <p className="text-sm text-yellow-600 font-medium">{contest.prize}</p>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 

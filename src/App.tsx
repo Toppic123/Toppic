@@ -46,6 +46,7 @@ function App() {
                   <Route path="contests/:id/rules" element={<ContestRules />} />
                   <Route path="upload" element={<Upload />} />
                   <Route path="profile" element={<Profile />} />
+                  <Route path="profile/:profileSlug" element={<Profile />} />
                   <Route path="login" element={<Login />} />
                   <Route path="register" element={<Register />} />
                   <Route path="support" element={<Support />} />
