@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -282,7 +283,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                   <Label htmlFor="status">Estado del concurso</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(value) => setFormData({ ...formData, status: value as "pending" | "active" | "finished" })}
+                    onValueChange={(value: "pending" | "active" | "finished") => setFormData({ ...formData, status: value })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona el estado" />
@@ -315,7 +316,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="isPrivate"
-                    checked={!!formData.isPrivate}
+                    checked={formData.isPrivate}
                     onCheckedChange={(checked) => setFormData({ ...formData, isPrivate: checked })}
                   />
                   <Label htmlFor="isPrivate">Concurso privado</Label>
@@ -337,7 +338,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="photoOwnership"
-                    checked={!!formData.photoOwnership}
+                    checked={formData.photoOwnership}
                     onCheckedChange={(checked) => setFormData({ ...formData, photoOwnership: checked })}
                   />
                   <Label htmlFor="photoOwnership">Los participantes mantienen la propiedad de sus fotos</Label>
@@ -346,7 +347,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="commercialUse"
-                    checked={!!formData.commercialUse}
+                    checked={formData.commercialUse}
                     onCheckedChange={(checked) => setFormData({ ...formData, commercialUse: checked })}
                   />
                   <Label htmlFor="commercialUse">Permitir uso comercial de las fotos</Label>
