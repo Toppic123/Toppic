@@ -74,6 +74,19 @@ export const useContestsData = () => {
             });
           }
           
+          // Función para obtener URL de imagen válida
+          const getValidImageUrl = () => {
+            if (contest.image_url) {
+              // Si la URL empieza con blob: o no es una URL válida, usar una imagen por defecto
+              if (contest.image_url.startsWith('blob:') || 
+                  !contest.image_url.startsWith('http')) {
+                return `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`;
+              }
+              return contest.image_url;
+            }
+            return `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`;
+          };
+
           // Función para obtener información del premio - prioriza el campo prize de la base de datos
           const getPrizeInfo = () => {
             // Primero verificar si hay un campo prize directo en la base de datos
@@ -120,7 +133,7 @@ export const useContestsData = () => {
             location: contest.location || "Madrid, España",
             category: "Fotografía",
             description: contest.description || "Descripción del concurso disponible pronto.",
-            imageUrl: contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
+            imageUrl: getValidImageUrl(),
             prize: prizeInfo,
             participants: contest.participants || 0,
             isActive: contest.status === "active",
