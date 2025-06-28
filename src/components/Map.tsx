@@ -17,10 +17,10 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
-// Coordenadas mejoradas y más precisas para España y Andorra
+// Coordenadas precisas y actualizadas para Andorra y regiones cercanas
 const getCoordinatesForLocation = (location: string) => {
   const locationMap: { [key: string]: { lat: number, lng: number } } = {
-    // Andorra - Coordenadas más precisas
+    // Andorra - Coordenadas muy precisas
     'andorra': { lat: 42.5063, lng: 1.5218 },
     'andorra la vella': { lat: 42.5063, lng: 1.5218 },
     'escaldes-engordany': { lat: 42.5079, lng: 1.5346 },
@@ -52,9 +52,7 @@ const getCoordinatesForLocation = (location: string) => {
     'las palmas': { lat: 28.1248, lng: -15.4300 },
     'santander': { lat: 43.4623, lng: -3.8099 },
     'córdoba': { lat: 37.8882, lng: -4.7794 },
-    'valladolid': { lat: 41.6523, lng: -4.7245 },
-    'vigo': { lat: 42.2328, lng: -8.7226 },
-    'gijón': { lat: 43.5322, lng: -5.6611 },
+    'valencia': { lat: 39.4699, lng: -0.3763 },
     
     // Cataluña - ciudades cercanas a Andorra
     'la seu d\'urgell': { lat: 42.3586, lng: 1.4582 },
@@ -198,20 +196,35 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     markersRef.current = markers;
   };
 
+  // Función mejorada para determinar si está en Andorra con mayor precisión
+  const isInAndorraRegion = (lat: number, lng: number) => {
+    // Coordenadas más precisas de Andorra
+    const andorraBounds = {
+      north: 42.6562,
+      south: 42.4297,
+      east: 1.7866,
+      west: 1.4135
+    };
+    
+    return lat >= andorraBounds.south && lat <= andorraBounds.north && 
+           lng >= andorraBounds.west && lng <= andorraBounds.east;
+  };
+
   // Función mejorada para encontrar concursos cercanos con mejor soporte para Andorra
-  const findNearbyContests = (userLat: number, userLng: number, maxDistance = 150) => {
+  const findNearbyContests = (userLat: number, userLng: number, maxDistance = 100) => {
     console.log('Finding nearby contests. User location:', { userLat, userLng });
     console.log('Active contests available:', activeMapContests.length);
     
-    // Verificar si está en Andorra (coordenadas aproximadas)
-    const isInAndorra = userLat >= 42.4 && userLat <= 42.7 && userLng >= 1.4 && userLng <= 1.8;
+    // Verificar si está en Andorra con mayor precisión
+    const isInAndorra = isInAndorraRegion(userLat, userLng);
     
     if (isInAndorra) {
-      console.log('User detected in Andorra, expanding search radius');
-      maxDistance = 200; // Expandir búsqueda para Andorra
+      console.log('Usuario confirmado en Andorra, expandiendo búsqueda y priorizando concursos locales');
+      maxDistance = 250; // Expandir búsqueda considerablemente para Andorra
       toast({
-        title: "Ubicación detectada: Andorra",
-        description: "Buscando concursos en Andorra y alrededores...",
+        title: "¡Ubicación confirmada: Andorra! 🇦🇩",
+        description: "Buscando concursos en Andorra y regiones cercanas de España y Francia...",
+        duration: 4000,
       });
     }
     
@@ -232,12 +245,31 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         contest.coords.lng
       );
       console.log(`Contest ${contest.title} in ${contest.location} is ${distance.toFixed(2)} km away`);
-      return { ...contest, distance };
-    }).filter(contest => contest.distance <= maxDistance)
+      
+      // Dar prioridad a concursos en Andorra si el usuario está en Andorra
+      let priorityBonus = 0;
+      if (isInAndorra && contest.location.toLowerCase().includes('andorra')) {
+        priorityBonus = -50; // Reducir distancia virtual para priorizar
+      }
+      
+      return { ...contest, distance: distance + priorityBonus, realDistance: distance };
+    }).filter(contest => contest.realDistance <= maxDistance)
       .sort((a, b) => a.distance - b.distance);
 
     console.log(`Nearby contests found within ${maxDistance}km:`, nearby.length);
-    setNearbyContests(nearby);
+    
+    // Si está en Andorra, priorizar concursos de Andorra al principio
+    if (isInAndorra) {
+      const andorraContests = nearby.filter(contest => 
+        contest.location.toLowerCase().includes('andorra')
+      );
+      const otherContests = nearby.filter(contest => 
+        !contest.location.toLowerCase().includes('andorra')
+      );
+      setNearbyContests([...andorraContests, ...otherContests]);
+    } else {
+      setNearbyContests(nearby);
+    }
 
     if (nearby.length === 0) {
       // Si no encuentra concursos, ampliar búsqueda considerablemente
@@ -248,7 +280,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
           contest.coords.lat, 
           contest.coords.lng
         );
-        return { ...contest, distance };
+        return { ...contest, distance, realDistance: distance };
       }).filter(contest => contest.distance <= 500)
         .sort((a, b) => a.distance - b.distance)
         .slice(0, 8);
@@ -268,22 +300,26 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         });
       }
     } else {
+      const closestDistance = nearby[0].realDistance;
       toast({
-        title: `${nearby.length} concursos cercanos`,
-        description: `El más cercano está a ${nearby[0].distance.toFixed(1)} km de distancia.`,
+        title: `${nearby.length} concursos cercanos encontrados`,
+        description: isInAndorra 
+          ? `Concursos disponibles en Andorra y alrededores. El más cercano está a ${closestDistance.toFixed(1)} km.`
+          : `El más cercano está a ${closestDistance.toFixed(1)} km de distancia.`,
+        duration: 4000,
       });
     }
 
     // Center map on user location and add user marker
     if (mapInstanceRef.current) {
-      const zoomLevel = isInAndorra ? 11 : 10;
+      const zoomLevel = isInAndorra ? 12 : 10;
       mapInstanceRef.current.setView([userLat, userLng], zoomLevel);
       addUserLocationMarker(mapInstanceRef.current, userLat, userLng);
     }
   };
 
   const locateUser = () => {
-    console.log('Starting geolocation process...');
+    console.log('Starting enhanced geolocation process for Andorra...');
     
     if (!geolocationSupported) {
       console.error('Geolocation not supported');
@@ -297,13 +333,14 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
     setIsLocating(true);
 
+    // Opciones mejoradas para mejor precisión en zonas montañosas como Andorra
     const options = {
       enableHighAccuracy: true,
-      timeout: 20000, // Aumentar timeout para mejor precisión
-      maximumAge: 30000 // Reducir edad máxima para obtener ubicación más actual
+      timeout: 30000, // Aumentar timeout para zonas con señal débil
+      maximumAge: 10000 // Reducir edad máxima para obtener ubicación más actual
     };
 
-    console.log('Requesting geolocation with options:', options);
+    console.log('Requesting high-accuracy geolocation with enhanced options:', options);
 
     const onSuccess = (position: GeolocationPosition) => {
       const { latitude, longitude, accuracy } = position.coords;
@@ -314,20 +351,31 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         timestamp: new Date(position.timestamp)
       });
       
-      // Verificar si está en Andorra
-      const isInAndorra = latitude >= 42.4 && latitude <= 42.7 && longitude >= 1.4 && longitude <= 1.8;
+      // Verificar si está en Andorra con mayor precisión
+      const isInAndorra = isInAndorraRegion(latitude, longitude);
       
       if (isInAndorra) {
-        console.log('User confirmed to be in Andorra');
+        console.log('Usuario confirmado en territorio de Andorra');
         toast({
-          title: "Ubicación confirmada: Andorra",
-          description: `Precisión: ${Math.round(accuracy)} metros. Buscando concursos locales...`,
+          title: "¡Bienvenido a Andorra! 🇦🇩",
+          description: `Ubicación confirmada con precisión de ${Math.round(accuracy)} metros. Buscando concursos locales...`,
+          duration: 5000,
         });
       } else {
-        toast({
-          title: "Ubicación obtenida",
-          description: `Precisión: ${Math.round(accuracy)} metros`,
-        });
+        // Verificar si está cerca de Andorra (frontera)
+        const distanceToAndorra = calculateDistance(latitude, longitude, 42.5063, 1.5218);
+        if (distanceToAndorra < 50) {
+          toast({
+            title: "Cerca de Andorra",
+            description: `Estás a ${distanceToAndorra.toFixed(1)} km de Andorra. Precisión: ${Math.round(accuracy)} metros.`,
+            duration: 4000,
+          });
+        } else {
+          toast({
+            title: "Ubicación obtenida",
+            description: `Precisión: ${Math.round(accuracy)} metros`,
+          });
+        }
       }
       
       setUserLocation({ lat: latitude, lng: longitude });
@@ -336,7 +384,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     };
 
     const onError = (error: GeolocationPositionError) => {
-      console.error("Geolocation error:", {
+      console.error("Enhanced geolocation error:", {
         code: error.code,
         message: error.message,
         PERMISSION_DENIED: error.PERMISSION_DENIED,
@@ -352,28 +400,29 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       switch(error.code) {
         case error.PERMISSION_DENIED:
           errorTitle = "Permisos denegados";
-          errorMessage = "Habilita la geolocalización en tu navegador para encontrar concursos cercanos.";
+          errorMessage = "Por favor, habilita la geolocalización en tu navegador. En Andorra es especialmente importante para encontrar concursos locales.";
           console.log('User denied geolocation permission');
           break;
         case error.POSITION_UNAVAILABLE:
-          errorTitle = "Ubicación no disponible";
-          errorMessage = "Verifica que el GPS esté activado y tengas buena señal. Si estás en Andorra, esto puede ser normal debido a la montaña.";
-          console.log('Position information is unavailable');
+          errorTitle = "Señal GPS no disponible";
+          errorMessage = "En zonas montañosas como Andorra, intenta moverte a un lugar con mejor vista al cielo o cerca de una ventana.";
+          console.log('Position information is unavailable - common in mountainous areas');
           break;
         case error.TIMEOUT:
-          errorTitle = "Tiempo agotado";
-          errorMessage = "La búsqueda de ubicación tardó demasiado. En zonas montañosas como Andorra, prueba en un lugar con mejor cobertura.";
-          console.log('Geolocation request timed out');
+          errorTitle = "Tiempo de espera agotado";
+          errorMessage = "La búsqueda de ubicación tardó demasiado. En Andorra, esto puede ocurrir por la topografía montañosa. Inténtalo de nuevo.";
+          console.log('Geolocation request timed out - extended timeout for mountain regions');
           break;
         default:
-          errorMessage = `Error: ${error.message}`;
-          console.log('Unknown geolocation error');
+          errorMessage = `Error técnico: ${error.message}. Si estás en Andorra, la señal GPS puede ser intermitente.`;
+          console.log('Unknown geolocation error in mountain region');
       }
       
       toast({
         title: errorTitle,
         description: errorMessage,
-        variant: "destructive"
+        variant: "destructive",
+        duration: 6000,
       });
     };
 
