@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, Camera, User } from "lucide-react";
+import { MapPin, Camera, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ContestCardProps = {
@@ -21,8 +21,6 @@ const ContestCard = ({
   title,
   imageUrl,
   location,
-  dateStart,
-  dateEnd,
   participantsCount,
   photosCount,
 }: ContestCardProps) => {
@@ -57,18 +55,6 @@ const ContestCard = ({
             <div className="flex items-center text-xs text-white/80 mb-2">
               <MapPin className="w-3 h-3 mr-1" />
               <span>{location}</span>
-            </div>
-          </div>
-          
-          {/* Pill badge for date */}
-          <div className="absolute top-3 left-3 z-20">
-            <div className="bg-black/70 backdrop-blur-sm text-white text-xs py-1 px-2 rounded-full flex items-center">
-              <Calendar className="w-3 h-3 mr-1" />
-              <span>
-                {new Date(dateStart).toLocaleDateString('es-ES', { 
-                  day: 'numeric', month: 'short' 
-                })}
-              </span>
             </div>
           </div>
         </div>

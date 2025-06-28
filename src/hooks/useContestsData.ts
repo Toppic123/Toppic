@@ -53,14 +53,32 @@ export const useContestsData = () => {
       }
       
       if (data) {
+        console.log('Raw contests data from Supabase:', data);
+        
         const formattedContests: Contest[] = data.map(contest => {
-          console.log('Procesando concurso:', contest.title, 'Premio original:', contest.prize);
+          console.log('Processing contest:', {
+            title: contest.title,
+            originalImageUrl: contest.image_url,
+            prize: contest.prize
+          });
+          
+          // Debugging específico para el concurso "Mirador Roc del Quer"
+          if (contest.title && contest.title.toLowerCase().includes('mirador') || 
+              contest.title && contest.title.toLowerCase().includes('roc del quer')) {
+            console.log('Found Mirador Roc del Quer contest:', {
+              title: contest.title,
+              image_url: contest.image_url,
+              id: contest.id,
+              status: contest.status,
+              fullContest: contest
+            });
+          }
           
           // Función para obtener información del premio - prioriza el campo prize de la base de datos
           const getPrizeInfo = () => {
             // Primero verificar si hay un campo prize directo en la base de datos
             if (contest.prize && contest.prize.trim() !== '') {
-              console.log('Premio encontrado en campo prize:', contest.prize);
+              console.log('Prize found in prize field:', contest.prize);
               return contest.prize.trim();
             }
             
@@ -81,7 +99,7 @@ export const useContestsData = () => {
                 if (matches && matches.length > 0) {
                   let prize = matches[0].replace(/premio[:\s]*/gi, '').trim();
                   if (prize && prize.length > 0 && prize.length < 100) {
-                    console.log('Premio encontrado en descripción:', prize);
+                    console.log('Prize found in description:', prize);
                     return prize;
                   }
                 }
@@ -89,12 +107,11 @@ export const useContestsData = () => {
             }
             
             // Valor por defecto
-            console.log('No se encontró premio, usando valor por defecto');
+            console.log('No prize found, using default');
             return "Por determinar";
           };
 
           const prizeInfo = getPrizeInfo();
-          console.log('Premio final para', contest.title, ':', prizeInfo);
 
           return {
             id: contest.id,
@@ -119,7 +136,7 @@ export const useContestsData = () => {
           };
         });
         
-        console.log("Concursos formateados con premios actualizados:", formattedContests);
+        console.log("Final formatted contests:", formattedContests);
         setContests(formattedContests);
       }
     } catch (error) {

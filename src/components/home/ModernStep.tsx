@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, Sparkles } from "lucide-react";
 
 interface ModernStepProps {
   icon: React.ComponentType<any>;
@@ -70,21 +69,9 @@ const ModernStep = ({
           </h3>
           
           {/* Descripción */}
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-center mb-6 text-lg">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-center text-lg">
             {description}
           </p>
-          
-          {/* Botón de acción con animación */}
-          <div className="flex justify-center">
-            <motion.button
-              className={`group/btn flex items-center bg-gradient-to-r ${gradient} text-white px-6 py-3 rounded-xl font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl`}
-              whileHover={{ x: 5 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>Comenzar</span>
-              <ChevronRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
-            </motion.button>
-          </div>
         </div>
         
         {/* Brillo superior */}

@@ -1,5 +1,5 @@
 
-import { MapPin, Calendar, Users, Image as ImageIcon } from "lucide-react";
+import { MapPin, Users, Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import ContestCard from "@/components/ContestCard";
 import { Button } from "@/components/ui/button";
@@ -77,7 +77,7 @@ const ContestGrid = ({
           : null;
         
         return (
-          <div key={contest.id} className="relative group">
+          <div key={contest.id} className="relative">
             <div className={contest.isActive ? "" : "grayscale opacity-75"}>
               <ContestCard key={contest.id} {...contest} />
               
@@ -109,38 +109,6 @@ const ContestGrid = ({
                   </Badge>
                 </div>
               )}
-
-              {/* Stats overlay */}
-              <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="bg-black/70 text-white text-xs px-3 py-2 rounded-md">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3" />
-                        <span>{contest.participantsCount || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <ImageIcon className="h-3 w-3" />
-                        <span>{contest.photosCount || 0}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      <span>
-                        {new Date(contest.dateEnd).toLocaleDateString('es-ES', {
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                  {distance !== null && contest.maxDistance && (
-                    <div className="text-xs text-gray-300 mt-1">
-                      Máximo permitido: {contest.maxDistance} km
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         );

@@ -101,6 +101,12 @@ const getCoordinatesForLocation = (location: string) => {
 const convertContestToMapFormat = (contest: any) => {
   const coordinates = getCoordinatesForLocation(contest.location || "madrid");
   
+  console.log('Converting contest to map format:', {
+    title: contest.title,
+    imageUrl: contest.imageUrl,
+    originalImageUrl: contest.imageUrl
+  });
+  
   return {
     id: contest.id,
     title: contest.title,
@@ -140,13 +146,17 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   // Check geolocation support on component mount
   useEffect(() => {
+    console.log('Checking geolocation support...');
     if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser');
       setGeolocationSupported(false);
       toast({
         title: "Geolocalización no disponible",
         description: "Tu navegador no soporta geolocalización",
         variant: "destructive"
       });
+    } else {
+      console.log('Geolocation is supported');
     }
   }, []);
 
@@ -180,9 +190,11 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   // Función mejorada para encontrar concursos cercanos
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 100) => {
-    console.log('Buscando concursos cerca de:', userLat, userLng);
+    console.log('Finding nearby contests. User location:', { userLat, userLng });
+    console.log('Active contests available:', activeMapContests.length);
     
     if (activeMapContests.length === 0) {
+      console.warn('No active contests available');
       toast({
         title: "No hay concursos disponibles",
         description: "No hay concursos activos disponibles en este momento.",
@@ -197,10 +209,12 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         contest.coords.lat, 
         contest.coords.lng
       );
+      console.log(`Contest ${contest.title} is ${distance.toFixed(2)} km away`);
       return { ...contest, distance };
     }).filter(contest => contest.distance <= maxDistance)
       .sort((a, b) => a.distance - b.distance);
 
+    console.log('Nearby contests found:', nearby.length);
     setNearbyContests(nearby);
 
     if (nearby.length === 0) {
@@ -216,6 +230,8 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       }).filter(contest => contest.distance <= 500)
         .sort((a, b) => a.distance - b.distance)
         .slice(0, 5);
+      
+      console.log('Expanded search results:', expandedSearch.length);
       
       if (expandedSearch.length > 0) {
         setNearbyContests(expandedSearch);
@@ -244,7 +260,10 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   };
 
   const locateUser = () => {
+    console.log('Starting geolocation process...');
+    
     if (!geolocationSupported) {
+      console.error('Geolocation not supported');
       toast({
         title: "Error de geolocalización",
         description: "Tu navegador no soporta geolocalización",
@@ -261,9 +280,16 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       maximumAge: 60000
     };
 
+    console.log('Requesting geolocation with options:', options);
+
     const onSuccess = (position: GeolocationPosition) => {
       const { latitude, longitude, accuracy } = position.coords;
-      console.log('Ubicación obtenida:', { latitude, longitude, accuracy });
+      console.log('Geolocation success:', { 
+        latitude, 
+        longitude, 
+        accuracy,
+        timestamp: new Date(position.timestamp)
+      });
       
       setUserLocation({ lat: latitude, lng: longitude });
       findNearbyContests(latitude, longitude);
@@ -276,7 +302,14 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     };
 
     const onError = (error: GeolocationPositionError) => {
-      console.error("Error de geolocalización:", error);
+      console.error("Geolocation error:", {
+        code: error.code,
+        message: error.message,
+        PERMISSION_DENIED: error.PERMISSION_DENIED,
+        POSITION_UNAVAILABLE: error.POSITION_UNAVAILABLE,
+        TIMEOUT: error.TIMEOUT
+      });
+      
       setIsLocating(false);
       
       let errorMessage = "No se pudo obtener tu ubicación.";
@@ -286,17 +319,21 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         case error.PERMISSION_DENIED:
           errorTitle = "Permisos denegados";
           errorMessage = "Habilita la geolocalización en tu navegador para encontrar concursos cercanos.";
+          console.log('User denied geolocation permission');
           break;
         case error.POSITION_UNAVAILABLE:
           errorTitle = "Ubicación no disponible";
           errorMessage = "Verifica que el GPS esté activado y tengas buena señal.";
+          console.log('Position information is unavailable');
           break;
         case error.TIMEOUT:
           errorTitle = "Tiempo agotado";
           errorMessage = "La búsqueda de ubicación tardó demasiado. Inténtalo de nuevo.";
+          console.log('Geolocation request timed out');
           break;
         default:
           errorMessage = `Error: ${error.message}`;
+          console.log('Unknown geolocation error');
       }
       
       toast({
