@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Star, Heart, User, Share2 } from "lucide-react";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 
 // Static photos with the corrected wedding photo
 const staticWinningPhotos = [
@@ -135,13 +137,11 @@ const WinningGallerySection = () => {
                 <div className="p-4">
                   <h3 className="font-medium text-lg mb-2">{photo.title}</h3>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Avatar className="h-7 w-7">
-                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer || photo.photographer_name} />
-                        <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm">{photo.photographer || photo.photographer_name}</span>
-                    </div>
+                    <ClickableUserProfile
+                      photographer={photo.photographer || photo.photographer_name}
+                      photographerAvatar={photo.photographerAvatar}
+                      size="sm"
+                    />
                     
                     <div className="flex items-center text-muted-foreground">
                       <Heart className="h-4 w-4 mr-1 fill-red-500 text-red-500" />
@@ -182,7 +182,17 @@ const WinningGallerySection = () => {
             <>
               <DialogHeader className="px-4 py-3 border-b">
                 <div className="flex items-center justify-between">
-                  <DialogTitle className="text-base">{selectedPhoto.title}</DialogTitle>
+                  <div className="flex flex-col items-start">
+                    <DialogTitle className="text-base">{selectedPhoto.title}</DialogTitle>
+                    <div className="mt-2">
+                      <p className="text-xs text-muted-foreground mb-1">Fotógrafo:</p>
+                      <ClickableUserProfile
+                        photographer={selectedPhoto.photographer || selectedPhoto.photographer_name}
+                        photographerAvatar={selectedPhoto.photographerAvatar}
+                        size="sm"
+                      />
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2">
                     <SocialShareButtons 
                       url={window.location.href}
