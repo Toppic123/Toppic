@@ -8,7 +8,6 @@ import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
 import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessagesManagement";
 import BannerManagement from "@/components/dashboard/banners/BannerManagement";
-import GalleryManager from "@/components/admin/GalleryManager";
 import ContestPhotoManager from "@/components/admin/ContestPhotoManager";
 import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
 import { useToast } from "@/hooks/use-toast";
@@ -28,7 +27,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-8 overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-7 overflow-x-auto">
             <TabsTrigger value="contests" className="flex items-center gap-2 whitespace-nowrap">
               <Trophy className="h-4 w-4" />
               <span className="hidden sm:inline">Concursos</span>
@@ -48,10 +47,6 @@ const AdminDashboard = () => {
             <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
               <span className="hidden sm:inline">Usuarios</span>
-            </TabsTrigger>
-            <TabsTrigger value="gallery" className="flex items-center gap-2 whitespace-nowrap">
-              <Image className="h-4 w-4" />
-              <span className="hidden sm:inline">Galería</span>
             </TabsTrigger>
             <TabsTrigger value="support" className="flex items-center gap-2 whitespace-nowrap">
               <MessageSquare className="h-4 w-4" />
@@ -119,20 +114,6 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <UserManagement />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="gallery" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestor de Galería</CardTitle>
-                <CardDescription>
-                  Administra todas las fotos de la plataforma
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <GalleryManager />
               </CardContent>
             </Card>
           </TabsContent>

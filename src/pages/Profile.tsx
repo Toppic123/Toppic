@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -225,11 +224,11 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Profile Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+      {/* Profile Header - Removed gradient background */}
+      <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
               {profileToShow?.avatar_url ? (
                 <img 
                   src={profileToShow.avatar_url} 
@@ -237,21 +236,21 @@ const Profile = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-3xl md:text-4xl font-bold">
+                <span className="text-3xl md:text-4xl font-bold text-gray-600">
                   {(profileToShow?.name || profileToShow?.username || 'U')[0].toUpperCase()}
                 </span>
               )}
             </div>
             
             <div className="flex-1">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">
                 {profileToShow?.name || profileToShow?.username || 'Usuario Anónimo'}
               </h1>
               {profileToShow?.bio && (
-                <p className="text-lg opacity-90 mb-4 max-w-2xl">{profileToShow.bio}</p>
+                <p className="text-lg text-gray-600 mb-4 max-w-2xl">{profileToShow.bio}</p>
               )}
               
-              <div className="flex flex-wrap gap-4 text-sm opacity-75">
+              <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                 {profileToShow?.website && (
                   <div className="flex items-center gap-1">
                     <Globe className="h-4 w-4" />
@@ -283,7 +282,7 @@ const Profile = () => {
               <Button
                 variant="secondary"
                 onClick={() => setShowSettings(!showSettings)}
-                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white border-white/30"
+                className="flex items-center gap-2"
               >
                 {showSettings ? <Edit className="h-4 w-4" /> : <Settings className="h-4 w-4" />}
                 {showSettings ? 'Editar perfil' : 'Configuración'}

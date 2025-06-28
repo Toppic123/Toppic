@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload as UploadIcon, MapPin } from "lucide-react";
+import { Camera, Upload as UploadIcon, MapPin, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Select,
@@ -420,6 +419,15 @@ const Upload = () => {
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="contest">Selecciona un concurso cercano</Label>
+                
+                {/* Location note */}
+                <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg mb-4">
+                  <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm text-blue-800">
+                    Los concursos mostrados están filtrados según tu ubicación actual. Solo puedes participar en concursos cercanos a ti.
+                  </p>
+                </div>
+                
                 {nearbyContests.length > 0 ? (
                   <Select 
                     value={selectedContest} 
