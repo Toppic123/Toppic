@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useContestsData } from "@/hooks/useContestsData";
@@ -17,7 +18,7 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
-// Generate realistic coordinates based on location
+// Generate realistic coordinates based on location - Updated with better Andorra support
 const getCoordinatesForLocation = (location: string) => {
   const locationMap: { [key: string]: { lat: number, lng: number } } = {
     'madrid': { lat: 40.4168, lng: -3.7038 },
@@ -25,23 +26,40 @@ const getCoordinatesForLocation = (location: string) => {
     'valencia': { lat: 39.4699, lng: -0.3763 },
     'sevilla': { lat: 37.3891, lng: -5.9845 },
     'bilbao': { lat: 43.2627, lng: -2.9253 },
-    'escaldes': { lat: 42.5063, lng: 1.5218 }, // Escaldes-Engordany, Andorra
+    'andorra la vella': { lat: 42.5063, lng: 1.5218 },
     'andorra': { lat: 42.5063, lng: 1.5218 },
+    'escaldes-engordany': { lat: 42.5079, lng: 1.5346 },
+    'escaldes': { lat: 42.5079, lng: 1.5346 },
+    'encamp': { lat: 42.5313, lng: 1.5839 },
+    'la massana': { lat: 42.5456, lng: 1.5149 },
+    'ordino': { lat: 42.5563, lng: 1.5331 },
+    'sant julià de lòria': { lat: 42.4639, lng: 1.4913 },
+    'canillo': { lat: 42.5676, lng: 1.5976 },
     'zaragoza': { lat: 41.6488, lng: -0.8891 },
     'málaga': { lat: 36.7213, lng: -4.4213 },
     'palma': { lat: 39.5696, lng: 2.6502 }
   };
 
-  const locationKey = location.toLowerCase();
+  const locationKey = location.toLowerCase().trim();
+  
+  console.log('Buscando coordenadas para ubicación:', locationKey);
   
   // Try to find exact match first
+  if (locationMap[locationKey]) {
+    console.log('Coordenadas encontradas:', locationMap[locationKey]);
+    return locationMap[locationKey];
+  }
+  
+  // Try partial matches for Andorra locations
   for (const [key, coords] of Object.entries(locationMap)) {
-    if (locationKey.includes(key)) {
+    if (locationKey.includes(key) || key.includes(locationKey)) {
+      console.log('Coordenadas encontradas por coincidencia parcial:', coords, 'para', key);
       return coords;
     }
   }
   
   // Default to Madrid with slight randomization if location not found
+  console.log('Ubicación no encontrada, usando Madrid por defecto');
   return { 
     lat: 40.4168 + (Math.random() - 0.5) * 0.1, 
     lng: -3.7038 + (Math.random() - 0.5) * 0.1 
@@ -51,6 +69,8 @@ const getCoordinatesForLocation = (location: string) => {
 // Convert contest data to map-compatible format
 const convertContestToMapFormat = (contest: any) => {
   const coordinates = getCoordinatesForLocation(contest.location || "madrid");
+  
+  console.log('Convirtiendo concurso:', contest.title, 'ubicación:', contest.location, 'coordenadas:', coordinates);
   
   return {
     id: contest.id,
@@ -120,6 +140,8 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   };
 
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
+    console.log('Buscando concursos cerca de:', userLat, userLng);
+    
     const nearby = activeMapContests.filter(contest => {
       const distance = calculateDistance(
         userLat, 
@@ -127,9 +149,11 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         contest.coords.lat, 
         contest.coords.lng
       );
+      console.log('Distancia al concurso', contest.title, ':', distance, 'km');
       return distance <= maxDistance;
     });
 
+    console.log('Concursos cercanos encontrados:', nearby.length);
     setNearbyContests(nearby);
 
     if (nearby.length === 0) {
@@ -164,22 +188,44 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       return;
     }
 
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    };
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        console.log('Ubicación del usuario obtenida:', latitude, longitude);
         setUserLocation({ lat: latitude, lng: longitude });
         findNearbyContests(latitude, longitude);
         setIsLocating(false);
       },
       (error) => {
         console.error("Error getting user location:", error);
+        let errorMessage = "No se pudo obtener tu ubicación.";
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Permisos de ubicación denegados. Por favor, habilita la ubicación en tu navegador.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Información de ubicación no disponible.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Tiempo de espera agotado para obtener la ubicación.";
+            break;
+        }
+        
         toast({
           title: "Error de ubicación",
-          description: "No se pudo obtener tu ubicación. Por favor, verifica los permisos de tu navegador.",
+          description: errorMessage,
           variant: "destructive"
         });
         setIsLocating(false);
-      }
+      },
+      options
     );
   };
 

@@ -107,7 +107,7 @@ const ContestDetail = () => {
                 </div>
                 <div className="text-center">
                   <Trophy className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-lg font-bold text-primary">{contest.prize || "Por determinar"}</p>
+                  <p className="text-lg font-bold text-primary">{contest.prize}</p>
                   <p className="text-sm text-muted-foreground">Premio</p>
                 </div>
                 <div className="text-center">

@@ -111,7 +111,7 @@ const Profile = () => {
         .eq('photographer_name', photographerName);
 
       if (contestError) {
-        console.error('Error fetching contest photos:', error);
+        console.error('Error fetching contest photos:', contestError);
       }
 
       // Mock photos for demonstration
@@ -166,6 +166,11 @@ const Profile = () => {
     } finally {
       setIsLoadingPhotos(false);
     }
+  };
+
+  const handleDeleteAccount = () => {
+    // Placeholder function for delete account
+    console.log('Delete account requested');
   };
 
   if (isLoading) {
@@ -291,7 +296,7 @@ const Profile = () => {
       {/* Content */}
       <div className="container mx-auto px-4 py-8">
         {isOwnProfile && showSettings ? (
-          <ProfileSettingsTabs />
+          <ProfileSettingsTabs onDeleteAccount={handleDeleteAccount} />
         ) : (
           <div>
             <div className="flex items-center justify-between mb-6">
