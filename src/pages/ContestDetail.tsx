@@ -31,6 +31,8 @@ const ContestDetail = () => {
     return <Navigate to="/contests" replace />;
   }
 
+  console.log('Contest prize info:', contest.prize); // Debug log
+
   // Mock photos for the contest
   const contestPhotos = Array(8).fill(null).map((_, i) => ({
     id: `photo-${i}`,
@@ -91,7 +93,7 @@ const ContestDetail = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {/* Contest Stats - SIN información del premio */}
+            {/* Contest Stats */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-4">Información del concurso</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -149,7 +151,7 @@ const ContestDetail = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Contest Details - CON información del premio */}
+            {/* Contest Details - CON información del premio mejorada */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="font-semibold text-lg mb-4">Detalles</h3>
               <div className="space-y-4">
@@ -180,12 +182,14 @@ const ContestDetail = () => {
                     <p className="text-sm text-muted-foreground">{contest.organizer}</p>
                   </div>
                 </div>
-                {/* Premio ÚNICAMENTE en la sección de detalles */}
+                {/* Premio mejorado con verificación de datos */}
                 <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
                   <Trophy className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div>
+                  <div className="w-full">
                     <p className="font-medium text-primary">Premio</p>
-                    <p className="text-sm font-bold text-primary">{contest.prize}</p>
+                    <p className="text-sm font-bold text-primary break-words">
+                      {contest.prize && contest.prize.trim() !== '' ? contest.prize : "Por determinar"}
+                    </p>
                   </div>
                 </div>
               </div>

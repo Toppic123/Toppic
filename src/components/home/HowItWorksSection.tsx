@@ -1,8 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { Upload, ThumbsUp, Award, Sparkles } from "lucide-react";
+import { Upload, ThumbsUp, Award } from "lucide-react";
 import ModernStep from "./ModernStep";
 import ModernSectionTitle from "./ModernSectionTitle";
 
@@ -62,33 +60,11 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
         />
         
         {/* Pasos modernos */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
           {steps.map((step, index) => (
             <ModernStep key={index} {...step} index={index} />
           ))}
         </div>
-        
-        {/* CTA mejorado */}
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8 }}
-          className="text-center relative"
-        >
-          <div className="relative inline-block">
-            <Button 
-              asChild 
-              size="lg" 
-              className="rounded-full px-16 py-8 text-xl font-black bg-gradient-to-r from-primary via-blue-600 to-purple-600 hover:from-primary/90 hover:via-blue-600/90 hover:to-purple-600/90 shadow-2xl hover:shadow-3xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-500 border-4 border-white/30"
-            >
-              <Link to="/contests" className="flex items-center">
-                <span>{texts.startNow}</span>
-                <Sparkles className="ml-4 w-6 h-6 animate-pulse" />
-              </Link>
-            </Button>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

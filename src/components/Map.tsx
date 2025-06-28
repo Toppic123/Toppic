@@ -18,7 +18,7 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
-// Coordenadas mejoradas con mayor precisión para España y Andorra
+// Coordenadas mejoradas para España y Andorra
 const getCoordinatesForLocation = (location: string) => {
   const locationMap: { [key: string]: { lat: number, lng: number } } = {
     // España - ciudades principales
@@ -38,7 +38,7 @@ const getCoordinatesForLocation = (location: string) => {
     'vigo': { lat: 42.2328, lng: -8.7226 },
     'gijón': { lat: 43.5322, lng: -5.6611 },
     
-    // Andorra - ubicaciones específicas con coordenadas precisas
+    // Andorra
     'andorra': { lat: 42.5063, lng: 1.5218 },
     'andorra la vella': { lat: 42.5063, lng: 1.5218 },
     'escaldes-engordany': { lat: 42.5079, lng: 1.5346 },
@@ -68,48 +68,38 @@ const getCoordinatesForLocation = (location: string) => {
 
   const locationKey = location.toLowerCase().trim();
   
-  console.log('Buscando coordenadas mejoradas para ubicación:', locationKey);
-  
   // Búsqueda exacta
   if (locationMap[locationKey]) {
-    console.log('Coordenadas exactas encontradas:', locationMap[locationKey]);
     return locationMap[locationKey];
   }
   
-  // Búsqueda parcial mejorada
+  // Búsqueda parcial
   for (const [key, coords] of Object.entries(locationMap)) {
     if (locationKey.includes(key) || key.includes(locationKey)) {
-      console.log('Coordenadas encontradas por coincidencia parcial:', coords, 'para', key);
       return coords;
     }
   }
   
   // Búsqueda por palabras clave
   if (locationKey.includes('andorra')) {
-    console.log('Detectado Andorra, usando coordenadas centrales');
     return locationMap['andorra'];
   }
   
   if (locationKey.includes('barcelona') || locationKey.includes('cataluña') || locationKey.includes('catalunya')) {
-    console.log('Detectado Barcelona/Cataluña');
     return locationMap['barcelona'];
   }
   
   if (locationKey.includes('madrid')) {
-    console.log('Detectado Madrid');
     return locationMap['madrid'];
   }
   
-  // Default mejorado
-  console.log('Ubicación no encontrada, usando Madrid por defecto con coordenadas precisas');
+  // Default
   return locationMap['madrid'];
 };
 
 // Convert contest data to map-compatible format
 const convertContestToMapFormat = (contest: any) => {
   const coordinates = getCoordinatesForLocation(contest.location || "madrid");
-  
-  console.log('Convirtiendo concurso:', contest.title, 'ubicación:', contest.location, 'coordenadas:', coordinates);
   
   return {
     id: contest.id,
@@ -120,7 +110,7 @@ const convertContestToMapFormat = (contest: any) => {
     endDate: contest.endDate,
     participants: contest.participants,
     isActive: contest.isActive,
-    prize: contest.prize || "500€",
+    prize: contest.prize || "Por determinar",
     imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
     organizer: contest.organizer,
     photosCount: 0,
@@ -148,14 +138,10 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   const mapContests = realContests.map(convertContestToMapFormat);
   const activeMapContests = mapContests.filter(contest => contest.isActive);
 
-  console.log("Contests from database:", realContests);
-  console.log("Converted map contests:", mapContests);
-
   // Check geolocation support on component mount
   useEffect(() => {
     if (!navigator.geolocation) {
       setGeolocationSupported(false);
-      console.error("Geolocation is not supported by this browser");
       toast({
         title: "Geolocalización no disponible",
         description: "Tu navegador no soporta geolocalización",
@@ -194,7 +180,15 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   // Función mejorada para encontrar concursos cercanos
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 100) => {
-    console.log('Buscando concursos cerca de:', userLat, userLng, 'con distancia máxima de', maxDistance, 'km');
+    console.log('Buscando concursos cerca de:', userLat, userLng);
+    
+    if (activeMapContests.length === 0) {
+      toast({
+        title: "No hay concursos disponibles",
+        description: "No hay concursos activos disponibles en este momento.",
+      });
+      return;
+    }
     
     const nearby = activeMapContests.map(contest => {
       const distance = calculateDistance(
@@ -203,12 +197,10 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         contest.coords.lat, 
         contest.coords.lng
       );
-      console.log('Distancia al concurso', contest.title, ':', distance.toFixed(2), 'km');
       return { ...contest, distance };
     }).filter(contest => contest.distance <= maxDistance)
-      .sort((a, b) => a.distance - b.distance); // Ordenar por distancia
+      .sort((a, b) => a.distance - b.distance);
 
-    console.log('Concursos cercanos encontrados:', nearby.length);
     setNearbyContests(nearby);
 
     if (nearby.length === 0) {
@@ -223,7 +215,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         return { ...contest, distance };
       }).filter(contest => contest.distance <= 500)
         .sort((a, b) => a.distance - b.distance)
-        .slice(0, 5); // Máximo 5 concursos
+        .slice(0, 5);
       
       if (expandedSearch.length > 0) {
         setNearbyContests(expandedSearch);
@@ -234,7 +226,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       } else {
         toast({
           title: "No se encontraron concursos cercanos",
-          description: "No hay concursos activos en tu área. Prueba a ampliar la búsqueda.",
+          description: "No hay concursos activos en tu área. Prueba más tarde.",
         });
       }
     } else {
@@ -262,22 +254,16 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     }
 
     setIsLocating(true);
-    console.log("Iniciando geolocalización...");
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 20000, // Aumentado a 20 segundos
-      maximumAge: 30000 // Cache por 30 segundos
+      timeout: 15000,
+      maximumAge: 60000
     };
 
     const onSuccess = (position: GeolocationPosition) => {
       const { latitude, longitude, accuracy } = position.coords;
-      console.log('Ubicación obtenida exitosamente:', {
-        latitude,
-        longitude,
-        accuracy: `${accuracy} metros`,
-        timestamp: new Date(position.timestamp).toLocaleString()
-      });
+      console.log('Ubicación obtenida:', { latitude, longitude, accuracy });
       
       setUserLocation({ lat: latitude, lng: longitude });
       findNearbyContests(latitude, longitude);
@@ -299,18 +285,18 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       switch(error.code) {
         case error.PERMISSION_DENIED:
           errorTitle = "Permisos denegados";
-          errorMessage = "Has denegado el acceso a tu ubicación. Por favor, habilita la geolocalización en tu navegador y recarga la página.";
+          errorMessage = "Habilita la geolocalización en tu navegador para encontrar concursos cercanos.";
           break;
         case error.POSITION_UNAVAILABLE:
           errorTitle = "Ubicación no disponible";
-          errorMessage = "No se puede determinar tu ubicación. Verifica que el GPS esté activado y tengas buena señal.";
+          errorMessage = "Verifica que el GPS esté activado y tengas buena señal.";
           break;
         case error.TIMEOUT:
           errorTitle = "Tiempo agotado";
-          errorMessage = "La búsqueda de ubicación ha tardado demasiado. Inténtalo de nuevo.";
+          errorMessage = "La búsqueda de ubicación tardó demasiado. Inténtalo de nuevo.";
           break;
         default:
-          errorMessage = `Error desconocido: ${error.message}`;
+          errorMessage = `Error: ${error.message}`;
       }
       
       toast({
@@ -320,18 +306,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       });
     };
 
-    // Intentar obtener la posición
-    try {
-      navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-    } catch (err) {
-      console.error("Error al llamar getCurrentPosition:", err);
-      setIsLocating(false);
-      toast({
-        title: "Error crítico",
-        description: "No se pudo inicializar la geolocalización",
-        variant: "destructive"
-      });
-    }
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
   };
 
   useEffect(() => {
@@ -353,14 +328,12 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   useEffect(() => {
     if (leafletLoaded && !contestsLoading) {
-      // Initialize map after Leaflet is loaded and contests are loaded
       const timer = setTimeout(() => {
         initMap();
       }, 100);
 
       return () => {
         clearTimeout(timer);
-        // Cleanup map on unmount
         if (mapInstanceRef.current) {
           mapInstanceRef.current.remove();
           mapInstanceRef.current = null;
@@ -369,7 +342,6 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     }
   }, [leafletLoaded, contestsLoading]);
 
-  // Re-add markers when contests data changes
   useEffect(() => {
     if (mapInstanceRef.current && !contestsLoading) {
       addContestMarkers();
@@ -378,23 +350,14 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   return (
     <div className="relative w-full h-[70vh] bg-muted rounded-lg overflow-hidden shadow-lg border border-gray-200">
-      {/* Mostrar estado de carga */}
       {(isMapLoading || contestsLoading) && <MapLoadingState />}
-
-      {/* Contenedor del mapa */}
       <div ref={mapRef} className="w-full h-full rounded-lg" />
-
-      {/* Botón central para buscar concursos cercanos */}
       <SearchButton 
         isLocating={isLocating}
         isMapLoading={isMapLoading || contestsLoading}
         onLocateUser={locateUser}
       />
-
-      {/* Lista de concursos cercanos */}
       <NearbyContestsList contests={nearbyContests} />
-
-      {/* Tarjeta de concurso seleccionado */}
       <SelectedContestCard contest={selectedContest} />
     </div>
   );

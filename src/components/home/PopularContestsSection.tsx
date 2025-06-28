@@ -1,12 +1,11 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Star } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
 import { useFeaturedContests } from "@/hooks/useFeaturedContests";
 import { useContestsData } from "@/hooks/useContestsData";
-import ModernSectionTitle from "./ModernSectionTitle";
 
 interface PopularContestsSectionProps {
   contests: any[];
@@ -78,13 +77,27 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-white to-[#f8f9fe] dark:from-background dark:to-background/90">
       <div className="container max-w-7xl mx-auto px-4">
-        {/* Título moderno */}
-        <ModernSectionTitle 
-          title="Concursos Destacados"
-          subtitle="Descubre los concursos más populares y emocionantes"
-          icon={Star}
-          gradient="from-yellow-500 via-orange-500 to-red-500"
-        />
+        {/* Título sin badge destacado */}
+        <div className="text-center mb-16">
+          <motion.h2 
+            className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            Concursos Destacados
+          </motion.h2>
+          <motion.p 
+            className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            Descubre los concursos más populares y emocionantes
+          </motion.p>
+        </div>
         
         <div className="flex justify-center mb-10">
           <Button asChild variant="ghost" className="group">
