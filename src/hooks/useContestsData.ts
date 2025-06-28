@@ -22,6 +22,7 @@ export interface Contest {
   contest_password?: string;
   minimum_distance_km?: number;
   prize?: string;
+  created_at?: string;
 }
 
 export const useContestsData = () => {
