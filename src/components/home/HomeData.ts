@@ -1,8 +1,7 @@
-
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
-// Hero section carousel images - Updated with minimalist high-end gourmet dish
+// Hero section carousel images - Updated with high-end gourmet dish
 export const heroImages = [
   {
     url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
@@ -17,8 +16,8 @@ export const heroImages = [
     category: "Torre Eiffel París"
   },
   {
-    url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Plato gourmet minimalista"
+    url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Plato gourmet de alta cocina"
   }
 ];
 
