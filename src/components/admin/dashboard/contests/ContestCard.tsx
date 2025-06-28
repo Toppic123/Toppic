@@ -17,8 +17,27 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
-  // Default image fallback
-  const imageUrl = contest.imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2000&auto=format&fit=crop";
+  // Better image handling with multiple fallbacks
+  const getImageUrl = (imageUrl: string | undefined) => {
+    if (!imageUrl) {
+      return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+    }
+    
+    // If it's a blob URL or data URL, return as is
+    if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
+      return imageUrl;
+    }
+    
+    // If it's a regular URL, return as is
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    
+    // Fallback for any other case
+    return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+  };
+
+  const imageUrl = getImageUrl(contest.imageUrl);
 
   return (
     <Card key={contest.id}>
@@ -29,9 +48,10 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
           alt={contest.title || 'Imagen del concurso'}
           className="w-full h-full object-cover"
           onError={(e) => {
-            // Fallback to default image if the contest image fails to load
             const target = e.target as HTMLImageElement;
-            target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2000&auto=format&fit=crop";
+            if (target.src !== "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop") {
+              target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+            }
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

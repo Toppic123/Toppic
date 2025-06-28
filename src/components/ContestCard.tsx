@@ -26,15 +26,31 @@ const ContestCard = ({
 }: ContestCardProps) => {
   const [imageError, setImageError] = useState(false);
   
-  // Use a single fallback image
-  const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=225&fit=crop";
+  // Better image handling
+  const getDisplayImage = () => {
+    if (!imageUrl || imageError) {
+      return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+    }
+    
+    // If it's a blob URL or data URL, return as is
+    if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
+      return imageUrl;
+    }
+    
+    // If it's a regular URL, return as is
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    
+    // Fallback
+    return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+  };
   
   const handleImageError = () => {
     setImageError(true);
   };
   
-  // Use original image if available and no error, otherwise use fallback
-  const displayImage = (!imageUrl || imageError) ? fallbackImage : imageUrl;
+  const displayImage = getDisplayImage();
   
   return (
     <motion.div

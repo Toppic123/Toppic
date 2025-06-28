@@ -44,31 +44,17 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     setIsUploading(true);
 
     try {
-      // Convert to base64 data URL for better compatibility
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setPreviewUrl(result);
-        onChange(result);
-        
-        toast({
-          title: "Imagen cargada",
-          description: "La imagen se ha cargado correctamente.",
-        });
-        
-        setIsUploading(false);
-      };
+      // Convert to blob URL for better performance and reliability
+      const blobUrl = URL.createObjectURL(file);
+      setPreviewUrl(blobUrl);
+      onChange(blobUrl);
       
-      reader.onerror = () => {
-        toast({
-          title: "Error al cargar imagen",
-          description: "Ha ocurrido un error al procesar la imagen.",
-          variant: "destructive",
-        });
-        setIsUploading(false);
-      };
+      toast({
+        title: "Imagen cargada",
+        description: "La imagen se ha cargado correctamente.",
+      });
       
-      reader.readAsDataURL(file);
+      setIsUploading(false);
     } catch (error) {
       console.error('Error uploading image:', error);
       toast({
@@ -155,10 +141,12 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
               src={previewUrl}
               alt="Vista previa de la imagen del concurso"
               className="w-full h-48 object-cover rounded-lg border"
-              onError={() => {
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
                 toast({
-                  title: "Error",
-                  description: "No se pudo cargar la imagen. Verifica la URL.",
+                  title: "Error de imagen",
+                  description: "Error al cargar la imagen. Se muestra imagen por defecto.",
                   variant: "destructive",
                 });
               }}

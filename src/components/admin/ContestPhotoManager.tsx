@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/dialog";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image, Plus, Trash2 } from "lucide-react";
+import { Upload, Image, Plus, Trash2, Edit, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import PhotoEditDialog from "@/components/admin/dashboard/photos/PhotoEditDialog";
+import { ContestPhoto } from "@/hooks/useContestPhotos";
 
 const ContestPhotoManager = () => {
   const [selectedContestId, setSelectedContestId] = useState<string>("");
@@ -18,6 +21,8 @@ const ContestPhotoManager = () => {
   const [photographerName, setPhotographerName] = useState("");
   const [photoDescription, setPhotoDescription] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<ContestPhoto | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
   const { contests } = useContestsData();
   const { photos, isLoading: photosLoading, uploadPhoto, fetchContestPhotos } = useContestPhotos(selectedContestId);
@@ -62,7 +67,7 @@ const ContestPhotoManager = () => {
 
     setIsUploading(true);
     try {
-      const result = await uploadPhoto(uploadFile, photographerName, photoDescription, true); // Auto-approve from admin
+      const result = await uploadPhoto(uploadFile, photographerName, photoDescription, true);
       if (result) {
         toast({
           title: "Éxito",
@@ -95,6 +100,64 @@ const ContestPhotoManager = () => {
     setPhotoDescription("");
   };
 
+  const handleEditPhoto = (photo: ContestPhoto) => {
+    setEditingPhoto(photo);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSavePhotoEdit = async (photoId: string, updates: Partial<ContestPhoto>) => {
+    try {
+      // Update photo in database
+      const { error } = await supabase
+        .from('contest_photos')
+        .update(updates)
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Foto actualizada",
+        description: "Los cambios se han guardado correctamente",
+      });
+
+      // Refresh photos
+      fetchContestPhotos();
+    } catch (error: any) {
+      console.error('Error updating photo:', error);
+      toast({
+        title: "Error al actualizar",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeletePhoto = async (photoId: string) => {
+    try {
+      const { error } = await supabase
+        .from('contest_photos')
+        .delete()
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Foto eliminada",
+        description: "La foto ha sido eliminada del concurso",
+      });
+
+      // Refresh photos
+      fetchContestPhotos();
+    } catch (error: any) {
+      console.error('Error deleting photo:', error);
+      toast({
+        title: "Error al eliminar",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const selectedContest = contests.find(c => c.id === selectedContestId);
 
   return (
@@ -106,7 +169,7 @@ const ContestPhotoManager = () => {
             Gestor de Fotos de Concursos
           </CardTitle>
           <CardDescription>
-            Añade fotos a los concursos para que no estén vacíos y los participantes puedan ver ejemplos.
+            Añade, edita y elimina fotos de los concursos.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -245,7 +308,7 @@ const ContestPhotoManager = () => {
                     <div className="p-3">
                       <p className="font-medium text-sm">{photo.photographer_name}</p>
                       {photo.description && (
-                        <p className="text-xs text-muted-foreground mt-1">{photo.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{photo.description}</p>
                       )}
                       <div className="flex items-center justify-between mt-2">
                         <Badge variant={photo.status === 'approved' ? 'default' : 'secondary'}>
@@ -255,6 +318,42 @@ const ContestPhotoManager = () => {
                           {photo.votes} votos
                         </div>
                       </div>
+                      <div className="flex gap-2 mt-3">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditPhoto(photo)}
+                          className="flex-1"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Editar
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button size="sm" variant="destructive" className="flex-1">
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              Eliminar
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>¿Eliminar foto?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Esta acción no se puede deshacer. La foto será eliminada permanentemente del concurso.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeletePhoto(photo.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Eliminar
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -263,6 +362,16 @@ const ContestPhotoManager = () => {
           </CardContent>
         </Card>
       )}
+
+      <PhotoEditDialog
+        photo={editingPhoto}
+        isOpen={isEditDialogOpen}
+        onClose={() => {
+          setIsEditDialogOpen(false);
+          setEditingPhoto(null);
+        }}
+        onSave={handleSavePhotoEdit}
+      />
     </div>
   );
 };
