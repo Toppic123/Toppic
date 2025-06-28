@@ -1,3 +1,4 @@
+
 // Import the WinningPhoto type from the use-winning-photos hook
 import { WinningPhoto } from "@/hooks/use-winning-photos";
 
@@ -16,8 +17,8 @@ export const heroImages = [
     category: "Torre Eiffel París"
   },
   {
-    url: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Alta cocina gourmet minimalista"
+    url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Plato gourmet minimalista"
   }
 ];
 
@@ -100,7 +101,7 @@ export const winningPhotos: WinningPhoto[] = [
   {
     id: 6,
     imageUrl: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Torre Eiffel París",
+    title: "Arquitectura urbana",
     photographer: "Marco Valencia",
     photographerAvatar: "https://i.pravatar.cc/150?img=6",
     likes: 284
