@@ -88,7 +88,7 @@ const ModernSectionTitle = ({
           className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed font-medium"
         >
           {subtitle}
-        </p>
+        </motion.p>
       )}
     </div>
   );
