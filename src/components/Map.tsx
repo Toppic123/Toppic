@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useContestsData } from "@/hooks/useContestsData";
@@ -18,9 +17,28 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
-// Coordenadas mejoradas para España y Andorra
+// Coordenadas mejoradas y más precisas para España y Andorra
 const getCoordinatesForLocation = (location: string) => {
   const locationMap: { [key: string]: { lat: number, lng: number } } = {
+    // Andorra - Coordenadas más precisas
+    'andorra': { lat: 42.5063, lng: 1.5218 },
+    'andorra la vella': { lat: 42.5063, lng: 1.5218 },
+    'escaldes-engordany': { lat: 42.5079, lng: 1.5346 },
+    'escaldes': { lat: 42.5079, lng: 1.5346 },
+    'encamp': { lat: 42.5313, lng: 1.5839 },
+    'la massana': { lat: 42.5456, lng: 1.5149 },
+    'ordino': { lat: 42.5563, lng: 1.5331 },
+    'sant julià de lòria': { lat: 42.4639, lng: 1.4913 },
+    'sant julia de loria': { lat: 42.4639, lng: 1.4913 },
+    'canillo': { lat: 42.5676, lng: 1.5976 },
+    'pas de la casa': { lat: 42.5428, lng: 1.7333 },
+    'soldeu': { lat: 42.5761, lng: 1.6703 },
+    'el tarter': { lat: 42.5683, lng: 1.6558 },
+    'arinsal': { lat: 42.5725, lng: 1.4861 },
+    'pal': { lat: 42.5556, lng: 1.4889 },
+    'grandvalira': { lat: 42.5444, lng: 1.6500 },
+    'caldea': { lat: 42.5079, lng: 1.5346 },
+    
     // España - ciudades principales
     'madrid': { lat: 40.4168, lng: -3.7038 },
     'barcelona': { lat: 41.3851, lng: 2.1734 },
@@ -38,32 +56,22 @@ const getCoordinatesForLocation = (location: string) => {
     'vigo': { lat: 42.2328, lng: -8.7226 },
     'gijón': { lat: 43.5322, lng: -5.6611 },
     
-    // Andorra
-    'andorra': { lat: 42.5063, lng: 1.5218 },
-    'andorra la vella': { lat: 42.5063, lng: 1.5218 },
-    'escaldes-engordany': { lat: 42.5079, lng: 1.5346 },
-    'escaldes': { lat: 42.5079, lng: 1.5346 },
-    'encamp': { lat: 42.5313, lng: 1.5839 },
-    'la massana': { lat: 42.5456, lng: 1.5149 },
-    'ordino': { lat: 42.5563, lng: 1.5331 },
-    'sant julià de lòria': { lat: 42.4639, lng: 1.4913 },
-    'sant julia de loria': { lat: 42.4639, lng: 1.4913 },
-    'canillo': { lat: 42.5676, lng: 1.5976 },
-    'pas de la casa': { lat: 42.5428, lng: 1.7333 },
-    'soldeu': { lat: 42.5761, lng: 1.6703 },
-    'el tarter': { lat: 42.5683, lng: 1.6558 },
-    
     // Cataluña - ciudades cercanas a Andorra
     'la seu d\'urgell': { lat: 42.3586, lng: 1.4582 },
     'puigcerdà': { lat: 42.4303, lng: 1.9272 },
     'berga': { lat: 42.1006, lng: 1.8447 },
     'manresa': { lat: 41.7287, lng: 1.8308 },
     'vic': { lat: 41.9301, lng: 2.2547 },
+    'ripoll': { lat: 42.1989, lng: 2.1914 },
+    'camprodon': { lat: 42.3167, lng: 2.3667 },
+    'olot': { lat: 42.1817, lng: 2.4889 },
     
-    // Francia - ciudades cercanas
+    // Francia - ciudades cercanas a Andorra
     'toulouse': { lat: 43.6047, lng: 1.4442 },
     'perpignan': { lat: 42.6886, lng: 2.8955 },
-    'foix': { lat: 42.9635, lng: 1.6053 }
+    'foix': { lat: 42.9635, lng: 1.6053 },
+    'ax-les-thermes': { lat: 42.7167, lng: 1.8333 },
+    'font-romeu': { lat: 42.5000, lng: 2.0333 }
   };
 
   const locationKey = location.toLowerCase().trim();
@@ -73,14 +81,14 @@ const getCoordinatesForLocation = (location: string) => {
     return locationMap[locationKey];
   }
   
-  // Búsqueda parcial
+  // Búsqueda parcial más específica para Andorra
   for (const [key, coords] of Object.entries(locationMap)) {
     if (locationKey.includes(key) || key.includes(locationKey)) {
       return coords;
     }
   }
   
-  // Búsqueda por palabras clave
+  // Búsqueda por palabras clave mejorada
   if (locationKey.includes('andorra')) {
     return locationMap['andorra'];
   }
@@ -93,7 +101,7 @@ const getCoordinatesForLocation = (location: string) => {
     return locationMap['madrid'];
   }
   
-  // Default
+  // Default a España central
   return locationMap['madrid'];
 };
 
@@ -103,6 +111,8 @@ const convertContestToMapFormat = (contest: any) => {
   
   console.log('Converting contest to map format:', {
     title: contest.title,
+    location: contest.location,
+    coordinates: coordinates,
     imageUrl: contest.imageUrl,
     originalImageUrl: contest.imageUrl
   });
@@ -115,7 +125,7 @@ const convertContestToMapFormat = (contest: any) => {
     description: contest.description || "Descripción del concurso disponible pronto.",
     endDate: contest.endDate,
     participants: contest.participants,
-    isActive: contest.isActive,
+    isActive: contest.status === 'active',
     prize: contest.prize || "Por determinar",
     imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
     organizer: contest.organizer,
@@ -188,10 +198,22 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     markersRef.current = markers;
   };
 
-  // Función mejorada para encontrar concursos cercanos
-  const findNearbyContests = (userLat: number, userLng: number, maxDistance = 100) => {
+  // Función mejorada para encontrar concursos cercanos con mejor soporte para Andorra
+  const findNearbyContests = (userLat: number, userLng: number, maxDistance = 150) => {
     console.log('Finding nearby contests. User location:', { userLat, userLng });
     console.log('Active contests available:', activeMapContests.length);
+    
+    // Verificar si está en Andorra (coordenadas aproximadas)
+    const isInAndorra = userLat >= 42.4 && userLat <= 42.7 && userLng >= 1.4 && userLng <= 1.8;
+    
+    if (isInAndorra) {
+      console.log('User detected in Andorra, expanding search radius');
+      maxDistance = 200; // Expandir búsqueda para Andorra
+      toast({
+        title: "Ubicación detectada: Andorra",
+        description: "Buscando concursos en Andorra y alrededores...",
+      });
+    }
     
     if (activeMapContests.length === 0) {
       console.warn('No active contests available');
@@ -209,16 +231,16 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         contest.coords.lat, 
         contest.coords.lng
       );
-      console.log(`Contest ${contest.title} is ${distance.toFixed(2)} km away`);
+      console.log(`Contest ${contest.title} in ${contest.location} is ${distance.toFixed(2)} km away`);
       return { ...contest, distance };
     }).filter(contest => contest.distance <= maxDistance)
       .sort((a, b) => a.distance - b.distance);
 
-    console.log('Nearby contests found:', nearby.length);
+    console.log(`Nearby contests found within ${maxDistance}km:`, nearby.length);
     setNearbyContests(nearby);
 
     if (nearby.length === 0) {
-      // Si no encuentra concursos en 100km, ampliar búsqueda
+      // Si no encuentra concursos, ampliar búsqueda considerablemente
       const expandedSearch = activeMapContests.map(contest => {
         const distance = calculateDistance(
           userLat, 
@@ -229,7 +251,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         return { ...contest, distance };
       }).filter(contest => contest.distance <= 500)
         .sort((a, b) => a.distance - b.distance)
-        .slice(0, 5);
+        .slice(0, 8);
       
       console.log('Expanded search results:', expandedSearch.length);
       
@@ -254,7 +276,8 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
     // Center map on user location and add user marker
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setView([userLat, userLng], 10);
+      const zoomLevel = isInAndorra ? 11 : 10;
+      mapInstanceRef.current.setView([userLat, userLng], zoomLevel);
       addUserLocationMarker(mapInstanceRef.current, userLat, userLng);
     }
   };
@@ -276,8 +299,8 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 60000
+      timeout: 20000, // Aumentar timeout para mejor precisión
+      maximumAge: 30000 // Reducir edad máxima para obtener ubicación más actual
     };
 
     console.log('Requesting geolocation with options:', options);
@@ -291,14 +314,25 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         timestamp: new Date(position.timestamp)
       });
       
+      // Verificar si está en Andorra
+      const isInAndorra = latitude >= 42.4 && latitude <= 42.7 && longitude >= 1.4 && longitude <= 1.8;
+      
+      if (isInAndorra) {
+        console.log('User confirmed to be in Andorra');
+        toast({
+          title: "Ubicación confirmada: Andorra",
+          description: `Precisión: ${Math.round(accuracy)} metros. Buscando concursos locales...`,
+        });
+      } else {
+        toast({
+          title: "Ubicación obtenida",
+          description: `Precisión: ${Math.round(accuracy)} metros`,
+        });
+      }
+      
       setUserLocation({ lat: latitude, lng: longitude });
       findNearbyContests(latitude, longitude);
       setIsLocating(false);
-      
-      toast({
-        title: "Ubicación obtenida",
-        description: `Precisión: ${Math.round(accuracy)} metros`,
-      });
     };
 
     const onError = (error: GeolocationPositionError) => {
@@ -323,12 +357,12 @@ const Map = ({ showMustardButton = false }: MapProps) => {
           break;
         case error.POSITION_UNAVAILABLE:
           errorTitle = "Ubicación no disponible";
-          errorMessage = "Verifica que el GPS esté activado y tengas buena señal.";
+          errorMessage = "Verifica que el GPS esté activado y tengas buena señal. Si estás en Andorra, esto puede ser normal debido a la montaña.";
           console.log('Position information is unavailable');
           break;
         case error.TIMEOUT:
           errorTitle = "Tiempo agotado";
-          errorMessage = "La búsqueda de ubicación tardó demasiado. Inténtalo de nuevo.";
+          errorMessage = "La búsqueda de ubicación tardó demasiado. En zonas montañosas como Andorra, prueba en un lugar con mejor cobertura.";
           console.log('Geolocation request timed out');
           break;
         default:

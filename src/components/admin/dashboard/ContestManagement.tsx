@@ -61,9 +61,9 @@ export const ContestManagement = () => {
           endDate: formData.endDate,
           photoDeadline: formData.photoDeadline,
           status: formData.status,
-          is_private: formData.isPrivate,
-          contest_password: formData.contestPassword,
-          minimum_distance_km: formData.minimumDistanceKm,
+          is_private: formData.is_private,
+          contest_password: formData.contest_password,
+          minimum_distance_km: formData.minimum_distance_km,
           prize: formData.prize
         } : null}
         onSubmit={handleSaveChanges}
