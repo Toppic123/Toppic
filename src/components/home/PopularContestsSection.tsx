@@ -77,23 +77,67 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-white to-[#f8f9fe] dark:from-background dark:to-background/90">
       <div className="container max-w-7xl mx-auto px-4">
-        {/* Título sin badge destacado */}
-        <div className="text-center mb-16">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4"
-            initial={{ opacity: 0, y: 20 }}
+        {/* Título moderno pero más pequeño */}
+        <div className="text-center mb-16 relative">
+          {/* Decoración de fondo */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-gradient-to-r from-primary/5 via-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
+          </div>
+          
+          {/* Badge superior */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            className="flex items-center justify-center mb-4"
           >
-            Concursos Destacados
-          </motion.h2>
-          <motion.p 
-            className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
+            <div className="flex items-center bg-gradient-to-r from-primary/10 to-blue-600/10 rounded-full px-4 py-2 border border-primary/20 backdrop-blur-sm">
+              <span className="text-primary font-bold text-sm">Destacado</span>
+            </div>
+          </motion.div>
+          
+          {/* Título principal más pequeño */}
+          <motion.h2 
+            initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-2xl md:text-3xl font-black mb-4 tracking-tight relative"
+          >
+            <span className="bg-gradient-to-r from-gray-900 via-primary to-blue-600 dark:from-white dark:via-primary dark:to-blue-400 bg-clip-text text-transparent relative">
+              CONCURSOS DESTACADOS
+              {/* Efecto de brillo */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
+                initial={{ x: '-100%', opacity: 0 }}
+                whileInView={{ x: '200%', opacity: [0, 1, 0] }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+              />
+            </span>
+          </motion.h2>
+          
+          {/* Línea decorativa animada */}
+          <motion.div 
+            initial={{ opacity: 0, width: 0 }}
+            whileInView={{ opacity: 1, width: 80 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="h-1 bg-gradient-to-r from-gray-900 via-primary to-blue-600 dark:from-white dark:via-primary dark:to-blue-400 rounded-full mx-auto mb-4 relative overflow-hidden"
+          >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+              animate={{ x: [-100, 200] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            />
+          </motion.div>
+          
+          {/* Subtítulo */}
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
           >
             Descubre los concursos más populares y emocionantes
           </motion.p>
