@@ -138,6 +138,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [nearbyContests, setNearbyContests] = useState<any[]>([]);
   const [leafletLoaded, setLeafletLoaded] = useState(false);
+  const [geolocationSupported, setGeolocationSupported] = useState(true);
   const { toast } = useToast();
   
   // Get real contests data from Supabase
@@ -149,6 +150,19 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   console.log("Contests from database:", realContests);
   console.log("Converted map contests:", mapContests);
+
+  // Check geolocation support on component mount
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setGeolocationSupported(false);
+      console.error("Geolocation is not supported by this browser");
+      toast({
+        title: "Geolocalización no disponible",
+        description: "Tu navegador no soporta geolocalización",
+        variant: "destructive"
+      });
+    }
+  }, []);
 
   const initMap = async () => {
     if (!mapRef.current || mapInstanceRef.current || !leafletLoaded) return;
@@ -238,57 +252,86 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   };
 
   const locateUser = () => {
-    setIsLocating(true);
-
-    if (!navigator.geolocation) {
+    if (!geolocationSupported) {
       toast({
         title: "Error de geolocalización",
         description: "Tu navegador no soporta geolocalización",
         variant: "destructive"
       });
-      setIsLocating(false);
       return;
     }
 
+    setIsLocating(true);
+    console.log("Iniciando geolocalización...");
+
     const options = {
       enableHighAccuracy: true,
-      timeout: 15000, // Aumentado el timeout
-      maximumAge: 60000 // Cache por 1 minuto
+      timeout: 20000, // Aumentado a 20 segundos
+      maximumAge: 30000 // Cache por 30 segundos
     };
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log('Ubicación del usuario obtenida con precisión:', latitude, longitude, 'Precisión:', position.coords.accuracy, 'metros');
-        setUserLocation({ lat: latitude, lng: longitude });
-        findNearbyContests(latitude, longitude);
-        setIsLocating(false);
-      },
-      (error) => {
-        console.error("Error getting user location:", error);
-        let errorMessage = "No se pudo obtener tu ubicación.";
-        
-        switch(error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = "Permisos de ubicación denegados. Por favor, habilita la ubicación en tu navegador.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = "Información de ubicación no disponible. Verifica tu conexión GPS.";
-            break;
-          case error.TIMEOUT:
-            errorMessage = "Tiempo de espera agotado para obtener la ubicación. Inténtalo de nuevo.";
-            break;
-        }
-        
-        toast({
-          title: "Error de ubicación",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        setIsLocating(false);
-      },
-      options
-    );
+    const onSuccess = (position: GeolocationPosition) => {
+      const { latitude, longitude, accuracy } = position.coords;
+      console.log('Ubicación obtenida exitosamente:', {
+        latitude,
+        longitude,
+        accuracy: `${accuracy} metros`,
+        timestamp: new Date(position.timestamp).toLocaleString()
+      });
+      
+      setUserLocation({ lat: latitude, lng: longitude });
+      findNearbyContests(latitude, longitude);
+      setIsLocating(false);
+      
+      toast({
+        title: "Ubicación obtenida",
+        description: `Precisión: ${Math.round(accuracy)} metros`,
+      });
+    };
+
+    const onError = (error: GeolocationPositionError) => {
+      console.error("Error de geolocalización:", error);
+      setIsLocating(false);
+      
+      let errorMessage = "No se pudo obtener tu ubicación.";
+      let errorTitle = "Error de ubicación";
+      
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          errorTitle = "Permisos denegados";
+          errorMessage = "Has denegado el acceso a tu ubicación. Por favor, habilita la geolocalización en tu navegador y recarga la página.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          errorTitle = "Ubicación no disponible";
+          errorMessage = "No se puede determinar tu ubicación. Verifica que el GPS esté activado y tengas buena señal.";
+          break;
+        case error.TIMEOUT:
+          errorTitle = "Tiempo agotado";
+          errorMessage = "La búsqueda de ubicación ha tardado demasiado. Inténtalo de nuevo.";
+          break;
+        default:
+          errorMessage = `Error desconocido: ${error.message}`;
+      }
+      
+      toast({
+        title: errorTitle,
+        description: errorMessage,
+        variant: "destructive"
+      });
+    };
+
+    // Intentar obtener la posición
+    try {
+      navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+    } catch (err) {
+      console.error("Error al llamar getCurrentPosition:", err);
+      setIsLocating(false);
+      toast({
+        title: "Error crítico",
+        description: "No se pudo inicializar la geolocalización",
+        variant: "destructive"
+      });
+    }
   };
 
   useEffect(() => {

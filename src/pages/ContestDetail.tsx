@@ -48,27 +48,6 @@ const ContestDetail = () => {
     navigate("/upload", { state: { contestId: id, contestTitle: contest.title } });
   };
 
-  // Extract prize information properly - check both description and direct prize field
-  const getPrizeInfo = () => {
-    // First check if there's a direct prize field
-    if (contest.prize && contest.prize !== "500€") {
-      return contest.prize;
-    }
-    
-    // Then check in description for prize information
-    if (contest.description) {
-      const prizeMatch = contest.description.match(/premio[:\s]*([^,\n.]+)/i);
-      if (prizeMatch) {
-        return prizeMatch[1].trim();
-      }
-    }
-    
-    // Default fallback
-    return "Por determinar";
-  };
-
-  const prizeInfo = getPrizeInfo();
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -112,10 +91,10 @@ const ContestDetail = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {/* Contest Stats */}
+            {/* Contest Stats - SIN información del premio */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-4">Información del concurso</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
                 <div className="text-center">
                   <Users className="h-8 w-8 text-primary mx-auto mb-2" />
                   <p className="text-2xl font-bold">{contest.participants}</p>
@@ -125,11 +104,6 @@ const ContestDetail = () => {
                   <Camera className="h-8 w-8 text-primary mx-auto mb-2" />
                   <p className="text-2xl font-bold">120</p>
                   <p className="text-sm text-muted-foreground">Fotos</p>
-                </div>
-                <div className="text-center">
-                  <Trophy className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-lg font-bold text-primary">{prizeInfo}</p>
-                  <p className="text-sm text-muted-foreground">Premio</p>
                 </div>
                 <div className="text-center">
                   <Calendar className="h-8 w-8 text-primary mx-auto mb-2" />
@@ -145,19 +119,6 @@ const ContestDetail = () => {
                 <div className="border-t pt-4">
                   <h3 className="font-semibold mb-2">Descripción</h3>
                   <p className="text-muted-foreground">{contest.description}</p>
-                </div>
-              )}
-
-              {/* Prize Information Section */}
-              {prizeInfo && prizeInfo !== "Por determinar" && (
-                <div className="border-t pt-4 mt-4">
-                  <h3 className="font-semibold mb-2 flex items-center">
-                    <Trophy className="h-4 w-4 text-primary mr-2" />
-                    Premio del Concurso
-                  </h3>
-                  <div className="bg-gradient-to-r from-primary/5 to-blue-600/5 rounded-lg p-4 border border-primary/20">
-                    <p className="text-lg font-bold text-primary">{prizeInfo}</p>
-                  </div>
                 </div>
               )}
             </div>
@@ -188,7 +149,7 @@ const ContestDetail = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Contest Details */}
+            {/* Contest Details - CON información del premio */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="font-semibold text-lg mb-4">Detalles</h3>
               <div className="space-y-4">
@@ -219,12 +180,12 @@ const ContestDetail = () => {
                     <p className="text-sm text-muted-foreground">{contest.organizer}</p>
                   </div>
                 </div>
-                {/* Prize information in sidebar */}
+                {/* Premio ÚNICAMENTE en la sección de detalles */}
                 <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
                   <Trophy className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-primary">Premio</p>
-                    <p className="text-sm font-bold text-primary">{prizeInfo}</p>
+                    <p className="text-sm font-bold text-primary">{contest.prize}</p>
                   </div>
                 </div>
               </div>

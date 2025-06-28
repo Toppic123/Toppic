@@ -54,11 +54,18 @@ export const useContestsData = () => {
       
       if (data) {
         const formattedContests: Contest[] = data.map(contest => {
-          // Función mejorada para extraer información del premio
-          const extractPrizeInfo = () => {
-            // Primero, buscar en la descripción patrones específicos de premio
+          console.log('Procesando concurso:', contest.title, 'Premio original:', contest.prize);
+          
+          // Función para obtener información del premio - prioriza el campo prize de la base de datos
+          const getPrizeInfo = () => {
+            // Primero verificar si hay un campo prize directo en la base de datos
+            if (contest.prize && contest.prize.trim() !== '') {
+              console.log('Premio encontrado en campo prize:', contest.prize);
+              return contest.prize.trim();
+            }
+            
+            // Si no hay prize directo, buscar en la descripción
             if (contest.description) {
-              // Patrones más específicos para capturar premios
               const prizePatterns = [
                 /premio[:\s]*([^,\n.!?]+)/gi,
                 /€[\d,.]*/g,
@@ -72,20 +79,22 @@ export const useContestsData = () => {
               for (const pattern of prizePatterns) {
                 const matches = contest.description.match(pattern);
                 if (matches && matches.length > 0) {
-                  // Limpiar y formatear el premio encontrado
                   let prize = matches[0].replace(/premio[:\s]*/gi, '').trim();
                   if (prize && prize.length > 0 && prize.length < 100) {
+                    console.log('Premio encontrado en descripción:', prize);
                     return prize;
                   }
                 }
               }
             }
             
-            // Si no se encuentra nada específico, usar un valor por defecto
+            // Valor por defecto
+            console.log('No se encontró premio, usando valor por defecto');
             return "Por determinar";
           };
 
-          const prizeInfo = extractPrizeInfo();
+          const prizeInfo = getPrizeInfo();
+          console.log('Premio final para', contest.title, ':', prizeInfo);
 
           return {
             id: contest.id,
@@ -110,7 +119,7 @@ export const useContestsData = () => {
           };
         });
         
-        console.log("Concursos formateados con premios:", formattedContests);
+        console.log("Concursos formateados con premios actualizados:", formattedContests);
         setContests(formattedContests);
       }
     } catch (error) {
