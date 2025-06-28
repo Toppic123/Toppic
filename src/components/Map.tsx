@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useContestsData } from "@/hooks/useContestsData";
@@ -52,7 +53,6 @@ const getCoordinatesForLocation = (location: string) => {
     'las palmas': { lat: 28.1248, lng: -15.4300 },
     'santander': { lat: 43.4623, lng: -3.8099 },
     'córdoba': { lat: 37.8882, lng: -4.7794 },
-    'valencia': { lat: 39.4699, lng: -0.3763 },
     
     // Cataluña - ciudades cercanas a Andorra
     'la seu d\'urgell': { lat: 42.3586, lng: 1.4582 },
