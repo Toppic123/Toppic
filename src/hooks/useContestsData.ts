@@ -54,16 +54,38 @@ export const useContestsData = () => {
       
       if (data) {
         const formattedContests: Contest[] = data.map(contest => {
-          // Extract prize information from description or use a default
-          let prizeInfo = "500€"; // Default prize
-          
-          // If there's specific prize data in the contest, use it
-          if (contest.description && contest.description.includes('Premio:')) {
-            const prizeMatch = contest.description.match(/Premio:\s*([^,\n]+)/i);
-            if (prizeMatch) {
-              prizeInfo = prizeMatch[1].trim();
+          // Función mejorada para extraer información del premio
+          const extractPrizeInfo = () => {
+            // Primero, buscar en la descripción patrones específicos de premio
+            if (contest.description) {
+              // Patrones más específicos para capturar premios
+              const prizePatterns = [
+                /premio[:\s]*([^,\n.!?]+)/gi,
+                /€[\d,.]*/g,
+                /\$[\d,.]*/g,
+                /[\d,]+\s*€/g,
+                /[\d,]+\s*euros?/gi,
+                /[\d,]+\s*dollars?/gi,
+                /[\d,]+\s*USD/g
+              ];
+              
+              for (const pattern of prizePatterns) {
+                const matches = contest.description.match(pattern);
+                if (matches && matches.length > 0) {
+                  // Limpiar y formatear el premio encontrado
+                  let prize = matches[0].replace(/premio[:\s]*/gi, '').trim();
+                  if (prize && prize.length > 0 && prize.length < 100) {
+                    return prize;
+                  }
+                }
+              }
             }
-          }
+            
+            // Si no se encuentra nada específico, usar un valor por defecto
+            return "Por determinar";
+          };
+
+          const prizeInfo = extractPrizeInfo();
 
           return {
             id: contest.id,
@@ -88,7 +110,7 @@ export const useContestsData = () => {
           };
         });
         
-        console.log("Concursos formateados:", formattedContests);
+        console.log("Concursos formateados con premios:", formattedContests);
         setContests(formattedContests);
       }
     } catch (error) {

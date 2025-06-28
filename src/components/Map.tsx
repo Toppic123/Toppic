@@ -18,39 +18,65 @@ interface MapProps {
   showMustardButton?: boolean;
 }
 
-// Generate realistic coordinates based on location - Updated with better Andorra support
+// Coordenadas mejoradas con mayor precisión para España y Andorra
 const getCoordinatesForLocation = (location: string) => {
   const locationMap: { [key: string]: { lat: number, lng: number } } = {
+    // España - ciudades principales
     'madrid': { lat: 40.4168, lng: -3.7038 },
     'barcelona': { lat: 41.3851, lng: 2.1734 },
     'valencia': { lat: 39.4699, lng: -0.3763 },
     'sevilla': { lat: 37.3891, lng: -5.9845 },
     'bilbao': { lat: 43.2627, lng: -2.9253 },
-    'andorra la vella': { lat: 42.5063, lng: 1.5218 },
+    'zaragoza': { lat: 41.6488, lng: -0.8891 },
+    'málaga': { lat: 36.7213, lng: -4.4213 },
+    'palma': { lat: 39.5696, lng: 2.6502 },
+    'palma de mallorca': { lat: 39.5696, lng: 2.6502 },
+    'las palmas': { lat: 28.1248, lng: -15.4300 },
+    'santander': { lat: 43.4623, lng: -3.8099 },
+    'córdoba': { lat: 37.8882, lng: -4.7794 },
+    'valladolid': { lat: 41.6523, lng: -4.7245 },
+    'vigo': { lat: 42.2328, lng: -8.7226 },
+    'gijón': { lat: 43.5322, lng: -5.6611 },
+    
+    // Andorra - ubicaciones específicas con coordenadas precisas
     'andorra': { lat: 42.5063, lng: 1.5218 },
+    'andorra la vella': { lat: 42.5063, lng: 1.5218 },
     'escaldes-engordany': { lat: 42.5079, lng: 1.5346 },
     'escaldes': { lat: 42.5079, lng: 1.5346 },
     'encamp': { lat: 42.5313, lng: 1.5839 },
     'la massana': { lat: 42.5456, lng: 1.5149 },
     'ordino': { lat: 42.5563, lng: 1.5331 },
     'sant julià de lòria': { lat: 42.4639, lng: 1.4913 },
+    'sant julia de loria': { lat: 42.4639, lng: 1.4913 },
     'canillo': { lat: 42.5676, lng: 1.5976 },
-    'zaragoza': { lat: 41.6488, lng: -0.8891 },
-    'málaga': { lat: 36.7213, lng: -4.4213 },
-    'palma': { lat: 39.5696, lng: 2.6502 }
+    'pas de la casa': { lat: 42.5428, lng: 1.7333 },
+    'soldeu': { lat: 42.5761, lng: 1.6703 },
+    'el tarter': { lat: 42.5683, lng: 1.6558 },
+    
+    // Cataluña - ciudades cercanas a Andorra
+    'la seu d\'urgell': { lat: 42.3586, lng: 1.4582 },
+    'puigcerdà': { lat: 42.4303, lng: 1.9272 },
+    'berga': { lat: 42.1006, lng: 1.8447 },
+    'manresa': { lat: 41.7287, lng: 1.8308 },
+    'vic': { lat: 41.9301, lng: 2.2547 },
+    
+    // Francia - ciudades cercanas
+    'toulouse': { lat: 43.6047, lng: 1.4442 },
+    'perpignan': { lat: 42.6886, lng: 2.8955 },
+    'foix': { lat: 42.9635, lng: 1.6053 }
   };
 
   const locationKey = location.toLowerCase().trim();
   
-  console.log('Buscando coordenadas para ubicación:', locationKey);
+  console.log('Buscando coordenadas mejoradas para ubicación:', locationKey);
   
-  // Try to find exact match first
+  // Búsqueda exacta
   if (locationMap[locationKey]) {
-    console.log('Coordenadas encontradas:', locationMap[locationKey]);
+    console.log('Coordenadas exactas encontradas:', locationMap[locationKey]);
     return locationMap[locationKey];
   }
   
-  // Try partial matches for Andorra locations
+  // Búsqueda parcial mejorada
   for (const [key, coords] of Object.entries(locationMap)) {
     if (locationKey.includes(key) || key.includes(locationKey)) {
       console.log('Coordenadas encontradas por coincidencia parcial:', coords, 'para', key);
@@ -58,12 +84,25 @@ const getCoordinatesForLocation = (location: string) => {
     }
   }
   
-  // Default to Madrid with slight randomization if location not found
-  console.log('Ubicación no encontrada, usando Madrid por defecto');
-  return { 
-    lat: 40.4168 + (Math.random() - 0.5) * 0.1, 
-    lng: -3.7038 + (Math.random() - 0.5) * 0.1 
-  };
+  // Búsqueda por palabras clave
+  if (locationKey.includes('andorra')) {
+    console.log('Detectado Andorra, usando coordenadas centrales');
+    return locationMap['andorra'];
+  }
+  
+  if (locationKey.includes('barcelona') || locationKey.includes('cataluña') || locationKey.includes('catalunya')) {
+    console.log('Detectado Barcelona/Cataluña');
+    return locationMap['barcelona'];
+  }
+  
+  if (locationKey.includes('madrid')) {
+    console.log('Detectado Madrid');
+    return locationMap['madrid'];
+  }
+  
+  // Default mejorado
+  console.log('Ubicación no encontrada, usando Madrid por defecto con coordenadas precisas');
+  return locationMap['madrid'];
 };
 
 // Convert contest data to map-compatible format
@@ -139,32 +178,55 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     markersRef.current = markers;
   };
 
-  const findNearbyContests = (userLat: number, userLng: number, maxDistance = 500) => {
-    console.log('Buscando concursos cerca de:', userLat, userLng);
+  // Función mejorada para encontrar concursos cercanos
+  const findNearbyContests = (userLat: number, userLng: number, maxDistance = 100) => {
+    console.log('Buscando concursos cerca de:', userLat, userLng, 'con distancia máxima de', maxDistance, 'km');
     
-    const nearby = activeMapContests.filter(contest => {
+    const nearby = activeMapContests.map(contest => {
       const distance = calculateDistance(
         userLat, 
         userLng, 
         contest.coords.lat, 
         contest.coords.lng
       );
-      console.log('Distancia al concurso', contest.title, ':', distance, 'km');
-      return distance <= maxDistance;
-    });
+      console.log('Distancia al concurso', contest.title, ':', distance.toFixed(2), 'km');
+      return { ...contest, distance };
+    }).filter(contest => contest.distance <= maxDistance)
+      .sort((a, b) => a.distance - b.distance); // Ordenar por distancia
 
     console.log('Concursos cercanos encontrados:', nearby.length);
     setNearbyContests(nearby);
 
     if (nearby.length === 0) {
-      toast({
-        title: "No se encontraron concursos cercanos",
-        description: "No hay concursos activos en tu área. Prueba a ampliar la búsqueda.",
-      });
+      // Si no encuentra concursos en 100km, ampliar búsqueda
+      const expandedSearch = activeMapContests.map(contest => {
+        const distance = calculateDistance(
+          userLat, 
+          userLng, 
+          contest.coords.lat, 
+          contest.coords.lng
+        );
+        return { ...contest, distance };
+      }).filter(contest => contest.distance <= 500)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 5); // Máximo 5 concursos
+      
+      if (expandedSearch.length > 0) {
+        setNearbyContests(expandedSearch);
+        toast({
+          title: `${expandedSearch.length} concursos encontrados`,
+          description: `Los concursos más cercanos están a ${expandedSearch[0].distance.toFixed(0)} km de distancia.`,
+        });
+      } else {
+        toast({
+          title: "No se encontraron concursos cercanos",
+          description: "No hay concursos activos en tu área. Prueba a ampliar la búsqueda.",
+        });
+      }
     } else {
       toast({
-        title: `${nearby.length} concursos encontrados`,
-        description: "Se muestran los concursos cercanos a tu ubicación.",
+        title: `${nearby.length} concursos cercanos`,
+        description: `El más cercano está a ${nearby[0].distance.toFixed(1)} km de distancia.`,
       });
     }
 
@@ -190,14 +252,14 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
     const options = {
       enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
+      timeout: 15000, // Aumentado el timeout
+      maximumAge: 60000 // Cache por 1 minuto
     };
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log('Ubicación del usuario obtenida:', latitude, longitude);
+        console.log('Ubicación del usuario obtenida con precisión:', latitude, longitude, 'Precisión:', position.coords.accuracy, 'metros');
         setUserLocation({ lat: latitude, lng: longitude });
         findNearbyContests(latitude, longitude);
         setIsLocating(false);
@@ -211,10 +273,10 @@ const Map = ({ showMustardButton = false }: MapProps) => {
             errorMessage = "Permisos de ubicación denegados. Por favor, habilita la ubicación en tu navegador.";
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "Información de ubicación no disponible.";
+            errorMessage = "Información de ubicación no disponible. Verifica tu conexión GPS.";
             break;
           case error.TIMEOUT:
-            errorMessage = "Tiempo de espera agotado para obtener la ubicación.";
+            errorMessage = "Tiempo de espera agotado para obtener la ubicación. Inténtalo de nuevo.";
             break;
         }
         

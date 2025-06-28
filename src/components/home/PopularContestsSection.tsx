@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
 import { useFeaturedContests } from "@/hooks/useFeaturedContests";
 import { useContestsData } from "@/hooks/useContestsData";
+import ModernSectionTitle from "./ModernSectionTitle";
 
 interface PopularContestsSectionProps {
   contests: any[];
@@ -77,25 +78,16 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-white to-[#f8f9fe] dark:from-background dark:to-background/90">
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="flex flex-col items-center mb-10">
-          <motion.h2 
-            initial={{ opacity: 0, y: -10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-4xl font-bold mb-2 tracking-tight text-center flex items-center gap-3"
-          >
-            <Star className="h-8 w-8 text-yellow-500" />
-            Concursos Destacados
-          </motion.h2>
-          <motion.div 
-            initial={{ opacity: 0, width: 0 }}
-            whileInView={{ opacity: 1, width: 100 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="h-1 bg-primary rounded w-24 mb-4"
-          ></motion.div>
-          
-          <Button asChild variant="ghost" className="group mt-4">
+        {/* Título moderno */}
+        <ModernSectionTitle 
+          title="Concursos Destacados"
+          subtitle="Descubre los concursos más populares y emocionantes"
+          icon={Star}
+          gradient="from-yellow-500 via-orange-500 to-red-500"
+        />
+        
+        <div className="flex justify-center mb-10">
+          <Button asChild variant="ghost" className="group">
             <Link to="/contests">
               <span>{texts.seeAll}</span>
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
