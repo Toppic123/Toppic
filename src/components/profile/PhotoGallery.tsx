@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Share2, MessageCircle } from "lucide-react";
+import { Share2, MessageCircle, Camera } from "lucide-react";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ReportPhotoDialog from "@/components/ReportPhotoDialog";
@@ -34,8 +34,12 @@ const PhotoGallery = ({ photos = [] }: PhotoGalleryProps) => {
   // Safety check for undefined or empty photos array
   if (!photos || photos.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-muted-foreground">No hay fotos disponibles.</p>
+      <div className="text-center py-12">
+        <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground mb-2">No hay fotos disponibles</p>
+        <p className="text-sm text-muted-foreground">
+          Las fotos aparecerán aquí una vez que se suban a los concursos
+        </p>
       </div>
     );
   }

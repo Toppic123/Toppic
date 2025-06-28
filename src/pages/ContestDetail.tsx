@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
 import PhotoCard from "@/components/PhotoCard";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -13,6 +14,9 @@ const ContestDetail = () => {
   const navigate = useNavigate();
   const { contests, isLoading } = useContestsData();
   const { user } = useAuth();
+  
+  // Fetch real photos from the database
+  const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(id);
 
   if (isLoading) {
     return (
@@ -31,15 +35,7 @@ const ContestDetail = () => {
     return <Navigate to="/contests" replace />;
   }
 
-  console.log('Contest prize info:', contest.prize); // Debug log
-
-  // Mock photos for the contest
-  const contestPhotos = Array(8).fill(null).map((_, i) => ({
-    id: `photo-${i}`,
-    imageUrl: `https://picsum.photos/seed/contest${id}photo${i}/400/600`,
-    photographer: `Fotógrafo ${i + 1}`,
-    photographerAvatar: `https://i.pravatar.cc/150?img=${(i % 20) + 1}`,
-  }));
+  console.log('Contest photos loaded:', approvedPhotos); // Debug log
 
   const handleUploadPhoto = () => {
     if (!user) {
@@ -104,7 +100,7 @@ const ContestDetail = () => {
                 </div>
                 <div className="text-center">
                   <Camera className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <p className="text-2xl font-bold">120</p>
+                  <p className="text-2xl font-bold">{approvedPhotos.length}</p>
                   <p className="text-sm text-muted-foreground">Fotos</p>
                 </div>
                 <div className="text-center">
@@ -134,24 +130,43 @@ const ContestDetail = () => {
                   Subir foto
                 </Button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {contestPhotos.map((photo) => (
-                  <PhotoCard
-                    key={photo.id}
-                    id={photo.id}
-                    imageUrl={photo.imageUrl}
-                    photographer={photo.photographer}
-                    photographerAvatar={photo.photographerAvatar}
-                    mode="grid"
-                  />
-                ))}
-              </div>
+              
+              {photosLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Cargando fotos...</p>
+                </div>
+              ) : approvedPhotos.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {approvedPhotos.map((photo) => (
+                    <PhotoCard
+                      key={photo.id}
+                      id={photo.id}
+                      imageUrl={photo.image_url}
+                      photographer={photo.photographer_name}
+                      photographerAvatar={photo.photographer_avatar}
+                      mode="grid"
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">
+                    Aún no hay fotos en este concurso
+                  </p>
+                  <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    Sé el primero en participar
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Contest Details - CON información del premio mejorada */}
+            {/* Contest Details */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="font-semibold text-lg mb-4">Detalles</h3>
               <div className="space-y-4">

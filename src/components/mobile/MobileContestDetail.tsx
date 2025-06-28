@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MapPin, Calendar, Trophy, Users, Camera, Vote, Share2 } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
 import SocialShareButtons from "@/components/SocialShareButtons";
 
 interface MobileContestDetailProps {
@@ -13,6 +14,7 @@ interface MobileContestDetailProps {
 
 const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps) => {
   const { contests, isLoading } = useContestsData();
+  const { approvedPhotos } = useContestPhotos(contestId);
   const [contest, setContest] = useState<any>(null);
 
   useEffect(() => {
@@ -116,7 +118,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
               </div>
               <div className="flex items-center text-gray-600">
                 <Users className="h-5 w-5 mr-3" />
-                <span>{contest.participants} participantes</span>
+                <span>{approvedPhotos.length} fotos participantes</span>
               </div>
             </div>
           </div>
@@ -155,7 +157,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
                 variant="outline"
                 className="py-3"
               >
-                Ver Fotos
+                Ver Fotos ({approvedPhotos.length})
               </Button>
               <Button 
                 onClick={() => onNavigate('vote')}

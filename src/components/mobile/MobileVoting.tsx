@@ -3,69 +3,30 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Share2, MessageCircle, Trophy, Users, Vote } from "lucide-react";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
 import MobilePhotoDetail from "./MobilePhotoDetail";
 import ContestAdBanner from "./ContestAdBanner";
 
 interface MobileVotingProps {
   onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
+  contestId?: string;
 }
 
-const mockPhotos = [
-  {
-    id: "1",
-    url: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=600",
-    author: "María García",
-    likes: 45,
-    comments: 12,
-    description: "Flores de primavera en el Parque Güell"
-  },
-  {
-    id: "2",
-    url: "https://images.unsplash.com/photo-1464822759844-d150baec81f2?w=600",
-    author: "Carlos López",
-    likes: 38,
-    comments: 8,
-    description: "Jardines de Barcelona en flor"
-  },
-  {
-    id: "3",
-    url: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=600",
-    author: "Ana Rodríguez",
-    likes: 52,
-    comments: 15,
-    description: "Tulipanes en el amanecer"
-  },
-  {
-    id: "4",
-    url: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600",
-    author: "David Martín",
-    likes: 41,
-    comments: 9,
-    description: "Bosque primaveral"
-  },
-  {
-    id: "5",
-    url: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600",
-    author: "Laura Sánchez",
-    likes: 47,
-    comments: 11,
-    description: "Naturaleza en estado puro"
-  },
-  {
-    id: "6",
-    url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600",
-    author: "Roberto Jiménez",
-    likes: 63,
-    comments: 18,
-    description: "Atardecer en la playa"
-  }
-];
+const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
+  const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
+  
+  // Fetch real photos from the database
+  const { approvedPhotos, isLoading } = useContestPhotos(contestId);
 
-const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
-  const [selectedPhoto, setSelectedPhoto] = useState<typeof mockPhotos[0] | null>(null);
-
-  const handlePhotoClick = (photo: typeof mockPhotos[0]) => {
-    setSelectedPhoto(photo);
+  const handlePhotoClick = (photo: any) => {
+    const formattedPhoto = {
+      id: photo.id,
+      url: photo.image_url,
+      author: photo.photographer_name,
+      description: photo.description || "Sin descripción",
+      likes: photo.votes
+    };
+    setSelectedPhoto(formattedPhoto);
   };
 
   if (selectedPhoto) {
@@ -90,7 +51,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           >
             ← Volver
           </Button>
-          <h1 className="text-lg font-semibold">Primavera en Barcelona</h1>
+          <h1 className="text-lg font-semibold">Concurso de Fotos</h1>
           <div></div>
         </div>
         
@@ -98,7 +59,7 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Users size={16} />
-              <span>45 participantes</span>
+              <span>{approvedPhotos.length} participantes</span>
             </div>
             <div className="flex items-center gap-1">
               <Trophy size={16} />
@@ -123,42 +84,58 @@ const MobileVoting = ({ onNavigate }: MobileVotingProps) => {
 
       {/* Photo Grid - Two photos horizontally */}
       <div className="p-4">
-        <div className="grid grid-cols-2 gap-3">
-          {mockPhotos.map((photo) => (
-            <div key={photo.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="relative">
-                <img 
-                  src={photo.url} 
-                  alt={photo.description}
-                  className="w-full h-48 object-cover cursor-pointer"
-                  onClick={() => handlePhotoClick(photo)}
-                />
-              </div>
-              
-              <div className="p-3">
-                <h3 className="font-medium text-sm text-gray-900 mb-1">{photo.author}</h3>
-                <p className="text-xs text-gray-600 mb-2 line-clamp-2">{photo.description}</p>
+        {isLoading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-500">Cargando fotos...</p>
+          </div>
+        ) : approvedPhotos.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
+            {approvedPhotos.map((photo) => (
+              <div key={photo.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div className="relative">
+                  <img 
+                    src={photo.image_url} 
+                    alt={photo.description || "Foto del concurso"}
+                    className="w-full h-48 object-cover cursor-pointer"
+                    onClick={() => handlePhotoClick(photo)}
+                  />
+                </div>
                 
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1">
-                      <MessageCircle size={12} />
-                      <span>{photo.comments}</span>
+                <div className="p-3">
+                  <h3 className="font-medium text-sm text-gray-900 mb-1">{photo.photographer_name}</h3>
+                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                    {photo.description || "Sin descripción"}
+                  </p>
+                  
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-1">
+                        <MessageCircle size={12} />
+                        <span>0</span>
+                      </div>
                     </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Share2 size={12} />
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Share2 size={12} />
-                  </Button>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500 mb-4">No hay fotos disponibles en este concurso</p>
+            <Button onClick={() => onNavigate('upload')} className="bg-blue-600 hover:bg-blue-700">
+              Subir primera foto
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Floating Action Buttons */}
