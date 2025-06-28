@@ -62,7 +62,7 @@ const ContestPhotoManager = () => {
 
     setIsUploading(true);
     try {
-      const result = await uploadPhoto(uploadFile, photographerName, photoDescription);
+      const result = await uploadPhoto(uploadFile, photographerName, photoDescription, true); // Auto-approve from admin
       if (result) {
         toast({
           title: "Éxito",

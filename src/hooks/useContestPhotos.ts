@@ -24,11 +24,11 @@ export const useContestPhotos = (contestId?: string) => {
     
     setIsLoading(true);
     try {
+      // Fetch all photos for admin panel (not just approved ones)
       const { data, error } = await supabase
         .from('contest_photos')
         .select('*')
         .eq('contest_id', contestId)
-        .eq('status', 'approved')
         .order('ai_score', { ascending: false });
       
       if (error) {
@@ -56,7 +56,12 @@ export const useContestPhotos = (contestId?: string) => {
     }
   };
 
-  const uploadPhoto = async (file: File, photographerName: string, description?: string) => {
+  const uploadPhoto = async (
+    file: File, 
+    photographerName: string, 
+    description?: string, 
+    autoApprove: boolean = false
+  ) => {
     if (!contestId) return null;
 
     try {
@@ -76,7 +81,7 @@ export const useContestPhotos = (contestId?: string) => {
         .from('contest-photos')
         .getPublicUrl(filePath);
 
-      // Insert photo record
+      // Insert photo record with auto-approval for admin uploads
       const { data, error } = await supabase
         .from('contest_photos')
         .insert({
@@ -86,7 +91,7 @@ export const useContestPhotos = (contestId?: string) => {
           description: description,
           votes: 0,
           is_featured: false,
-          status: 'pending'
+          status: autoApprove ? 'approved' : 'pending'
         })
         .select()
         .single();
@@ -95,7 +100,9 @@ export const useContestPhotos = (contestId?: string) => {
 
       toast({
         title: "Foto subida exitosamente",
-        description: "Tu foto está siendo procesada por nuestro sistema de IA.",
+        description: autoApprove 
+          ? "La foto ha sido añadida y aprobada automáticamente."
+          : "Tu foto está siendo procesada por nuestro sistema de IA.",
       });
 
       // Refresh photos list
