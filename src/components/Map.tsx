@@ -212,11 +212,17 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
   // Función mejorada para encontrar concursos cercanos con mejor soporte para Andorra
   const findNearbyContests = (userLat: number, userLng: number, maxDistance = 100) => {
+    console.log('=== DEBUGGING GEOLOCATION ===');
     console.log('Finding nearby contests. User location:', { userLat, userLng });
     console.log('Active contests available:', activeMapContests.length);
+    console.log('Contest locations:');
+    activeMapContests.forEach(contest => {
+      console.log(`- ${contest.title}: ${contest.location} at ${contest.coords.lat}, ${contest.coords.lng}`);
+    });
     
     // Verificar si está en Andorra con mayor precisión
     const isInAndorra = isInAndorraRegion(userLat, userLng);
+    console.log('Is user in Andorra region?', isInAndorra);
     
     if (isInAndorra) {
       console.log('Usuario confirmado en Andorra, expandiendo búsqueda y priorizando concursos locales');
@@ -244,12 +250,15 @@ const Map = ({ showMustardButton = false }: MapProps) => {
         contest.coords.lat, 
         contest.coords.lng
       );
-      console.log(`Contest ${contest.title} in ${contest.location} is ${distance.toFixed(2)} km away`);
+      console.log(`Distance calculation: Contest ${contest.title} in ${contest.location} is ${distance.toFixed(2)} km away`);
+      console.log(`  User coords: ${userLat}, ${userLng}`);
+      console.log(`  Contest coords: ${contest.coords.lat}, ${contest.coords.lng}`);
       
       // Dar prioridad a concursos en Andorra si el usuario está en Andorra
       let priorityBonus = 0;
       if (isInAndorra && contest.location.toLowerCase().includes('andorra')) {
         priorityBonus = -50; // Reducir distancia virtual para priorizar
+        console.log(`  Priority bonus applied: ${priorityBonus}km`);
       }
       
       return { ...contest, distance: distance + priorityBonus, realDistance: distance };
@@ -257,6 +266,11 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       .sort((a, b) => a.distance - b.distance);
 
     console.log(`Nearby contests found within ${maxDistance}km:`, nearby.length);
+    console.log('Nearby contests details:', nearby.map(c => ({ 
+      title: c.title, 
+      location: c.location, 
+      distance: c.realDistance.toFixed(2) + 'km' 
+    })));
     
     // Si está en Andorra, priorizar concursos de Andorra al principio
     if (isInAndorra) {
@@ -319,6 +333,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
   };
 
   const locateUser = () => {
+    console.log('=== STARTING GEOLOCATION PROCESS ===');
     console.log('Starting enhanced geolocation process for Andorra...');
     
     if (!geolocationSupported) {
@@ -344,6 +359,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
 
     const onSuccess = (position: GeolocationPosition) => {
       const { latitude, longitude, accuracy } = position.coords;
+      console.log('=== GEOLOCATION SUCCESS ===');
       console.log('Geolocation success:', { 
         latitude, 
         longitude, 
@@ -353,6 +369,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       
       // Verificar si está en Andorra con mayor precisión
       const isInAndorra = isInAndorraRegion(latitude, longitude);
+      console.log('User is in Andorra region:', isInAndorra);
       
       if (isInAndorra) {
         console.log('Usuario confirmado en territorio de Andorra');
@@ -364,6 +381,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
       } else {
         // Verificar si está cerca de Andorra (frontera)
         const distanceToAndorra = calculateDistance(latitude, longitude, 42.5063, 1.5218);
+        console.log('Distance to Andorra center:', distanceToAndorra.toFixed(2), 'km');
         if (distanceToAndorra < 50) {
           toast({
             title: "Cerca de Andorra",
@@ -384,6 +402,7 @@ const Map = ({ showMustardButton = false }: MapProps) => {
     };
 
     const onError = (error: GeolocationPositionError) => {
+      console.error("=== GEOLOCATION ERROR ===");
       console.error("Enhanced geolocation error:", {
         code: error.code,
         message: error.message,

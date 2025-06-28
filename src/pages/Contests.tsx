@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
@@ -21,31 +22,41 @@ const Contests = () => {
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active");
   
-  // Transform contests to match ContestGrid interface
-  const transformedContests = allContests.map(contest => ({
-    id: contest.id,
-    title: contest.title,
-    imageUrl: contest.imageUrl || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
-    location: contest.location,
-    locationCoords: contest.coordinates || { lat: 40.4168, lng: -3.7038 },
-    maxDistance: 1, // Default max distance in km
-    dateStart: contest.startDate || new Date().toISOString(),
-    dateEnd: contest.endDate,
-    participantsCount: contest.participants,
-    photosCount: 0, // Default since it's not in the database yet
-    category: contest.category,
-    isActive: contest.isActive,
-  }));
+  // Memoize transformed contests to prevent recreation on every render
+  const transformedContests = useMemo(() => {
+    return allContests.map(contest => ({
+      id: contest.id,
+      title: contest.title,
+      imageUrl: contest.imageUrl || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
+      location: contest.location,
+      locationCoords: contest.coordinates || { lat: 40.4168, lng: -3.7038 },
+      maxDistance: 1, // Default max distance in km
+      dateStart: contest.startDate || new Date().toISOString(),
+      dateEnd: contest.endDate,
+      participantsCount: contest.participants,
+      photosCount: 0, // Default since it's not in the database yet
+      category: contest.category,
+      isActive: contest.isActive,
+    }));
+  }, [allContests]);
   
-  // Extract unique categories and locations from contests
-  const categories = ["all", ...Array.from(new Set(allContests.map(contest => contest.category)))];
-  const locations = ["all", ...Array.from(new Set(allContests.map(contest => contest.location)))];
+  // Extract unique categories and locations from contests - memoized
+  const { categories, locations } = useMemo(() => {
+    const cats = ["all", ...Array.from(new Set(allContests.map(contest => contest.category)))];
+    const locs = ["all", ...Array.from(new Set(allContests.map(contest => contest.location)))];
+    return { categories: cats, locations: locs };
+  }, [allContests]);
   
   // Get user location for distance calculations
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log('User location obtained:', {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          });
           setUserLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude
@@ -53,6 +64,11 @@ const Contests = () => {
         },
         (error) => {
           console.error("Error obteniendo ubicación:", error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 60000
         }
       );
     }
@@ -60,7 +76,15 @@ const Contests = () => {
   
   // Filter contests based on search query, active category, location and status
   useEffect(() => {
-    let filtered = transformedContests;
+    console.log('Filtering contests with:', { 
+      searchQuery, 
+      activeCategory, 
+      activeLocation, 
+      contestStatus,
+      totalContests: transformedContests.length 
+    });
+    
+    let filtered = [...transformedContests];
     
     // Filter by contest status (active or finished) - default to active only
     if (contestStatus !== "all") {
@@ -97,6 +121,7 @@ const Contests = () => {
       return 0;
     });
     
+    console.log('Filtered contests:', filtered.length);
     setDisplayedContests(filtered);
   }, [searchQuery, activeCategory, activeLocation, contestStatus, transformedContests]);
   
@@ -156,6 +181,11 @@ const Contests = () => {
               <span className="text-base text-muted-foreground mr-4">
                 {displayedContests.length} concursos encontrados
               </span>
+              {userLocation && (
+                <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded">
+                  📍 Ubicación: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+                </span>
+              )}
             </div>
             
             {/* Enhanced TabsList with prominent styling */}
