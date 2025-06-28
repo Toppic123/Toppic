@@ -7,7 +7,7 @@ import PopularContestsSection from "@/components/home/PopularContestsSection";
 import NearbyContestsSection from "@/components/home/NearbyContestsSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
 import { homeTexts } from "@/components/home/HomeTexts";
-import { heroImages, popularContests } from "@/components/home/HomeData";
+import { heroImages } from "@/components/home/HomeData";
 
 const Index = () => {
   return (
@@ -19,7 +19,7 @@ const Index = () => {
     >
       <HeroSection heroImages={heroImages} texts={homeTexts} />
       <NearbyContestsSection />
-      <PopularContestsSection contests={popularContests} texts={homeTexts} />
+      <PopularContestsSection texts={homeTexts} />
       <HowItWorksSection texts={homeTexts} />
       <WinningGallerySection />
       <OrganizerSection texts={homeTexts} />
