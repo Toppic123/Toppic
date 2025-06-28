@@ -1,28 +1,27 @@
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export interface Contest {
   id: string;
   title: string;
   organizer: string;
   location: string;
-  category: string;
-  description?: string;
-  imageUrl?: string;
-  prize?: string;
-  participants: number;
-  isActive: boolean;
+  description: string;
+  imageUrl: string;
+  startDate: string;
   endDate: string;
-  startDate?: string;
   photoDeadline?: string;
-  status: "pending" | "active" | "finished";
+  status: 'active' | 'pending' | 'finished';
+  participants: number;
+  category: string;
+  coordinates?: { lat: number; lng: number };
+  isActive: boolean;
   is_private?: boolean;
   contest_password?: string;
-  coordinates?: { lat: number; lng: number };
-  created_at?: string;
   minimum_distance_km?: number;
+  prize?: string;
 }
 
 export const useContestsData = () => {
@@ -30,18 +29,14 @@ export const useContestsData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchContests();
-  }, []);
-
   const fetchContests = async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from('contests')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         console.error('Error fetching contests:', error);
         toast({
@@ -51,93 +46,32 @@ export const useContestsData = () => {
         });
         return;
       }
-      
+
       if (data) {
-        console.log('Raw contests data from Supabase:', data);
+        const transformedContests: Contest[] = data.map(contest => ({
+          id: contest.id,
+          title: contest.title || 'Sin título',
+          organizer: contest.organizer || 'Organizador desconocido',
+          location: contest.location || 'Ubicación no especificada',
+          description: contest.description || 'Sin descripción',
+          imageUrl: contest.image_url || '', // Allow empty string, will be handled by fallback
+          startDate: contest.start_date || new Date().toISOString(),
+          endDate: contest.end_date || new Date().toISOString(),
+          photoDeadline: contest.photo_deadline,
+          status: contest.status as 'active' | 'pending' | 'finished',
+          participants: contest.participants || 0,
+          category: 'Fotografía', // Default category
+          coordinates: contest.latitude && contest.longitude 
+            ? { lat: Number(contest.latitude), lng: Number(contest.longitude) }
+            : { lat: 40.4168, lng: -3.7038 }, // Default to Madrid coordinates
+          isActive: contest.status === 'active',
+          is_private: contest.is_private,
+          contest_password: contest.contest_password,
+          minimum_distance_km: contest.minimum_distance_km,
+          prize: contest.prize
+        }));
         
-        const formattedContests: Contest[] = data.map(contest => {
-          console.log('Processing contest:', {
-            title: contest.title,
-            originalImageUrl: contest.image_url,
-            prize: contest.prize
-          });
-          
-          // Debugging específico para el concurso "Mirador Roc del Quer"
-          if (contest.title && contest.title.toLowerCase().includes('mirador') || 
-              contest.title && contest.title.toLowerCase().includes('roc del quer')) {
-            console.log('Found Mirador Roc del Quer contest:', {
-              title: contest.title,
-              image_url: contest.image_url,
-              id: contest.id,
-              status: contest.status,
-              fullContest: contest
-            });
-          }
-          
-          // Función para obtener información del premio - prioriza el campo prize de la base de datos
-          const getPrizeInfo = () => {
-            // Primero verificar si hay un campo prize directo en la base de datos
-            if (contest.prize && contest.prize.trim() !== '') {
-              console.log('Prize found in prize field:', contest.prize);
-              return contest.prize.trim();
-            }
-            
-            // Si no hay prize directo, buscar en la descripción
-            if (contest.description) {
-              const prizePatterns = [
-                /premio[:\s]*([^,\n.!?]+)/gi,
-                /€[\d,.]*/g,
-                /\$[\d,.]*/g,
-                /[\d,]+\s*€/g,
-                /[\d,]+\s*euros?/gi,
-                /[\d,]+\s*dollars?/gi,
-                /[\d,]+\s*USD/g
-              ];
-              
-              for (const pattern of prizePatterns) {
-                const matches = contest.description.match(pattern);
-                if (matches && matches.length > 0) {
-                  let prize = matches[0].replace(/premio[:\s]*/gi, '').trim();
-                  if (prize && prize.length > 0 && prize.length < 100) {
-                    console.log('Prize found in description:', prize);
-                    return prize;
-                  }
-                }
-              }
-            }
-            
-            // Valor por defecto
-            console.log('No prize found, using default');
-            return "Por determinar";
-          };
-
-          const prizeInfo = getPrizeInfo();
-
-          return {
-            id: contest.id,
-            title: contest.title || "Concurso sin título",
-            organizer: contest.organizer || "Organizador desconocido",
-            location: contest.location || "Madrid, España",
-            category: "Fotografía",
-            description: contest.description || "Descripción del concurso disponible pronto.",
-            imageUrl: contest.image_url || `https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400`,
-            prize: prizeInfo,
-            participants: contest.participants || 0,
-            isActive: contest.status === "active",
-            endDate: contest.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-            startDate: contest.start_date || new Date().toISOString(),
-            photoDeadline: contest.photo_deadline || new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
-            status: contest.status as "pending" | "active" | "finished",
-            is_private: contest.is_private || false,
-            contest_password: contest.contest_password || undefined,
-            coordinates: { lat: 40.4168, lng: -3.7038 },
-            created_at: contest.created_at,
-            minimum_distance_km: contest.minimum_distance_km || 0,
-          };
-        });
-        
-        console.log("Final formatted contests:", formattedContests);
-        setContests(formattedContests);
+        setContests(transformedContests);
       }
     } catch (error) {
       console.error('Error fetching contests:', error);
@@ -150,6 +84,10 @@ export const useContestsData = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchContests();
+  }, []);
 
   return {
     contests,
