@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image, Plus, Trash2, Edit, Eye } from "lucide-react";
+import { Upload, Image, Plus, Trash2, Edit } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PhotoEditDialog from "@/components/admin/dashboard/photos/PhotoEditDialog";
 import { ContestPhoto } from "@/hooks/useContestPhotos";
@@ -134,12 +134,57 @@ const ContestPhotoManager = () => {
 
   const handleDeletePhoto = async (photoId: string) => {
     try {
-      const { error } = await supabase
+      console.log('Attempting to delete photo:', photoId);
+      
+      // First, get the photo details to get the image URL for storage cleanup
+      const { data: photoData, error: fetchError } = await supabase
+        .from('contest_photos')
+        .select('image_url')
+        .eq('id', photoId)
+        .single();
+
+      if (fetchError) {
+        console.error('Error fetching photo data:', fetchError);
+        throw fetchError;
+      }
+
+      // Delete from storage if the image exists
+      if (photoData?.image_url) {
+        try {
+          // Extract the file path from the public URL
+          const urlParts = photoData.image_url.split('/');
+          const storageIndex = urlParts.findIndex(part => part === 'contest-photos');
+          if (storageIndex !== -1 && storageIndex < urlParts.length - 1) {
+            const filePath = urlParts.slice(storageIndex + 1).join('/');
+            console.log('Deleting from storage:', filePath);
+            
+            const { error: storageError } = await supabase.storage
+              .from('contest-photos')
+              .remove([filePath]);
+
+            if (storageError) {
+              console.warn('Storage deletion warning:', storageError);
+              // Don't throw here, continue with database deletion
+            }
+          }
+        } catch (storageError) {
+          console.warn('Storage cleanup failed:', storageError);
+          // Continue with database deletion even if storage cleanup fails
+        }
+      }
+
+      // Delete from database
+      const { error: deleteError } = await supabase
         .from('contest_photos')
         .delete()
         .eq('id', photoId);
 
-      if (error) throw error;
+      if (deleteError) {
+        console.error('Database deletion error:', deleteError);
+        throw deleteError;
+      }
+
+      console.log('Photo deleted successfully');
 
       toast({
         title: "Foto eliminada",
@@ -152,7 +197,7 @@ const ContestPhotoManager = () => {
       console.error('Error deleting photo:', error);
       toast({
         title: "Error al eliminar",
-        description: error.message,
+        description: error.message || "No se pudo eliminar la foto",
         variant: "destructive",
       });
     }
