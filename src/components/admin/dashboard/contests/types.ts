@@ -1,4 +1,3 @@
-
 export type ContestStatus = "active" | "pending" | "finished";
 
 export interface Contest {
@@ -22,6 +21,7 @@ export interface Contest {
   photo_ownership?: boolean;
   commercial_use?: boolean;
   minimum_distance_km?: number;
+  prize?: string;
 }
 
 export interface ContestFormData {
