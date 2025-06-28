@@ -4,8 +4,6 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
-import { useFeaturedContests } from "@/hooks/useFeaturedContests";
-import { useContestsData } from "@/hooks/useContestsData";
 
 interface PopularContestsSectionProps {
   contests: any[];
@@ -16,9 +14,6 @@ interface PopularContestsSectionProps {
 }
 
 const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps) => {
-  const { featuredContests, isLoading: featuredLoading } = useFeaturedContests();
-  const { contests: allContests, isLoading: contestsLoading } = useContestsData();
-
   // Variantes de animación para contenedor e items
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -42,37 +37,8 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
     }
   };
 
-  // Get featured contests data
-  const getFeaturedContestsData = () => {
-    if (featuredLoading || contestsLoading || !featuredContests.length) {
-      // Fallback to original contests if no featured contests
-      return contests.slice(0, 3);
-    }
-
-    // Map featured contests to display format
-    const featuredData = featuredContests
-      .slice(0, 3) // Limit to 3 contests
-      .map(featured => {
-        const contest = allContests.find(c => c.id === featured.contest_id);
-        if (!contest) return null;
-        
-        return {
-          id: contest.id,
-          title: contest.title,
-          imageUrl: contest.imageUrl,
-          location: contest.location,
-          dateStart: contest.startDate,
-          dateEnd: contest.endDate,
-          participantsCount: contest.participants,
-          photosCount: 0 // Default value
-        };
-      })
-      .filter(Boolean);
-
-    return featuredData.length > 0 ? featuredData : contests.slice(0, 3);
-  };
-
-  const displayContests = getFeaturedContestsData();
+  // Use the first 3 contests from the static data
+  const displayContests = contests.slice(0, 3);
 
   return (
     <section className="py-12 md:py-20 bg-gradient-to-b from-white to-[#f8f9fe] dark:from-background dark:to-background/90">
@@ -92,7 +58,7 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
             className="flex items-center justify-center mb-4"
           >
             <div className="flex items-center bg-gradient-to-r from-primary/10 to-blue-600/10 rounded-full px-4 py-2 border border-primary/20 backdrop-blur-sm">
-              <span className="text-primary font-bold text-sm">Destacado</span>
+              <span className="text-primary font-bold text-sm">Popular</span>
             </div>
           </motion.div>
           
@@ -104,7 +70,7 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
             className="text-2xl md:text-3xl font-black mb-4 tracking-tight relative"
           >
             <span className="bg-gradient-to-r from-gray-900 via-primary to-blue-600 dark:from-white dark:via-primary dark:to-blue-400 bg-clip-text text-transparent relative">
-              CONCURSOS DESTACADOS
+              CONCURSOS POPULARES
               {/* Efecto de brillo */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12"
@@ -174,12 +140,6 @@ const PopularContestsSection = ({ contests, texts }: PopularContestsSectionProps
             </motion.div>
           ))}
         </motion.div>
-
-        {featuredLoading && (
-          <div className="text-center mt-8">
-            <p className="text-gray-500">Cargando concursos destacados...</p>
-          </div>
-        )}
       </div>
     </section>
   );

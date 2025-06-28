@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Trophy, MessageSquare, Image, Camera, Star } from "lucide-react";
+import { Users, Trophy, MessageSquare, Image, Camera } from "lucide-react";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
 import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
@@ -10,7 +10,6 @@ import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessa
 import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 import GalleryManager from "@/components/admin/GalleryManager";
 import ContestPhotoManager from "@/components/admin/ContestPhotoManager";
-import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
@@ -28,14 +27,10 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-8 overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-7 overflow-x-auto">
             <TabsTrigger value="contests" className="flex items-center gap-2 whitespace-nowrap">
               <Trophy className="h-4 w-4" />
               <span className="hidden sm:inline">Concursos</span>
-            </TabsTrigger>
-            <TabsTrigger value="featured-contests" className="flex items-center gap-2 whitespace-nowrap">
-              <Star className="h-4 w-4" />
-              <span className="hidden sm:inline">Destacados</span>
             </TabsTrigger>
             <TabsTrigger value="contest-photos" className="flex items-center gap-2 whitespace-nowrap">
               <Camera className="h-4 w-4" />
@@ -73,20 +68,6 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <ContestManagement />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="featured-contests" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Concursos Destacados</CardTitle>
-                <CardDescription>
-                  Gestiona los concursos que aparecen en la página principal
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FeaturedContestsManagement />
               </CardContent>
             </Card>
           </TabsContent>

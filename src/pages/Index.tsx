@@ -18,8 +18,8 @@ const Index = () => {
       className="min-h-screen"
     >
       <HeroSection heroImages={heroImages} texts={homeTexts} />
-      <PopularContestsSection contests={popularContests} texts={homeTexts} />
       <NearbyContestsSection />
+      <PopularContestsSection contests={popularContests} texts={homeTexts} />
       <HowItWorksSection texts={homeTexts} />
       <WinningGallerySection />
       <OrganizerSection texts={homeTexts} />
