@@ -44,15 +44,31 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     setIsUploading(true);
 
     try {
-      // Create a local preview URL
-      const localPreview = URL.createObjectURL(file);
-      setPreviewUrl(localPreview);
-      onChange(localPreview);
-
-      toast({
-        title: "Imagen cargada",
-        description: "La imagen se ha cargado correctamente.",
-      });
+      // Convert to base64 data URL for better compatibility
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setPreviewUrl(result);
+        onChange(result);
+        
+        toast({
+          title: "Imagen cargada",
+          description: "La imagen se ha cargado correctamente.",
+        });
+        
+        setIsUploading(false);
+      };
+      
+      reader.onerror = () => {
+        toast({
+          title: "Error al cargar imagen",
+          description: "Ha ocurrido un error al procesar la imagen.",
+          variant: "destructive",
+        });
+        setIsUploading(false);
+      };
+      
+      reader.readAsDataURL(file);
     } catch (error) {
       console.error('Error uploading image:', error);
       toast({
@@ -60,7 +76,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         description: "Ha ocurrido un error al subir la imagen.",
         variant: "destructive",
       });
-    } finally {
       setIsUploading(false);
     }
   };

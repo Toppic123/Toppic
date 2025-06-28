@@ -17,8 +17,26 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
+  // Default image fallback
+  const imageUrl = contest.imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2000&auto=format&fit=crop";
+
   return (
     <Card key={contest.id}>
+      {/* Contest Image */}
+      <div className="relative h-32 overflow-hidden rounded-t-lg">
+        <img
+          src={imageUrl}
+          alt={contest.title || 'Imagen del concurso'}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback to default image if the contest image fails to load
+            const target = e.target as HTMLImageElement;
+            target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2000&auto=format&fit=crop";
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      </div>
+
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>

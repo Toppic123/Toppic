@@ -75,11 +75,17 @@ const ContestGrid = ({
               contest.locationCoords.lng
             )
           : null;
+
+        // Ensure we have a valid image URL with fallback
+        const contestWithValidImage = {
+          ...contest,
+          imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2000&auto=format&fit=crop"
+        };
         
         return (
           <div key={contest.id} className="relative">
             <div className={contest.isActive ? "" : "grayscale opacity-75"}>
-              <ContestCard key={contest.id} {...contest} />
+              <ContestCard key={contest.id} {...contestWithValidImage} />
               
               {/* Status and distance badges */}
               <div className="absolute top-3 left-3 flex flex-col gap-2">
