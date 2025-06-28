@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +13,7 @@ import { Upload, Image, Plus, Trash2, Edit, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PhotoEditDialog from "@/components/admin/dashboard/photos/PhotoEditDialog";
 import { ContestPhoto } from "@/hooks/useContestPhotos";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContestPhotoManager = () => {
   const [selectedContestId, setSelectedContestId] = useState<string>("");

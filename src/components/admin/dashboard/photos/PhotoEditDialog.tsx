@@ -19,7 +19,7 @@ const PhotoEditDialog = ({ photo, isOpen, onClose, onSave }: PhotoEditDialogProp
   const [formData, setFormData] = useState({
     photographer_name: "",
     description: "",
-    status: "approved" as const,
+    status: "approved" as "approved" | "pending" | "rejected",
     is_featured: false,
   });
 
