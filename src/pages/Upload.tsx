@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -49,6 +48,11 @@ const Upload = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log('Upload page - User location obtained:', {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          });
           setUserLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude
@@ -72,7 +76,7 @@ const Upload = () => {
     }
   }, []);
   
-  // Calculate distance between two points
+  // Calculate distance between two points using the same formula as Map.tsx
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // Radius of the Earth in kilometers
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -86,24 +90,39 @@ const Upload = () => {
     return distance;
   };
 
-  // Filter contests based on user location - Fixed to show new contests and be more permissive
+  // Filter contests based on user location - FIXED to use real coordinates from database
   const nearbyContests = allContests.filter(contest => {
     // Only show active contests
     if (contest.status !== 'active') return false;
     
     // If no location data, show all active contests
-    if (!userLocation || !contest.coordinates) return true;
+    if (!userLocation) return true;
+    
+    // Use the REAL coordinates from the contest data, not fake coordinates
+    const contestCoords = contest.coordinates;
+    if (!contestCoords) {
+      console.log(`Contest ${contest.title}: No coordinates available`);
+      return true; // Show contest if no coordinates available
+    }
     
     const distance = calculateDistance(
       userLocation.lat,
       userLocation.lng,
-      contest.coordinates.lat,
-      contest.coordinates.lng
+      contestCoords.lat,
+      contestCoords.lng
     );
     
-    // Much more permissive distance - allow up to 50km or the contest's minimum distance, whichever is greater
-    const maxDistance = Math.max(contest.minimum_distance_km || 1, 50);
-    console.log(`Contest ${contest.title}: distance=${distance.toFixed(2)}km, maxDistance=${maxDistance}km`);
+    // Much more permissive distance - allow up to 100km or the contest's minimum distance, whichever is greater
+    const maxDistance = Math.max(contest.minimum_distance_km || 1, 100);
+    
+    console.log(`Upload page - Contest ${contest.title}:`, {
+      contestCoords: contestCoords,
+      userLocation: userLocation,
+      distance: distance.toFixed(2) + 'km',
+      maxDistance: maxDistance + 'km',
+      isWithinRange: distance <= maxDistance
+    });
+    
     return distance <= maxDistance;
   }).map(contest => ({
     id: contest.id,
