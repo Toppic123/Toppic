@@ -41,9 +41,20 @@ const FeaturedContest = ({
     setImageLoaded(true);
   };
   
+  // Process the image URL to ensure it's valid
+  let processedImageUrl = imageUrl;
+  
+  // If it's a Supabase URL, make sure it's formatted correctly
+  if (imageUrl && imageUrl.includes('supabase.co') && !imageUrl.includes('/storage/v1/object/public/')) {
+    const fileName = imageUrl.split('/').pop();
+    if (fileName && fileName.includes('contest-')) {
+      processedImageUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
+    }
+  }
+  
   // Simple fallback handling
   const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
-  const displayImage = imageError || !imageUrl ? fallbackImage : imageUrl;
+  const displayImage = imageError || !processedImageUrl ? fallbackImage : processedImageUrl;
   
   return (
     <div className="relative w-full min-h-[70vh] overflow-hidden">

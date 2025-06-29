@@ -14,7 +14,13 @@ interface ContestImageUploadProps {
 
 const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string>(value);
   const { toast } = useToast();
+
+  // Update preview when value changes
+  useEffect(() => {
+    setPreviewUrl(value);
+  }, [value]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -67,14 +73,15 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         return;
       }
 
-      // Get public URL using the getPublicUrl method
-      const { data: { publicUrl } } = supabase.storage
-        .from('contest-images')
-        .getPublicUrl(fileName);
+      // Get the public URL using the correct format
+      const publicUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
       
       console.log('Image uploaded successfully. Public URL:', publicUrl);
       
-      // Immediately update the form with the new URL
+      // Update preview immediately
+      setPreviewUrl(publicUrl);
+      
+      // Update the form with the new URL
       onChange(publicUrl);
       
       toast({
@@ -96,6 +103,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
   const clearImage = () => {
     onChange('');
+    setPreviewUrl('');
     
     const fileInput = document.getElementById('contest-image-upload') as HTMLInputElement;
     if (fileInput) {
@@ -129,17 +137,22 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
           </Button>
         </div>
 
-        {value && (
+        {previewUrl && (
           <div className="relative">
             <img
-              src={value}
+              src={previewUrl}
               alt="Vista previa del concurso"
               className="w-full max-w-md h-48 object-cover rounded-lg border"
               onError={(e) => {
-                console.error('Error loading image preview:', value);
+                console.error('Error loading image preview:', previewUrl);
+                const target = e.target as HTMLImageElement;
+                // Si la imagen falla, intentar con la URL original
+                if (target.src !== value && value) {
+                  target.src = value;
+                }
               }}
               onLoad={() => {
-                console.log('Image loaded successfully in preview:', value);
+                console.log('Image loaded successfully in preview:', previewUrl);
               }}
             />
             <Button

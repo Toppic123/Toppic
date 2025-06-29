@@ -19,7 +19,18 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
 
   // Simple fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
-  const imageUrl = contest.imageUrl || fallbackImage;
+  
+  // Process the image URL to ensure it's valid
+  let imageUrl = contest.imageUrl || contest.image_url || fallbackImage;
+  
+  // If it's a Supabase URL, make sure it's formatted correctly
+  if (imageUrl && imageUrl.includes('supabase.co') && !imageUrl.includes('/storage/v1/object/public/')) {
+    // Fix malformed Supabase URLs
+    const fileName = imageUrl.split('/').pop();
+    if (fileName && fileName.includes('contest-')) {
+      imageUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
+    }
+  }
 
   console.log(`Contest "${contest.title}" using image:`, imageUrl);
 
