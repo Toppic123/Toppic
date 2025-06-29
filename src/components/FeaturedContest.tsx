@@ -31,7 +31,7 @@ const FeaturedContest = ({
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const handleImageError = () => {
     console.error('FeaturedContest image failed to load:', imageUrl);
     setImageError(true);
   };
@@ -41,16 +41,9 @@ const FeaturedContest = ({
     setImageLoaded(true);
   };
   
-  // Improved image handling
-  const getDisplayImage = () => {
-    if (imageError || !imageUrl) {
-      return "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
-    }
-    
-    return imageUrl;
-  };
-  
-  const displayImage = getDisplayImage();
+  // Simple fallback handling
+  const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
+  const displayImage = imageError || !imageUrl ? fallbackImage : imageUrl;
   
   return (
     <div className="relative w-full min-h-[70vh] overflow-hidden">

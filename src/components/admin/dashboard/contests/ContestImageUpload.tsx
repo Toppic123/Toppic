@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ interface ContestImageUploadProps {
 
 const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string>(value);
   const { toast } = useToast();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,11 +40,8 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
       return;
     }
 
-    // Create preview URL immediately
-    const localPreviewUrl = URL.createObjectURL(file);
-    setPreviewUrl(localPreviewUrl);
-
     setIsUploading(true);
+    
     try {
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
@@ -68,42 +64,23 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
           description: "Error al subir la imagen: " + error.message,
           variant: "destructive"
         });
-        setPreviewUrl(value);
         return;
       }
 
-      // Construct the public URL manually using the Supabase project URL
-      const publicUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
+      // Get public URL using the getPublicUrl method
+      const { data: { publicUrl } } = supabase.storage
+        .from('contest-images')
+        .getPublicUrl(fileName);
       
       console.log('Image uploaded successfully. Public URL:', publicUrl);
       
-      // Verify the URL works by testing it
-      const testImage = new Image();
-      testImage.onload = () => {
-        console.log('Image URL verified successfully:', publicUrl);
-        setPreviewUrl(publicUrl);
-        onChange(publicUrl);
-        
-        toast({
-          title: "Imagen cargada",
-          description: "La imagen se ha cargado correctamente",
-        });
-      };
+      // Immediately update the form with the new URL
+      onChange(publicUrl);
       
-      testImage.onerror = () => {
-        console.error('Image URL verification failed:', publicUrl);
-        toast({
-          title: "Error",
-          description: "Error al verificar la imagen subida",
-          variant: "destructive"
-        });
-        setPreviewUrl(value);
-      };
-      
-      testImage.src = publicUrl;
-      
-      // Clean up local blob URL
-      URL.revokeObjectURL(localPreviewUrl);
+      toast({
+        title: "Imagen cargada",
+        description: "La imagen se ha cargado correctamente",
+      });
       
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -112,18 +89,12 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         description: "Error al cargar la imagen",
         variant: "destructive"
       });
-      setPreviewUrl(value);
     } finally {
       setIsUploading(false);
     }
   };
 
   const clearImage = () => {
-    if (previewUrl && previewUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(previewUrl);
-    }
-    
-    setPreviewUrl('');
     onChange('');
     
     const fileInput = document.getElementById('contest-image-upload') as HTMLInputElement;
@@ -131,15 +102,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
       fileInput.value = '';
     }
   };
-
-  // Update preview when value changes from parent
-  React.useEffect(() => {
-    if (value !== previewUrl && !isUploading) {
-      setPreviewUrl(value);
-    }
-  }, [value, isUploading]);
-
-  const displayImage = previewUrl || '';
 
   return (
     <div className="space-y-4">
@@ -167,19 +129,17 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
           </Button>
         </div>
 
-        {displayImage && (
+        {value && (
           <div className="relative">
             <img
-              src={displayImage}
+              src={value}
               alt="Vista previa del concurso"
               className="w-full max-w-md h-48 object-cover rounded-lg border"
               onError={(e) => {
-                console.error('Error loading image preview:', displayImage);
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
+                console.error('Error loading image preview:', value);
               }}
               onLoad={() => {
-                console.log('Image loaded successfully in preview:', displayImage);
+                console.log('Image loaded successfully in preview:', value);
               }}
             />
             <Button

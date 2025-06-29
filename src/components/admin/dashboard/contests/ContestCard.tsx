@@ -17,23 +17,14 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
-  // Enhanced image handling with debugging
-  const getImageUrl = (imageUrl: string | undefined) => {
-    console.log(`Admin ContestCard - Processing image for "${contest.title}":`, imageUrl);
-    
-    if (!imageUrl) {
-      console.log('No image URL provided, using fallback');
-      return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
-    }
-    
-    console.log('Using provided image URL:', imageUrl);
-    return imageUrl;
-  };
+  // Simple fallback image URL
+  const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+  const imageUrl = contest.imageUrl || contest.image_url || fallbackImage;
 
-  const imageUrl = getImageUrl(contest.imageUrl);
+  console.log(`Contest "${contest.title}" using image:`, imageUrl);
 
   return (
-    <Card key={contest.id}>
+    <Card>
       {/* Contest Image */}
       <div className="relative h-32 overflow-hidden rounded-t-lg">
         <img
@@ -41,16 +32,15 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
           alt={contest.title || 'Imagen del concurso'}
           className="w-full h-full object-cover"
           onError={(e) => {
-            console.error('Failed to load admin contest image:', contest.imageUrl);
+            console.error('Failed to load contest image:', imageUrl);
             const target = e.target as HTMLImageElement;
-            if (target.src !== "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop") {
-              target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+            if (target.src !== fallbackImage) {
+              target.src = fallbackImage;
             }
           }}
           onLoad={() => {
-            console.log('Admin contest image loaded successfully:', imageUrl);
+            console.log('Contest image loaded successfully:', imageUrl);
           }}
-          crossOrigin="anonymous"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
