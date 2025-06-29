@@ -3,7 +3,7 @@ import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, Heart } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import PhotoCard from "@/components/PhotoCard";
@@ -16,7 +16,7 @@ const ContestDetail = () => {
   const { user } = useAuth();
   
   // Fetch real photos from the database
-  const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(id);
+  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(id);
 
   if (isLoading) {
     return (
@@ -44,6 +44,14 @@ const ContestDetail = () => {
     }
     // Navigate to upload page with contest context
     navigate("/upload", { state: { contestId: id, contestTitle: contest.title } });
+  };
+
+  const handleVotePhoto = async (photoId: string) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    await votePhoto(photoId);
   };
 
   return (
@@ -139,14 +147,31 @@ const ContestDetail = () => {
               ) : approvedPhotos.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {approvedPhotos.map((photo) => (
-                    <PhotoCard
-                      key={photo.id}
-                      id={photo.id}
-                      imageUrl={photo.image_url}
-                      photographer={photo.photographer_name}
-                      photographerAvatar={photo.photographer_avatar}
-                      mode="grid"
-                    />
+                    <div key={photo.id} className="relative group">
+                      <PhotoCard
+                        id={photo.id}
+                        imageUrl={photo.image_url}
+                        photographer={photo.photographer_name}
+                        photographerAvatar={photo.photographer_avatar}
+                        mode="grid"
+                      />
+                      {/* Vote button overlay */}
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="bg-white/90 hover:bg-white text-red-500 hover:text-red-600 shadow-md"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleVotePhoto(photo.id);
+                          }}
+                        >
+                          <Heart className="h-4 w-4 mr-1" />
+                          {photo.votes}
+                        </Button>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : (

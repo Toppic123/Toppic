@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Share2, MessageCircle, Trophy, Users, Vote } from "lucide-react";
+import { Share2, MessageCircle, Trophy, Users, Vote, Heart } from "lucide-react";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import MobilePhotoDetail from "./MobilePhotoDetail";
 import ContestAdBanner from "./ContestAdBanner";
@@ -16,7 +16,7 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   
   // Fetch real photos from the database
-  const { approvedPhotos, isLoading } = useContestPhotos(contestId);
+  const { approvedPhotos, isLoading, votePhoto } = useContestPhotos(contestId);
 
   const handlePhotoClick = (photo: any) => {
     const formattedPhoto = {
@@ -27,6 +27,11 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
       likes: photo.votes
     };
     setSelectedPhoto(formattedPhoto);
+  };
+
+  const handleVotePhoto = async (photoId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    await votePhoto(photoId);
   };
 
   if (selectedPhoto) {
@@ -114,15 +119,29 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
                         <MessageCircle size={12} />
                         <span>0</span>
                       </div>
+                      <div className="flex items-center gap-1">
+                        <Heart size={12} className="text-red-500" />
+                        <span>{photo.votes}</span>
+                      </div>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Share2 size={12} />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0 text-red-500 hover:text-red-600"
+                        onClick={(e) => handleVotePhoto(photo.id, e)}
+                      >
+                        <Heart size={12} />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Share2 size={12} />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
