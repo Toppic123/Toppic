@@ -20,11 +20,11 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
   // Fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   
-  // Use the imageUrl from contest data
-  const imageUrl = contest.imageUrl || fallbackImage;
+  // Use the image_url from contest data (this is what comes from the database)
+  const imageUrl = contest.image_url || contest.imageUrl || fallbackImage;
 
   console.log(`Contest "${contest.title}" using image URL:`, imageUrl);
-  console.log('Contest data:', { imageUrl: contest.imageUrl });
+  console.log('Contest data:', { imageUrl: contest.imageUrl, image_url: contest.image_url });
 
   return (
     <Card>

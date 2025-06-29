@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     organizer: contest?.organizer || '',
     description: contest?.description || '',
     location: contest?.location || '',
-    imageUrl: contest?.imageUrl || contest?.image_url || '',
+    imageUrl: contest?.image_url || contest?.imageUrl || '',
     prize: contest?.prize || '',
     startDate: contest?.startDate ? new Date(contest.startDate) : contest?.start_date ? new Date(contest.start_date) : undefined,
     photoDeadline: contest?.photoDeadline ? new Date(contest.photoDeadline) : contest?.photo_deadline ? new Date(contest.photo_deadline) : undefined,
@@ -52,8 +53,9 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
   React.useEffect(() => {
     console.log('ContestFormDialog - contest prop changed:', contest);
     if (contest) {
-      const newImageUrl = contest.imageUrl || contest.image_url || '';
-      console.log('Setting imageUrl from contest:', newImageUrl);
+      // Prioritize image_url from database, then imageUrl as fallback
+      const newImageUrl = contest.image_url || contest.imageUrl || '';
+      console.log('Setting imageUrl from contest (prioritizing image_url):', newImageUrl);
       setFormData({
         title: contest.title || '',
         organizer: contest.organizer || '',

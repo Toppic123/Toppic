@@ -41,9 +41,12 @@ const FeaturedContest = ({
     setImageLoaded(true);
   };
   
-  // Use the image URL directly without complex processing
+  // Use the image URL directly - this component receives imageUrl as a prop
   const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
   const displayImage = imageError || !imageUrl ? fallbackImage : imageUrl;
+  
+  console.log('FeaturedContest received imageUrl prop:', imageUrl);
+  console.log('FeaturedContest using displayImage:', displayImage);
   
   return (
     <div className="relative w-full min-h-[70vh] overflow-hidden">

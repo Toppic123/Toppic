@@ -36,9 +36,12 @@ const ContestCard = ({
     setImageLoaded(true);
   };
   
-  // Use the image URL directly without complex processing
+  // Use the image URL directly - this component receives imageUrl as a prop
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   const displayImage = imageError || !imageUrl ? fallbackImage : imageUrl;
+  
+  console.log('ContestCard received imageUrl prop:', imageUrl);
+  console.log('ContestCard using displayImage:', displayImage);
   
   return (
     <motion.div
