@@ -9,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image, Plus, Trash2, Edit } from "lucide-react";
+import { Upload, Image, Plus, Trash2, Edit, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PhotoEditDialog from "@/components/admin/dashboard/photos/PhotoEditDialog";
 import { ContestPhoto } from "@/hooks/useContestPhotos";
@@ -23,6 +23,7 @@ const ContestPhotoManager = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<ContestPhoto | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [deletingPhotoId, setDeletingPhotoId] = useState<string | null>(null);
   
   const { contests } = useContestsData();
   const { photos, isLoading: photosLoading, uploadPhoto, fetchContestPhotos } = useContestPhotos(selectedContestId);
@@ -107,34 +108,46 @@ const ContestPhotoManager = () => {
 
   const handleSavePhotoEdit = async (photoId: string, updates: Partial<ContestPhoto>) => {
     try {
+      console.log('Updating photo:', photoId, 'with updates:', updates);
+      
       // Update photo in database
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('contest_photos')
         .update(updates)
-        .eq('id', photoId);
+        .eq('id', photoId)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database update error:', error);
+        throw error;
+      }
+
+      console.log('Photo updated successfully:', data);
 
       toast({
         title: "Foto actualizada",
         description: "Los cambios se han guardado correctamente",
       });
 
-      // Refresh photos
-      fetchContestPhotos();
+      // Refresh photos to show changes immediately
+      await fetchContestPhotos();
     } catch (error: any) {
       console.error('Error updating photo:', error);
       toast({
         title: "Error al actualizar",
-        description: error.message,
+        description: error.message || "No se pudieron guardar los cambios",
         variant: "destructive",
       });
     }
   };
 
   const handleDeletePhoto = async (photoId: string) => {
+    if (deletingPhotoId) return; // Prevent multiple simultaneous deletions
+    
+    setDeletingPhotoId(photoId);
+    
     try {
-      console.log('Attempting to delete photo:', photoId);
+      console.log('Starting deletion process for photo:', photoId);
       
       // First, get the photo details to get the image URL for storage cleanup
       const { data: photoData, error: fetchError } = await supabase
@@ -145,35 +158,12 @@ const ContestPhotoManager = () => {
 
       if (fetchError) {
         console.error('Error fetching photo data:', fetchError);
-        throw fetchError;
+        throw new Error('No se pudo obtener la información de la foto');
       }
 
-      // Delete from storage if the image exists
-      if (photoData?.image_url) {
-        try {
-          // Extract the file path from the public URL
-          const urlParts = photoData.image_url.split('/');
-          const storageIndex = urlParts.findIndex(part => part === 'contest-photos');
-          if (storageIndex !== -1 && storageIndex < urlParts.length - 1) {
-            const filePath = urlParts.slice(storageIndex + 1).join('/');
-            console.log('Deleting from storage:', filePath);
-            
-            const { error: storageError } = await supabase.storage
-              .from('contest-photos')
-              .remove([filePath]);
+      console.log('Photo data retrieved:', photoData);
 
-            if (storageError) {
-              console.warn('Storage deletion warning:', storageError);
-              // Don't throw here, continue with database deletion
-            }
-          }
-        } catch (storageError) {
-          console.warn('Storage cleanup failed:', storageError);
-          // Continue with database deletion even if storage cleanup fails
-        }
-      }
-
-      // Delete from database
+      // Delete from database first
       const { error: deleteError } = await supabase
         .from('contest_photos')
         .delete()
@@ -181,24 +171,62 @@ const ContestPhotoManager = () => {
 
       if (deleteError) {
         console.error('Database deletion error:', deleteError);
-        throw deleteError;
+        throw new Error('Error al eliminar la foto de la base de datos: ' + deleteError.message);
       }
 
-      console.log('Photo deleted successfully');
+      console.log('Photo deleted from database successfully');
+
+      // Try to delete from storage (optional cleanup - don't fail if this doesn't work)
+      if (photoData?.image_url) {
+        try {
+          // Extract the file path from the public URL
+          const urlParts = photoData.image_url.split('/');
+          const storageIndex = urlParts.findIndex(part => part === 'contest-photos');
+          if (storageIndex !== -1 && storageIndex < urlParts.length - 1) {
+            const filePath = urlParts.slice(storageIndex + 1).join('/');
+            console.log('Attempting storage deletion for path:', filePath);
+            
+            const { error: storageError } = await supabase.storage
+              .from('contest-photos')
+              .remove([filePath]);
+
+            if (storageError) {
+              console.warn('Storage deletion warning (non-critical):', storageError);
+            } else {
+              console.log('Storage cleanup completed successfully');
+            }
+          }
+        } catch (storageError) {
+          console.warn('Storage cleanup failed (non-critical):', storageError);
+        }
+      }
 
       toast({
         title: "Foto eliminada",
-        description: "La foto ha sido eliminada del concurso",
+        description: "La foto ha sido eliminada correctamente del concurso",
       });
 
-      // Refresh photos
-      fetchContestPhotos();
+      // Force refresh of photos to show changes immediately
+      await fetchContestPhotos();
+      
     } catch (error: any) {
-      console.error('Error deleting photo:', error);
+      console.error('Delete operation failed:', error);
       toast({
         title: "Error al eliminar",
-        description: error.message || "No se pudo eliminar la foto",
+        description: error.message || "No se pudo eliminar la foto. Inténtalo de nuevo.",
         variant: "destructive",
+      });
+    } finally {
+      setDeletingPhotoId(null);
+    }
+  };
+
+  const handleRefresh = async () => {
+    if (selectedContestId) {
+      await fetchContestPhotos();
+      toast({
+        title: "Actualizado",
+        description: "Lista de fotos actualizada",
       });
     }
   };
@@ -256,78 +284,24 @@ const ContestPhotoManager = () => {
       {selectedContestId && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5" />
-              Añadir Nueva Foto
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="photo-upload">Subir Foto</Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  id="photo-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  className="flex-1"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => document.getElementById('photo-upload')?.click()}
-                  className="flex items-center gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  Seleccionar
-                </Button>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Fotos del Concurso</CardTitle>
+                <CardDescription>
+                  {photosLoading ? 'Cargando fotos...' : `${photos.length} foto(s) en este concurso`}
+                </CardDescription>
               </div>
-              {uploadFile && (
-                <div className="text-sm text-muted-foreground">
-                  Archivo seleccionado: {uploadFile.name} ({(uploadFile.size / 1024 / 1024).toFixed(2)} MB)
-                </div>
-              )}
+              <Button 
+                onClick={handleRefresh} 
+                variant="outline" 
+                size="sm"
+                disabled={photosLoading}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${photosLoading ? 'animate-spin' : ''}`} />
+                Actualizar
+              </Button>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="photographer-name">Nombre del Fotógrafo *</Label>
-              <Input
-                id="photographer-name"
-                value={photographerName}
-                onChange={(e) => setPhotographerName(e.target.value)}
-                placeholder="Nombre del autor de la foto"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="photo-description">Descripción (Opcional)</Label>
-              <Textarea
-                id="photo-description"
-                value={photoDescription}
-                onChange={(e) => setPhotoDescription(e.target.value)}
-                placeholder="Descripción de la foto, técnica utilizada, etc."
-                rows={3}
-              />
-            </div>
-
-            <Button 
-              onClick={handleUpload}
-              disabled={!uploadFile || !photographerName.trim() || isUploading}
-              className="w-full"
-            >
-              {isUploading ? 'Subiendo...' : 'Añadir Foto al Concurso'}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {selectedContestId && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Fotos del Concurso</CardTitle>
-            <CardDescription>
-              {photosLoading ? 'Cargando fotos...' : `${photos.length} foto(s) en este concurso`}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             {photosLoading ? (
@@ -369,22 +343,37 @@ const ContestPhotoManager = () => {
                           variant="outline"
                           onClick={() => handleEditPhoto(photo)}
                           className="flex-1"
+                          disabled={deletingPhotoId === photo.id}
                         >
                           <Edit className="h-3 w-3 mr-1" />
                           Editar
                         </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="destructive" className="flex-1">
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Eliminar
+                            <Button 
+                              size="sm" 
+                              variant="destructive" 
+                              className="flex-1" 
+                              disabled={deletingPhotoId === photo.id}
+                            >
+                              {deletingPhotoId === photo.id ? (
+                                <>
+                                  <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
+                                  Eliminando...
+                                </>
+                              ) : (
+                                <>
+                                  <Trash2 className="h-3 w-3 mr-1" />
+                                  Eliminar
+                                </>
+                              )}
                             </Button>
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>¿Eliminar foto?</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Esta acción no se puede deshacer. La foto será eliminada permanentemente del concurso.
+                                Esta acción no se puede deshacer. La foto será eliminada permanentemente del concurso y del almacenamiento.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -392,8 +381,9 @@ const ContestPhotoManager = () => {
                               <AlertDialogAction
                                 onClick={() => handleDeletePhoto(photo.id)}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                disabled={deletingPhotoId === photo.id}
                               >
-                                Eliminar
+                                {deletingPhotoId === photo.id ? 'Eliminando...' : 'Eliminar'}
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
