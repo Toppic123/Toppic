@@ -2,7 +2,7 @@
 import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Home, Heart, RotateCcw } from "lucide-react";
+import { ArrowLeft, Home, RotateCcw, ThumbsUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileSwipeVotingProps {
@@ -256,7 +256,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         }}
       >
         <div className="bg-green-500 rounded-full p-8 animate-pulse">
-          <Heart className="h-12 w-12 text-white fill-white" />
+          <ThumbsUp className="h-12 w-12 text-white fill-white" />
         </div>
       </div>
 
@@ -279,7 +279,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             }}
           >
             <div className="bg-green-500 rounded-full p-6 animate-pulse">
-              <Heart className="h-10 w-10 text-white fill-white" />
+              <ThumbsUp className="h-10 w-10 text-white fill-white" />
             </div>
           </div>
           
@@ -316,7 +316,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             }}
           >
             <div className="bg-green-500 rounded-full p-6 animate-pulse">
-              <Heart className="h-10 w-10 text-white fill-white" />
+              <ThumbsUp className="h-10 w-10 text-white fill-white" />
             </div>
           </div>
           

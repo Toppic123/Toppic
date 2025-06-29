@@ -1,9 +1,8 @@
-
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, Heart } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import PhotoCard from "@/components/PhotoCard";
@@ -16,7 +15,7 @@ const ContestDetail = () => {
   const { user } = useAuth();
   
   // Fetch real photos from the database
-  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(id);
+  const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(id);
 
   if (isLoading) {
     return (
@@ -44,14 +43,6 @@ const ContestDetail = () => {
     }
     // Navigate to upload page with contest context
     navigate("/upload", { state: { contestId: id, contestTitle: contest.title } });
-  };
-
-  const handleVotePhoto = async (photoId: string) => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    await votePhoto(photoId);
   };
 
   return (
@@ -156,7 +147,7 @@ const ContestDetail = () => {
                         mode="grid"
                       />
                       
-                      {/* Photo info and vote section */}
+                      {/* Photo info section */}
                       <div className="p-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -165,31 +156,6 @@ const ContestDetail = () => {
                               <p className="text-xs text-gray-600 mt-1 line-clamp-2">{photo.description}</p>
                             )}
                           </div>
-                          
-                          {/* Vote button - only show if user is logged in */}
-                          {user && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="flex items-center gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleVotePhoto(photo.id);
-                              }}
-                            >
-                              <Heart className="h-4 w-4" />
-                              <span className="text-sm font-medium">{photo.votes}</span>
-                            </Button>
-                          )}
-                          
-                          {/* Show vote count for non-logged in users */}
-                          {!user && (
-                            <div className="flex items-center gap-1 text-gray-500">
-                              <Heart className="h-4 w-4" />
-                              <span className="text-sm">{photo.votes}</span>
-                            </div>
-                          )}
                         </div>
                         
                         {/* Login prompt for non-authenticated users */}
@@ -201,7 +167,7 @@ const ContestDetail = () => {
                               className="w-full text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                               onClick={() => navigate("/login")}
                             >
-                              Inicia sesión para votar
+                              Inicia sesión para participar
                             </Button>
                           </div>
                         )}
