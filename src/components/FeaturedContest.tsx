@@ -29,16 +29,41 @@ const FeaturedContest = ({
   photosCount,
 }: FeaturedContestProps) => {
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
-  // Use a single fallback image
-  const fallbackImage = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
-  
-  const handleImageError = () => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error('FeaturedContest image failed to load:', imageUrl);
     setImageError(true);
   };
+
+  const handleImageLoad = () => {
+    console.log('FeaturedContest image loaded successfully:', imageUrl);
+    setImageLoaded(true);
+  };
   
-  // Use original image if available and no error, otherwise use fallback
-  const displayImage = (!imageUrl || imageError) ? fallbackImage : imageUrl;
+  // Improved image handling
+  const getDisplayImage = () => {
+    if (imageError || !imageUrl) {
+      return "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
+    }
+    
+    // Handle different types of URLs properly
+    if (imageUrl.startsWith('blob:') || 
+        imageUrl.startsWith('data:') || 
+        imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+    
+    // If it contains supabase storage indicators, treat as valid
+    if (imageUrl.includes('supabase') || imageUrl.includes('storage')) {
+      return imageUrl;
+    }
+    
+    // Fallback
+    return "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
+  };
+  
+  const displayImage = getDisplayImage();
   
   return (
     <div className="relative w-full min-h-[70vh] overflow-hidden">
@@ -46,11 +71,22 @@ const FeaturedContest = ({
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/95 to-transparent z-10" />
         
+        {/* Background loading placeholder */}
+        {!imageLoaded && !imageError && (
+          <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
+            <Camera className="h-16 w-16 text-gray-400" />
+          </div>
+        )}
+        
         <img
           src={displayImage}
-          alt={title}
-          className="w-full h-full object-cover scale-105 blur-sm opacity-40"
+          alt={`${title} - imagen de fondo`}
+          className={`w-full h-full object-cover scale-105 blur-sm opacity-40 transition-opacity duration-500 ${
+            imageLoaded ? 'opacity-40' : 'opacity-0'
+          }`}
           onError={handleImageError}
+          onLoad={handleImageLoad}
+          loading="eager"
         />
       </div>
       
@@ -67,12 +103,23 @@ const FeaturedContest = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7, delay: 0.4 }}
             className="mb-8 relative"
-          >            
+          >   
+            {/* Main image loading placeholder */}
+            {!imageLoaded && !imageError && (
+              <div className="w-full max-w-4xl h-[50vh] bg-gray-200 animate-pulse rounded-2xl shadow-2xl mx-auto flex items-center justify-center">
+                <Camera className="h-16 w-16 text-gray-400" />
+              </div>
+            )}
+            
             <img
               src={displayImage}
               alt={title}
-              className="w-full max-w-4xl h-[50vh] object-cover rounded-2xl shadow-2xl mx-auto"
+              className={`w-full max-w-4xl h-[50vh] object-cover rounded-2xl shadow-2xl mx-auto transition-opacity duration-500 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               onError={handleImageError}
+              onLoad={handleImageLoad}
+              loading="eager"
             />
           </motion.div>
           

@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, Camera, User, ImageIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { MapPin, Camera, User } from "lucide-react";
 
 type ContestCardProps = {
   id: string;
@@ -25,30 +24,38 @@ const ContestCard = ({
   photosCount,
 }: ContestCardProps) => {
   const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
-  // Better image handling for Supabase storage URLs
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error('ContestCard image failed to load:', imageUrl);
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    console.log('ContestCard image loaded successfully:', imageUrl);
+    setImageLoaded(true);
+  };
+  
+  // Better image handling with proper URL validation
   const getDisplayImage = () => {
-    if (!imageUrl || imageError) {
+    if (imageError || !imageUrl) {
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
     }
     
-    // If it's a blob URL or data URL, return as is
-    if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
+    // Handle different types of URLs
+    if (imageUrl.startsWith('blob:') || 
+        imageUrl.startsWith('data:') || 
+        imageUrl.startsWith('http')) {
       return imageUrl;
     }
     
-    // If it's a Supabase storage URL or regular URL, return as is
-    if (imageUrl.startsWith('http') || imageUrl.includes('supabase')) {
+    // If it contains supabase storage path, it's likely a valid URL
+    if (imageUrl.includes('supabase') || imageUrl.includes('storage')) {
       return imageUrl;
     }
     
-    // Fallback
+    // Fallback for any other case
     return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
-  };
-  
-  const handleImageError = () => {
-    console.error('Failed to load image:', imageUrl);
-    setImageError(true);
   };
   
   const displayImage = getDisplayImage();
@@ -66,11 +73,22 @@ const ContestCard = ({
           <div className="aspect-[16/9] bg-muted overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10 opacity-70 transition-opacity group-hover:opacity-90" />
             
+            {/* Loading placeholder */}
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+                <Camera className="h-8 w-8 text-gray-400" />
+              </div>
+            )}
+            
             <img
               src={displayImage}
               alt={title}
-              className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
+              className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
+                imageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
               onError={handleImageError}
+              onLoad={handleImageLoad}
+              loading="lazy"
             />
           </div>
           
