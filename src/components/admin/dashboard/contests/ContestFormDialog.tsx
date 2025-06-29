@@ -99,6 +99,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      console.log('Form data being submitted:', formData); // Debug log
       await onSubmit(formData);
       onClose();
     } catch (error) {

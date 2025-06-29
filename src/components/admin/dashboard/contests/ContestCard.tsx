@@ -20,8 +20,8 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
   // Simple fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   
-  // Process the image URL to ensure it's valid
-  let imageUrl = contest.imageUrl || contest.image_url || fallbackImage;
+  // Process the image URL to ensure it's valid - use imageUrl instead of image_url
+  let imageUrl = contest.imageUrl || fallbackImage;
   
   // If it's a Supabase URL, make sure it's formatted correctly
   if (imageUrl && imageUrl.includes('supabase.co') && !imageUrl.includes('/storage/v1/object/public/')) {
@@ -61,6 +61,11 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
           <div>
             <CardTitle>{contest.title || 'Sin título'}</CardTitle>
             <CardDescription>Organizado por: {contest.organizer || 'Desconocido'}</CardDescription>
+            {contest.prize && (
+              <CardDescription className="text-amber-600 font-medium">
+                Premio: {contest.prize}
+              </CardDescription>
+            )}
           </div>
           <div className="flex flex-col gap-2">
             <div className={`px-3 py-1 rounded-full text-sm font-medium ${

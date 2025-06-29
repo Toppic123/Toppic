@@ -87,7 +87,7 @@ export const useContestForm = (onSuccess?: () => void) => {
         location: data.location,
         description: data.description,
         image_url: data.imageUrl,
-        prize: data.prize, // Asegurar que el premio se incluye
+        prize: data.prize, // Make sure prize is included
         start_date: data.startDate instanceof Date ? data.startDate.toISOString() : data.startDate,
         end_date: data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate,
         photo_deadline: data.photoDeadline instanceof Date ? data.photoDeadline.toISOString() : data.photoDeadline,
@@ -97,7 +97,7 @@ export const useContestForm = (onSuccess?: () => void) => {
         minimum_distance_km: data.minimumDistanceKm,
       };
 
-      console.log('Contest data to save:', contestData); // Debug log
+      console.log('Contest data to save (including prize):', contestData); // Debug log
 
       if (formData.id) {
         // Editar concurso existente - usar el ID del formData, no crear uno nuevo
