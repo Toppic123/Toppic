@@ -10,7 +10,7 @@ export interface ContestFormData {
   organizer: string;
   location: string;
   description: string;
-  imageUrl: string;
+  image_url: string;
   prize: string;
   startDate: string;
   endDate: string;
@@ -29,7 +29,7 @@ export const useContestForm = (onSuccess?: () => void) => {
     organizer: "",
     location: "",
     description: "",
-    imageUrl: "",
+    image_url: "",
     prize: "",
     startDate: new Date().toISOString().slice(0, 16),
     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
@@ -45,7 +45,7 @@ export const useContestForm = (onSuccess?: () => void) => {
       organizer: "",
       location: "",
       description: "",
-      imageUrl: "",
+      image_url: "",
       prize: "",
       startDate: new Date().toISOString().slice(0, 16),
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
@@ -64,7 +64,7 @@ export const useContestForm = (onSuccess?: () => void) => {
       organizer: contest.organizer,
       location: contest.location,
       description: contest.description || "",
-      imageUrl: contest.imageUrl || "",
+      image_url: contest.image_url || "",
       prize: contest.prize || "",
       startDate: contest.startDate ? new Date(contest.startDate).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
       endDate: contest.endDate ? new Date(contest.endDate).toISOString().slice(0, 16) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
@@ -79,15 +79,15 @@ export const useContestForm = (onSuccess?: () => void) => {
 
   const handleSaveChanges = async (data: any) => {
     try {
-      console.log('Saving contest data:', data); // Debug log
+      console.log('Saving contest data:', data);
       
       const contestData = {
         title: data.title,
         organizer: data.organizer,
         location: data.location,
         description: data.description,
-        image_url: data.imageUrl,
-        prize: data.prize, // Make sure prize is included
+        image_url: data.image_url,
+        prize: data.prize,
         start_date: data.startDate instanceof Date ? data.startDate.toISOString() : data.startDate,
         end_date: data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate,
         photo_deadline: data.photoDeadline instanceof Date ? data.photoDeadline.toISOString() : data.photoDeadline,
@@ -97,7 +97,7 @@ export const useContestForm = (onSuccess?: () => void) => {
         minimum_distance_km: data.minimumDistanceKm,
       };
 
-      console.log('Contest data to save (including prize):', contestData); // Debug log
+      console.log('Contest data to save (including prize):', contestData);
 
       if (formData.id) {
         // Editar concurso existente - usar el ID del formData, no crear uno nuevo
@@ -109,7 +109,7 @@ export const useContestForm = (onSuccess?: () => void) => {
 
         if (error) throw error;
         
-        console.log('Update result:', updateResult); // Debug log
+        console.log('Update result:', updateResult);
 
         toast({
           title: "Concurso actualizado",
@@ -124,7 +124,7 @@ export const useContestForm = (onSuccess?: () => void) => {
 
         if (error) throw error;
         
-        console.log('Insert result:', insertResult); // Debug log
+        console.log('Insert result:', insertResult);
 
         toast({
           title: "Concurso creado",
