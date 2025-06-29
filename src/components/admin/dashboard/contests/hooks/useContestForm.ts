@@ -79,12 +79,15 @@ export const useContestForm = (onSuccess?: () => void) => {
 
   const handleSaveChanges = async (data: any) => {
     try {
+      console.log('Saving contest data:', data); // Debug log
+      
       const contestData = {
         title: data.title,
         organizer: data.organizer,
         location: data.location,
         description: data.description,
         image_url: data.imageUrl,
+        prize: data.prize, // Asegurar que el premio se incluye
         start_date: data.startDate instanceof Date ? data.startDate.toISOString() : data.startDate,
         end_date: data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate,
         photo_deadline: data.photoDeadline instanceof Date ? data.photoDeadline.toISOString() : data.photoDeadline,
@@ -94,14 +97,19 @@ export const useContestForm = (onSuccess?: () => void) => {
         minimum_distance_km: data.minimumDistanceKm,
       };
 
+      console.log('Contest data to save:', contestData); // Debug log
+
       if (formData.id) {
         // Editar concurso existente - usar el ID del formData, no crear uno nuevo
-        const { error } = await supabase
+        const { data: updateResult, error } = await supabase
           .from('contests')
           .update(contestData)
-          .eq('id', formData.id);
+          .eq('id', formData.id)
+          .select();
 
         if (error) throw error;
+        
+        console.log('Update result:', updateResult); // Debug log
 
         toast({
           title: "Concurso actualizado",
@@ -109,11 +117,14 @@ export const useContestForm = (onSuccess?: () => void) => {
         });
       } else {
         // Crear nuevo concurso
-        const { error } = await supabase
+        const { data: insertResult, error } = await supabase
           .from('contests')
-          .insert(contestData);
+          .insert(contestData)
+          .select();
 
         if (error) throw error;
+        
+        console.log('Insert result:', insertResult); // Debug log
 
         toast({
           title: "Concurso creado",

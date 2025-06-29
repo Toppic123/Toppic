@@ -1,3 +1,4 @@
+
 import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +35,8 @@ const ContestDetail = () => {
     return <Navigate to="/contests" replace />;
   }
 
-  console.log('Contest photos loaded:', approvedPhotos); // Debug log
+  console.log('Contest data:', contest); // Debug log
+  console.log('Contest prize:', contest.prize); // Debug log for prize specifically
 
   const handleUploadPhoto = () => {
     if (!user) {
@@ -223,7 +225,7 @@ const ContestDetail = () => {
                     <p className="text-sm text-muted-foreground">{contest.organizer}</p>
                   </div>
                 </div>
-                {/* Premio mejorado con verificación de datos */}
+                {/* Premio - Sección mejorada con mejor manejo de datos */}
                 <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
                   <Trophy className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <div className="w-full">
@@ -231,6 +233,8 @@ const ContestDetail = () => {
                     <p className="text-sm font-bold text-primary break-words">
                       {contest.prize && contest.prize.trim() !== '' ? contest.prize : "Por determinar"}
                     </p>
+                    {/* Debug info - remover en producción */}
+                    <p className="text-xs text-gray-400 mt-1">Debug: {contest.prize || "null/undefined"}</p>
                   </div>
                 </div>
               </div>
