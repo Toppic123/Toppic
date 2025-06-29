@@ -102,7 +102,7 @@ export const useContestForm = (onSuccess?: () => void) => {
         is_private: data.isPrivate || false,
         contest_password: data.contestPassword || null,
         minimum_distance_km: data.minimumDistanceKm || 0,
-        plan: data.plan, // Fix: correctly map the plan field
+        plan: data.plan, // Fix: ensure plan is correctly mapped from form data
       };
 
       console.log('Contest data to save (including plan):', contestData);

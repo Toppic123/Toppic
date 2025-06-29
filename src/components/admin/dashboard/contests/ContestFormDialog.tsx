@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -126,7 +125,29 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     setIsSubmitting(true);
     try {
       console.log('Form data being submitted with plan:', formData.plan);
-      await onSubmit(formData);
+      // Fix: Ensure plan is correctly passed in the submission data
+      const submissionData = {
+        title: formData.title,
+        organizer: formData.organizer,
+        description: formData.description,
+        location: formData.location,
+        image_url: formData.image_url,
+        prize: formData.prize,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        photoDeadline: formData.photoDeadline,
+        status: formData.status,
+        isPrivate: formData.isPrivate,
+        contestPassword: formData.contestPassword,
+        minimumDistanceKm: formData.minimumDistanceKm,
+        photoOwnership: formData.photoOwnership,
+        commercialUse: formData.commercialUse,
+        plan: formData.plan, // Ensure plan is included in submission data
+        latitude: formData.latitude,
+        longitude: formData.longitude
+      };
+      console.log('Submission data with plan:', submissionData);
+      await onSubmit(submissionData);
       onClose();
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -206,7 +227,10 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                   <Label htmlFor="plan">Plan del concurso</Label>
                   <Select
                     value={formData.plan}
-                    onValueChange={(value: ContestPlan) => setFormData({ ...formData, plan: value })}
+                    onValueChange={(value: ContestPlan) => {
+                      console.log('Plan changed to:', value);
+                      setFormData({ ...formData, plan: value });
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona un plan" />
