@@ -181,11 +181,6 @@ const Contests = () => {
               <span className="text-base text-muted-foreground mr-4">
                 {displayedContests.length} concursos encontrados
               </span>
-              {userLocation && (
-                <span className="text-sm text-green-600 bg-green-50 px-2 py-1 rounded">
-                  📍 Ubicación: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
-                </span>
-              )}
             </div>
             
             {/* Enhanced TabsList with prominent styling */}

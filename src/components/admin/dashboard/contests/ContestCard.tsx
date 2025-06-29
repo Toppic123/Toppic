@@ -17,7 +17,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
-  // Better image handling with multiple fallbacks
+  // Better image handling with Supabase storage support
   const getImageUrl = (imageUrl: string | undefined) => {
     if (!imageUrl) {
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
@@ -28,8 +28,8 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
       return imageUrl;
     }
     
-    // If it's a regular URL, return as is
-    if (imageUrl.startsWith('http')) {
+    // If it's a Supabase storage URL or regular URL, return as is
+    if (imageUrl.startsWith('http') || imageUrl.includes('supabase')) {
       return imageUrl;
     }
     
@@ -48,6 +48,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
           alt={contest.title || 'Imagen del concurso'}
           className="w-full h-full object-cover"
           onError={(e) => {
+            console.error('Failed to load contest image:', contest.imageUrl);
             const target = e.target as HTMLImageElement;
             if (target.src !== "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop") {
               target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";

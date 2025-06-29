@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ContestImageUploadProps {
   value: string;
@@ -41,9 +42,35 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
     setIsUploading(true);
     try {
-      // Create a blob URL for immediate preview
-      const blobUrl = URL.createObjectURL(file);
-      onChange(blobUrl);
+      // Generate unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `contest-${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('contest-images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        console.error('Storage upload error:', error);
+        toast({
+          title: "Error",
+          description: "Error al subir la imagen: " + error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('contest-images')
+        .getPublicUrl(fileName);
+
+      console.log('Image uploaded successfully:', publicUrl);
+      onChange(publicUrl);
       
       toast({
         title: "Imagen cargada",
@@ -102,6 +129,11 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
               src={value}
               alt="Vista previa del concurso"
               className="w-full max-w-md h-48 object-cover rounded-lg border"
+              onError={(e) => {
+                console.error('Error loading image:', value);
+                const target = e.target as HTMLImageElement;
+                target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+              }}
             />
             <Button
               type="button"

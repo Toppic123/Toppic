@@ -26,7 +26,7 @@ const ContestCard = ({
 }: ContestCardProps) => {
   const [imageError, setImageError] = useState(false);
   
-  // Better image handling
+  // Better image handling for Supabase storage URLs
   const getDisplayImage = () => {
     if (!imageUrl || imageError) {
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
@@ -37,8 +37,8 @@ const ContestCard = ({
       return imageUrl;
     }
     
-    // If it's a regular URL, return as is
-    if (imageUrl.startsWith('http')) {
+    // If it's a Supabase storage URL or regular URL, return as is
+    if (imageUrl.startsWith('http') || imageUrl.includes('supabase')) {
       return imageUrl;
     }
     
@@ -47,6 +47,7 @@ const ContestCard = ({
   };
   
   const handleImageError = () => {
+    console.error('Failed to load image:', imageUrl);
     setImageError(true);
   };
   
