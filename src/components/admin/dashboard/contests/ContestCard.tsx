@@ -19,7 +19,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
 
   // Simple fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
-  const imageUrl = contest.imageUrl || contest.image_url || fallbackImage;
+  const imageUrl = contest.imageUrl || fallbackImage;
 
   console.log(`Contest "${contest.title}" using image:`, imageUrl);
 
