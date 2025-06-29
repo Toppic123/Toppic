@@ -144,12 +144,12 @@ const ContestPhotoManager = () => {
   const handleDeletePhoto = async (photoId: string) => {
     if (deletingPhotoId) return; // Prevent multiple simultaneous deletions
     
+    console.log('Starting deletion for photo:', photoId);
     setDeletingPhotoId(photoId);
     
     try {
-      console.log('Starting deletion process for photo:', photoId);
-      
       // First, get the photo details to get the image URL for storage cleanup
+      console.log('Fetching photo data...');
       const { data: photoData, error: fetchError } = await supabase
         .from('contest_photos')
         .select('image_url')
@@ -163,7 +163,8 @@ const ContestPhotoManager = () => {
 
       console.log('Photo data retrieved:', photoData);
 
-      // Delete from database first
+      // Delete from database
+      console.log('Deleting from database...');
       const { error: deleteError } = await supabase
         .from('contest_photos')
         .delete()
@@ -176,9 +177,10 @@ const ContestPhotoManager = () => {
 
       console.log('Photo deleted from database successfully');
 
-      // Try to delete from storage (optional cleanup - don't fail if this doesn't work)
+      // Try to delete from storage (this is optional cleanup)
       if (photoData?.image_url) {
         try {
+          console.log('Attempting storage cleanup...');
           // Extract the file path from the public URL
           const urlParts = photoData.image_url.split('/');
           const storageIndex = urlParts.findIndex(part => part === 'contest-photos');
@@ -207,7 +209,9 @@ const ContestPhotoManager = () => {
       });
 
       // Force refresh of photos to show changes immediately
+      console.log('Refreshing photos list...');
       await fetchContestPhotos();
+      console.log('Photos list refreshed');
       
     } catch (error: any) {
       console.error('Delete operation failed:', error);
@@ -292,7 +296,14 @@ const ContestPhotoManager = () => {
                 </CardDescription>
               </div>
               <Button 
-                onClick={handleRefresh} 
+                onClick={async () => {
+                  console.log('Manual refresh triggered');
+                  await fetchContestPhotos();
+                  toast({
+                    title: "Actualizado",
+                    description: "Lista de fotos actualizada",
+                  });
+                }} 
                 variant="outline" 
                 size="sm"
                 disabled={photosLoading}
@@ -323,6 +334,11 @@ const ContestPhotoManager = () => {
                       src={photo.image_url}
                       alt={photo.description || 'Foto del concurso'}
                       className="w-full h-48 object-cover"
+                      onError={(e) => {
+                        console.error('Image failed to load:', photo.image_url);
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                      }}
                     />
                     <div className="p-3">
                       <p className="font-medium text-sm">{photo.photographer_name}</p>
@@ -341,7 +357,11 @@ const ContestPhotoManager = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleEditPhoto(photo)}
+                          onClick={() => {
+                            console.log('Edit button clicked for photo:', photo.id);
+                            setEditingPhoto(photo);
+                            setIsEditDialogOpen(true);
+                          }}
                           className="flex-1"
                           disabled={deletingPhotoId === photo.id}
                         >
@@ -355,6 +375,7 @@ const ContestPhotoManager = () => {
                               variant="destructive" 
                               className="flex-1" 
                               disabled={deletingPhotoId === photo.id}
+                              onClick={() => console.log('Delete button clicked for photo:', photo.id)}
                             >
                               {deletingPhotoId === photo.id ? (
                                 <>
@@ -379,7 +400,10 @@ const ContestPhotoManager = () => {
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancelar</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDeletePhoto(photo.id)}
+                                onClick={() => {
+                                  console.log('Confirm delete clicked for photo:', photo.id);
+                                  handleDeletePhoto(photo.id);
+                                }}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 disabled={deletingPhotoId === photo.id}
                               >
@@ -405,7 +429,38 @@ const ContestPhotoManager = () => {
           setIsEditDialogOpen(false);
           setEditingPhoto(null);
         }}
-        onSave={handleSavePhotoEdit}
+        onSave={async (photoId: string, updates: Partial<ContestPhoto>) => {
+          try {
+            console.log('Updating photo:', photoId, 'with updates:', updates);
+            
+            const { data, error } = await supabase
+              .from('contest_photos')
+              .update(updates)
+              .eq('id', photoId)
+              .select();
+
+            if (error) {
+              console.error('Database update error:', error);
+              throw error;
+            }
+
+            console.log('Photo updated successfully:', data);
+
+            toast({
+              title: "Foto actualizada",
+              description: "Los cambios se han guardado correctamente",
+            });
+
+            await fetchContestPhotos();
+          } catch (error: any) {
+            console.error('Error updating photo:', error);
+            toast({
+              title: "Error al actualizar",
+              description: error.message || "No se pudieron guardar los cambios",
+              variant: "destructive",
+            });
+          }
+        }}
       />
     </div>
   );
