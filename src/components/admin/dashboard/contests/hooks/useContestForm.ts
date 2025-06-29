@@ -58,13 +58,16 @@ export const useContestForm = (onSuccess?: () => void) => {
   };
 
   const handleEditContest = (contest: Contest) => {
+    // Handle both possible field names for backward compatibility
+    const imageUrl = contest.image_url || contest.imageUrl || "";
+    
     setFormData({
       id: contest.id,
       title: contest.title,
       organizer: contest.organizer,
       location: contest.location,
       description: contest.description || "",
-      image_url: contest.image_url || "",
+      image_url: imageUrl,
       prize: contest.prize || "",
       startDate: contest.startDate ? new Date(contest.startDate).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
       endDate: contest.endDate ? new Date(contest.endDate).toISOString().slice(0, 16) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),

@@ -1,3 +1,4 @@
+
 export type ContestStatus = "active" | "pending" | "finished";
 
 export interface Contest {
@@ -15,7 +16,7 @@ export interface Contest {
   participants?: number;
   location?: string;
   imageUrl?: string;
-  image_url?: string;
+  image_url?: string; // Added the database field name
   is_private?: boolean;
   contest_password?: string;
   photo_ownership?: boolean;
