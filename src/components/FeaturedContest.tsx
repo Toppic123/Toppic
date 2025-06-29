@@ -47,20 +47,7 @@ const FeaturedContest = ({
       return "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
     }
     
-    // Handle different types of URLs properly
-    if (imageUrl.startsWith('blob:') || 
-        imageUrl.startsWith('data:') || 
-        imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    
-    // If it contains supabase storage indicators, treat as valid
-    if (imageUrl.includes('supabase') || imageUrl.includes('storage')) {
-      return imageUrl;
-    }
-    
-    // Fallback
-    return "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
+    return imageUrl;
   };
   
   const displayImage = getDisplayImage();

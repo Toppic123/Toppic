@@ -36,26 +36,13 @@ const ContestCard = ({
     setImageLoaded(true);
   };
   
-  // Better image handling with proper URL validation
+  // Improved image handling with proper URL validation
   const getDisplayImage = () => {
     if (imageError || !imageUrl) {
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
     }
     
-    // Handle different types of URLs
-    if (imageUrl.startsWith('blob:') || 
-        imageUrl.startsWith('data:') || 
-        imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    
-    // If it contains supabase storage path, it's likely a valid URL
-    if (imageUrl.includes('supabase') || imageUrl.includes('storage')) {
-      return imageUrl;
-    }
-    
-    // Fallback for any other case
-    return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+    return imageUrl;
   };
   
   const displayImage = getDisplayImage();

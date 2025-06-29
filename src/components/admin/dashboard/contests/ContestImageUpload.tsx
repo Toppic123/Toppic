@@ -128,20 +128,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     }
   }, [value, isUploading]);
 
-  const getDisplayImage = () => {
-    if (!previewUrl) return null;
-    
-    // Handle different types of URLs
-    if (previewUrl.startsWith('blob:') || 
-        previewUrl.startsWith('data:') || 
-        previewUrl.startsWith('http')) {
-      return previewUrl;
-    }
-    
-    return previewUrl;
-  };
-
-  const displayImage = getDisplayImage();
+  const displayImage = previewUrl || '';
 
   return (
     <div className="space-y-4">

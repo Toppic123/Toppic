@@ -17,24 +17,13 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
-  // Better image handling with Supabase storage support
+  // Simplified image handling - let the image src handle the URL directly
   const getImageUrl = (imageUrl: string | undefined) => {
     if (!imageUrl) {
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
     }
     
-    // If it's a blob URL or data URL, return as is
-    if (imageUrl.startsWith('blob:') || imageUrl.startsWith('data:')) {
-      return imageUrl;
-    }
-    
-    // If it's a Supabase storage URL or regular URL, return as is
-    if (imageUrl.startsWith('http') || imageUrl.includes('supabase')) {
-      return imageUrl;
-    }
-    
-    // Fallback for any other case
-    return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+    return imageUrl;
   };
 
   const imageUrl = getImageUrl(contest.imageUrl);
