@@ -1,7 +1,8 @@
 
-import { Camera, Edit, Trash } from "lucide-react";
+import { Camera, Edit, Trash, Crown } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Contest } from "./types";
 
 interface ContestCardProps {
@@ -9,6 +10,18 @@ interface ContestCardProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
+
+const getPlanInfo = (plan?: string) => {
+  switch (plan) {
+    case 'professional':
+      return { label: 'Profesional', color: 'bg-blue-100 text-blue-800', icon: '⭐' };
+    case 'premium':
+      return { label: 'Premium', color: 'bg-purple-100 text-purple-800', icon: '👑' };
+    case 'basic':
+    default:
+      return { label: 'Básico', color: 'bg-gray-100 text-gray-800', icon: '📦' };
+  }
+};
 
 export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => {
   // Safety check for invalid contest data
@@ -22,6 +35,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
   
   // Use image_url (database field) as primary source
   const imageUrl = contest.image_url || fallbackImage;
+  const planInfo = getPlanInfo(contest.plan);
 
   console.log(`Contest "${contest.title}" using image URL:`, imageUrl);
   console.log('Contest image_url from database:', contest.image_url);
@@ -69,6 +83,10 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
               {contest.status === 'active' ? 'Activo' : 
                 contest.status === 'finished' ? 'Finalizado' : 'Pendiente'}
             </div>
+            <Badge className={planInfo.color}>
+              <span className="mr-1">{planInfo.icon}</span>
+              {planInfo.label}
+            </Badge>
           </div>
         </div>
       </CardHeader>

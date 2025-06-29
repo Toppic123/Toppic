@@ -1,5 +1,6 @@
 
 export type ContestStatus = "active" | "pending" | "finished";
+export type ContestPlan = "basic" | "professional" | "premium";
 
 export interface Contest {
   id: string;
@@ -23,6 +24,7 @@ export interface Contest {
   commercial_use?: boolean;
   minimum_distance_km?: number;
   prize?: string;
+  plan?: ContestPlan;
 }
 
 export interface ContestFormData {
@@ -42,6 +44,7 @@ export interface ContestFormData {
   isPrivate?: boolean;
   contestPassword?: string;
   minimumDistanceKm: number;
+  plan: ContestPlan;
 }
 
 export interface ContestCardProps {

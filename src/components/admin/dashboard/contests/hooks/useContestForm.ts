@@ -19,6 +19,7 @@ export interface ContestFormData {
   is_private: boolean;
   contest_password?: string;
   minimum_distance_km: number;
+  plan: "basic" | "professional" | "premium";
 }
 
 export const useContestForm = (onSuccess?: () => void) => {
@@ -37,6 +38,7 @@ export const useContestForm = (onSuccess?: () => void) => {
     status: "pending",
     is_private: false,
     minimum_distance_km: 0,
+    plan: "basic",
   });
 
   const handleCreateNewContest = () => {
@@ -53,13 +55,14 @@ export const useContestForm = (onSuccess?: () => void) => {
       status: "pending",
       is_private: false,
       minimum_distance_km: 0,
+      plan: "basic",
     });
     setIsDialogOpen(true);
   };
 
   const handleEditContest = (contest: Contest) => {
     // Handle both possible field names for backward compatibility
-    const imageUrl = contest.image_url || contest.imageUrl || "";
+    const imageUrl = contest.imageUrl || "";
     
     setFormData({
       id: contest.id,
@@ -76,6 +79,7 @@ export const useContestForm = (onSuccess?: () => void) => {
       is_private: contest.is_private || false,
       contest_password: contest.contest_password || "",
       minimum_distance_km: contest.minimum_distance_km || 0,
+      plan: (contest as any).plan || "basic",
     });
     setIsDialogOpen(true);
   };
@@ -98,9 +102,10 @@ export const useContestForm = (onSuccess?: () => void) => {
         is_private: data.isPrivate,
         contest_password: data.contestPassword,
         minimum_distance_km: data.minimumDistanceKm,
+        plan: data.plan,
       };
 
-      console.log('Contest data to save (including prize):', contestData);
+      console.log('Contest data to save (including plan):', contestData);
 
       if (formData.id) {
         // Editar concurso existente - usar el ID del formData, no crear uno nuevo

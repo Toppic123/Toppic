@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import LocationCombobox from "./LocationCombobox";
 import OrganizerSelect from "./OrganizerSelect";
 import ContestImageUpload from "./ContestImageUpload";
-import { Contest } from "./types";
+import { Contest, ContestPlan } from "./types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ContestFormDialogProps {
@@ -24,6 +24,19 @@ interface ContestFormDialogProps {
   contest?: Contest | null;
   onSubmit: (contestData: any) => void;
 }
+
+const getPlanLimits = (plan: ContestPlan) => {
+  switch (plan) {
+    case 'basic':
+      return { maxParticipants: 100, features: ['Hasta 100 participantes', 'Soporte básico'] };
+    case 'professional':
+      return { maxParticipants: 500, features: ['Hasta 500 participantes', 'Soporte prioritario', 'Análisis avanzado'] };
+    case 'premium':
+      return { maxParticipants: 1000, features: ['Hasta 1000 participantes', 'Soporte dedicado', 'Análisis completo', 'Branding personalizado'] };
+    default:
+      return { maxParticipants: 100, features: ['Hasta 100 participantes'] };
+  }
+};
 
 export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: ContestFormDialogProps) => {
   // Simple form state management within the component
@@ -43,6 +56,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     contestPassword: contest?.contest_password || '',
     photoOwnership: contest?.photo_ownership !== undefined ? contest.photo_ownership : true,
     commercialUse: contest?.commercial_use !== undefined ? contest.commercial_use : true,
+    plan: contest?.plan || 'basic' as ContestPlan,
     latitude: undefined as number | undefined,
     longitude: undefined as number | undefined
   });
@@ -72,6 +86,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         contestPassword: contest.contest_password || '',
         photoOwnership: contest.photo_ownership !== undefined ? contest.photo_ownership : true,
         commercialUse: contest.commercial_use !== undefined ? contest.commercial_use : true,
+        plan: contest.plan || 'basic' as ContestPlan,
         latitude: undefined,
         longitude: undefined
       });
@@ -94,6 +109,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         contestPassword: '',
         photoOwnership: true,
         commercialUse: true,
+        plan: 'basic' as ContestPlan,
         latitude: undefined,
         longitude: undefined
       });
@@ -109,7 +125,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      console.log('Form data being submitted with image_url:', formData.image_url);
+      console.log('Form data being submitted with plan:', formData.plan);
       await onSubmit(formData);
       onClose();
     } catch (error) {
@@ -127,6 +143,8 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
       longitude: location.lon ? parseFloat(location.lon) : undefined
     });
   };
+
+  const planLimits = getPlanLimits(formData.plan);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -173,14 +191,41 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="prize">Premio</Label>
-                <Input
-                  id="prize"
-                  value={formData.prize}
-                  onChange={(e) => setFormData({ ...formData, prize: e.target.value })}
-                  placeholder="Ej: 500€, Cámara profesional, Viaje a París..."
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="prize">Premio</Label>
+                  <Input
+                    id="prize"
+                    value={formData.prize}
+                    onChange={(e) => setFormData({ ...formData, prize: e.target.value })}
+                    placeholder="Ej: 500€, Cámara profesional, Viaje a París..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="plan">Plan del concurso</Label>
+                  <Select
+                    value={formData.plan}
+                    onValueChange={(value: ContestPlan) => setFormData({ ...formData, plan: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="basic">Básico</SelectItem>
+                      <SelectItem value="professional">Profesional</SelectItem>
+                      <SelectItem value="premium">Premium</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="text-sm text-muted-foreground">
+                    <p className="font-medium">Características del plan {formData.plan}:</p>
+                    <ul className="list-disc list-inside mt-1">
+                      {planLimits.features.map((feature, index) => (
+                        <li key={index}>{feature}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
