@@ -145,9 +145,9 @@ const ContestDetail = () => {
                   <p className="text-muted-foreground">Cargando fotos...</p>
                 </div>
               ) : approvedPhotos.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {approvedPhotos.map((photo) => (
-                    <div key={photo.id} className="relative group">
+                    <div key={photo.id} className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                       <PhotoCard
                         id={photo.id}
                         imageUrl={photo.image_url}
@@ -155,21 +155,56 @@ const ContestDetail = () => {
                         photographerAvatar={photo.photographer_avatar}
                         mode="grid"
                       />
-                      {/* Vote button overlay */}
-                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          className="bg-white/90 hover:bg-white text-red-500 hover:text-red-600 shadow-md"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleVotePhoto(photo.id);
-                          }}
-                        >
-                          <Heart className="h-4 w-4 mr-1" />
-                          {photo.votes}
-                        </Button>
+                      
+                      {/* Photo info and vote section */}
+                      <div className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-sm text-gray-900">{photo.photographer_name}</h4>
+                            {photo.description && (
+                              <p className="text-xs text-gray-600 mt-1 line-clamp-2">{photo.description}</p>
+                            )}
+                          </div>
+                          
+                          {/* Vote button - only show if user is logged in */}
+                          {user && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex items-center gap-1 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleVotePhoto(photo.id);
+                              }}
+                            >
+                              <Heart className="h-4 w-4" />
+                              <span className="text-sm font-medium">{photo.votes}</span>
+                            </Button>
+                          )}
+                          
+                          {/* Show vote count for non-logged in users */}
+                          {!user && (
+                            <div className="flex items-center gap-1 text-gray-500">
+                              <Heart className="h-4 w-4" />
+                              <span className="text-sm">{photo.votes}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Login prompt for non-authenticated users */}
+                        {!user && (
+                          <div className="mt-3 pt-3 border-t border-gray-100">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="w-full text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                              onClick={() => navigate("/login")}
+                            >
+                              Inicia sesión para votar
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
