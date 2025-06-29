@@ -1,4 +1,3 @@
-
 import { Camera, Edit, Trash } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,20 +16,11 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
-  // Simple fallback image URL
+  // Fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   
-  // Process the image URL to ensure it's valid - use imageUrl instead of image_url
-  let imageUrl = contest.imageUrl || fallbackImage;
-  
-  // If it's a Supabase URL, make sure it's formatted correctly
-  if (imageUrl && imageUrl.includes('supabase.co') && !imageUrl.includes('/storage/v1/object/public/')) {
-    // Fix malformed Supabase URLs
-    const fileName = imageUrl.split('/').pop();
-    if (fileName && fileName.includes('contest-')) {
-      imageUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
-    }
-  }
+  // Use imageUrl directly from contest data
+  const imageUrl = contest.imageUrl || fallbackImage;
 
   console.log(`Contest "${contest.title}" using image:`, imageUrl);
 
