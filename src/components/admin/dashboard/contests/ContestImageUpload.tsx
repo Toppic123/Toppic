@@ -19,12 +19,15 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
   // Update preview when value changes
   useEffect(() => {
+    console.log('ContestImageUpload - value changed to:', value);
     setPreviewUrl(value);
   }, [value]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    console.log('Starting file upload:', file.name, file.size);
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -49,11 +52,11 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     setIsUploading(true);
     
     try {
-      // Generate unique filename
+      // Generate unique filename with timestamp
       const fileExt = file.name.split('.').pop();
       const fileName = `contest-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
-      console.log('Uploading contest image:', fileName);
+      console.log('Uploading to Supabase Storage with filename:', fileName);
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
@@ -73,19 +76,21 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         return;
       }
 
-      // Get the public URL using the proper method
+      console.log('File uploaded successfully:', data);
+
+      // Get the public URL
       const { data: urlData } = supabase.storage
         .from('contest-images')
         .getPublicUrl(fileName);
       
       const publicUrl = urlData.publicUrl;
       
-      console.log('Image uploaded successfully. Public URL:', publicUrl);
+      console.log('Generated public URL:', publicUrl);
       
       // Update preview immediately
       setPreviewUrl(publicUrl);
       
-      // Update the form with the new URL
+      // Notify parent component with the new URL
       onChange(publicUrl);
       
       toast({
@@ -106,9 +111,11 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
   };
 
   const clearImage = () => {
-    onChange('');
+    console.log('Clearing image');
     setPreviewUrl('');
+    onChange('');
     
+    // Clear the file input
     const fileInput = document.getElementById('contest-image-upload') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
@@ -143,6 +150,9 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
         {previewUrl && (
           <div className="relative">
+            <div className="text-sm text-muted-foreground mb-2">
+              Vista previa de la imagen:
+            </div>
             <img
               src={previewUrl}
               alt="Vista previa del concurso"
@@ -172,6 +182,12 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         {isUploading && (
           <div className="text-sm text-muted-foreground">
             Subiendo imagen... Por favor espera.
+          </div>
+        )}
+
+        {previewUrl && !isUploading && (
+          <div className="text-sm text-green-600">
+            ✓ Imagen lista para guardar
           </div>
         )}
       </div>

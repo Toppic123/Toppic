@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -51,13 +50,16 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
 
   // Update form data when contest prop changes
   React.useEffect(() => {
+    console.log('ContestFormDialog - contest prop changed:', contest);
     if (contest) {
+      const newImageUrl = contest.imageUrl || contest.image_url || '';
+      console.log('Setting imageUrl from contest:', newImageUrl);
       setFormData({
         title: contest.title || '',
         organizer: contest.organizer || '',
         description: contest.description || '',
         location: contest.location || '',
-        imageUrl: contest.imageUrl || contest.image_url || '',
+        imageUrl: newImageUrl,
         prize: contest.prize || '',
         startDate: contest.startDate ? new Date(contest.startDate) : contest.start_date ? new Date(contest.start_date) : undefined,
         photoDeadline: contest.photoDeadline ? new Date(contest.photoDeadline) : contest.photo_deadline ? new Date(contest.photo_deadline) : undefined,
@@ -73,6 +75,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
       });
     } else {
       // Reset form for new contest
+      console.log('Resetting form for new contest');
       setFormData({
         title: '',
         organizer: '',
@@ -95,11 +98,16 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     }
   }, [contest]);
 
+  const handleImageChange = (newImageUrl: string) => {
+    console.log('ContestFormDialog - Image changed to:', newImageUrl);
+    setFormData(prev => ({ ...prev, imageUrl: newImageUrl }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      console.log('Form data being submitted:', formData); // Debug log
+      console.log('Form data being submitted:', formData);
       await onSubmit(formData);
       onClose();
     } catch (error) {
@@ -184,7 +192,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
 
               <ContestImageUpload
                 value={formData.imageUrl}
-                onChange={(value) => setFormData({ ...formData, imageUrl: value })}
+                onChange={handleImageChange}
               />
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

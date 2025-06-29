@@ -1,3 +1,4 @@
+
 import { Camera, Edit, Trash } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,23 +20,25 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
   // Fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   
-  // Use imageUrl directly from contest data
-  const imageUrl = contest.imageUrl || fallbackImage;
+  // Use the imageUrl from contest data, ensuring we handle both possible field names
+  const imageUrl = contest.imageUrl || contest.image_url || fallbackImage;
 
-  console.log(`Contest "${contest.title}" using image:`, imageUrl);
+  console.log(`Contest "${contest.title}" using image URL:`, imageUrl);
+  console.log('Contest data:', { imageUrl: contest.imageUrl, image_url: contest.image_url });
 
   return (
     <Card>
       {/* Contest Image */}
-      <div className="relative h-32 overflow-hidden rounded-t-lg">
+      <div className="relative h-32 overflow-hidden rounded-t-lg bg-gray-100">
         <img
           src={imageUrl}
           alt={contest.title || 'Imagen del concurso'}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-opacity duration-300"
           onError={(e) => {
             console.error('Failed to load contest image:', imageUrl);
             const target = e.target as HTMLImageElement;
             if (target.src !== fallbackImage) {
+              console.log('Switching to fallback image');
               target.src = fallbackImage;
             }
           }}
