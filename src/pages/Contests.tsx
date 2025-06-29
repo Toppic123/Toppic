@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -203,11 +202,6 @@ const Contests = () => {
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     LISTA
-                    {viewMode === "grid" && (
-                      <Badge className="ml-2 bg-white text-[#4891AA] text-xs px-2 py-0.5">
-                        Activo
-                      </Badge>
-                    )}
                   </TabsTrigger>
                   <TabsTrigger 
                     value="map"
@@ -221,11 +215,6 @@ const Contests = () => {
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     MAPA
-                    {viewMode === "map" && (
-                      <Badge className="ml-2 bg-white text-[#4891AA] text-xs px-2 py-0.5">
-                        Activo
-                      </Badge>
-                    )}
                   </TabsTrigger>
                 </TabsList>
               </motion.div>

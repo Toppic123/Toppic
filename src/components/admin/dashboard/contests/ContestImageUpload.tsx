@@ -73,8 +73,12 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         return;
       }
 
-      // Get the public URL using the correct format
-      const publicUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
+      // Get the public URL 
+      const { data: urlData } = supabase.storage
+        .from('contest-images')
+        .getPublicUrl(fileName);
+      
+      const publicUrl = urlData.publicUrl;
       
       console.log('Image uploaded successfully. Public URL:', publicUrl);
       
@@ -146,10 +150,8 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
               onError={(e) => {
                 console.error('Error loading image preview:', previewUrl);
                 const target = e.target as HTMLImageElement;
-                // Si la imagen falla, intentar con la URL original
-                if (target.src !== value && value) {
-                  target.src = value;
-                }
+                // Fallback to a default image if loading fails
+                target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
               }}
               onLoad={() => {
                 console.log('Image loaded successfully in preview:', previewUrl);

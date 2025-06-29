@@ -36,20 +36,9 @@ const ContestCard = ({
     setImageLoaded(true);
   };
   
-  // Process the image URL to ensure it's valid
-  let processedImageUrl = imageUrl;
-  
-  // If it's a Supabase URL, make sure it's formatted correctly
-  if (imageUrl && imageUrl.includes('supabase.co') && !imageUrl.includes('/storage/v1/object/public/')) {
-    const fileName = imageUrl.split('/').pop();
-    if (fileName && fileName.includes('contest-')) {
-      processedImageUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
-    }
-  }
-  
-  // Simple fallback handling
+  // Use the image URL directly without complex processing
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
-  const displayImage = imageError || !processedImageUrl ? fallbackImage : processedImageUrl;
+  const displayImage = imageError || !imageUrl ? fallbackImage : imageUrl;
   
   return (
     <motion.div
