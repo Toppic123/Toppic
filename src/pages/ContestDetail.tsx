@@ -35,9 +35,6 @@ const ContestDetail = () => {
     return <Navigate to="/contests" replace />;
   }
 
-  console.log('Contest data:', contest); // Debug log
-  console.log('Contest prize:', contest.prize); // Debug log for prize specifically
-
   const handleUploadPhoto = () => {
     if (!user) {
       navigate("/login");
@@ -233,8 +230,6 @@ const ContestDetail = () => {
                     <p className="text-sm font-bold text-primary break-words">
                       {contest.prize && contest.prize.trim() !== '' ? contest.prize : "Por determinar"}
                     </p>
-                    {/* Debug info - remover en producción */}
-                    <p className="text-xs text-gray-400 mt-1">Debug: {contest.prize || "null/undefined"}</p>
                   </div>
                 </div>
               </div>
