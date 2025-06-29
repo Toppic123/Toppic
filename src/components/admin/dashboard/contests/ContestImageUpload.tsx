@@ -68,29 +68,43 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
           description: "Error al subir la imagen: " + error.message,
           variant: "destructive"
         });
-        // Revert to original preview if upload fails
         setPreviewUrl(value);
         return;
       }
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('contest-images')
-        .getPublicUrl(fileName);
-
-      console.log('Image uploaded successfully:', publicUrl);
+      // Construct the public URL manually using the Supabase project URL
+      const publicUrl = `https://sslwwbcvpujyfnpjypwk.supabase.co/storage/v1/object/public/contest-images/${fileName}`;
       
-      // Update both local state and parent
-      setPreviewUrl(publicUrl);
-      onChange(publicUrl);
+      console.log('Image uploaded successfully. Public URL:', publicUrl);
+      
+      // Verify the URL works by testing it
+      const testImage = new Image();
+      testImage.onload = () => {
+        console.log('Image URL verified successfully:', publicUrl);
+        setPreviewUrl(publicUrl);
+        onChange(publicUrl);
+        
+        toast({
+          title: "Imagen cargada",
+          description: "La imagen se ha cargado correctamente",
+        });
+      };
+      
+      testImage.onerror = () => {
+        console.error('Image URL verification failed:', publicUrl);
+        toast({
+          title: "Error",
+          description: "Error al verificar la imagen subida",
+          variant: "destructive"
+        });
+        setPreviewUrl(value);
+      };
+      
+      testImage.src = publicUrl;
       
       // Clean up local blob URL
       URL.revokeObjectURL(localPreviewUrl);
       
-      toast({
-        title: "Imagen cargada",
-        description: "La imagen se ha cargado correctamente",
-      });
     } catch (error) {
       console.error('Error uploading file:', error);
       toast({
@@ -98,7 +112,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         description: "Error al cargar la imagen",
         variant: "destructive"
       });
-      // Revert to original preview if upload fails
       setPreviewUrl(value);
     } finally {
       setIsUploading(false);
@@ -106,7 +119,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
   };
 
   const clearImage = () => {
-    // Clean up blob URL if it exists
     if (previewUrl && previewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(previewUrl);
     }
@@ -114,7 +126,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     setPreviewUrl('');
     onChange('');
     
-    // Reset file input
     const fileInput = document.getElementById('contest-image-upload') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
@@ -168,7 +179,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
                 target.style.display = 'none';
               }}
               onLoad={() => {
-                console.log('Image loaded successfully:', displayImage);
+                console.log('Image loaded successfully in preview:', displayImage);
               }}
             />
             <Button

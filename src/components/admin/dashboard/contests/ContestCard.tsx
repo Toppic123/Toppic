@@ -17,12 +17,16 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
     return null;
   }
 
-  // Simplified image handling - let the image src handle the URL directly
+  // Enhanced image handling with debugging
   const getImageUrl = (imageUrl: string | undefined) => {
+    console.log(`Admin ContestCard - Processing image for "${contest.title}":`, imageUrl);
+    
     if (!imageUrl) {
+      console.log('No image URL provided, using fallback');
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
     }
     
+    console.log('Using provided image URL:', imageUrl);
     return imageUrl;
   };
 
@@ -37,12 +41,16 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
           alt={contest.title || 'Imagen del concurso'}
           className="w-full h-full object-cover"
           onError={(e) => {
-            console.error('Failed to load contest image:', contest.imageUrl);
+            console.error('Failed to load admin contest image:', contest.imageUrl);
             const target = e.target as HTMLImageElement;
             if (target.src !== "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop") {
               target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
             }
           }}
+          onLoad={() => {
+            console.log('Admin contest image loaded successfully:', imageUrl);
+          }}
+          crossOrigin="anonymous"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>

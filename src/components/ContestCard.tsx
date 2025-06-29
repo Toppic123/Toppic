@@ -28,6 +28,7 @@ const ContestCard = ({
   
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error('ContestCard image failed to load:', imageUrl);
+    console.error('Image error event:', e);
     setImageError(true);
   };
 
@@ -36,12 +37,14 @@ const ContestCard = ({
     setImageLoaded(true);
   };
   
-  // Improved image handling with proper URL validation
+  // Improved image handling with debugging
   const getDisplayImage = () => {
     if (imageError || !imageUrl) {
+      console.log('Using fallback image for contest:', title, 'Original URL:', imageUrl);
       return "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
     }
     
+    console.log('Using contest image URL:', imageUrl);
     return imageUrl;
   };
   
@@ -76,6 +79,7 @@ const ContestCard = ({
               onError={handleImageError}
               onLoad={handleImageLoad}
               loading="lazy"
+              crossOrigin="anonymous"
             />
           </div>
           
