@@ -116,6 +116,19 @@ const getCoordinatesForLocation = (location: string) => {
   return locationMap['andorra'];
 };
 
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
+
 export const useContestsData = () => {
   const [contests, setContests] = useState<Contest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -151,9 +164,12 @@ export const useContestsData = () => {
             console.log(`Contest "${contest.title}" using location-based coordinates for "${contest.location}":`, coordinates);
           }
 
+          // Clean the contest title to remove "FOTOGRAFIA" words
+          const cleanedTitle = cleanContestTitle(contest.title);
+
           return {
             id: contest.id,
-            title: contest.title || 'Sin título',
+            title: cleanedTitle,
             organizer: contest.organizer || 'Organizador desconocido',
             location: contest.location || 'Ubicación no especificada',
             description: contest.description || 'Sin descripción',

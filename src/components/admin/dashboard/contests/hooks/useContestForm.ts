@@ -99,10 +99,10 @@ export const useContestForm = (onSuccess?: () => void) => {
         end_date: data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate,
         photo_deadline: data.photoDeadline instanceof Date ? data.photoDeadline.toISOString() : data.photoDeadline,
         status: data.status,
-        is_private: data.isPrivate,
-        contest_password: data.contestPassword,
-        minimum_distance_km: data.minimumDistanceKm,
-        plan: data.plan,
+        is_private: data.isPrivate || false,
+        contest_password: data.contestPassword || null,
+        minimum_distance_km: data.minimumDistanceKm || 0,
+        plan: data.plan, // Fix: correctly map the plan field
       };
 
       console.log('Contest data to save (including plan):', contestData);
