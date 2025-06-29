@@ -1,3 +1,4 @@
+
 import { Camera, Edit, Trash } from "lucide-react";
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,11 +20,11 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
   // Fallback image URL
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   
-  // Use the image_url from contest data (this is what comes from the database)
-  const imageUrl = contest.image_url || contest.imageUrl || fallbackImage;
+  // Use image_url (database field) as primary source
+  const imageUrl = contest.image_url || fallbackImage;
 
   console.log(`Contest "${contest.title}" using image URL:`, imageUrl);
-  console.log('Contest data:', { imageUrl: contest.imageUrl, image_url: contest.image_url });
+  console.log('Contest image_url from database:', contest.image_url);
 
   return (
     <Card>

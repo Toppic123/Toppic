@@ -32,7 +32,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     organizer: contest?.organizer || '',
     description: contest?.description || '',
     location: contest?.location || '',
-    imageUrl: contest?.image_url || contest?.imageUrl || '',
+    image_url: contest?.image_url || '',
     prize: contest?.prize || '',
     startDate: contest?.startDate ? new Date(contest.startDate) : contest?.start_date ? new Date(contest.start_date) : undefined,
     photoDeadline: contest?.photoDeadline ? new Date(contest.photoDeadline) : contest?.photo_deadline ? new Date(contest.photo_deadline) : undefined,
@@ -53,15 +53,15 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
   React.useEffect(() => {
     console.log('ContestFormDialog - contest prop changed:', contest);
     if (contest) {
-      // Prioritize image_url from database, then imageUrl as fallback
-      const newImageUrl = contest.image_url || contest.imageUrl || '';
-      console.log('Setting imageUrl from contest (prioritizing image_url):', newImageUrl);
+      // Use image_url as the primary field (database field name)
+      const imageUrl = contest.image_url || contest.imageUrl || '';
+      console.log('Setting image_url from contest:', imageUrl);
       setFormData({
         title: contest.title || '',
         organizer: contest.organizer || '',
         description: contest.description || '',
         location: contest.location || '',
-        imageUrl: newImageUrl,
+        image_url: imageUrl,
         prize: contest.prize || '',
         startDate: contest.startDate ? new Date(contest.startDate) : contest.start_date ? new Date(contest.start_date) : undefined,
         photoDeadline: contest.photoDeadline ? new Date(contest.photoDeadline) : contest.photo_deadline ? new Date(contest.photo_deadline) : undefined,
@@ -83,7 +83,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         organizer: '',
         description: '',
         location: '',
-        imageUrl: '',
+        image_url: '',
         prize: '',
         startDate: undefined,
         photoDeadline: undefined,
@@ -102,14 +102,14 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
 
   const handleImageChange = (newImageUrl: string) => {
     console.log('ContestFormDialog - Image changed to:', newImageUrl);
-    setFormData(prev => ({ ...prev, imageUrl: newImageUrl }));
+    setFormData(prev => ({ ...prev, image_url: newImageUrl }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      console.log('Form data being submitted:', formData);
+      console.log('Form data being submitted with image_url:', formData.image_url);
       await onSubmit(formData);
       onClose();
     } catch (error) {
@@ -193,7 +193,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
               </div>
 
               <ContestImageUpload
-                value={formData.imageUrl}
+                value={formData.image_url}
                 onChange={handleImageChange}
               />
 

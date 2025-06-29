@@ -86,6 +86,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
       const publicUrl = urlData.publicUrl;
       
       console.log('Generated public URL:', publicUrl);
+      console.log('About to call onChange with URL:', publicUrl);
       
       // Update preview immediately
       setPreviewUrl(publicUrl);
@@ -187,7 +188,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
         {previewUrl && !isUploading && (
           <div className="text-sm text-green-600">
-            ✓ Imagen lista para guardar
+            ✓ Imagen lista para guardar con URL: {previewUrl}
           </div>
         )}
       </div>
