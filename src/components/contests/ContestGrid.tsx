@@ -30,6 +30,19 @@ interface ContestGridProps {
   clearFilters: () => void;
 }
 
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
+
 const ContestGrid = ({
   contests,
   userLocation,
@@ -82,15 +95,19 @@ const ContestGrid = ({
         // Validate and process image URL
         const processedImageUrl = contest.imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
         
-        const contestWithValidImage = {
+        // Clean the contest title to remove "FOTOGRAFIA" words
+        const cleanedTitle = cleanContestTitle(contest.title);
+        
+        const contestWithCleanedData = {
           ...contest,
+          title: cleanedTitle,
           imageUrl: processedImageUrl
         };
         
         return (
           <div key={contest.id} className="relative">
             <div className={contest.isActive ? "" : "grayscale opacity-75"}>
-              <ContestCard key={contest.id} {...contestWithValidImage} />
+              <ContestCard key={contest.id} {...contestWithCleanedData} />
               
               {/* Status and distance badges */}
               <div className="absolute top-3 left-3 flex flex-col gap-2">

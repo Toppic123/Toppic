@@ -15,6 +15,19 @@ type ContestCardProps = {
   photosCount: number;
 };
 
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
+
 const ContestCard = ({
   id,
   title,
@@ -36,12 +49,16 @@ const ContestCard = ({
     setImageLoaded(true);
   };
   
+  // Clean the title to remove "FOTOGRAFIA" words
+  const displayTitle = cleanContestTitle(title);
+  
   // Use the image URL directly - this component receives imageUrl as a prop
   const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
   const displayImage = imageError || !imageUrl ? fallbackImage : imageUrl;
   
   console.log('ContestCard received imageUrl prop:', imageUrl);
   console.log('ContestCard using displayImage:', displayImage);
+  console.log('ContestCard cleaned title:', displayTitle);
   
   return (
     <motion.div
@@ -65,7 +82,7 @@ const ContestCard = ({
             
             <img
               src={displayImage}
-              alt={title}
+              alt={displayTitle}
               className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
                 imageLoaded ? 'opacity-100' : 'opacity-0'
               }`}
@@ -77,7 +94,7 @@ const ContestCard = ({
           
           {/* Overlay content */}
           <div className="absolute bottom-0 left-0 right-0 p-4 z-20 text-white">
-            <h3 className="font-medium text-lg mb-1">{title}</h3>
+            <h3 className="font-medium text-lg mb-1">{displayTitle}</h3>
             <div className="flex items-center text-xs text-white/80 mb-2">
               <MapPin className="w-3 h-3 mr-1" />
               <span>{location}</span>

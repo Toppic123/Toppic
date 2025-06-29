@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +11,19 @@ import { useContestsData } from "@/hooks/useContestsData";
 interface MobileContestsProps {
   onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
 }
+
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
 
 const MobileContests = ({ onNavigate }: MobileContestsProps) => {
   const { contests: allContests, isLoading } = useContestsData();
@@ -46,10 +58,10 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     setSelectedContestId(null);
   };
 
-  // Convert contests to mobile format
+  // Convert contests to mobile format with cleaned titles
   const mobileContests = allContests.map(contest => ({
     id: contest.id,
-    title: contest.title,
+    title: cleanContestTitle(contest.title), // Clean the title here
     location: contest.location,
     distance: "0.5 km", // Default distance
     endDate: contest.endDate,

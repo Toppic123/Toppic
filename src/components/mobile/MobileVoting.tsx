@@ -12,6 +12,19 @@ interface MobileVotingProps {
   contestId?: string;
 }
 
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
+
 const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   
@@ -51,7 +64,7 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
           >
             ← Volver
           </Button>
-          <h1 className="text-lg font-semibold">Concurso de Fotos</h1>
+          <h1 className="text-lg font-semibold">{cleanContestTitle("Concurso de Fotografía")}</h1>
           <div></div>
         </div>
         
