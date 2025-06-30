@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Camera, ArrowRight, Smartphone } from "lucide-react";
+import { Camera, Smartphone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -75,16 +75,6 @@ const HeroSection = ({ heroImages, texts }: HeroSectionProps) => {
                 <span>{texts.exploreContests}</span>
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="rounded-full px-12 py-6 bg-[#4891AA]/80 border-white text-white hover:bg-[#4891AA]/90 hover:border-white text-xl font-bold h-auto">
-              <Link to="/register">
-                <span>{texts.startNow}</span>
-                <ArrowRight className="ml-3 h-6 w-6" />
-              </Link>
-            </Button>
-          </div>
-
-          {/* Mobile App Link - Fixed to redirect to /mobile-prototype */}
-          <div className="mt-8">
             <Button asChild variant="ghost" size="lg" className="rounded-full px-8 py-4 bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/50 text-lg font-medium h-auto">
               <Link to="/mobile-prototype">
                 <Smartphone className="mr-3 h-5 w-5" />
