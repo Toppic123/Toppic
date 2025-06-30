@@ -44,14 +44,6 @@ const cleanContestTitle = (title: string): string => {
   return cleanedTitle || 'Sin título';
 };
 
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('es-ES', { 
-    day: 'numeric', 
-    month: 'short' 
-  });
-};
-
 const getDaysRemaining = (endDate: string) => {
   const end = new Date(endDate);
   const now = new Date();
@@ -186,31 +178,6 @@ const ContestGrid = ({
                   <div className="flex items-center text-xs text-gray-600">
                     <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
                     <span className="truncate">{contest.location}</span>
-                  </div>
-
-                  {/* Stats Row */}
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <div className="flex items-center">
-                      <Users className="h-3 w-3 mr-1" />
-                      <span>{contest.participantsCount}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <ImageIcon className="h-3 w-3 mr-1" />
-                      <span>{contest.photosCount}</span>
-                    </div>
-                    {contest.isActive && (
-                      <div className="flex items-center text-green-600 font-medium">
-                        <Trophy className="h-3 w-3 mr-1" />
-                        <span>Participa</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Dates */}
-                  <div className="text-xs text-gray-500 pt-1 border-t border-gray-100">
-                    <span>
-                      {formatDate(contest.dateStart)} - {formatDate(contest.dateEnd)}
-                    </span>
                   </div>
                 </CardContent>
               </Card>
