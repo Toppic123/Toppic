@@ -88,13 +88,13 @@ export const useContestForm = (onSuccess?: () => void) => {
     try {
       console.log('Original form submission data:', formSubmissionData);
       
-      // The key issue: correctly map the form data to database fields
+      // Asegurar que image_url se mapee correctamente
       const contestData = {
         title: formSubmissionData.title,
         organizer: formSubmissionData.organizer,
         location: formSubmissionData.location,
         description: formSubmissionData.description,
-        image_url: formSubmissionData.image_url,
+        image_url: formSubmissionData.image_url || "", // Asegurar que se incluya la URL de la imagen
         prize: formSubmissionData.prize,
         start_date: formSubmissionData.startDate instanceof Date ? formSubmissionData.startDate.toISOString() : formSubmissionData.startDate,
         end_date: formSubmissionData.endDate instanceof Date ? formSubmissionData.endDate.toISOString() : formSubmissionData.endDate,
@@ -103,10 +103,10 @@ export const useContestForm = (onSuccess?: () => void) => {
         is_private: formSubmissionData.is_private || false,
         contest_password: formSubmissionData.contest_password || null,
         minimum_distance_km: formSubmissionData.minimum_distance_km || 0,
-        plan: formSubmissionData.plan || "basic", // Fix: Use the correct field name from form
+        plan: formSubmissionData.plan || "basic",
       };
 
-      console.log('Mapped contest data for database:', contestData);
+      console.log('Mapped contest data for database (with image_url):', contestData);
 
       if (formData.id) {
         // Update existing contest

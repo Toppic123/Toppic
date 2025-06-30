@@ -70,7 +70,11 @@ const ContestHeroSection = () => {
               alt={`Imagen de portada del concurso ${item.contestName}`}
               className="absolute w-full h-full object-cover"
               onError={(e) => {
+                console.error('Error loading contest cover image:', item.imageUrl);
                 e.currentTarget.src = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
+              }}
+              onLoad={() => {
+                console.log('Contest cover image loaded successfully:', item.imageUrl);
               }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/60" />
