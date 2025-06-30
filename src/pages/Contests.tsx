@@ -8,6 +8,7 @@ import { Eye } from "lucide-react";
 import ContestFilters from "@/components/contests/ContestFilters";
 import ContestGrid from "@/components/contests/ContestGrid";
 import ContestMapView, { ViewToggleButton } from "@/components/contests/ContestMapView";
+import WinningPhotosCarousel from "@/components/contests/WinningPhotosCarousel";
 import { calculateDistance } from "@/utils/contestsData";
 import { useContestsData } from "@/hooks/useContestsData";
 
@@ -155,6 +156,9 @@ const Contests = () => {
             </p>
           </div>
         </div>
+        
+        {/* Winning Photos Carousel */}
+        <WinningPhotosCarousel />
         
         {/* Search and filters */}
         <div className="mb-6">
