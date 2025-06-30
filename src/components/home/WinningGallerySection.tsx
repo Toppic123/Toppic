@@ -152,23 +152,6 @@ const WinningGallerySection = () => {
               </motion.div>
             ))}
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-center mt-12"
-          >
-            <p className="text-gray-600 mb-6">
-              ¿Tienes una fotografía extraordinaria? ¡Participa en nuestros concursos!
-            </p>
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full text-lg font-semibold"
-            >
-              Explorar Concursos
-            </Button>
-          </motion.div>
         </div>
       </section>
 

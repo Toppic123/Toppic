@@ -10,6 +10,19 @@ interface MobileHomeProps {
   onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
 }
 
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
+
 const MobileHome = ({ onNavigate }: MobileHomeProps) => {
   const [location, setLocation] = useState("Barcelona, España");
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,7 +31,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
   const featuredContests = [
     {
       id: "1",
-      title: "Primavera en Barcelona",
+      title: cleanContestTitle("Primavera en Barcelona"),
       location: "Barcelona",
       participants: 45,
       timeLeft: "5 días",
@@ -26,7 +39,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
     },
     {
       id: "2", 
-      title: "Arquitectura Moderna",
+      title: cleanContestTitle("Arquitectura Moderna"),
       location: "Madrid",
       participants: 32,
       timeLeft: "12 días",
@@ -88,12 +101,12 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
                 <div key={photo.id} className="relative rounded-lg overflow-hidden shadow-md">
                   <img 
                     src={photo.imageUrl || photo.image_url}
-                    alt={photo.title}
+                    alt={cleanContestTitle(photo.title)}
                     className="w-full h-32 object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   <div className="absolute bottom-2 left-2 right-2">
-                    <h3 className="text-white text-sm font-medium truncate">{photo.title}</h3>
+                    <h3 className="text-white text-sm font-medium truncate">{cleanContestTitle(photo.title)}</h3>
                     <p className="text-white/80 text-xs truncate">{photo.photographer || photo.photographer_name}</p>
                     <Badge variant="secondary" className="text-xs mt-1">
                       Ganadora

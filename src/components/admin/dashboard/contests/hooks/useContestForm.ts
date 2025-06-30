@@ -84,32 +84,32 @@ export const useContestForm = (onSuccess?: () => void) => {
     setIsDialogOpen(true);
   };
 
-  const handleSaveChanges = async (data: any) => {
+  const handleSaveChanges = async (formSubmissionData: any) => {
     try {
-      console.log('Saving contest data:', data);
+      console.log('Original form submission data:', formSubmissionData);
       
-      // Fix: Correctly map all form fields to database fields
+      // The key issue: correctly map the form data to database fields
       const contestData = {
-        title: data.title,
-        organizer: data.organizer,
-        location: data.location,
-        description: data.description,
-        image_url: data.image_url,
-        prize: data.prize,
-        start_date: data.startDate instanceof Date ? data.startDate.toISOString() : data.startDate,
-        end_date: data.endDate instanceof Date ? data.endDate.toISOString() : data.endDate,
-        photo_deadline: data.photoDeadline instanceof Date ? data.photoDeadline.toISOString() : data.photoDeadline,
-        status: data.status,
-        is_private: data.isPrivate || false,
-        contest_password: data.contestPassword || null,
-        minimum_distance_km: data.minimumDistanceKm || 0,
-        plan: data.plan, // This should now correctly map from the form data
+        title: formSubmissionData.title,
+        organizer: formSubmissionData.organizer,
+        location: formSubmissionData.location,
+        description: formSubmissionData.description,
+        image_url: formSubmissionData.image_url,
+        prize: formSubmissionData.prize,
+        start_date: formSubmissionData.startDate instanceof Date ? formSubmissionData.startDate.toISOString() : formSubmissionData.startDate,
+        end_date: formSubmissionData.endDate instanceof Date ? formSubmissionData.endDate.toISOString() : formSubmissionData.endDate,
+        photo_deadline: formSubmissionData.photoDeadline instanceof Date ? formSubmissionData.photoDeadline.toISOString() : formSubmissionData.photoDeadline,
+        status: formSubmissionData.status,
+        is_private: formSubmissionData.is_private || false,
+        contest_password: formSubmissionData.contest_password || null,
+        minimum_distance_km: formSubmissionData.minimum_distance_km || 0,
+        plan: formSubmissionData.plan || "basic", // Fix: Use the correct field name from form
       };
 
-      console.log('Final contest data to save:', contestData);
+      console.log('Mapped contest data for database:', contestData);
 
       if (formData.id) {
-        // Editar concurso existente - usar el ID del formData, no crear uno nuevo
+        // Update existing contest
         const { data: updateResult, error } = await supabase
           .from('contests')
           .update(contestData)
@@ -118,14 +118,14 @@ export const useContestForm = (onSuccess?: () => void) => {
 
         if (error) throw error;
         
-        console.log('Update result:', updateResult);
+        console.log('Contest updated successfully:', updateResult);
 
         toast({
           title: "Concurso actualizado",
           description: "Los datos del concurso se han actualizado correctamente.",
         });
       } else {
-        // Crear nuevo concurso
+        // Create new contest
         const { data: insertResult, error } = await supabase
           .from('contests')
           .insert(contestData)
@@ -133,7 +133,7 @@ export const useContestForm = (onSuccess?: () => void) => {
 
         if (error) throw error;
         
-        console.log('Insert result:', insertResult);
+        console.log('Contest created successfully:', insertResult);
 
         toast({
           title: "Concurso creado",
