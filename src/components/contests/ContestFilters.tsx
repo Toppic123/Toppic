@@ -50,41 +50,66 @@ const ContestFilters = ({
   ];
   
   return (
-    <div className="space-y-4 mb-8">
-      {/* Search bar - redesigned to be more prominent and intuitive */}
-      <div className="relative max-w-2xl mx-auto">
-        <div className="relative shadow-lg rounded-xl overflow-hidden border-2 border-primary/30 hover:border-primary/50 transition-all">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary h-5 w-5" />
-          <Input
-            type="text"
-            placeholder="Buscar concursos por nombre o ubicación..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 pr-4 py-7 text-lg border-0 bg-white rounded-xl shadow-inner focus:ring-2 focus:ring-primary/20 focus-visible:ring-offset-0"
-          />
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
+    <div className="space-y-6 mb-8">
+      {/* Modern Search Bar */}
+      <div className="relative max-w-3xl mx-auto">
+        <div className="relative group">
+          {/* Gradient background container */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-purple-50 to-pink-100 rounded-2xl blur-xl opacity-70 group-hover:opacity-100 transition-all duration-500"></div>
+          
+          {/* Main search container */}
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300">
+            {/* Search icon with animated background */}
+            <div className="absolute left-6 top-1/2 transform -translate-y-1/2 z-10">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <Search className="w-5 h-5 text-white" />
+              </div>
+            </div>
+            
+            {/* Input field */}
+            <Input
+              type="text"
+              placeholder="Descubre concursos increíbles... busca por nombre o ubicación"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-20 pr-16 py-8 text-lg font-medium border-0 bg-transparent rounded-2xl placeholder:text-gray-400 focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+            
+            {/* Clear button */}
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 h-10 w-10 p-0 rounded-full hover:bg-gray-100 transition-all duration-200"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </Button>
+            )}
+          </div>
+          
+          {/* Decorative elements */}
+          <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
+          <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-pink-400 rounded-full animate-pulse delay-1000"></div>
         </div>
-        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-10 h-1 bg-primary/30 rounded-full"></div>
+        
+        {/* Search suggestions hint */}
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-500">
+            💡 Busca por ejemplo: "Barcelona", "Naturaleza", "Retrato"
+          </p>
+        </div>
       </div>
       
       {/* Filters button and active filters */}
-      <div className="flex items-center justify-center gap-4 flex-wrap pt-2">
+      <div className="flex items-center justify-center gap-4 flex-wrap">
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" className="relative px-6 py-3 rounded-full border-2">
-              <Filter className="mr-2 h-4 w-4" />
-              FILTROS
+            <Button variant="outline" className="relative px-8 py-4 rounded-full border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-300 shadow-md hover:shadow-lg">
+              <Filter className="mr-3 h-5 w-5" />
+              <span className="font-semibold">FILTROS</span>
               {activeFiltersCount > 0 && (
-                <Badge className="ml-2 h-5 w-5 p-0 text-xs bg-primary">
+                <Badge className="ml-3 h-6 w-6 p-0 text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white border-0">
                   {activeFiltersCount}
                 </Badge>
               )}
@@ -215,7 +240,7 @@ const ContestFilters = ({
         
         {/* Active filter badges */}
         {activeCategory !== "all" && (
-          <Badge variant="secondary" className="px-3 py-1">
+          <Badge variant="secondary" className="px-4 py-2 rounded-full">
             {activeCategory}
             <Button
               variant="ghost"
@@ -229,7 +254,7 @@ const ContestFilters = ({
         )}
         
         {activeLocation !== "all" && (
-          <Badge variant="secondary" className="px-3 py-1">
+          <Badge variant="secondary" className="px-4 py-2 rounded-full">
             {activeLocation}
             <Button
               variant="ghost"
@@ -243,7 +268,7 @@ const ContestFilters = ({
         )}
         
         {contestStatus !== "active" && (
-          <Badge variant="secondary" className="px-3 py-1">
+          <Badge variant="secondary" className="px-4 py-2 rounded-full">
             {contestStatus === "all" ? "Todos" : "Finalizados"}
             <Button
               variant="ghost"
