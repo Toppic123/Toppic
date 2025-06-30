@@ -76,6 +76,20 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  
+  /* Contest grid specific styles */
+  .contest-grid-compact {
+    gap: 0.75rem;
+  }
+  
+  .contest-card-compact {
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .contest-card-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Custom animations */
