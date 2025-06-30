@@ -8,6 +8,7 @@ import { Eye } from "lucide-react";
 import ContestFilters from "@/components/contests/ContestFilters";
 import ContestGrid from "@/components/contests/ContestGrid";
 import ContestMapView, { ViewToggleButton } from "@/components/contests/ContestMapView";
+import ContestsHeroSection from "@/components/contests/ContestsHeroSection";
 import { calculateDistance } from "@/utils/contestsData";
 import { useContestsData } from "@/hooks/useContestsData";
 
@@ -142,10 +143,19 @@ const Contests = () => {
     );
   }
   
+  // Calculate active contests for hero section
+  const activeContestsCount = transformedContests.filter(contest => contest.isActive).length;
+  
   return (
     <div className="min-h-screen">
+      {/* Hero Section */}
+      <ContestsHeroSection 
+        totalContests={transformedContests.length}
+        activeContests={activeContestsCount}
+      />
+      
       {/* Main content with proper spacing */}
-      <div className="container max-w-7xl mx-auto px-4 pt-8">
+      <div className="container max-w-7xl mx-auto px-4 pt-12">
         {/* Search and filters */}
         <div className="mb-6">
           <ContestFilters
