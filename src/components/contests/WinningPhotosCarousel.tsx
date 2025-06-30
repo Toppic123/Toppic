@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Badge } from "@/components/ui/badge";
 import { Star, Trophy } from "lucide-react";
-import { useWinningPhotos } from "@/hooks/use-winning-photos";
+import { useWinningPhotosSimple } from "@/hooks/useWinningPhotosSimple";
 
 // Function to clean contest titles by removing "FOTOGRAFIA" and similar words
 const cleanContestTitle = (title: string): string => {
@@ -19,7 +19,7 @@ const cleanContestTitle = (title: string): string => {
 };
 
 const WinningPhotosCarousel = () => {
-  const { photos: winningPhotos, loading: isLoadingWinning } = useWinningPhotos();
+  const { photos: winningPhotos, loading: isLoadingWinning } = useWinningPhotosSimple();
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ const WinningPhotosCarousel = () => {
             <CarouselItem key={photo.id} className="basis-full">
               <div className="relative rounded-lg overflow-hidden shadow-lg group h-96">
                 <img 
-                  src={photo.imageUrl || photo.image_url}
+                  src={photo.imageUrl}
                   alt={cleanContestTitle(photo.title)}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   onError={(e) => {
@@ -73,7 +73,7 @@ const WinningPhotosCarousel = () => {
                     {cleanContestTitle(photo.title)}
                   </h3>
                   <p className="text-white/80 text-sm mb-2 truncate">
-                    {photo.photographer || photo.photographer_name}
+                    {photo.photographer}
                   </p>
                   <div className="flex items-center justify-between">
                     <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
