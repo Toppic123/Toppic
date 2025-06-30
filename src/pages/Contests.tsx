@@ -135,7 +135,7 @@ const Contests = () => {
 
   if (isLoading) {
     return (
-      <div className="pt-24 pb-16 min-h-screen">
+      <div className="pt-0 pb-0 min-h-screen">
         <div className="container max-w-7xl mx-auto px-4">
           <div className="flex justify-center items-center min-h-[400px]">
             <p className="text-lg text-muted-foreground">Cargando concursos...</p>
@@ -146,20 +146,11 @@ const Contests = () => {
   }
   
   return (
-    <div className="pt-24 pb-16 min-h-screen">
-      <div className="container max-w-7xl mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Explora concursos</h1>
-            <p className="text-muted-foreground max-w-2xl text-lg">
-              Descubre y participa en concursos de fotografía cerca de ti.
-            </p>
-          </div>
-        </div>
-        
-        {/* Full-width Winning Photos Carousel */}
-        <WinningPhotosCarousel />
-        
+    <div className="pt-0 pb-0 min-h-screen">
+      {/* Full-screen Winning Photos Carousel */}
+      <WinningPhotosCarousel />
+      
+      <div className="container max-w-7xl mx-auto px-4 pt-8">
         {/* Search and filters */}
         <div className="mb-6">
           <ContestFilters
