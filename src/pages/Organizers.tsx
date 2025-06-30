@@ -4,7 +4,6 @@ import { useState } from "react";
 import PricingPlans, { PricingPlan } from "@/components/PricingPlans";
 import { useNavigate } from "react-router-dom";
 import FeaturesSection from "@/components/organizers/FeaturesSection";
-import RegistrationCTASection from "@/components/organizers/RegistrationCTASection";
 import StatsSection from "@/components/organizers/StatsSection";
 import RegistrationDialog from "@/components/organizers/RegistrationDialog";
 
@@ -91,9 +90,6 @@ const Organizers = () => {
         >
           <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
         </motion.div>
-
-        {/* Registration CTA Section */}
-        <RegistrationCTASection onRegisterClick={() => setShowRegistrationDialog(true)} />
 
         {/* Stats Section */}
         <StatsSection />
