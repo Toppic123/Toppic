@@ -6,31 +6,28 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import { useContestsData } from "@/hooks/useContestsData";
 
 const ContestHeroSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { photos: winningPhotos } = useWinningPhotos();
   const { contests } = useContestsData();
   
-  // Get active contests for display
+  // Get active contests for display - use their cover images
   const activeContests = contests.filter(contest => contest.isActive).slice(0, 3);
   
-  // Combine winning photos with contest data
-  const heroData = winningPhotos.slice(0, 3).map((photo, index) => {
-    const contest = activeContests[index] || activeContests[0];
-    const daysRemaining = contest ? Math.ceil((new Date(contest.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
+  // Use contest cover images directly
+  const heroData = activeContests.map((contest) => {
+    const daysRemaining = Math.ceil((new Date(contest.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     
     return {
-      id: photo.id,
-      imageUrl: photo.imageUrl || photo.image_url,
-      contestName: contest?.title || "Concurso de Fotografía",
-      location: contest?.location || "Barcelona",
-      prize: contest?.prize || "€500",
-      photographerName: photo.photographer || photo.photographer_name || "Fotógrafo Anónimo",
+      id: contest.id,
+      imageUrl: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop",
+      contestName: contest.title,
+      location: contest.location,
+      prize: contest.prize || "€500",
+      photographerName: contest.organizer || "Organizador",
       daysRemaining: Math.max(0, daysRemaining),
-      contestId: contest?.id || "1"
+      contestId: contest.id
     };
   });
 
@@ -70,7 +67,7 @@ const ContestHeroSection = () => {
           >
             <img 
               src={item.imageUrl} 
-              alt={`Foto ganadora de ${item.photographerName}`}
+              alt={`Imagen de portada del concurso ${item.contestName}`}
               className="absolute w-full h-full object-cover"
               onError={(e) => {
                 e.currentTarget.src = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800&h=600&fit=crop";
@@ -123,7 +120,7 @@ const ContestHeroSection = () => {
                   </div>
                   <div className="flex items-center text-white/90">
                     <User className="w-5 h-5 mr-2" />
-                    <span className="text-lg">Foto de {currentItem.photographerName}</span>
+                    <span className="text-lg">Organizado por {currentItem.photographerName}</span>
                   </div>
                 </div>
               </div>
