@@ -145,8 +145,10 @@ const Contests = () => {
   
   return (
     <div className="min-h-screen">
-      {/* Full-screen Winning Photos Carousel - positioned outside any container */}
-      <WinningPhotosCarousel />
+      {/* Winning Photos Carousel - positioned at the top with proper spacing */}
+      <div className="w-full bg-gradient-to-b from-gray-50 to-white py-8">
+        <WinningPhotosCarousel />
+      </div>
       
       {/* Main content with proper spacing */}
       <div className="container max-w-7xl mx-auto px-4 pt-8">
