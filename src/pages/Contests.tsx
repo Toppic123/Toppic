@@ -135,21 +135,20 @@ const Contests = () => {
 
   if (isLoading) {
     return (
-      <div className="pt-0 pb-0 min-h-screen">
-        <div className="container max-w-7xl mx-auto px-4">
-          <div className="flex justify-center items-center min-h-[400px]">
-            <p className="text-lg text-muted-foreground">Cargando concursos...</p>
-          </div>
+      <div className="min-h-screen">
+        <div className="flex justify-center items-center min-h-[400px]">
+          <p className="text-lg text-muted-foreground">Cargando concursos...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="pt-0 pb-0 min-h-screen">
-      {/* Full-screen Winning Photos Carousel */}
+    <div className="min-h-screen">
+      {/* Full-screen Winning Photos Carousel - positioned outside any container */}
       <WinningPhotosCarousel />
       
+      {/* Main content with proper spacing */}
       <div className="container max-w-7xl mx-auto px-4 pt-8">
         {/* Search and filters */}
         <div className="mb-6">

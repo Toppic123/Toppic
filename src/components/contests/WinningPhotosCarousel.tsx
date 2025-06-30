@@ -33,7 +33,7 @@ const WinningPhotosCarousel = () => {
 
   if (isLoadingWinning) {
     return (
-      <div className="w-screen h-screen bg-gradient-to-br from-gray-50 to-gray-100 animate-pulse">
+      <div className="w-full h-screen bg-gradient-to-br from-gray-50 to-gray-100 animate-pulse">
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
             <div className="w-12 h-12 bg-gray-300 rounded-full mx-auto mb-4 animate-pulse"></div>
@@ -49,9 +49,9 @@ const WinningPhotosCarousel = () => {
   }
 
   return (
-    <div className="w-screen h-screen -mx-4 md:-mx-8 lg:-mx-16 xl:-mx-32 2xl:-mx-48">
+    <div className="w-full h-screen relative overflow-hidden">
       <Carousel className="w-full h-full" opts={{ loop: true }}>
-        <CarouselContent className="-ml-0 h-full">
+        <CarouselContent className="h-full -ml-0">
           {winningPhotos.map((photo, index) => (
             <CarouselItem key={photo.id} className="pl-0 basis-full h-full">
               {/* Full Screen Card */}
