@@ -99,9 +99,9 @@ const ContestFilters = ({
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-60"></div>
         </div>
         
-        {/* Enhanced search suggestions hint */}
+        {/* Enhanced search suggestions hint with darker background */}
         <div className="text-center mt-4">
-          <p className="text-sm text-gray-600 font-medium bg-gray-50 rounded-full px-4 py-2 inline-block border border-gray-200">
+          <p className="text-sm text-white font-medium bg-gray-800 rounded-full px-6 py-3 inline-block border border-gray-700 shadow-lg">
             💡 Busca por ejemplo: "Barcelona", "Naturaleza", "Retrato"
           </p>
         </div>
