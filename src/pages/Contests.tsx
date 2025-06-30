@@ -157,7 +157,7 @@ const Contests = () => {
           </div>
         </div>
         
-        {/* Winning Photos Carousel */}
+        {/* Full-width Winning Photos Carousel */}
         <WinningPhotosCarousel />
         
         {/* Search and filters */}
