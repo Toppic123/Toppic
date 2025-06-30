@@ -8,7 +8,6 @@ import { Eye } from "lucide-react";
 import ContestFilters from "@/components/contests/ContestFilters";
 import ContestGrid from "@/components/contests/ContestGrid";
 import ContestMapView, { ViewToggleButton } from "@/components/contests/ContestMapView";
-import WinningPhotosCarousel from "@/components/contests/WinningPhotosCarousel";
 import { calculateDistance } from "@/utils/contestsData";
 import { useContestsData } from "@/hooks/useContestsData";
 
@@ -145,11 +144,6 @@ const Contests = () => {
   
   return (
     <div className="min-h-screen">
-      {/* Winning Photos Carousel - positioned at the top with proper spacing */}
-      <div className="w-full bg-gradient-to-b from-gray-50 to-white py-8">
-        <WinningPhotosCarousel />
-      </div>
-      
       {/* Main content with proper spacing */}
       <div className="container max-w-7xl mx-auto px-4 pt-8">
         {/* Search and filters */}
