@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -9,11 +8,9 @@ import { Grid3X3, Map } from "lucide-react";
 import ContestFilters from "@/components/contests/ContestFilters";
 import ContestGrid from "@/components/contests/ContestGrid";
 import ContestMapView, { ViewToggleButton } from "@/components/contests/ContestMapView";
-import HeroSection from "@/components/home/HeroSection";
+import ContestHeroSection from "@/components/contests/ContestHeroSection";
 import { calculateDistance } from "@/utils/contestsData";
 import { useContestsData } from "@/hooks/useContestsData";
-import { heroImages } from "@/components/home/HomeData";
-import { homeTexts } from "@/components/home/HomeTexts";
 
 const Contests = () => {
   const { contests: allContests, isLoading } = useContestsData();
@@ -150,8 +147,8 @@ const Contests = () => {
   
   return (
     <div className="min-h-screen">
-      {/* Hero Section from Homepage */}
-      <HeroSection heroImages={heroImages} texts={homeTexts} />
+      {/* Contest Hero Section */}
+      <ContestHeroSection />
       
       <div className="pt-16 pb-16">
         <div className="container max-w-7xl mx-auto px-4">
