@@ -203,9 +203,9 @@ const Contests = () => {
                           : "bg-gray-100 group-hover:bg-gray-200"
                         }
                       `}>
-                        <Grid3X3 className="w-4 h-4" />
+                        <Grid3X3 className={`w-4 h-4 ${viewMode === "grid" ? "text-white" : ""}`} />
                       </div>
-                      <span>LISTA</span>
+                      <span className={viewMode === "grid" ? "text-white" : ""}>LISTA</span>
                     </div>
                     {viewMode === "grid" && (
                       <motion.div
@@ -235,9 +235,9 @@ const Contests = () => {
                           : "bg-gray-100 group-hover:bg-gray-200"
                         }
                       `}>
-                        <Map className="w-4 h-4" />
+                        <Map className={`w-4 h-4 ${viewMode === "map" ? "text-white" : ""}`} />
                       </div>
-                      <span>MAPA</span>
+                      <span className={viewMode === "map" ? "text-white" : ""}>MAPA</span>
                     </div>
                     {viewMode === "map" && (
                       <motion.div
