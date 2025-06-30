@@ -33,7 +33,7 @@ const WinningPhotosCarousel = () => {
 
   if (isLoadingWinning) {
     return (
-      <div className="w-full h-64 bg-gray-100 animate-pulse rounded-lg mb-8">
+      <div className="w-full h-96 bg-gray-100 animate-pulse rounded-lg mb-8">
         <div className="flex items-center justify-center h-full">
           <p className="text-gray-500">Cargando fotos ganadoras...</p>
         </div>
@@ -47,20 +47,15 @@ const WinningPhotosCarousel = () => {
 
   return (
     <div className="mb-8">
-      <div className="flex items-center mb-4">
-        <Trophy className="h-6 w-6 text-yellow-500 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-900">Fotos Ganadoras</h2>
-      </div>
-      
       <Carousel className="w-full">
         <CarouselContent>
           {winningPhotos.map((photo, index) => (
-            <CarouselItem key={photo.id} className="md:basis-1/2 lg:basis-1/3">
-              <div className="relative rounded-lg overflow-hidden shadow-lg group">
+            <CarouselItem key={photo.id} className="basis-full">
+              <div className="relative rounded-lg overflow-hidden shadow-lg group h-96">
                 <img 
                   src={photo.imageUrl || photo.image_url}
                   alt={cleanContestTitle(photo.title)}
-                  className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   onError={(e) => {
                     e.currentTarget.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=256&fit=crop";
                   }}
