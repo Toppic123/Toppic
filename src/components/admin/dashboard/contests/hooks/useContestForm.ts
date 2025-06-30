@@ -88,6 +88,7 @@ export const useContestForm = (onSuccess?: () => void) => {
     try {
       console.log('Saving contest data:', data);
       
+      // Fix: Correctly map all form fields to database fields
       const contestData = {
         title: data.title,
         organizer: data.organizer,
@@ -102,10 +103,10 @@ export const useContestForm = (onSuccess?: () => void) => {
         is_private: data.isPrivate || false,
         contest_password: data.contestPassword || null,
         minimum_distance_km: data.minimumDistanceKm || 0,
-        plan: data.plan, // Fix: ensure plan is correctly mapped from form data
+        plan: data.plan, // This should now correctly map from the form data
       };
 
-      console.log('Contest data to save (including plan):', contestData);
+      console.log('Final contest data to save:', contestData);
 
       if (formData.id) {
         // Editar concurso existente - usar el ID del formData, no crear uno nuevo

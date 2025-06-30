@@ -11,6 +11,19 @@ interface ContestCardProps {
   onDelete: (id: string) => void;
 }
 
+// Function to clean contest titles by removing "FOTOGRAFIA" and similar words
+const cleanContestTitle = (title: string): string => {
+  if (!title) return 'Sin título';
+  
+  // Remove "FOTOGRAFIA", "FOTOGRAFÍA", "DE FOTOGRAFIA", etc. (case insensitive)
+  const cleanedTitle = title
+    .replace(/\b(de\s+)?fotograf[íi]a\b/gi, '')
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+  
+  return cleanedTitle || 'Sin título';
+};
+
 const getPlanInfo = (plan?: string) => {
   switch (plan) {
     case 'professional':
@@ -36,9 +49,13 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
   // Use image_url (database field) as primary source
   const imageUrl = contest.image_url || fallbackImage;
   const planInfo = getPlanInfo(contest.plan);
+  
+  // Clean the contest title to remove "FOTOGRAFIA" words
+  const displayTitle = cleanContestTitle(contest.title);
 
   console.log(`Contest "${contest.title}" using image URL:`, imageUrl);
   console.log('Contest image_url from database:', contest.image_url);
+  console.log('Contest cleaned title:', displayTitle);
 
   return (
     <Card>
@@ -46,7 +63,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
       <div className="relative h-32 overflow-hidden rounded-t-lg bg-gray-100">
         <img
           src={imageUrl}
-          alt={contest.title || 'Imagen del concurso'}
+          alt={displayTitle}
           className="w-full h-full object-cover transition-opacity duration-300"
           onError={(e) => {
             console.error('Failed to load contest image:', imageUrl);
@@ -66,7 +83,7 @@ export const ContestCard = ({ contest, onEdit, onDelete }: ContestCardProps) => 
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle>{contest.title || 'Sin título'}</CardTitle>
+            <CardTitle>{displayTitle}</CardTitle>
             <CardDescription>Organizado por: {contest.organizer || 'Desconocido'}</CardDescription>
             {contest.prize && (
               <CardDescription className="text-amber-600 font-medium">
