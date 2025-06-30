@@ -18,23 +18,62 @@ const cleanContestTitle = (title: string): string => {
   return cleanedTitle || 'Sin título';
 };
 
+// High-quality photos for the carousel
+const highQualityPhotos = [
+  {
+    id: 101,
+    imageUrl: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?q=80&w=1200&auto=format&fit=crop",
+    title: "Retrato Profesional",
+    photographer: "Ana García",
+    photographerAvatar: "https://i.pravatar.cc/150?img=15",
+    likes: 456
+  },
+  {
+    id: 102,
+    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+    title: "Tecnología Moderna",
+    photographer: "Carlos Ruiz",
+    photographerAvatar: "https://i.pravatar.cc/150?img=16",
+    likes: 523
+  },
+  {
+    id: 103,
+    imageUrl: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop",
+    title: "Paisaje Montañoso",
+    photographer: "María Torres",
+    photographerAvatar: "https://i.pravatar.cc/150?img=17",
+    likes: 789
+  },
+  {
+    id: 104,
+    imageUrl: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1200&auto=format&fit=crop",
+    title: "Olas del Océano",
+    photographer: "Diego Morales",
+    photographerAvatar: "https://i.pravatar.cc/150?img=18",
+    likes: 634
+  }
+];
+
 const WinningPhotosCarousel = () => {
   const { photos: winningPhotos, loading: isLoadingWinning } = useWinningPhotos();
   const [activeIndex, setActiveIndex] = useState(0);
 
-  console.log('WinningPhotosCarousel - Photos loaded:', winningPhotos?.length || 0);
-  console.log('WinningPhotosCarousel - Photos data:', winningPhotos);
+  // Use high-quality photos as primary source
+  const displayPhotos = highQualityPhotos.length > 0 ? highQualityPhotos : winningPhotos;
+
+  console.log('WinningPhotosCarousel - High-quality photos:', highQualityPhotos.length);
+  console.log('WinningPhotosCarousel - Display photos:', displayPhotos.length);
 
   useEffect(() => {
-    if (winningPhotos.length > 0) {
+    if (displayPhotos.length > 0) {
       const interval = setInterval(() => {
-        setActiveIndex((current) => (current + 1) % winningPhotos.length);
+        setActiveIndex((current) => (current + 1) % displayPhotos.length);
       }, 5000);
       return () => clearInterval(interval);
     }
-  }, [winningPhotos.length]);
+  }, [displayPhotos.length]);
 
-  if (isLoadingWinning) {
+  if (isLoadingWinning && displayPhotos.length === 0) {
     return (
       <div className="w-full h-64 bg-gradient-to-br from-gray-50 to-gray-100 animate-pulse rounded-xl">
         <div className="flex items-center justify-center h-full">
@@ -47,8 +86,8 @@ const WinningPhotosCarousel = () => {
     );
   }
 
-  if (!winningPhotos || winningPhotos.length === 0) {
-    console.log('No winning photos available');
+  if (!displayPhotos || displayPhotos.length === 0) {
+    console.log('No photos available for carousel');
     return (
       <div className="w-full h-64 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl">
         <div className="flex items-center justify-center h-full">
@@ -65,9 +104,9 @@ const WinningPhotosCarousel = () => {
     <div className="w-full h-80 relative overflow-hidden rounded-xl shadow-lg mb-8">
       <Carousel className="w-full h-full" opts={{ loop: true }}>
         <CarouselContent className="h-full -ml-0">
-          {winningPhotos.map((photo, index) => {
+          {displayPhotos.map((photo, index) => {
             const imageUrl = photo.imageUrl || photo.image_url;
-            console.log(`Photo ${photo.id} - Image URL:`, imageUrl);
+            console.log(`Displaying photo ${photo.id} - Image URL:`, imageUrl);
             
             return (
               <CarouselItem key={photo.id} className="pl-0 basis-full h-full">
@@ -76,12 +115,16 @@ const WinningPhotosCarousel = () => {
                   {/* Background Image */}
                   <div className="absolute inset-0">
                     <img 
-                      src={imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200&h=400&fit=crop"}
+                      src={imageUrl}
                       alt={cleanContestTitle(photo.title)}
                       className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                       onError={(e) => {
-                        console.log('Image error for photo:', photo.id, e);
-                        e.currentTarget.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200&h=400&fit=crop";
+                        console.log('Image load error for photo:', photo.id, imageUrl);
+                        // Fallback to a different image if the main one fails
+                        const fallbackUrl = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200&h=400&fit=crop";
+                        if (e.currentTarget.src !== fallbackUrl) {
+                          e.currentTarget.src = fallbackUrl;
+                        }
                       }}
                       onLoad={() => {
                         console.log('Image loaded successfully for photo:', photo.id);
