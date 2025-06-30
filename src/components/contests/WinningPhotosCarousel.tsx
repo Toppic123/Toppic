@@ -105,7 +105,7 @@ const WinningPhotosCarousel = () => {
       <Carousel className="w-full h-full" opts={{ loop: true }}>
         <CarouselContent className="h-full -ml-0">
           {displayPhotos.map((photo, index) => {
-            const imageUrl = photo.imageUrl || photo.image_url;
+            const imageUrl = photo.imageUrl;
             console.log(`Displaying photo ${photo.id} - Image URL:`, imageUrl);
             
             return (
@@ -167,13 +167,13 @@ const WinningPhotosCarousel = () => {
                             <div className="bg-white/20 rounded-full p-1 mr-3 border border-white/30">
                               <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center">
                                 <span className="text-white font-bold text-sm">
-                                  {(photo.photographer || photo.photographer_name || 'A')[0].toUpperCase()}
+                                  {(photo.photographer || 'A')[0].toUpperCase()}
                                 </span>
                               </div>
                             </div>
                             <div>
                               <p className="text-white font-semibold">
-                                {photo.photographer || photo.photographer_name}
+                                {photo.photographer}
                               </p>
                               <p className="text-white/70 text-sm">Fotógrafo</p>
                             </div>
