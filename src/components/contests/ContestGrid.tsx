@@ -1,9 +1,10 @@
 
-import { MapPin, Users, Image as ImageIcon } from "lucide-react";
+import { MapPin, Users, Image as ImageIcon, Calendar, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import ContestCard from "@/components/ContestCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface ContestGridProps {
   contests: Array<{
@@ -43,6 +44,22 @@ const cleanContestTitle = (title: string): string => {
   return cleanedTitle || 'Sin título';
 };
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('es-ES', { 
+    day: 'numeric', 
+    month: 'short' 
+  });
+};
+
+const getDaysRemaining = (endDate: string) => {
+  const end = new Date(endDate);
+  const now = new Date();
+  const diffTime = end.getTime() - now.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays);
+};
+
 const ContestGrid = ({
   contests,
   userLocation,
@@ -72,8 +89,8 @@ const ContestGrid = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {contests.map((contest) => {
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {contests.map((contest, index) => {
         // Skip rendering if contest is missing critical data
         if (!contest || !contest.id || !contest.title) {
           console.warn("Invalid contest data found:", contest);
@@ -89,56 +106,116 @@ const ContestGrid = ({
             )
           : null;
 
-        // Debug logging for image URLs
-        console.log(`Contest "${contest.title}" image URL:`, contest.imageUrl);
-
         // Validate and process image URL
         const processedImageUrl = contest.imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
         
         // Clean the contest title to remove "FOTOGRAFIA" words
         const cleanedTitle = cleanContestTitle(contest.title);
         
-        const contestWithCleanedData = {
-          ...contest,
-          title: cleanedTitle,
-          imageUrl: processedImageUrl
-        };
+        // Calculate days remaining
+        const daysRemaining = getDaysRemaining(contest.dateEnd);
         
         return (
-          <div key={contest.id} className="relative">
-            <div className={contest.isActive ? "" : "grayscale opacity-75"}>
-              <ContestCard key={contest.id} {...contestWithCleanedData} />
-              
-              {/* Status and distance badges */}
-              <div className="absolute top-3 left-3 flex flex-col gap-2">
-                <Badge
-                  variant={contest.isActive ? "default" : "secondary"}
-                  className="text-xs shadow-md"
-                >
-                  {contest.isActive ? "Activo" : "Finalizado"}
-                </Badge>
-                
-                {contest.category && (
-                  <Badge variant="outline" className="text-xs bg-white/90 shadow-md">
-                    {contest.category}
-                  </Badge>
-                )}
-              </div>
+          <motion.div
+            key={contest.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+            className="group"
+          >
+            <Link to={`/contests/${contest.id}`} className="block">
+              <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] bg-white">
+                {/* Contest Image */}
+                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                  <img
+                    src={processedImageUrl}
+                    alt={cleanedTitle}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+                    }}
+                  />
+                  
+                  {/* Status Badge */}
+                  <div className="absolute top-3 left-3">
+                    <Badge
+                      variant={contest.isActive ? "default" : "secondary"}
+                      className={`text-xs font-semibold ${
+                        contest.isActive 
+                          ? "bg-green-500 hover:bg-green-600 text-white" 
+                          : "bg-gray-500 text-white"
+                      }`}
+                    >
+                      {contest.isActive ? "ACTIVO" : "FINALIZADO"}
+                    </Badge>
+                  </div>
 
-              {/* Distance badge */}
-              {distance !== null && (
-                <div className="absolute top-3 right-3">
-                  <Badge 
-                    variant="secondary" 
-                    className="text-xs bg-black/70 text-white border-none shadow-md"
-                  >
-                    <MapPin className="h-3 w-3 mr-1" />
-                    {distance.toFixed(1)} km
-                  </Badge>
+                  {/* Distance Badge */}
+                  {distance !== null && (
+                    <div className="absolute top-3 right-3">
+                      <Badge 
+                        variant="secondary" 
+                        className="text-xs bg-black/70 text-white border-none"
+                      >
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {distance.toFixed(1)} km
+                      </Badge>
+                    </div>
+                  )}
+
+                  {/* Days Remaining */}
+                  {contest.isActive && daysRemaining > 0 && (
+                    <div className="absolute bottom-3 right-3">
+                      <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {daysRemaining}d
+                      </Badge>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+
+                {/* Contest Info */}
+                <CardContent className="p-4 space-y-3">
+                  {/* Title */}
+                  <h3 className="font-semibold text-sm leading-tight text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    {cleanedTitle}
+                  </h3>
+
+                  {/* Location */}
+                  <div className="flex items-center text-xs text-gray-600">
+                    <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                    <span className="truncate">{contest.location}</span>
+                  </div>
+
+                  {/* Stats Row */}
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center">
+                      <Users className="h-3 w-3 mr-1" />
+                      <span>{contest.participantsCount}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <ImageIcon className="h-3 w-3 mr-1" />
+                      <span>{contest.photosCount}</span>
+                    </div>
+                    {contest.isActive && (
+                      <div className="flex items-center text-green-600 font-medium">
+                        <Trophy className="h-3 w-3 mr-1" />
+                        <span>Participa</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Dates */}
+                  <div className="text-xs text-gray-500 pt-1 border-t border-gray-100">
+                    <span>
+                      {formatDate(contest.dateStart)} - {formatDate(contest.dateEnd)}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          </motion.div>
         );
       })}
     </div>
