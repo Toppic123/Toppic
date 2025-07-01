@@ -24,14 +24,14 @@ interface PricingPlansProps {
 const defaultPlans: PricingPlan[] = [
   {
     name: "Básico",
-    price: "89€",
+    price: "69€",
     description: "Ideal para eventos pequeños y locales",
     features: [
-      "Hasta 300 participantes",
+      "Hasta 100 participantes",
       "1 concurso fotográfico",
       "Derechos sobre 1 foto ganadora"
     ],
-    buttonText: "Comenzar",
+    buttonText: "SELECCIONAR PLAN",
     buttonVariant: "outline"
   },
   {
@@ -39,18 +39,18 @@ const defaultPlans: PricingPlan[] = [
     price: "119€",
     description: "Perfecto para eventos medianos y empresas",
     features: [
-      "Hasta 700 participantes",
+      "Hasta 500 participantes",
       "1 concurso fotográfico",
       "Publicidad en la app (banners en el concurso)",
       "Derechos sobre las 3 mejores fotos de cada concurso"
     ],
     recommended: true,
-    buttonText: "Seleccionar Plan",
+    buttonText: "SELECCIONAR PLAN",
     buttonVariant: "default"
   },
   {
     name: "Premium",
-    price: "159€",
+    price: "189€",
     description: "Para grandes eventos y marcas reconocidas",
     features: [
       "Participantes ilimitados",
@@ -58,7 +58,7 @@ const defaultPlans: PricingPlan[] = [
       "Publicidad en la app",
       "Derechos sobre las 3 mejores fotos"
     ],
-    buttonText: "Contactanos",
+    buttonText: "SELECCIONAR PLAN",
     buttonVariant: "secondary"
   }
 ];
@@ -118,7 +118,17 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
         ))}
       </div>
 
+      {/* Important note about rewards */}
       <div className="mt-8 text-center">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-4xl mx-auto mb-6">
+          <p className="text-amber-800 text-base font-medium">
+            <Info className="h-5 w-5 inline-block mr-2" />
+            Importante: Estas tarifas no incluyen la recompensa que debe ofrecer obligatoriamente el organizador
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 text-center">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
