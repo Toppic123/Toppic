@@ -433,8 +433,7 @@ const ContestGallery = ({
                       imageUrl={selectedPhoto.imageUrl}
                     />
                     
-                    <div className="flex items-center justify-between pt-2 border-t">
-                      <span className="text-sm text-gray-600">¿Hay algún problema con esta foto?</span>
+                    <div className="flex items-center justify-end pt-2 border-t">
                       <ReportPhotoDialog 
                         photoId={selectedPhoto.id}
                         trigger={

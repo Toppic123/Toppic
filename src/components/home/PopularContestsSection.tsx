@@ -62,7 +62,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
     );
   }
 
-  // Convert featured contests to the format expected by ContestCard
+  // Convert featured contests to the format expected by ContestCard - without participants count
   const displayContests = featuredContests
     .filter(featured => featured.contests && featured.is_active)
     .slice(0, 3)
@@ -73,7 +73,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
       location: featured.contests!.location || "Sin ubicación",
       dateStart: new Date().toISOString().split('T')[0],
       dateEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      participantsCount: 0,
+      participantsCount: 0, // Not shown anymore
       photosCount: 0,
     }));
 

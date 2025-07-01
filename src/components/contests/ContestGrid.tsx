@@ -92,7 +92,7 @@ const ContestGrid = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       {contests.map((contest, index) => {
         // Skip rendering if contest is missing critical data
         if (!contest || !contest.id || !contest.title) {
@@ -142,8 +142,8 @@ const ContestGrid = ({
           >
             <Link to={`/contests/${contest.id}`} className="block">
               <Card className="overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] bg-white">
-                {/* Contest Image */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                {/* Contest Image - Increased height for larger cards */}
+                <div className="relative aspect-[4/2.5] overflow-hidden bg-gray-100">
                   <img
                     src={processedImageUrl}
                     alt={cleanedTitle}
@@ -160,10 +160,10 @@ const ContestGrid = ({
                   />
                   
                   {/* Status Badge */}
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-4 left-4">
                     <Badge
                       variant={contest.isActive ? "default" : "secondary"}
-                      className={`text-xs font-semibold ${
+                      className={`text-sm font-semibold px-3 py-1 ${
                         contest.isActive 
                           ? "bg-green-500 hover:bg-green-600 text-white" 
                           : "bg-gray-500 text-white"
@@ -175,12 +175,12 @@ const ContestGrid = ({
 
                   {/* Distance Badge */}
                   {distance !== null && (
-                    <div className="absolute top-3 right-3">
+                    <div className="absolute top-4 right-4">
                       <Badge 
                         variant="secondary" 
-                        className="text-xs bg-black/70 text-white border-none"
+                        className="text-sm bg-black/70 text-white border-none px-3 py-1"
                       >
-                        <MapPin className="h-3 w-3 mr-1" />
+                        <MapPin className="h-4 w-4 mr-1" />
                         {distance.toFixed(1)} km
                       </Badge>
                     </div>
@@ -188,25 +188,25 @@ const ContestGrid = ({
 
                   {/* Days Remaining */}
                   {contest.isActive && daysRemaining > 0 && (
-                    <div className="absolute bottom-3 right-3">
-                      <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold">
-                        <Calendar className="h-3 w-3 mr-1" />
+                    <div className="absolute bottom-4 right-4">
+                      <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-3 py-1">
+                        <Calendar className="h-4 w-4 mr-1" />
                         {daysRemaining}d
                       </Badge>
                     </div>
                   )}
                 </div>
 
-                {/* Contest Info */}
-                <CardContent className="p-4 space-y-3">
+                {/* Contest Info - Increased padding for larger cards */}
+                <CardContent className="p-6 space-y-4">
                   {/* Title */}
-                  <h3 className="font-semibold text-sm leading-tight text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="font-semibold text-lg leading-tight text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                     {cleanedTitle}
                   </h3>
 
                   {/* Location */}
-                  <div className="flex items-center text-xs text-gray-600">
-                    <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                  <div className="flex items-center text-sm text-gray-600">
+                    <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
                     <span className="truncate">{contest.location}</span>
                   </div>
                 </CardContent>

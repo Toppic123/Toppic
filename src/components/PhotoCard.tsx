@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
@@ -273,8 +274,7 @@ const PhotoCard = ({
                     imageUrl={imageUrl}
                   />
                   
-                  <div className="flex items-center justify-between pt-2 border-t">
-                    <span className="text-sm text-gray-600">¿Problema con esta foto?</span>
+                  <div className="flex items-center justify-end pt-2 border-t">
                     <ReportPhotoDialog 
                       photoId={id}
                       trigger={
