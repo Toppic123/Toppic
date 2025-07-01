@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -137,6 +136,8 @@ export const useContestsData = () => {
   const fetchContests = async () => {
     try {
       setIsLoading(true);
+      console.log('Fetching contests from database...');
+      
       const { data, error } = await supabase
         .from('contests')
         .select('*')
@@ -153,7 +154,16 @@ export const useContestsData = () => {
       }
 
       if (data) {
+        console.log('Raw contest data from database:', data);
+        
         const transformedContests: Contest[] = data.map(contest => {
+          console.log(`Processing contest "${contest.title}":`, {
+            id: contest.id,
+            title: contest.title,
+            image_url: contest.image_url,
+            location: contest.location
+          });
+
           // Use database coordinates if available, otherwise use location-based coordinates
           let coordinates;
           if (contest.latitude && contest.longitude) {
@@ -167,9 +177,9 @@ export const useContestsData = () => {
           // Clean the contest title to remove "FOTOGRAFIA" words
           const cleanedTitle = cleanContestTitle(contest.title);
 
-          // FIX: Correctly map image_url from database to imageUrl in interface
+          // FIXED: Handle image URL properly - use database field correctly
           const imageUrl = contest.image_url || '';
-          console.log(`Contest "${contest.title}" image URL from database:`, contest.image_url, '-> mapped to:', imageUrl);
+          console.log(`Contest "${contest.title}" final imageUrl:`, imageUrl);
 
           return {
             id: contest.id,
@@ -177,7 +187,7 @@ export const useContestsData = () => {
             organizer: contest.organizer || 'Organizador desconocido',
             location: contest.location || 'Ubicación no especificada',
             description: contest.description || 'Sin descripción',
-            imageUrl: imageUrl, // FIX: Use the correct field mapping
+            imageUrl: imageUrl,
             startDate: contest.start_date || new Date().toISOString(),
             endDate: contest.end_date || new Date().toISOString(),
             photoDeadline: contest.photo_deadline,
@@ -193,9 +203,10 @@ export const useContestsData = () => {
           };
         });
         
-        console.log('Transformed contests with images:', transformedContests.map(c => ({
+        console.log('Final transformed contests:', transformedContests.map(c => ({
           title: c.title,
-          imageUrl: c.imageUrl
+          imageUrl: c.imageUrl,
+          hasImage: !!c.imageUrl
         })));
         
         setContests(transformedContests);

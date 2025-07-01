@@ -69,7 +69,7 @@ const ContestFilters = ({
             {/* Input field with enhanced styling */}
             <Input
               type="text"
-              placeholder="Descubre concursos increíbles... busca por nombre o ubicación"
+              placeholder="Busca por nombre o ubicación"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-24 pr-16 py-8 text-lg font-medium border-0 bg-white/95 rounded-2xl placeholder:text-gray-500 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 shadow-inner"

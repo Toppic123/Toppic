@@ -1,4 +1,3 @@
-
 import { MapPin, Users, Image as ImageIcon, Calendar, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -98,8 +97,15 @@ const ContestGrid = ({
             )
           : null;
 
-        // Validate and process image URL
-        const processedImageUrl = contest.imageUrl || "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+        // IMPROVED: Better image URL handling with multiple fallbacks
+        let processedImageUrl = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+        
+        if (contest.imageUrl && contest.imageUrl.trim() !== '') {
+          processedImageUrl = contest.imageUrl;
+          console.log(`Using contest image for "${contest.title}":`, processedImageUrl);
+        } else {
+          console.log(`No image found for contest "${contest.title}", using fallback:`, processedImageUrl);
+        }
         
         // Clean the contest title to remove "FOTOGRAFIA" words
         const cleanedTitle = cleanContestTitle(contest.title);
@@ -124,8 +130,12 @@ const ContestGrid = ({
                     alt={cleanedTitle}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
+                      console.error(`Error loading image for contest "${contest.title}":`, processedImageUrl);
                       const target = e.target as HTMLImageElement;
                       target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+                    }}
+                    onLoad={() => {
+                      console.log(`Image loaded successfully for contest "${contest.title}":`, processedImageUrl);
                     }}
                   />
                   
