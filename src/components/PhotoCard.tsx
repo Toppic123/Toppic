@@ -6,7 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ReportPhotoDialog from "@/components/ReportPhotoDialog";
 import ClickableUserProfile from "@/components/ClickableUserProfile";
+import PhotoComments from "@/components/PhotoComments";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 type PhotoCardProps = {
   id: string;
@@ -225,13 +228,14 @@ const PhotoCard = ({
         </div>
       </motion.div>
 
-      {/* Photo Detail Dialog */}
+      {/* Enhanced Photo Detail Dialog - Ensures all required info is shown */}
       <Dialog open={showPhotoDialog} onOpenChange={setShowPhotoDialog}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden p-0">
-          <div className="relative w-full h-full bg-black flex flex-col">
-            <DialogClose className="absolute top-2 right-2 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80" />
-            
-            <div className="flex-1 overflow-hidden flex items-center justify-center p-4">
+        <DialogContent className="sm:max-w-6xl max-h-[95vh] overflow-hidden p-0">
+          <div className="flex h-[90vh]">
+            {/* Left side - Photo */}
+            <div className="flex-1 bg-black flex items-center justify-center relative">
+              <DialogClose className="absolute top-4 right-4 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80" />
+              
               <img 
                 src={imageUrl} 
                 alt={`Foto de ${photographer}`} 
@@ -239,23 +243,54 @@ const PhotoCard = ({
               />
             </div>
             
-            <div className="bg-white w-full p-4 flex justify-between items-center">
-              <div className="flex flex-col">
-                <span className="text-sm text-muted-foreground mb-1">Fotógrafo:</span>
-                <ClickableUserProfile
-                  photographer={photographer}
-                  photographerAvatar={photographerAvatar}
-                  size="md"
-                />
+            {/* Right side - Information and Comments */}
+            <div className="w-80 bg-white flex flex-col border-l">
+              {/* Photo Info Header with all required information */}
+              <div className="p-4 border-b bg-gray-50">
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={photographerAvatar} alt={photographer} />
+                    <AvatarFallback><User className="h-6 w-6" /></AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <ClickableUserProfile
+                      photographer={photographer}
+                      photographerAvatar={photographerAvatar}
+                      size="md"
+                      showAvatar={false}
+                    />
+                  </div>
+                </div>
+                
+                {/* Action buttons - Share and Report */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">Compartir:</span>
+                  </div>
+                  <SocialShareButtons 
+                    url={window.location.href}
+                    title={`Photo by ${photographer}`}
+                    imageUrl={imageUrl}
+                  />
+                  
+                  <div className="flex items-center justify-between pt-2 border-t">
+                    <span className="text-sm text-gray-600">¿Problema con esta foto?</span>
+                    <ReportPhotoDialog 
+                      photoId={id}
+                      trigger={
+                        <Button variant="outline" size="sm" className="text-red-500 hover:bg-red-50">
+                          <Flag className="h-4 w-4 mr-1" />
+                          Denunciar
+                        </Button>
+                      }
+                    />
+                  </div>
+                </div>
               </div>
               
-              <div className="flex items-center gap-2">
-                <SocialShareButtons 
-                  url={window.location.href}
-                  title={`Photo by ${photographer}`}
-                  imageUrl={imageUrl}
-                />
-                <ReportPhotoDialog photoId={id} />
+              {/* Comments Section - Always visible and functional */}
+              <div className="flex-1 overflow-hidden">
+                <PhotoComments photoId={id} isEmbedded={true} />
               </div>
             </div>
           </div>

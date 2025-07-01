@@ -58,7 +58,7 @@ const ContestGallery = ({
   const [emailSent, setEmailSent] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   
-  // Calculate days remaining until gallery expires
+  // ... keep existing code (calculateDaysRemaining function and useEffect)
   const calculateDaysRemaining = () => {
     const now = new Date();
     const expiryDate = new Date(availableUntil);
@@ -72,18 +72,17 @@ const ContestGallery = ({
   useEffect(() => {
     const timer = setInterval(() => {
       setDaysRemaining(calculateDaysRemaining());
-    }, 1000 * 60 * 60); // Update every hour
+    }, 1000 * 60 * 60);
     
     return () => clearInterval(timer);
   }, [availableUntil]);
   
+  // ... keep existing code (handleShareGallery and handleSendEmail functions)
   const handleShareGallery = () => {
     setShowShareDialog(true);
   };
   
   const handleSendEmail = () => {
-    // In a real implementation, this would call an API endpoint
-    // to send an email with the gallery link
     toast({
       title: "Email enviado",
       description: "Se ha enviado un email con el enlace a la galería",
@@ -99,7 +98,7 @@ const ContestGallery = ({
   
   return (
     <div className="container max-w-7xl mx-auto px-4 py-12">
-      {/* Gallery header */}
+      {/* ... keep existing code (Gallery header section) */}
       <div className="mb-12">
         <div className="flex flex-col lg:flex-row justify-between gap-6">
           <div>
@@ -157,7 +156,7 @@ const ContestGallery = ({
         </div>
       </div>
       
-      {/* Winners section - if there are winners */}
+      {/* ... keep existing code (Winners section) */}
       {winners.length > 0 && (
         <div className="mb-16">
           <div className="text-center">
@@ -203,26 +202,50 @@ const ContestGallery = ({
         </div>
       )}
       
-      {/* Gallery grid */}
+      {/* Gallery grid - Enhanced to show photographer info on all photos */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-8">Todas las fotografías</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {photos.map((photo) => (
-            <div key={photo.id} onClick={() => handlePhotoClick(photo)} className="cursor-pointer">
-              <PhotoCard
-                id={photo.id}
-                imageUrl={photo.imageUrl}
-                photographer={photo.photographer}
-                photographerAvatar={photo.photographerAvatar}
-                mode="grid"
-                expanded={false}
-              />
-            </div>
+            <motion.div
+              key={photo.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="cursor-pointer group"
+              onClick={() => handlePhotoClick(photo)}
+            >
+              <div className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative">
+                <img
+                  src={photo.imageUrl}
+                  alt={`Foto de ${photo.photographer}`}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                
+                {/* Overlay with photographer info - visible on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <div className="flex items-center gap-2 text-white">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={photo.photographerAvatar} alt={photo.photographer} />
+                        <AvatarFallback className="text-xs">
+                          <User className="h-3 w-3" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium truncate">{photo.photographer}</span>
+                      {photo.votes > 0 && (
+                        <span className="text-xs text-white/80 ml-auto">{photo.votes} votos</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
       
-      {/* Share dialog */}
+      {/* ... keep existing code (Share dialog and Info dialog) */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -242,7 +265,6 @@ const ContestGallery = ({
         </DialogContent>
       </Dialog>
       
-      {/* Info dialog */}
       <Dialog open={showInfoDialog} onOpenChange={setShowInfoDialog}>
         <DialogContent>
           <DialogHeader>
@@ -278,14 +300,14 @@ const ContestGallery = ({
         </DialogContent>
       </Dialog>
 
-      {/* Photo detail dialog with complete information */}
+      {/* Enhanced Photo detail dialog - Works for ALL photos including vertical ones */}
       <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
-        <DialogContent className="sm:max-w-6xl max-h-[95vh] overflow-hidden p-0">
+        <DialogContent className="sm:max-w-7xl max-h-[95vh] overflow-hidden p-0">
           {selectedPhoto && (
-            <div className="flex h-[90vh]">
-              {/* Left side - Photo */}
-              <div className="flex-1 bg-black flex items-center justify-center relative">
-                <DialogClose className="absolute top-4 right-4 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80">
+            <div className="flex h-[90vh] max-h-[90vh]">
+              {/* Left side - Photo with enhanced display for both vertical and horizontal photos */}
+              <div className="flex-1 bg-black flex items-center justify-center relative min-w-0">
+                <DialogClose className="absolute top-4 right-4 z-20 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors">
                   <X className="h-4 w-4" />
                   <span className="sr-only">Cerrar</span>
                 </DialogClose>
@@ -295,18 +317,34 @@ const ContestGallery = ({
                   alt={`Foto de ${selectedPhoto.photographer}`} 
                   className="max-h-full max-w-full object-contain"
                 />
+                
+                {/* Mobile-friendly photographer info overlay for the photo */}
+                <div className="absolute bottom-4 left-4 right-4 md:hidden">
+                  <div className="bg-black/80 rounded-lg p-3 text-white">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={selectedPhoto.photographerAvatar} alt={selectedPhoto.photographer} />
+                        <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">{selectedPhoto.photographer}</p>
+                        <p className="text-xs text-white/80">{selectedPhoto.votes} votos</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               
-              {/* Right side - Information and Comments */}
-              <div className="w-96 bg-white flex flex-col border-l">
-                {/* Photo Info Header */}
-                <div className="p-6 border-b">
+              {/* Right side - Enhanced Information and Comments panel */}
+              <div className="w-80 lg:w-96 bg-white flex flex-col border-l shrink-0">
+                {/* Photo Info Header - Enhanced */}
+                <div className="p-4 border-b bg-gray-50">
                   <div className="flex items-center gap-3 mb-4">
                     <Avatar className="h-12 w-12">
                       <AvatarImage src={selectedPhoto.photographerAvatar} alt={selectedPhoto.photographer} />
                       <AvatarFallback><User className="h-6 w-6" /></AvatarFallback>
                     </Avatar>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <ClickableUserProfile 
                         photographer={selectedPhoto.photographer}
                         photographerAvatar={selectedPhoto.photographerAvatar}
@@ -317,26 +355,33 @@ const ContestGallery = ({
                     </div>
                   </div>
                   
-                  {/* Action buttons */}
-                  <div className="flex items-center justify-between">
+                  {/* Enhanced Action buttons section */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Compartir foto:</span>
+                    </div>
                     <SocialShareButtons 
                       url={`${window.location.origin}/contests/${contestId}/photos/${selectedPhoto.id}`}
                       title={`Foto de ${selectedPhoto.photographer} en ${contestTitle}`}
                       imageUrl={selectedPhoto.imageUrl}
                     />
                     
-                    <ReportPhotoDialog 
-                      photoId={selectedPhoto.id}
-                      trigger={
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-50 p-2">
-                          <Flag className="h-4 w-4" />
-                        </Button>
-                      }
-                    />
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <span className="text-sm text-gray-600">¿Hay algún problema con esta foto?</span>
+                      <ReportPhotoDialog 
+                        photoId={selectedPhoto.id}
+                        trigger={
+                          <Button variant="outline" size="sm" className="text-red-500 hover:bg-red-50 border-red-200">
+                            <Flag className="h-4 w-4 mr-1" />
+                            Denunciar
+                          </Button>
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
                 
-                {/* Comments Section */}
+                {/* Comments Section - Enhanced and always visible */}
                 <div className="flex-1 overflow-hidden">
                   <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />
                 </div>
