@@ -167,13 +167,17 @@ export const useContestsData = () => {
           // Clean the contest title to remove "FOTOGRAFIA" words
           const cleanedTitle = cleanContestTitle(contest.title);
 
+          // FIX: Correctly map image_url from database to imageUrl in interface
+          const imageUrl = contest.image_url || '';
+          console.log(`Contest "${contest.title}" image URL from database:`, contest.image_url, '-> mapped to:', imageUrl);
+
           return {
             id: contest.id,
             title: cleanedTitle,
             organizer: contest.organizer || 'Organizador desconocido',
             location: contest.location || 'Ubicación no especificada',
             description: contest.description || 'Sin descripción',
-            imageUrl: contest.image_url || '', // Allow empty string, will be handled by fallback
+            imageUrl: imageUrl, // FIX: Use the correct field mapping
             startDate: contest.start_date || new Date().toISOString(),
             endDate: contest.end_date || new Date().toISOString(),
             photoDeadline: contest.photo_deadline,
@@ -189,10 +193,9 @@ export const useContestsData = () => {
           };
         });
         
-        console.log('Transformed contests with coordinates:', transformedContests.map(c => ({
+        console.log('Transformed contests with images:', transformedContests.map(c => ({
           title: c.title,
-          location: c.location,
-          coordinates: c.coordinates
+          imageUrl: c.imageUrl
         })));
         
         setContests(transformedContests);
