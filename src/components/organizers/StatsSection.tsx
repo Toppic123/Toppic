@@ -6,12 +6,12 @@ const StatsSection = () => {
   const stats = [
     {
       icon: Users,
-      number: "2,500+",
+      number: "100+",
       label: "Organizadores Activos"
     },
     {
       icon: Trophy,
-      number: "850+",
+      number: "500+",
       label: "Concursos Realizados"
     },
     {
