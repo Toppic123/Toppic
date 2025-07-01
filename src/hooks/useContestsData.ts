@@ -23,7 +23,7 @@ export interface Contest {
   minimum_distance_km?: number;
   prize?: string;
   created_at?: string;
-  plan?: 'basic' | 'professional' | 'premium'; // Add plan field to interface
+  plan?: 'basic' | 'professional' | 'premium';
 }
 
 // Comprehensive location coordinates mapping
@@ -166,7 +166,7 @@ export const useContestsData = () => {
           console.log(`   - image_url (DB field): "${contest.image_url || 'NO IMAGE_URL'}"`);
           console.log(`   - Location: "${contest.location || 'NO LOCATION'}"`);
           console.log(`   - Status: "${contest.status || 'NO STATUS'}"`);
-          console.log(`   - Plan: "${contest.plan || 'NO PLAN'}"`); // Add plan logging
+          console.log(`   - Plan: "${contest.plan || 'NO PLAN'}"`);
           console.log(`   - Created: ${contest.created_at}`);
           console.log('   ---');
         });
@@ -193,6 +193,10 @@ export const useContestsData = () => {
           console.log(`   🖼️  Final imageUrl after processing: "${imageUrl}"`);
           console.log(`   ✅ Has image URL: ${!!imageUrl}`);
 
+          // Fix: Ensure plan is properly typed
+          const contestPlan = contest.plan as 'basic' | 'professional' | 'premium' || 'basic';
+          console.log(`   📋 Contest plan from DB: "${contest.plan}" -> transformed to: "${contestPlan}"`);
+
           const transformedContest = {
             id: contest.id,
             title: cleanedTitle,
@@ -212,7 +216,7 @@ export const useContestsData = () => {
             contest_password: contest.contest_password,
             minimum_distance_km: contest.minimum_distance_km,
             prize: contest.prize,
-            plan: contest.plan || 'basic' // Include plan in transformed contest
+            plan: contestPlan
           };
 
           console.log(`   ✅ Transformed contest:`, {
@@ -221,7 +225,7 @@ export const useContestsData = () => {
             imageUrl: transformedContest.imageUrl,
             hasImage: !!transformedContest.imageUrl,
             isActive: transformedContest.isActive,
-            plan: transformedContest.plan // Log plan in transformation
+            plan: transformedContest.plan
           });
 
           return transformedContest;

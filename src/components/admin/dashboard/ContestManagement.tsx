@@ -65,6 +65,7 @@ export const ContestManagement = () => {
           is_private: formData.is_private,
           contest_password: formData.contest_password,
           minimum_distance_km: formData.minimum_distance_km,
+          plan: formData.plan, // Include plan in contest data
         } : null}
         onSubmit={handleSaveChanges}
       />

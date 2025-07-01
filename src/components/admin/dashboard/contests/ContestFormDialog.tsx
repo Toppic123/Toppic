@@ -69,6 +69,7 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
       // Use image_url as the primary field (database field name)
       const imageUrl = contest.image_url || contest.imageUrl || '';
       console.log('Setting image_url from contest:', imageUrl);
+      console.log('Setting plan from contest:', contest.plan);
       setFormData({
         title: contest.title || '',
         organizer: contest.organizer || '',
