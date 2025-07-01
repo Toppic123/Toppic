@@ -28,6 +28,10 @@ const PhotoRequirements = ({ compact = false }: PhotoRequirementsProps) => {
             <p>Se admiten fotos tomadas con móviles o cámaras fotográficas.</p>
           </div>
           <div className="flex items-start gap-2">
+            <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+            <p>Máximo 1 foto por participante.</p>
+          </div>
+          <div className="flex items-start gap-2">
             <FileWarning className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
             <p>No se aceptan imágenes creadas por inteligencia artificial.</p>
           </div>
@@ -72,6 +76,7 @@ const PhotoRequirements = ({ compact = false }: PhotoRequirementsProps) => {
               <p className="text-sm">
                 Al subir fotografías, el usuario reconoce ser el propietario de los derechos de dicha imagen
                 y concede a los organizadores del concurso los derechos de uso especificados en las bases del concurso.
+                Solo se permite 1 foto por participante por concurso.
               </p>
             </div>
           </AccordionContent>

@@ -134,7 +134,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
             <h3 className="font-semibold text-gray-900 mb-2">Reglas del Concurso</h3>
             <ul className="text-sm text-gray-600 space-y-1">
               <li>• Las fotos deben ser originales y de tu autoría</li>
-              <li>• Solo se permite una foto por participante</li>
+              <li>• Máximo 1 foto por participante</li>
               <li>• La foto debe estar relacionada con el tema del concurso</li>
               <li>• No se permiten ediciones excesivas</li>
               <li>• Las fotos deben cumplir con las normas de la comunidad</li>
