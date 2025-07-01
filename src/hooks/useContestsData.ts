@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -136,7 +137,7 @@ export const useContestsData = () => {
   const fetchContests = async () => {
     try {
       setIsLoading(true);
-      console.log('Fetching contests from database...');
+      console.log('=== FETCHING CONTESTS FROM DATABASE ===');
       
       const { data, error } = await supabase
         .from('contests')
@@ -144,7 +145,7 @@ export const useContestsData = () => {
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching contests:', error);
+        console.error('❌ Error fetching contests:', error);
         toast({
           title: "Error al cargar concursos",
           description: error.message,
@@ -154,34 +155,43 @@ export const useContestsData = () => {
       }
 
       if (data) {
-        console.log('Raw contest data from database:', data);
+        console.log('✅ Raw contest data from database:', data.length, 'contests found');
+        console.log('📋 Full database response:', JSON.stringify(data, null, 2));
         
-        const transformedContests: Contest[] = data.map(contest => {
-          console.log(`Processing contest "${contest.title}":`, {
-            id: contest.id,
-            title: contest.title,
-            image_url: contest.image_url,
-            location: contest.location
-          });
+        // Log each contest's image data specifically
+        data.forEach((contest, index) => {
+          console.log(`🏆 Contest #${index + 1}: "${contest.title}"`);
+          console.log(`   - ID: ${contest.id}`);
+          console.log(`   - image_url (DB field): "${contest.image_url || 'NO IMAGE_URL'}"`);
+          console.log(`   - Location: "${contest.location || 'NO LOCATION'}"`);
+          console.log(`   - Status: "${contest.status || 'NO STATUS'}"`);
+          console.log(`   - Created: ${contest.created_at}`);
+          console.log('   ---');
+        });
+        
+        const transformedContests: Contest[] = data.map((contest, index) => {
+          console.log(`🔄 Transforming contest #${index + 1}: "${contest.title}"`);
 
           // Use database coordinates if available, otherwise use location-based coordinates
           let coordinates;
           if (contest.latitude && contest.longitude) {
             coordinates = { lat: Number(contest.latitude), lng: Number(contest.longitude) };
-            console.log(`Contest "${contest.title}" using database coordinates:`, coordinates);
+            console.log(`   📍 Using database coordinates:`, coordinates);
           } else {
             coordinates = getCoordinatesForLocation(contest.location || 'andorra');
-            console.log(`Contest "${contest.title}" using location-based coordinates for "${contest.location}":`, coordinates);
+            console.log(`   📍 Using location-based coordinates for "${contest.location}":`, coordinates);
           }
 
           // Clean the contest title to remove "FOTOGRAFIA" words
           const cleanedTitle = cleanContestTitle(contest.title);
 
-          // FIXED: Handle image URL properly - use database field correctly
+          // CRITICAL: Handle image URL properly - use database field correctly
           const imageUrl = contest.image_url || '';
-          console.log(`Contest "${contest.title}" final imageUrl:`, imageUrl);
+          console.log(`   🖼️  Original image_url from DB: "${contest.image_url}"`);
+          console.log(`   🖼️  Final imageUrl after processing: "${imageUrl}"`);
+          console.log(`   ✅ Has image URL: ${!!imageUrl}`);
 
-          return {
+          const transformedContest = {
             id: contest.id,
             title: cleanedTitle,
             organizer: contest.organizer || 'Organizador desconocido',
@@ -201,18 +211,39 @@ export const useContestsData = () => {
             minimum_distance_km: contest.minimum_distance_km,
             prize: contest.prize
           };
+
+          console.log(`   ✅ Transformed contest:`, {
+            id: transformedContest.id,
+            title: transformedContest.title,
+            imageUrl: transformedContest.imageUrl,
+            hasImage: !!transformedContest.imageUrl,
+            isActive: transformedContest.isActive
+          });
+
+          return transformedContest;
         });
         
-        console.log('Final transformed contests:', transformedContests.map(c => ({
-          title: c.title,
-          imageUrl: c.imageUrl,
-          hasImage: !!c.imageUrl
-        })));
+        console.log('🎯 FINAL SUMMARY:');
+        console.log(`   Total contests: ${transformedContests.length}`);
+        const contestsWithImages = transformedContests.filter(c => c.imageUrl);
+        const contestsWithoutImages = transformedContests.filter(c => !c.imageUrl);
+        console.log(`   Contests WITH images: ${contestsWithImages.length}`);
+        console.log(`   Contests WITHOUT images: ${contestsWithoutImages.length}`);
+        
+        if (contestsWithImages.length > 0) {
+          console.log('   ✅ Contests with images:');
+          contestsWithImages.forEach(c => console.log(`      - "${c.title}": ${c.imageUrl}`));
+        }
+        
+        if (contestsWithoutImages.length > 0) {
+          console.log('   ❌ Contests without images:');
+          contestsWithoutImages.forEach(c => console.log(`      - "${c.title}": NO IMAGE`));
+        }
         
         setContests(transformedContests);
       }
     } catch (error) {
-      console.error('Error fetching contests:', error);
+      console.error('💥 Unexpected error fetching contests:', error);
       toast({
         title: "Error",
         description: "Ha ocurrido un error al cargar los concursos.",
@@ -220,6 +251,7 @@ export const useContestsData = () => {
       });
     } finally {
       setIsLoading(false);
+      console.log('=== FINISHED FETCHING CONTESTS ===');
     }
   };
 

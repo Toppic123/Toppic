@@ -1,3 +1,4 @@
+
 import { MapPin, Users, Image as ImageIcon, Calendar, Trophy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -57,8 +58,19 @@ const ContestGrid = ({
   calculateDistance,
   clearFilters,
 }: ContestGridProps) => {
+  console.log('🎯 ContestGrid rendering with contests:', contests.length);
+  
+  // Log image information for debugging
+  contests.forEach((contest, index) => {
+    console.log(`🏆 ContestGrid #${index + 1}: "${contest.title}"`);
+    console.log(`   - imageUrl: "${contest.imageUrl || 'NO IMAGE'}"`);
+    console.log(`   - hasImage: ${!!contest.imageUrl}`);
+    console.log(`   - isActive: ${contest.isActive}`);
+  });
+
   // Safety check for empty contests array
   if (!contests || contests.length === 0) {
+    console.log('⚠️ ContestGrid: No contests to display');
     return (
       <Card className="text-center py-12">
         <CardContent className="space-y-4">
@@ -84,7 +96,7 @@ const ContestGrid = ({
       {contests.map((contest, index) => {
         // Skip rendering if contest is missing critical data
         if (!contest || !contest.id || !contest.title) {
-          console.warn("Invalid contest data found:", contest);
+          console.warn("❌ Invalid contest data found:", contest);
           return null;
         }
 
@@ -98,13 +110,20 @@ const ContestGrid = ({
           : null;
 
         // IMPROVED: Better image URL handling with multiple fallbacks
-        let processedImageUrl = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+        const fallbackImage = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+        let processedImageUrl = fallbackImage;
+        
+        console.log(`🖼️ Processing image for "${contest.title}":`, {
+          originalImageUrl: contest.imageUrl,
+          hasImageUrl: !!contest.imageUrl,
+          imageUrlLength: contest.imageUrl?.length || 0
+        });
         
         if (contest.imageUrl && contest.imageUrl.trim() !== '') {
           processedImageUrl = contest.imageUrl;
-          console.log(`Using contest image for "${contest.title}":`, processedImageUrl);
+          console.log(`✅ Using contest image for "${contest.title}":`, processedImageUrl);
         } else {
-          console.log(`No image found for contest "${contest.title}", using fallback:`, processedImageUrl);
+          console.log(`❌ No image found for contest "${contest.title}", using fallback:`, processedImageUrl);
         }
         
         // Clean the contest title to remove "FOTOGRAFIA" words
@@ -130,12 +149,13 @@ const ContestGrid = ({
                     alt={cleanedTitle}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     onError={(e) => {
-                      console.error(`Error loading image for contest "${contest.title}":`, processedImageUrl);
+                      console.error(`❌ Error loading image for contest "${contest.title}":`, processedImageUrl);
+                      console.log(`🔄 Falling back to default image for "${contest.title}"`);
                       const target = e.target as HTMLImageElement;
-                      target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
+                      target.src = fallbackImage;
                     }}
                     onLoad={() => {
-                      console.log(`Image loaded successfully for contest "${contest.title}":`, processedImageUrl);
+                      console.log(`✅ Image loaded successfully for contest "${contest.title}":`, processedImageUrl);
                     }}
                   />
                   

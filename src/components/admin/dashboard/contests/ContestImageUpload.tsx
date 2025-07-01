@@ -19,7 +19,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
   // Update preview when value changes
   useEffect(() => {
-    console.log('ContestImageUpload - value changed to:', value);
+    console.log('🖼️ ContestImageUpload - value changed to:', value);
     setPreviewUrl(value);
   }, [value]);
 
@@ -27,10 +27,15 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    console.log('Starting file upload:', file.name, file.size);
+    console.log('📤 Starting file upload:', {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type
+    });
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
+      console.error('❌ Invalid file type:', file.type);
       toast({
         title: "Error",
         description: "Por favor selecciona un archivo de imagen válido",
@@ -41,6 +46,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
+      console.error('❌ File too large:', file.size);
       toast({
         title: "Error", 
         description: "El archivo es demasiado grande. Máximo 5MB",
@@ -52,11 +58,38 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     setIsUploading(true);
     
     try {
+      // Check if contest-images bucket exists, if not create it
+      console.log('🪣 Checking if contest-images bucket exists...');
+      const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+      
+      if (listError) {
+        console.error('❌ Error listing buckets:', listError);
+      } else {
+        console.log('📋 Available buckets:', buckets.map(b => b.name));
+        const contestImagesBucket = buckets.find(b => b.name === 'contest-images');
+        if (!contestImagesBucket) {
+          console.log('🪣 Creating contest-images bucket...');
+          const { error: createError } = await supabase.storage.createBucket('contest-images', {
+            public: true,
+            allowedMimeTypes: ['image/*'],
+            fileSizeLimit: 5242880 // 5MB
+          });
+          
+          if (createError) {
+            console.error('❌ Error creating bucket:', createError);
+          } else {
+            console.log('✅ contest-images bucket created successfully');
+          }
+        } else {
+          console.log('✅ contest-images bucket already exists');
+        }
+      }
+
       // Generate unique filename with timestamp
       const fileExt = file.name.split('.').pop();
       const fileName = `contest-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
-      console.log('Uploading to Supabase Storage with filename:', fileName);
+      console.log('📤 Uploading to Supabase Storage with filename:', fileName);
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
@@ -67,7 +100,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         });
 
       if (error) {
-        console.error('Storage upload error:', error);
+        console.error('❌ Storage upload error:', error);
         toast({
           title: "Error",
           description: "Error al subir la imagen: " + error.message,
@@ -76,7 +109,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
         return;
       }
 
-      console.log('File uploaded successfully:', data);
+      console.log('✅ File uploaded successfully:', data);
 
       // Get the public URL
       const { data: urlData } = supabase.storage
@@ -85,8 +118,20 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
       
       const publicUrl = urlData.publicUrl;
       
-      console.log('Generated public URL:', publicUrl);
-      console.log('About to call onChange with URL:', publicUrl);
+      console.log('🌐 Generated public URL:', publicUrl);
+      console.log('📞 About to call onChange with URL:', publicUrl);
+      
+      // Test if the image URL is accessible
+      try {
+        const response = await fetch(publicUrl, { method: 'HEAD' });
+        console.log('🔍 Image URL accessibility test:', {
+          url: publicUrl,
+          status: response.status,
+          accessible: response.ok
+        });
+      } catch (testError) {
+        console.error('❌ Error testing image URL:', testError);
+      }
       
       // Update preview immediately
       setPreviewUrl(publicUrl);
@@ -100,7 +145,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
       });
       
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('💥 Unexpected error uploading file:', error);
       toast({
         title: "Error",
         description: "Error al cargar la imagen",
@@ -112,7 +157,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
   };
 
   const clearImage = () => {
-    console.log('Clearing image');
+    console.log('🗑️ Clearing image');
     setPreviewUrl('');
     onChange('');
     
@@ -159,12 +204,12 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
               alt="Vista previa del concurso"
               className="w-full max-w-md h-48 object-cover rounded-lg border"
               onError={(e) => {
-                console.error('Error loading image preview:', previewUrl);
+                console.error('❌ Error loading image preview:', previewUrl);
                 const target = e.target as HTMLImageElement;
                 target.src = "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=400&h=225&fit=crop";
               }}
               onLoad={() => {
-                console.log('Image preview loaded successfully:', previewUrl);
+                console.log('✅ Image preview loaded successfully:', previewUrl);
               }}
             />
             <Button
