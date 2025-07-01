@@ -24,8 +24,8 @@ const ModernSectionTitle = ({
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-32 bg-gradient-to-r from-primary/5 via-blue-500/5 to-purple-500/5 rounded-full blur-3xl"></div>
       </div>
       
-      {/* Badge superior con icono */}
-      {(Icon || showSparkles) && (
+      {/* Badge superior con icono - solo si showSparkles es true */}
+      {showSparkles && (Icon || showSparkles) && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,9 +35,9 @@ const ModernSectionTitle = ({
           <div className="flex items-center bg-gradient-to-r from-primary/10 to-blue-600/10 rounded-full px-6 py-3 border border-primary/20 backdrop-blur-sm">
             {Icon ? (
               <Icon className="w-6 h-6 text-primary mr-3" />
-            ) : showSparkles ? (
+            ) : (
               <Sparkles className="w-6 h-6 text-primary mr-3 animate-pulse" />
-            ) : null}
+            )}
             <span className="text-primary font-bold text-lg">Destacado</span>
           </div>
         </motion.div>

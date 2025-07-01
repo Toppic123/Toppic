@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, Filter, X, MapPin, Tag, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -97,13 +96,6 @@ const ContestFilters = ({
           
           {/* Additional accent line */}
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-60"></div>
-        </div>
-        
-        {/* Enhanced search suggestions hint with lighter gray background */}
-        <div className="text-center mt-4">
-          <p className="text-sm text-gray-700 font-medium bg-gray-200 rounded-full px-6 py-3 inline-block border border-gray-300 shadow-lg">
-            💡 Busca por ejemplo: "Barcelona", "Naturaleza", "Retrato"
-          </p>
         </div>
       </div>
       
