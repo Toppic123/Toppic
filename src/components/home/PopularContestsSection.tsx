@@ -1,10 +1,11 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Trophy, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
 import { useFeaturedContests } from "@/hooks/useFeaturedContests";
+import ModernSectionTitle from "./ModernSectionTitle";
 
 interface PopularContestsSectionProps {
   texts: {
@@ -41,19 +42,20 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
 
   if (isLoading) {
     return (
-      <section className="py-12 md:py-20 bg-gradient-to-b from-white to-slate-50 dark:from-background dark:to-background/50">
-        <div className="container max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <div className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4 inline-block">
-              Popular
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Concursos Populares
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Cargando concursos destacados...
-            </p>
-          </div>
+      <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-gray-950/30 dark:to-background relative overflow-hidden">
+        {/* Background Pattern - unified */}
+        <div className="absolute inset-0 opacity-4">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+        
+        <div className="container max-w-7xl mx-auto px-4 relative z-10">
+          <ModernSectionTitle 
+            title="Concursos Populares"
+            subtitle="Cargando concursos destacados..."
+            icon={Trophy}
+            gradient="from-amber-500 via-orange-500 to-red-500"
+          />
         </div>
       </section>
     );
@@ -75,41 +77,22 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
     }));
 
   return (
-    <section className="py-12 md:py-20 bg-gradient-to-b from-white to-slate-50 dark:from-background dark:to-background/50">
-      <div className="container max-w-7xl mx-auto px-4">
-        {/* Título homogeneizado con el estilo del resto de secciones */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-block"
-          >
-            <div className="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
-              Popular
-            </div>
-          </motion.div>
-          
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4"
-          >
-            Concursos Populares
-          </motion.h2>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
-          >
-            Descubre los concursos más populares y emocionantes
-          </motion.p>
-        </div>
+    <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-gray-950/30 dark:to-background relative overflow-hidden">
+      {/* Background Pattern - unified */}
+      <div className="absolute inset-0 opacity-4">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-red-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
+      <div className="container max-w-7xl mx-auto px-4 relative z-10">
+        {/* Modern Title - unified style */}
+        <ModernSectionTitle 
+          title="Concursos Populares"
+          subtitle="Descubre los concursos más populares y emocionantes de nuestra comunidad"
+          icon={Trophy}
+          gradient="from-amber-500 via-orange-500 to-red-500"
+        />
         
         {displayContests.length > 0 ? (
           <>
@@ -118,7 +101,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
             >
               {displayContests.map((contest) => (
                 <motion.div key={contest.id} variants={itemVariants}>
@@ -143,10 +126,16 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
               >
-                <Button asChild size="lg" className="group">
-                  <Link to="/contests">
-                    <span>{texts.seeAll}</span>
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <Button 
+                  asChild 
+                  size="lg" 
+                  className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-white px-8 py-6 text-lg font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group"
+                >
+                  <Link to="/contests" className="flex items-center">
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                    <Trophy className="mr-3 h-5 w-5 relative z-10" />
+                    <span className="relative z-10">{texts.seeAll}</span>
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
                   </Link>
                 </Button>
               </motion.div>

@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Upload, ThumbsUp, Award } from "lucide-react";
+import { Upload, ThumbsUp, Award, Zap } from "lucide-react";
 import ModernStep from "./ModernStep";
 import ModernSectionTitle from "./ModernSectionTitle";
 
@@ -44,22 +44,23 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
 
   return (
     <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-gray-950/30 dark:to-background relative overflow-hidden">
-      {/* Fondo decorativo mejorado */}
+      {/* Background Pattern - unified */}
       <div className="absolute inset-0 opacity-4">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-green-400 to-blue-400 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-teal-400/30 to-blue-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        {/* Título moderno */}
+        {/* Modern Title - unified style */}
         <ModernSectionTitle 
           title={texts.howItWorks}
           subtitle="Proceso simple y efectivo en 3 pasos para participar en concursos de fotografía"
-          gradient="from-gray-900 via-primary to-blue-600 dark:from-white dark:via-primary dark:to-blue-400"
+          icon={Zap}
+          gradient="from-green-600 via-teal-600 to-blue-600"
         />
         
-        {/* Pasos modernos */}
+        {/* Steps - unified spacing */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
           {steps.map((step, index) => (
             <ModernStep key={index} {...step} index={index} />
