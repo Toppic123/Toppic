@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X, User, Flag } from "lucide-react";
+import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X, User, Flag, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import PhotoCard from "@/components/PhotoCard";
@@ -57,8 +57,8 @@ const ContestGallery = ({
   const [showInfoDialog, setShowInfoDialog] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   
-  // ... keep existing code (calculateDaysRemaining function and useEffect)
   const calculateDaysRemaining = () => {
     const now = new Date();
     const expiryDate = new Date(availableUntil);
@@ -77,7 +77,6 @@ const ContestGallery = ({
     return () => clearInterval(timer);
   }, [availableUntil]);
   
-  // ... keep existing code (handleShareGallery and handleSendEmail functions)
   const handleShareGallery = () => {
     setShowShareDialog(true);
   };
@@ -91,14 +90,54 @@ const ContestGallery = ({
   };
 
   const handlePhotoClick = (photo: Photo) => {
+    const allPhotos = [...winners, ...photos];
+    const photoIndex = allPhotos.findIndex(p => p.id === photo.id);
+    setCurrentPhotoIndex(photoIndex);
     setSelectedPhoto(photo);
   };
+
+  // Navigation functions
+  const navigateToNextPhoto = () => {
+    const allPhotos = [...winners, ...photos];
+    const nextIndex = (currentPhotoIndex + 1) % allPhotos.length;
+    setCurrentPhotoIndex(nextIndex);
+    setSelectedPhoto(allPhotos[nextIndex]);
+  };
+
+  const navigateToPrevPhoto = () => {
+    const allPhotos = [...winners, ...photos];
+    const prevIndex = currentPhotoIndex === 0 ? allPhotos.length - 1 : currentPhotoIndex - 1;
+    setCurrentPhotoIndex(prevIndex);
+    setSelectedPhoto(allPhotos[prevIndex]);
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!selectedPhoto) return;
+      
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        navigateToNextPhoto();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        navigateToPrevPhoto();
+      } else if (event.key === 'Escape') {
+        setSelectedPhoto(null);
+      }
+    };
+
+    if (selectedPhoto) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [selectedPhoto, currentPhotoIndex]);
   
   const galleryLink = `${window.location.origin}/contests/${contestId}/gallery`;
+  const allPhotos = [...winners, ...photos];
   
   return (
     <div className="container max-w-7xl mx-auto px-4 py-12">
-      {/* ... keep existing code (Gallery header section) */}
       <div className="mb-12">
         <div className="flex flex-col lg:flex-row justify-between gap-6">
           <div>
@@ -156,7 +195,6 @@ const ContestGallery = ({
         </div>
       </div>
       
-      {/* ... keep existing code (Winners section) */}
       {winners.length > 0 && (
         <div className="mb-16">
           <div className="text-center">
@@ -245,7 +283,6 @@ const ContestGallery = ({
         </div>
       </div>
       
-      {/* ... keep existing code (Share dialog and Info dialog) */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -283,7 +320,7 @@ const ContestGallery = ({
               <p className="text-sm text-muted-foreground">
                 Las fotografías mostradas en esta galería están protegidas por derechos de autor y pertenecen a sus respectivos creadores.
                 No está permitido descargar, reproducir o utilizar estas imágenes sin el consentimiento explícito de sus autores.
-              </p>
+                </p>
             </div>
             <div>
               <h3 className="font-medium mb-1">Calidad de imagen</h3>
@@ -300,17 +337,47 @@ const ContestGallery = ({
         </DialogContent>
       </Dialog>
 
-      {/* Enhanced Photo detail dialog - Works for ALL photos including vertical ones */}
+      {/* Enhanced Photo detail dialog with navigation - Works for ALL photos including vertical ones */}
       <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
         <DialogContent className="sm:max-w-7xl max-h-[95vh] overflow-hidden p-0">
           {selectedPhoto && (
             <div className="flex h-[90vh] max-h-[90vh]">
-              {/* Left side - Photo with enhanced display for both vertical and horizontal photos */}
+              {/* Left side - Photo with enhanced display and navigation */}
               <div className="flex-1 bg-black flex items-center justify-center relative min-w-0">
                 <DialogClose className="absolute top-4 right-4 z-20 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors">
                   <X className="h-4 w-4" />
                   <span className="sr-only">Cerrar</span>
                 </DialogClose>
+                
+                {/* Navigation buttons */}
+                {allPhotos.length > 1 && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
+                      onClick={navigateToPrevPhoto}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      <span className="sr-only">Foto anterior</span>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
+                      onClick={navigateToNextPhoto}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                      <span className="sr-only">Siguiente foto</span>
+                    </Button>
+                  </>
+                )}
+                
+                {/* Photo counter */}
+                <div className="absolute top-4 left-4 z-20 bg-black/60 rounded-full px-3 py-1 text-white text-sm">
+                  {currentPhotoIndex + 1} / {allPhotos.length}
+                </div>
                 
                 <img 
                   src={selectedPhoto.imageUrl} 
