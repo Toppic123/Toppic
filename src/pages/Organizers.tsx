@@ -68,15 +68,6 @@ const Organizers = () => {
       className="pt-24 pb-16"
     >
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            ORGANIZADORES
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Únete a nuestra plataforma como organizador profesional y crea experiencias fotográficas únicas
-          </p>
-        </div>
-
         {/* Features Section */}
         <FeaturesSection />
 
