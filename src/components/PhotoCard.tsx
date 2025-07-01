@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, Flag, ThumbsUp, ThumbsDown, Share2 } from "lucide-react";
@@ -143,6 +142,7 @@ const PhotoCard = ({
           onClick={handleTapOrClick}
         />
         
+        
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
           {direction === 1 && (
             <div className="bg-green-500/80 text-white rounded-full p-4">
@@ -209,7 +209,7 @@ const PhotoCard = ({
             src={imageUrl}
             alt={`Photo by ${photographer}`}
             className={cn(
-              "contest-card-image",
+              "w-full h-full object-cover transition-opacity duration-700",
               imageLoaded ? "opacity-100" : "opacity-0"
             )}
             onLoad={() => setImageLoaded(true)}
