@@ -23,12 +23,13 @@ const NearbyContestsSection = () => {
       </div>
 
       <div className="container mx-auto px-4 text-center relative z-10">
-        {/* Modern Title - unified style */}
+        {/* Modern Title - unified style without DESTACADO badge */}
         <ModernSectionTitle 
           title="Concursos cerca de ti"
           subtitle="Descubre concursos de fotografía en tu área y participa desde tu ubicación actual"
           icon={MapPin}
           gradient="from-blue-600 via-purple-600 to-pink-600"
+          showSparkles={false}
         />
 
         <motion.div

@@ -55,6 +55,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
             subtitle="Cargando concursos destacados..."
             icon={Trophy}
             gradient="from-amber-500 via-orange-500 to-red-500"
+            showSparkles={false}
           />
         </div>
       </section>
@@ -86,12 +87,13 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        {/* Modern Title - unified style */}
+        {/* Modern Title - unified style without DESTACADO badge */}
         <ModernSectionTitle 
           title="Concursos Populares"
           subtitle="Descubre los concursos más populares y emocionantes de nuestra comunidad"
           icon={Trophy}
           gradient="from-amber-500 via-orange-500 to-red-500"
+          showSparkles={false}
         />
         
         {displayContests.length > 0 ? (

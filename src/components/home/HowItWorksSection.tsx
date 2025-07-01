@@ -52,12 +52,13 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        {/* Modern Title - unified style */}
+        {/* Modern Title - unified style without DESTACADO badge */}
         <ModernSectionTitle 
           title={texts.howItWorks}
           subtitle="Proceso simple y efectivo en 3 pasos para participar en concursos de fotografía"
           icon={Zap}
           gradient="from-green-600 via-teal-600 to-blue-600"
+          showSparkles={false}
         />
         
         {/* Steps - unified spacing */}
