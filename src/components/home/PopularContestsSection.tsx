@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Trophy, Star } from "lucide-react";
+import { ArrowRight, Trophy } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
@@ -62,7 +62,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
     );
   }
 
-  // Convert featured contests to the format expected by ContestCard - without participants count
+  // Convert featured contests to the format expected by ContestCard - REMOVED participants count completely
   const displayContests = featuredContests
     .filter(featured => featured.contests && featured.is_active)
     .slice(0, 3)
@@ -73,7 +73,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
       location: featured.contests!.location || "Sin ubicación",
       dateStart: new Date().toISOString().split('T')[0],
       dateEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      participantsCount: 0, // Not shown anymore
+      // REMOVED: participantsCount completely - no longer passed to ContestCard
       photosCount: 0,
     }));
 
@@ -114,7 +114,6 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
                     location={contest.location}
                     dateStart={contest.dateStart}
                     dateEnd={contest.dateEnd}
-                    participantsCount={contest.participantsCount}
                     photosCount={contest.photosCount}
                   />
                 </motion.div>

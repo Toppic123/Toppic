@@ -15,8 +15,8 @@ const ContestDetail = () => {
   const { contests, isLoading } = useContestsData();
   const { user } = useAuth();
   
-  // Fetch real photos from the database
-  const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(id);
+  // Fetch real photos from the database and use voting functionality
+  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(id);
 
   if (isLoading) {
     return (
@@ -42,6 +42,14 @@ const ContestDetail = () => {
     }
     // Navigate to upload page with contest context
     navigate("/upload", { state: { contestId: id, contestTitle: contest.title } });
+  };
+
+  const handleVotePhoto = async (photoId: string, isUpvote: boolean) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    await votePhoto(photoId);
   };
 
   return (
@@ -87,7 +95,7 @@ const ContestDetail = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {/* Contest Stats */}
+            {/* Contest Stats - Using REAL photos count */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <h2 className="text-xl font-semibold mb-4">Información del concurso</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -119,7 +127,7 @@ const ContestDetail = () => {
               )}
             </div>
 
-            {/* Photo Gallery */}
+            {/* Photo Gallery - Using REAL photos from database */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold">Fotos del concurso</h2>
@@ -144,6 +152,7 @@ const ContestDetail = () => {
                         photographer={photo.photographer_name}
                         photographerAvatar={photo.photographer_avatar}
                         mode="grid"
+                        onVote={handleVotePhoto}
                       />
                       
                       {/* Photo info section */}
@@ -154,6 +163,9 @@ const ContestDetail = () => {
                             {photo.description && (
                               <p className="text-xs text-gray-600 mt-1 line-clamp-2">{photo.description}</p>
                             )}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {photo.votes} votos
                           </div>
                         </div>
                         
@@ -166,7 +178,7 @@ const ContestDetail = () => {
                               className="w-full text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                               onClick={() => navigate("/login")}
                             >
-                              Inicia sesión para participar
+                              Inicia sesión para votar
                             </Button>
                           </div>
                         )}

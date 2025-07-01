@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X, User, Flag, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X, User, Flag, ChevronLeft, ChevronRight, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import PhotoCard from "@/components/PhotoCard";
@@ -39,6 +39,7 @@ interface ContestGalleryProps {
   availableUntil: string;
   photos: Photo[];
   winners?: Photo[];
+  onVotePhoto?: (photoId: string, isUpvote: boolean) => void;
 }
 
 const ContestGallery = ({
@@ -51,6 +52,7 @@ const ContestGallery = ({
   availableUntil,
   photos,
   winners = [],
+  onVotePhoto,
 }: ContestGalleryProps) => {
   const { toast } = useToast();
   const [showShareDialog, setShowShareDialog] = useState(false);
@@ -96,9 +98,11 @@ const ContestGallery = ({
     setSelectedPhoto(photo);
   };
 
-  // Navigation functions
+  // Navigation functions - FIXED
   const navigateToNextPhoto = () => {
     const allPhotos = [...winners, ...photos];
+    if (allPhotos.length === 0) return;
+    
     const nextIndex = (currentPhotoIndex + 1) % allPhotos.length;
     setCurrentPhotoIndex(nextIndex);
     setSelectedPhoto(allPhotos[nextIndex]);
@@ -106,12 +110,14 @@ const ContestGallery = ({
 
   const navigateToPrevPhoto = () => {
     const allPhotos = [...winners, ...photos];
+    if (allPhotos.length === 0) return;
+    
     const prevIndex = currentPhotoIndex === 0 ? allPhotos.length - 1 : currentPhotoIndex - 1;
     setCurrentPhotoIndex(prevIndex);
     setSelectedPhoto(allPhotos[prevIndex]);
   };
 
-  // Keyboard navigation
+  // Keyboard navigation - FIXED
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!selectedPhoto) return;
@@ -123,15 +129,25 @@ const ContestGallery = ({
         event.preventDefault();
         navigateToPrevPhoto();
       } else if (event.key === 'Escape') {
+        event.preventDefault();
         setSelectedPhoto(null);
       }
     };
 
-    if (selectedPhoto) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPhoto, currentPhotoIndex, winners.length, photos.length]);
+
+  // Photo voting handler
+  const handleVotePhoto = (photoId: string, isUpvote: boolean) => {
+    if (onVotePhoto) {
+      onVotePhoto(photoId, isUpvote);
+      toast({
+        title: isUpvote ? "Voto positivo" : "Voto negativo",
+        description: `Tu ${isUpvote ? 'voto positivo' : 'voto negativo'} ha sido registrado`,
+      });
     }
-  }, [selectedPhoto, currentPhotoIndex]);
+  };
   
   const galleryLink = `${window.location.origin}/contests/${contestId}/gallery`;
   const allPhotos = [...winners, ...photos];
@@ -240,7 +256,7 @@ const ContestGallery = ({
         </div>
       )}
       
-      {/* Gallery grid - Enhanced to show photographer info on all photos */}
+      {/* Gallery grid with voting */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-8">Todas las fotografías</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -259,6 +275,30 @@ const ContestGallery = ({
                   alt={`Foto de ${photo.photographer}`}
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
+                
+                {/* Voting buttons - appear on hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                  <Button
+                    size="sm"
+                    className="bg-green-500 hover:bg-green-600 text-white rounded-full p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVotePhoto(photo.id, true);
+                    }}
+                  >
+                    <ThumbsUp className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-red-500 hover:bg-red-600 text-white rounded-full p-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVotePhoto(photo.id, false);
+                    }}
+                  >
+                    <ThumbsDown className="h-4 w-4" />
+                  </Button>
+                </div>
                 
                 {/* Overlay with photographer info - visible on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -283,6 +323,7 @@ const ContestGallery = ({
         </div>
       </div>
       
+      {/* ... keep existing code (share dialog and info dialog) */}
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -337,26 +378,29 @@ const ContestGallery = ({
         </DialogContent>
       </Dialog>
 
-      {/* Enhanced Photo detail dialog with navigation - Works for ALL photos including vertical ones */}
+      {/* FIXED Photo detail dialog with enhanced navigation and voting */}
       <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
         <DialogContent className="sm:max-w-7xl max-h-[95vh] overflow-hidden p-0">
           {selectedPhoto && (
             <div className="flex h-[90vh] max-h-[90vh]">
-              {/* Left side - Photo with enhanced display and navigation */}
+              {/* Left side - Photo with enhanced navigation */}
               <div className="flex-1 bg-black flex items-center justify-center relative min-w-0">
                 <DialogClose className="absolute top-4 right-4 z-20 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors">
                   <X className="h-4 w-4" />
                   <span className="sr-only">Cerrar</span>
                 </DialogClose>
                 
-                {/* Navigation buttons */}
+                {/* Navigation buttons - FIXED */}
                 {allPhotos.length > 1 && (
                   <>
                     <Button
                       variant="outline"
                       size="icon"
                       className="absolute left-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
-                      onClick={navigateToPrevPhoto}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateToPrevPhoto();
+                      }}
                     >
                       <ChevronLeft className="h-4 w-4" />
                       <span className="sr-only">Foto anterior</span>
@@ -366,7 +410,10 @@ const ContestGallery = ({
                       variant="outline"
                       size="icon"
                       className="absolute right-4 top-1/2 -translate-y-1/2 z-20 rounded-full bg-black/60 border-white/20 text-white hover:bg-black/80"
-                      onClick={navigateToNextPhoto}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateToNextPhoto();
+                      }}
                     >
                       <ChevronRight className="h-4 w-4" />
                       <span className="sr-only">Siguiente foto</span>
@@ -379,14 +426,38 @@ const ContestGallery = ({
                   {currentPhotoIndex + 1} / {allPhotos.length}
                 </div>
                 
+                {/* Voting buttons in photo view */}
+                <div className="absolute bottom-4 left-4 z-20 flex gap-3">
+                  <Button
+                    size="sm"
+                    className="bg-green-500 hover:bg-green-600 text-white rounded-full p-3"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVotePhoto(selectedPhoto.id, true);
+                    }}
+                  >
+                    <ThumbsUp className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-red-500 hover:bg-red-600 text-white rounded-full p-3"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleVotePhoto(selectedPhoto.id, false);
+                    }}
+                  >
+                    <ThumbsDown className="h-5 w-5" />
+                  </Button>
+                </div>
+                
                 <img 
                   src={selectedPhoto.imageUrl} 
                   alt={`Foto de ${selectedPhoto.photographer}`} 
                   className="max-h-full max-w-full object-contain"
                 />
                 
-                {/* Mobile-friendly photographer info overlay for the photo */}
-                <div className="absolute bottom-4 left-4 right-4 md:hidden">
+                {/* Mobile-friendly photographer info overlay */}
+                <div className="absolute bottom-4 right-4 md:hidden">
                   <div className="bg-black/80 rounded-lg p-3 text-white">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
@@ -404,7 +475,7 @@ const ContestGallery = ({
               
               {/* Right side - Enhanced Information and Comments panel */}
               <div className="w-80 lg:w-96 bg-white flex flex-col border-l shrink-0">
-                {/* Photo Info Header - Enhanced */}
+                {/* Photo Info Header with voting stats */}
                 <div className="p-4 border-b bg-gray-50">
                   <div className="flex items-center gap-3 mb-4">
                     <Avatar className="h-12 w-12">
@@ -422,7 +493,32 @@ const ContestGallery = ({
                     </div>
                   </div>
                   
-                  {/* Enhanced Action buttons section */}
+                  {/* Voting section */}
+                  <div className="space-y-3 mb-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Votar esta foto:</span>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        size="sm"
+                        className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                        onClick={() => handleVotePhoto(selectedPhoto.id, true)}
+                      >
+                        <ThumbsUp className="h-4 w-4 mr-1" />
+                        Me gusta
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                        onClick={() => handleVotePhoto(selectedPhoto.id, false)}
+                      >
+                        <ThumbsDown className="h-4 w-4 mr-1" />
+                        No me gusta
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Share section */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-700">Compartir foto:</span>
@@ -447,7 +543,7 @@ const ContestGallery = ({
                   </div>
                 </div>
                 
-                {/* Comments Section - Enhanced and always visible */}
+                {/* Comments Section */}
                 <div className="flex-1 overflow-hidden">
                   <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />
                 </div>
