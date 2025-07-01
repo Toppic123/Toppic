@@ -88,25 +88,27 @@ export const useContestForm = (onSuccess?: () => void) => {
     try {
       console.log('Original form submission data:', formSubmissionData);
       
-      // Asegurar que image_url se mapee correctamente
+      // Ensure all form fields are correctly mapped to database fields
       const contestData = {
         title: formSubmissionData.title,
         organizer: formSubmissionData.organizer,
         location: formSubmissionData.location,
         description: formSubmissionData.description,
-        image_url: formSubmissionData.image_url || "", // Asegurar que se incluya la URL de la imagen
-        prize: formSubmissionData.prize,
+        image_url: formSubmissionData.image_url || "",
+        prize: formSubmissionData.prize || "",
         start_date: formSubmissionData.startDate instanceof Date ? formSubmissionData.startDate.toISOString() : formSubmissionData.startDate,
         end_date: formSubmissionData.endDate instanceof Date ? formSubmissionData.endDate.toISOString() : formSubmissionData.endDate,
         photo_deadline: formSubmissionData.photoDeadline instanceof Date ? formSubmissionData.photoDeadline.toISOString() : formSubmissionData.photoDeadline,
         status: formSubmissionData.status,
-        is_private: formSubmissionData.is_private || false,
-        contest_password: formSubmissionData.contest_password || null,
-        minimum_distance_km: formSubmissionData.minimum_distance_km || 0,
-        plan: formSubmissionData.plan || "basic",
+        is_private: formSubmissionData.isPrivate || false,
+        contest_password: formSubmissionData.contestPassword || null,
+        minimum_distance_km: formSubmissionData.minimumDistanceKm || 0,
+        plan: formSubmissionData.plan || "basic", // Ensure plan is properly mapped
+        photo_ownership: formSubmissionData.photoOwnership !== undefined ? formSubmissionData.photoOwnership : true,
+        commercial_use: formSubmissionData.commercialUse !== undefined ? formSubmissionData.commercialUse : true,
       };
 
-      console.log('Mapped contest data for database (with image_url):', contestData);
+      console.log('Mapped contest data for database (including plan):', contestData);
 
       if (formData.id) {
         // Update existing contest

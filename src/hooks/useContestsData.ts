@@ -23,6 +23,7 @@ export interface Contest {
   minimum_distance_km?: number;
   prize?: string;
   created_at?: string;
+  plan?: 'basic' | 'professional' | 'premium'; // Add plan field to interface
 }
 
 // Comprehensive location coordinates mapping
@@ -165,6 +166,7 @@ export const useContestsData = () => {
           console.log(`   - image_url (DB field): "${contest.image_url || 'NO IMAGE_URL'}"`);
           console.log(`   - Location: "${contest.location || 'NO LOCATION'}"`);
           console.log(`   - Status: "${contest.status || 'NO STATUS'}"`);
+          console.log(`   - Plan: "${contest.plan || 'NO PLAN'}"`); // Add plan logging
           console.log(`   - Created: ${contest.created_at}`);
           console.log('   ---');
         });
@@ -209,7 +211,8 @@ export const useContestsData = () => {
             is_private: contest.is_private,
             contest_password: contest.contest_password,
             minimum_distance_km: contest.minimum_distance_km,
-            prize: contest.prize
+            prize: contest.prize,
+            plan: contest.plan || 'basic' // Include plan in transformed contest
           };
 
           console.log(`   ✅ Transformed contest:`, {
@@ -217,7 +220,8 @@ export const useContestsData = () => {
             title: transformedContest.title,
             imageUrl: transformedContest.imageUrl,
             hasImage: !!transformedContest.imageUrl,
-            isActive: transformedContest.isActive
+            isActive: transformedContest.isActive,
+            plan: transformedContest.plan // Log plan in transformation
           });
 
           return transformedContest;
