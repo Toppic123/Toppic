@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Camera, TrendingUp, Album, Sparkles, Users, Heart } from "lucide-react";
 
@@ -175,16 +174,68 @@ const FeaturesSection = () => {
         ))}
       </div>
 
-      {/* Introduction text before pricing plans */}
+      {/* Enhanced Introduction text before pricing plans */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2 }}
-        className="text-center mt-20 mb-16"
+        className="text-center mt-20 mb-16 relative"
       >
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          Únete a nuestra plataforma como organizador profesional y crea experiencias fotográficas únicas
-        </p>
+        {/* Background decoration */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-1/3 w-96 h-96 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"></div>
+        </div>
+
+        {/* Decorative badge */}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 1.4, duration: 0.6 }}
+          className="mb-8"
+        >
+          <span className="inline-block px-8 py-4 bg-gradient-to-r from-primary/20 to-blue-500/20 text-primary font-bold rounded-full text-lg border border-primary/30 backdrop-blur-sm">
+            🚀 ¡Comienza Ahora!
+          </span>
+        </motion.div>
+
+        {/* Main call-to-action text */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.5 }}
+          className="relative"
+        >
+          <h3 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+            <span className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Únete a nuestra plataforma
+            </span>
+            <br />
+            <span className="text-gray-900">como organizador profesional</span>
+            <br />
+            <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
+              y crea experiencias fotográficas únicas
+            </span>
+          </h3>
+
+          {/* Decorative elements */}
+          <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary/20 rounded-full animate-pulse"></div>
+          <div className="absolute -bottom-2 -left-4 w-6 h-6 bg-blue-500/30 rounded-full animate-bounce"></div>
+          <div className="absolute top-1/2 -right-8 w-4 h-4 bg-purple-500/40 rounded-full animate-ping"></div>
+        </motion.div>
+
+        {/* Sparkle effects */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.7 }}
+          className="absolute inset-0 pointer-events-none"
+        >
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
+          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-blue-500/60 rounded-full animate-ping"></div>
+          <div className="absolute top-1/2 left-1/6 w-1.5 h-1.5 bg-purple-500/60 rounded-full animate-bounce"></div>
+          <div className="absolute bottom-1/4 right-1/6 w-1 h-1 bg-pink-500/60 rounded-full animate-pulse"></div>
+        </motion.div>
       </motion.div>
 
       {/* Pricing Plans header section */}
