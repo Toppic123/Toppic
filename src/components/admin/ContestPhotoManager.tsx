@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Image, Plus, Trash2, Edit, RefreshCw } from "lucide-react";
+import { Upload, Image, Plus, Trash2, Edit, RefreshCw, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import PhotoEditDialog from "@/components/admin/dashboard/photos/PhotoEditDialog";
 import { ContestPhoto } from "@/hooks/useContestPhotos";
@@ -69,7 +68,8 @@ const ContestPhotoManager = () => {
 
     setIsUploading(true);
     try {
-      const result = await uploadPhoto(uploadFile, photographerName, photoDescription, true);
+      // Admin uploads don't have user_id constraint, so we pass undefined
+      const result = await uploadPhoto(uploadFile, photographerName, photoDescription, true, undefined);
       if (result) {
         toast({
           title: "Éxito",
@@ -185,6 +185,14 @@ const ContestPhotoManager = () => {
     }
   };
 
+  // Count photos per user in the selected contest
+  const photosPerUser = photos.reduce((acc, photo) => {
+    if (photo.user_id) {
+      acc[photo.user_id] = (acc[photo.user_id] || 0) + 1;
+    }
+    return acc;
+  }, {} as Record<string, number>);
+
   const selectedContest = contests.find(c => c.id === selectedContestId);
 
   return (
@@ -196,7 +204,7 @@ const ContestPhotoManager = () => {
             Gestor de Fotos de Concursos
           </CardTitle>
           <CardDescription>
-            Añade, edita y elimina fotos de los concursos.
+            Añade, edita y elimina fotos de los concursos. Nota: Se permite máximo una foto por usuario por concurso.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -237,6 +245,23 @@ const ContestPhotoManager = () => {
 
       {selectedContestId && (
         <>
+          {/* One Photo Per User Notice */}
+          <Card className="border-blue-200 bg-blue-50">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-medium text-blue-800 mb-1">
+                    Límite de una foto por usuario
+                  </h3>
+                  <p className="text-sm text-blue-700">
+                    El sistema permite que cada usuario suba máximo una foto por concurso. Como administrador, puedes subir fotos sin esta restricción.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -244,7 +269,7 @@ const ContestPhotoManager = () => {
                 Añadir Nueva Foto
               </CardTitle>
               <CardDescription>
-                Sube una nueva foto al concurso seleccionado
+                Sube una nueva foto al concurso seleccionado (sin restricción de usuario)
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -314,6 +339,11 @@ const ContestPhotoManager = () => {
                   <CardTitle>Fotos del Concurso</CardTitle>
                   <CardDescription>
                     {photosLoading ? 'Cargando fotos...' : `${photos.length} foto(s) en este concurso`}
+                    {Object.keys(photosPerUser).length > 0 && (
+                      <span className="block mt-1 text-xs text-muted-foreground">
+                        {Object.keys(photosPerUser).length} usuario(s) han participado
+                      </span>
+                    )}
                   </CardDescription>
                 </div>
                 <Button 
@@ -367,6 +397,11 @@ const ContestPhotoManager = () => {
                             {photo.votes} votos
                           </div>
                         </div>
+                        {photo.user_id && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Usuario: {photo.user_id.substring(0, 8)}...
+                          </div>
+                        )}
                         <div className="flex gap-2 mt-3">
                           <Button
                             size="sm"

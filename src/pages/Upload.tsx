@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload as UploadIcon, MapPin, Info } from "lucide-react";
+import { Camera, Upload as UploadIcon, MapPin, Info, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Select,
@@ -17,6 +18,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import ConsentForms from "@/components/ConsentForms";
 import { useContestsData } from "@/hooks/useContestsData";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ConsentData {
@@ -40,10 +42,24 @@ const Upload = () => {
   const [consents, setConsents] = useState<ConsentData | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [userHasPhotoInContest, setUserHasPhotoInContest] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { contests: allContests } = useContestsData();
+  const { checkUserHasPhoto } = useContestPhotos(selectedContest);
+  
+  // Check if user already has a photo in the selected contest
+  useEffect(() => {
+    const checkUserPhoto = async () => {
+      if (selectedContest && user) {
+        const hasPhoto = await checkUserHasPhoto(selectedContest, user.id);
+        setUserHasPhotoInContest(hasPhoto);
+      }
+    };
+    
+    checkUserPhoto();
+  }, [selectedContest, user, checkUserHasPhoto]);
   
   // Get user location
   useEffect(() => {
@@ -261,7 +277,7 @@ const Upload = () => {
   };
 
   const savePhotoToDatabase = async (imageUrl: string, contestId: string, title: string, description: string) => {
-    console.log('Saving photo to database:', { imageUrl, contestId, title, description });
+    console.log('Saving photo to database:', { imageUrl, contestId, title, description, userId: user?.id });
 
     const { data, error } = await supabase
       .from('contest_photos')
@@ -272,13 +288,20 @@ const Upload = () => {
         description: description || title,
         votes: 0,
         is_featured: false,
-        status: 'approved' // Auto-approve for now
+        status: 'approved',
+        user_id: user?.id || null
       })
       .select()
       .single();
 
     if (error) {
       console.error('Database insert error:', error);
+      
+      // Handle unique constraint violation
+      if (error.code === '23505') {
+        throw new Error('Solo puedes subir una foto por concurso. Ya tienes una foto en este concurso.');
+      }
+      
       throw error;
     }
 
@@ -324,6 +347,15 @@ const Upload = () => {
       });
       return;
     }
+
+    if (userHasPhotoInContest) {
+      toast({
+        title: "Límite alcanzado",
+        description: "Solo puedes subir una foto por concurso. Ya tienes una foto en este concurso.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsUploading(true);
     
@@ -363,7 +395,7 @@ const Upload = () => {
     return contest?.type || "landscape";
   };
 
-  const canProceedToConsent = previewUrl && selectedContest;
+  const canProceedToConsent = previewUrl && selectedContest && !userHasPhotoInContest;
   const canProceedToDetails = consents !== null;
 
   return (
@@ -406,6 +438,25 @@ const Upload = () => {
         </div>
       </div>
 
+      {/* One Photo Per Contest Notice */}
+      {userHasPhotoInContest && (
+        <Card className="mb-6 border-orange-200 bg-orange-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-orange-800 mb-1">
+                  Ya tienes una foto en este concurso
+                </h3>
+                <p className="text-sm text-orange-700">
+                  Solo se permite una foto por participante en cada concurso. Ya has subido una foto a este concurso.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Step 1: Upload & Contest Selection */}
       {currentStep === "upload" && (
         <Card>
@@ -423,9 +474,10 @@ const Upload = () => {
                 {/* Location note */}
                 <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg mb-4">
                   <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-blue-800">
-                    Los concursos mostrados están filtrados según tu ubicación actual. Solo puedes participar en concursos cercanos a ti.
-                  </p>
+                  <div className="text-sm text-blue-800">
+                    <p className="mb-2">Los concursos mostrados están filtrados según tu ubicación actual. Solo puedes participar en concursos cercanos a ti.</p>
+                    <p className="font-medium">⚠️ Límite: Solo puedes subir una foto por concurso.</p>
+                  </div>
                 </div>
                 
                 {nearbyContests.length > 0 ? (
@@ -579,7 +631,7 @@ const Upload = () => {
               type="submit" 
               className="w-full" 
               onClick={handleSubmit}
-              disabled={isUploading || !title.trim()}
+              disabled={isUploading || !title.trim() || userHasPhotoInContest}
             >
               <UploadIcon className="mr-2 h-4 w-4" />
               {isUploading ? "Subiendo..." : "Subir foto"}

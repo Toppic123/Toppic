@@ -60,11 +60,35 @@ export const useContestPhotos = (contestId?: string) => {
     }
   };
 
+  const checkUserHasPhoto = async (contestId: string, userId?: string) => {
+    if (!userId) return false;
+    
+    try {
+      const { data, error } = await supabase
+        .from('contest_photos')
+        .select('id')
+        .eq('contest_id', contestId)
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+        console.error('Error checking user photo:', error);
+        return false;
+      }
+
+      return !!data;
+    } catch (error) {
+      console.error('Error checking user photo:', error);
+      return false;
+    }
+  };
+
   const uploadPhoto = async (
     file: File, 
     photographerName: string, 
     description?: string, 
-    autoApprove: boolean = false
+    autoApprove: boolean = false,
+    userId?: string
   ) => {
     if (!contestId) return null;
 
@@ -74,9 +98,23 @@ export const useContestPhotos = (contestId?: string) => {
         photographerName, 
         description, 
         autoApprove,
+        userId,
         fileSize: file.size,
         fileType: file.type
       });
+
+      // Check if user already has a photo in this contest
+      if (userId) {
+        const hasPhoto = await checkUserHasPhoto(contestId, userId);
+        if (hasPhoto) {
+          toast({
+            title: "Límite alcanzado",
+            description: "Solo puedes subir una foto por concurso. Ya tienes una foto en este concurso.",
+            variant: "destructive",
+          });
+          return null;
+        }
+      }
 
       // Upload image to Supabase Storage
       const fileExt = file.name.split('.').pop();
@@ -104,7 +142,7 @@ export const useContestPhotos = (contestId?: string) => {
 
       console.log('Public URL generated:', publicUrl);
 
-      // Insert photo record
+      // Insert photo record with user_id
       const { data, error } = await supabase
         .from('contest_photos')
         .insert({
@@ -114,13 +152,25 @@ export const useContestPhotos = (contestId?: string) => {
           description: description,
           votes: 0,
           is_featured: false,
-          status: autoApprove ? 'approved' : 'approved' // Auto-approve all photos for now
+          status: autoApprove ? 'approved' : 'approved',
+          user_id: userId || null
         })
         .select()
         .single();
 
       if (error) {
         console.error('Database insert error:', error);
+        
+        // Handle unique constraint violation
+        if (error.code === '23505') {
+          toast({
+            title: "Límite alcanzado",
+            description: "Solo puedes subir una foto por concurso. Ya tienes una foto en este concurso.",
+            variant: "destructive",
+          });
+          return null;
+        }
+        
         throw error;
       }
 
@@ -185,6 +235,7 @@ export const useContestPhotos = (contestId?: string) => {
     isLoading,
     uploadPhoto,
     votePhoto,
-    fetchContestPhotos
+    fetchContestPhotos,
+    checkUserHasPhoto
   };
 };

@@ -53,6 +53,7 @@ export type Database = {
           photographer_avatar: string | null
           photographer_name: string
           status: string
+          user_id: string | null
           votes: number
         }
         Insert: {
@@ -66,6 +67,7 @@ export type Database = {
           photographer_avatar?: string | null
           photographer_name: string
           status?: string
+          user_id?: string | null
           votes?: number
         }
         Update: {
@@ -79,6 +81,7 @@ export type Database = {
           photographer_avatar?: string | null
           photographer_name?: string
           status?: string
+          user_id?: string | null
           votes?: number
         }
         Relationships: [
