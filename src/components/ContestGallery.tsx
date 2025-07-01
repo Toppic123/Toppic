@@ -1,13 +1,16 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X } from "lucide-react";
+import { Calendar, Camera, Download, ExternalLink, Info, Mail, MapPin, Share2, Trophy, Clock, X, User, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import PhotoCard from "@/components/PhotoCard";
 import SocialShareButtons from "@/components/SocialShareButtons";
+import ReportPhotoDialog from "@/components/ReportPhotoDialog";
+import PhotoComments from "@/components/PhotoComments";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -275,39 +278,76 @@ const ContestGallery = ({
         </DialogContent>
       </Dialog>
 
-      {/* Photo detail dialog */}
+      {/* Photo detail dialog with complete information */}
       <Dialog open={!!selectedPhoto} onOpenChange={(open) => !open && setSelectedPhoto(null)}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden p-0">
-          <div className="relative w-full h-full bg-black flex items-center justify-center">
-            <DialogClose className="absolute top-2 right-2 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80">
-              <X className="h-4 w-4" />
-              <span className="sr-only">Cerrar</span>
-            </DialogClose>
+        <DialogContent className="sm:max-w-5xl max-h-[95vh] overflow-hidden p-0">
+          <div className="flex h-[90vh]">
+            {/* Left side - Photo */}
+            <div className="flex-1 bg-black flex items-center justify-center relative">
+              <DialogClose className="absolute top-4 right-4 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Cerrar</span>
+              </DialogClose>
+              
+              {selectedPhoto && (
+                <img 
+                  src={selectedPhoto.imageUrl} 
+                  alt={`Foto de ${selectedPhoto.photographer}`} 
+                  className="max-h-full max-w-full object-contain"
+                />
+              )}
+            </div>
             
-            {selectedPhoto && (
-              <div className="h-full max-h-[80vh] w-full flex flex-col">
-                <div className="flex-1 overflow-hidden flex items-center justify-center">
-                  <img 
-                    src={selectedPhoto.imageUrl} 
-                    alt={`Foto de ${selectedPhoto.photographer}`} 
-                    className="max-h-full max-w-full object-contain"
-                  />
-                </div>
-                
-                <div className="bg-white w-full p-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{selectedPhoto.photographer}</p>
-                      <p className="text-sm text-muted-foreground">{selectedPhoto.votes} votos</p>
+            {/* Right side - Information and Comments */}
+            <div className="w-80 bg-white flex flex-col border-l">
+              {selectedPhoto && (
+                <>
+                  {/* Photo Info Header */}
+                  <div className="p-4 border-b">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={selectedPhoto.photographerAvatar} alt={selectedPhoto.photographer} />
+                          <AvatarFallback><User className="h-5 w-5" /></AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <ClickableUserProfile 
+                            photographer={selectedPhoto.photographer}
+                            photographerAvatar={selectedPhoto.photographerAvatar}
+                            size="sm"
+                            showAvatar={false}
+                          />
+                          <p className="text-xs text-muted-foreground">{selectedPhoto.votes} votos</p>
+                        </div>
+                      </div>
                     </div>
                     
-                    <Button variant="outline" size="sm" onClick={() => setSelectedPhoto(null)}>
-                      Cerrar
-                    </Button>
+                    {/* Action buttons */}
+                    <div className="flex items-center justify-between">
+                      <SocialShareButtons 
+                        url={`${window.location.origin}/contests/${contestId}/photos/${selectedPhoto.id}`}
+                        title={`Foto de ${selectedPhoto.photographer}`}
+                        imageUrl={selectedPhoto.imageUrl}
+                      />
+                      
+                      <ReportPhotoDialog 
+                        photoId={selectedPhoto.id}
+                        trigger={
+                          <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-50 p-2">
+                            <Flag className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                  
+                  {/* Comments Section */}
+                  <div className="flex-1 overflow-hidden">
+                    <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Camera, Trophy, User, Heart, Filter, Share2, X, Instagram } from "lucide-react";
+import { Camera, Trophy, User, Heart, Filter, Share2, X, Instagram, Flag } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,9 @@ import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogClose } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import PhotoComments from "@/components/PhotoComments";
+import SocialShareButtons from "@/components/SocialShareButtons";
+import ReportPhotoDialog from "@/components/ReportPhotoDialog";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 
 const winningPhotos = [
   {
@@ -121,7 +124,6 @@ const GalleryPage = () => {
   
   const handleSharePhoto = (photo: any, platform: 'native' | 'instagram' = 'native') => {
     if (platform === 'instagram') {
-      // Open Instagram share intent
       const instagramUrl = `https://www.instagram.com/create/story?url=${encodeURIComponent(window.location.href)}`;
       window.open(instagramUrl, '_blank');
       return;
@@ -213,7 +215,6 @@ const GalleryPage = () => {
                   alt={photo.title} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   onError={(e) => {
-                    // Display fallback for broken images
                     (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
                   }}
                 />
@@ -260,49 +261,92 @@ const GalleryPage = () => {
         open={selectedPhoto !== null} 
         onOpenChange={(open) => !open && setSelectedPhoto(null)}
       >
-        <DialogContent className="sm:max-w-3xl h-[80vh] max-h-[800px] flex flex-col p-0 gap-0">
-          <DialogHeader className="px-4 py-2 border-b flex flex-row items-center justify-between">
-            <DialogTitle className="text-base">{selectedPhoto?.title}</DialogTitle>
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto, 'instagram')}
-                className="h-8 w-8 p-0"
-              >
-                <Instagram className="h-4 w-4" />
-                <span className="sr-only">Share on Instagram</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => selectedPhoto && handleSharePhoto(selectedPhoto)}
-                className="h-8 w-8 p-0"
-              >
-                <Share2 className="h-4 w-4" />
-                <span className="sr-only">Share</span>
-              </Button>
-              <DialogClose className="h-8 w-8 p-0">
+        <DialogContent className="sm:max-w-5xl max-h-[95vh] overflow-hidden p-0">
+          <div className="flex h-[90vh]">
+            {/* Left side - Photo */}
+            <div className="flex-1 bg-black flex items-center justify-center relative">
+              <DialogClose className="absolute top-4 right-4 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80">
                 <X className="h-4 w-4" />
-                <span className="sr-only">Close</span>
+                <span className="sr-only">Cerrar</span>
               </DialogClose>
-            </div>
-          </DialogHeader>
-          
-          <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full">
-            <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
-              <img 
-                src={selectedPhoto?.imageUrl} 
-                alt={selectedPhoto?.title}
-                className="max-w-full max-h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
-                }}
-              />
+              
+              {selectedPhoto && (
+                <img 
+                  src={selectedPhoto.imageUrl} 
+                  alt={selectedPhoto.title}
+                  className="max-w-full max-h-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3";
+                  }}
+                />
+              )}
             </div>
             
-            <div className="col-span-2 flex flex-col border-l">
-              {selectedPhoto && <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />}
+            {/* Right side - Information and Comments */}
+            <div className="w-80 bg-white flex flex-col border-l">
+              {selectedPhoto && (
+                <>
+                  {/* Photo Info Header */}
+                  <div className="p-4 border-b">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={selectedPhoto.photographerAvatar} alt={selectedPhoto.photographer} />
+                          <AvatarFallback><User className="h-5 w-5" /></AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <ClickableUserProfile 
+                            photographer={selectedPhoto.photographer}
+                            photographerAvatar={selectedPhoto.photographerAvatar}
+                            size="sm"
+                            showAvatar={false}
+                          />
+                          <p className="text-xs text-muted-foreground">{selectedPhoto.likes} me gusta</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-3">
+                      <h3 className="font-medium text-lg">{selectedPhoto.title}</h3>
+                      <p className="text-sm text-muted-foreground">{selectedPhoto.contestName}</p>
+                    </div>
+                    
+                    {/* Action buttons */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <SocialShareButtons 
+                          url={`${window.location.origin}/gallery/${selectedPhoto.id}`}
+                          title={`${selectedPhoto.title} - ${selectedPhoto.photographer}`}
+                          imageUrl={selectedPhoto.imageUrl}
+                        />
+                        
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSharePhoto(selectedPhoto, 'instagram')}
+                          className="p-2"
+                        >
+                          <Instagram className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      <ReportPhotoDialog 
+                        photoId={selectedPhoto.id}
+                        trigger={
+                          <Button variant="ghost" size="sm" className="text-red-500 hover:bg-red-50 p-2">
+                            <Flag className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Comments Section */}
+                  <div className="flex-1 overflow-hidden">
+                    <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </DialogContent>
