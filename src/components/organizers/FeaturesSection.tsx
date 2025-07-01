@@ -175,36 +175,17 @@ const FeaturesSection = () => {
         ))}
       </div>
 
-      {/* Call-to-action section */}
+      {/* Pricing Plans header section */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2 }}
-        className="text-center mt-20 relative"
+        className="text-center mt-20"
       >
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-primary/5 via-blue-500/5 to-purple-500/5 rounded-3xl blur-3xl"></div>
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 border border-gray-100 shadow-xl">
-          <h3 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            ¿Listo para revolucionar tus eventos?
-          </h3>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Únete a cientos de organizadores que ya están creando experiencias únicas con TOPPICS
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <div className="flex items-center gap-2 px-6 py-3 bg-green-50 rounded-full">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-green-700 font-semibold">+500 eventos exitosos</span>
-            </div>
-            <div className="flex items-center gap-2 px-6 py-3 bg-blue-50 rounded-full">
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-blue-700 font-semibold">+100 organizadores activos</span>
-            </div>
-            <div className="flex items-center gap-2 px-6 py-3 bg-purple-50 rounded-full">
-              <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
-              <span className="text-purple-700 font-semibold">98% satisfacción</span>
-            </div>
-          </div>
-        </div>
+        <h2 className="text-3xl font-bold mb-4">Nuestros Planes</h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          Elige el plan que mejor se adapte a tus necesidades.
+        </p>
       </motion.div>
     </>
   );

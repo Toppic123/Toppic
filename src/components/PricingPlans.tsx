@@ -65,14 +65,7 @@ const defaultPlans: PricingPlan[] = [
 
 const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest }: PricingPlansProps) => {
   return (
-    <div className="container mx-auto py-12">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-4">Nuestros Planes</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-          Elige el plan que mejor se adapte a tus necesidades.
-        </p>
-      </div>
-      
+    <div className="container mx-auto py-12">      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <Card 
