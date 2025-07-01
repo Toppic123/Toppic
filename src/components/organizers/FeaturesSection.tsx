@@ -175,12 +175,24 @@ const FeaturesSection = () => {
         ))}
       </div>
 
-      {/* Pricing Plans header section */}
+      {/* Introduction text before pricing plans */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.2 }}
-        className="text-center mt-20"
+        className="text-center mt-20 mb-16"
+      >
+        <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          Únete a nuestra plataforma como organizador profesional y crea experiencias fotográficas únicas
+        </p>
+      </motion.div>
+
+      {/* Pricing Plans header section */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.3 }}
+        className="text-center"
       >
         <h2 className="text-3xl font-bold mb-4">Nuestros Planes</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
