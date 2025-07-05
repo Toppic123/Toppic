@@ -10,7 +10,7 @@ import MobileLogin from "@/components/mobile/MobileLogin";
 import MobileRegister from "@/components/mobile/MobileRegister";
 import MobileGalleryHome from "@/components/mobile/MobileGalleryHome";
 
-type Screen = 'home' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | 'login' | 'register' | 'gallery' | 'settings';
+type Screen = 'home' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | 'login' | 'register' | 'gallery';
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
@@ -52,10 +52,6 @@ const MobilePrototype = () => {
         return <MobileRegister onNavigate={navigateToScreen} />;
       case 'gallery':
         return <MobileGalleryHome onNavigate={navigateToScreen} />;
-      case 'settings':
-        // For now, we'll render the profile component for settings
-        // You can create a dedicated MobileSettings component later
-        return <MobileProfile onNavigate={navigateToScreen} />;
       default:
         return <MobileHome onNavigate={navigateToScreen} />;
     }
