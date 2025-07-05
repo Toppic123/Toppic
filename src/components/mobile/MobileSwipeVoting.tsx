@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +25,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
   const { toast } = useToast();
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [votes, setVotes] = useState(0);
-  const [swipeDirection, setSwipeDirection] = useState<'top' | 'bottom' | 'right' | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | 'up' | null>(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [votedPhoto, setVotedPhoto] = useState<string | null>(null);
@@ -35,7 +36,6 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
   // Fetch real photos and contest data - use the first active contest if no contestId provided
   const { contests, isLoading: contestsLoading } = useContestsData();
   
-  // Get the contest ID to use - either provided or first active contest
   const activeContestId = contestId || contests.find(c => c.status === 'active')?.id;
   
   const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(activeContestId);
@@ -67,13 +67,12 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
   const photoPairs = createPhotoPairs();
   const currentPair = photoPairs[currentPairIndex];
 
-  const handleVote = useCallback(async (selectedPhoto: VotingPhoto, direction: 'top' | 'bottom' | 'right') => {
+  const handleVote = useCallback(async (selectedPhoto: VotingPhoto, direction: 'left' | 'right' | 'up') => {
     if (!activeContestId) return;
     
     setVotedPhoto(selectedPhoto.id);
     setSwipeDirection(direction);
     
-    // Vote on the selected photo using the real voting function
     try {
       await votePhoto(selectedPhoto.id);
     } catch (error) {
@@ -122,25 +121,25 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
     
     // Determine if it's a horizontal or vertical swipe
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Horizontal swipe (right swipe for voting)
+      // Horizontal swipe
+      const normalizedDistance = Math.min(Math.abs(deltaX), maxSwipe);
+      setSwipeDistance(normalizedDistance);
+      
       if (deltaX > 20) {
         setSwipeDirection('right');
-        setSwipeDistance(Math.min(Math.abs(deltaX), maxSwipe));
+      } else if (deltaX < -20) {
+        setSwipeDirection('left');
+      } else {
+        setSwipeDirection(null);
+      }
+    } else {
+      // Vertical swipe (up for voting)
+      if (deltaY < -20) {
+        setSwipeDirection('up');
+        setSwipeDistance(Math.min(Math.abs(deltaY), maxSwipe));
       } else {
         setSwipeDirection(null);
         setSwipeDistance(0);
-      }
-    } else {
-      // Vertical swipe (existing functionality)
-      const normalizedDistance = Math.min(Math.abs(deltaY), maxSwipe);
-      setSwipeDistance(normalizedDistance);
-      
-      if (deltaY > 20) {
-        setSwipeDirection('bottom');
-      } else if (deltaY < -20) {
-        setSwipeDirection('top');
-      } else {
-        setSwipeDirection(null);
       }
     }
   }, [isDragging]);
@@ -155,18 +154,16 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
     const threshold = 80;
     
     if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > threshold && currentPair) {
-      // Right swipe - vote for the currently focused photo (top photo by default)
       if (deltaX > 0) {
-        handleVote(currentPair[0], 'right');
-      }
-    } else if (Math.abs(deltaY) > threshold && currentPair) {
-      if (deltaY > 0) {
-        // Deslizó hacia abajo - vota por la foto inferior
-        handleVote(currentPair[1], 'bottom');
+        // Right swipe - vote for right photo
+        handleVote(currentPair[1], 'right');
       } else {
-        // Deslizó hacia arriba - vota por la foto superior
-        handleVote(currentPair[0], 'top');
+        // Left swipe - vote for left photo
+        handleVote(currentPair[0], 'left');
       }
+    } else if (Math.abs(deltaY) > threshold && deltaY < 0 && currentPair) {
+      // Up swipe - vote for the currently focused photo (left photo by default)
+      handleVote(currentPair[0], 'up');
     } else {
       // No se completó el deslizamiento, resetear
       setSwipeDirection(null);
@@ -176,7 +173,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
     setIsDragging(false);
   }, [isDragging, currentPair, handleVote]);
 
-  const handlePhotoClick = useCallback((photo: VotingPhoto, side: 'top' | 'bottom') => {
+  const handlePhotoClick = useCallback((photo: VotingPhoto, side: 'left' | 'right') => {
     if (!isDragging) {
       handleVote(photo, side);
     }
@@ -227,7 +224,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
     );
   }
 
-  const getSwipeIndicatorOpacity = (side: 'top' | 'bottom' | 'right') => {
+  const getSwipeIndicatorOpacity = (side: 'left' | 'right' | 'up') => {
     if (swipeDirection === side) {
       return Math.min(swipeDistance / 100, 1);
     }
@@ -266,11 +263,11 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
         </div>
       </div>
 
-      {/* Right Swipe Indicator - Overlay on entire container */}
+      {/* Up Swipe Indicator - Overlay on entire container */}
       <div 
         className="absolute inset-0 bg-green-500/40 z-15 flex items-center justify-center transition-opacity duration-200"
         style={{ 
-          opacity: swipeDirection === 'right' ? getSwipeIndicatorOpacity('right') : 0
+          opacity: swipeDirection === 'up' ? getSwipeIndicatorOpacity('up') : 0
         }}
       >
         <div className="bg-green-500 rounded-full p-8 animate-pulse">
@@ -278,21 +275,21 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
         </div>
       </div>
 
-      {/* Photos Container - Vertical Layout */}
+      {/* Photos Container - Horizontal Layout */}
       <div 
         ref={containerRef}
-        className="flex flex-col h-full pt-20 pb-32"
+        className="flex h-full pt-20 pb-32"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Top Photo - 50% height */}
-        <div className="h-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[0], 'top')}>
-          {/* Vote Indicator for Top Photo */}
+        {/* Left Photo - 50% width */}
+        <div className="w-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[0], 'left')}>
+          {/* Vote Indicator for Left Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
             style={{ 
-              opacity: swipeDirection === 'top' ? getSwipeIndicatorOpacity('top') : 
+              opacity: swipeDirection === 'left' ? getSwipeIndicatorOpacity('left') : 
                       (votedPhoto === currentPair[0].id ? 1 : 0)
             }}
           >
@@ -320,16 +317,16 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
           </div>
         </div>
 
-        {/* Horizontal Divider */}
-        <div className="h-1 bg-white/30 flex-shrink-0"></div>
+        {/* Vertical Divider */}
+        <div className="w-1 bg-white/30 flex-shrink-0"></div>
 
-        {/* Bottom Photo - 50% height */}
-        <div className="h-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[1], 'bottom')}>
-          {/* Vote Indicator for Bottom Photo */}
+        {/* Right Photo - 50% width */}
+        <div className="w-1/2 relative overflow-hidden flex items-center justify-center" onClick={() => handlePhotoClick(currentPair[1], 'right')}>
+          {/* Vote Indicator for Right Photo */}
           <div 
             className="absolute inset-0 bg-green-500/40 z-10 flex items-center justify-center transition-opacity duration-200"
             style={{ 
-              opacity: swipeDirection === 'bottom' ? getSwipeIndicatorOpacity('bottom') : 
+              opacity: swipeDirection === 'right' ? getSwipeIndicatorOpacity('right') : 
                       (votedPhoto === currentPair[1].id ? 1 : 0)
             }}
           >
@@ -363,22 +360,22 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
         <div className="text-center space-y-3">
           <p className="text-lg font-medium">¿Cuál te gusta más?</p>
           <p className="text-sm opacity-80">
-            Toca una foto, desliza hacia arriba/abajo o desliza hacia la derecha para votar
+            Toca una foto, desliza izquierda/derecha o desliza hacia arriba para votar
           </p>
           
           {/* Visual Swipe Indicators */}
-          <div className="flex justify-center items-center space-y-4 mt-4 flex-col">
+          <div className="flex justify-center items-center space-x-8 mt-4">
             <div className="text-center">
-              <div className="text-xs opacity-60">↑ Desliza o toca</div>
-              <div className="text-xs opacity-60">Foto superior</div>
+              <div className="text-xs opacity-60">← Desliza o toca</div>
+              <div className="text-xs opacity-60">Foto izquierda</div>
             </div>
             <div className="text-center">
-              <div className="text-xs opacity-60">→ Desliza derecha</div>
+              <div className="text-xs opacity-60">↑ Desliza arriba</div>
               <div className="text-xs opacity-60">Votar por la mejor</div>
             </div>
             <div className="text-center">
-              <div className="text-xs opacity-60">Toca o desliza ↓</div>
-              <div className="text-xs opacity-60">Foto inferior</div>
+              <div className="text-xs opacity-60">Toca o desliza →</div>
+              <div className="text-xs opacity-60">Foto derecha</div>
             </div>
           </div>
           
