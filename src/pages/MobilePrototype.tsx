@@ -22,9 +22,13 @@ const MobilePrototype = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [hasNotifications, setHasNotifications] = useState(false);
   const [newCommentsCount, setNewCommentsCount] = useState(0);
+  const [currentContestId, setCurrentContestId] = useState<string | null>(null);
 
-  const handleNavigation = (screen: MobileScreen) => {
+  const handleNavigation = (screen: MobileScreen, contestId?: string) => {
     setCurrentScreen(screen);
+    if (contestId) {
+      setCurrentContestId(contestId);
+    }
     
     if (screen === 'profile') {
       setHasNotifications(false);
@@ -58,11 +62,11 @@ const MobilePrototype = () => {
       case 'contests':
         return <MobileContests onNavigate={handleNavigation} />;
       case 'upload':
-        return <MobileUpload onNavigate={handleNavigation} />;
+        return <MobileUpload onNavigate={handleNavigation} contestId={currentContestId} />;
       case 'voting':
-        return <MobileVoting onNavigate={handleNavigation} />;
+        return <MobileVoting onNavigate={handleNavigation} contestId={currentContestId} />;
       case 'vote':
-        return <MobileSwipeVoting onNavigate={handleNavigation} />;
+        return <MobileSwipeVoting onNavigate={handleNavigation} contestId={currentContestId} />;
       case 'profile':
         return <MobileProfile onNavigate={handleNavigation} />;
       case 'settings':

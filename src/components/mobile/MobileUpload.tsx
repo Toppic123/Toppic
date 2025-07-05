@@ -1,178 +1,257 @@
 
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Camera, MapPin, Upload, Image } from "lucide-react";
+import { ArrowLeft, Camera, Upload, X } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
+import { useContestsData } from "@/hooks/useContestsData";
 
 interface MobileUploadProps {
-  onNavigate: (screen: 'contests') => void;
+  onNavigate: (screen: 'contests' | 'voting' | 'profile') => void;
+  contestId?: string | null;
 }
 
-const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
-  const [selectedContest, setSelectedContest] = useState("Primavera en Barcelona");
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
+const MobileUpload = ({ onNavigate, contestId }: MobileUploadProps) => {
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [photographerName, setPhotographerName] = useState("");
   const [description, setDescription] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  
+  // Get contests data and determine which contest to use
+  const { contests } = useContestsData();
+  
+  // Use provided contestId or fall back to first active contest
+  const activeContestId = contestId || contests.find(c => c.status === 'active')?.id;
+  
+  const { uploadPhoto } = useContestPhotos(activeContestId);
 
-  const handlePhotoSelect = () => {
-    fileInputRef.current?.click();
-  };
+  console.log('MobileUpload - contestId:', contestId);
+  console.log('MobileUpload - activeContestId:', activeContestId);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        toast({
+          title: "Archivo demasiado grande",
+          description: "La imagen no puede ser mayor a 10MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setSelectedImage(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate upload
-    onNavigate('contests');
+  const handleUpload = async () => {
+    if (!selectedImage || !photographerName.trim()) {
+      toast({
+        title: "Información incompleta",
+        description: "Por favor, selecciona una imagen y agrega tu nombre",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!activeContestId) {
+      toast({
+        title: "Error",
+        description: "No hay concursos activos disponibles",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const result = await uploadPhoto(
+        selectedImage,
+        photographerName.trim(),
+        description.trim() || undefined,
+        true // Auto-approve for demo
+      );
+
+      if (result) {
+        // Reset form
+        setSelectedImage(null);
+        setPreviewUrl("");
+        setPhotographerName("");
+        setDescription("");
+        
+        // Navigate to voting screen to see the uploaded photo
+        setTimeout(() => {
+          onNavigate('voting');
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
+  const clearImage = () => {
+    setSelectedImage(null);
+    setPreviewUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const currentContest = contests.find(c => c.id === activeContestId);
+
   return (
-    <div className="h-full bg-white flex flex-col">
+    <div className="h-full bg-gray-50 flex flex-col">
       {/* Header */}
       <div className="bg-blue-600 text-white px-4 py-4 flex-shrink-0">
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onNavigate('contests')}
-            className="text-white hover:bg-blue-700 mr-3 p-2"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-semibold">Subir foto</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onNavigate('contests')}
+              className="text-white hover:bg-blue-700 mr-3 p-2"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-lg font-semibold">Subir Foto</h1>
+              {currentContest && (
+                <p className="text-sm opacity-80">{currentContest.title}</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="p-4 pb-20">
-          {/* Contest Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Concurso seleccionado
-            </label>
-            <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-gray-900">{selectedContest}</h3>
-                  <p className="text-sm text-gray-600">Barcelona • Termina en 5 días</p>
-                </div>
-                <Badge className="bg-green-500">Activo</Badge>
-              </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* Image Upload Section */}
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">Seleccionar Imagen</h3>
+          
+          {!previewUrl ? (
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-2">Toca para seleccionar una foto</p>
+              <p className="text-sm text-gray-500">JPG, PNG o WEBP (máx. 10MB)</p>
             </div>
-          </div>
-
-          {/* Photo Upload */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Selecciona tu foto
-            </label>
-            {!selectedImage ? (
-              <div 
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors"
-                onClick={handlePhotoSelect}
+          ) : (
+            <div className="relative">
+              <img 
+                src={previewUrl} 
+                alt="Vista previa" 
+                className="w-full h-64 object-cover rounded-lg"
+              />
+              <Button
+                variant="destructive"
+                size="sm"
+                className="absolute top-2 right-2"
+                onClick={clearImage}
               >
-                <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">Toca para seleccionar una foto</p>
-                <p className="text-sm text-gray-500">JPG, PNG o GIF. Máximo 5MB</p>
-                
-                <Button 
-                  type="button"
-                  variant="outline"
-                  className="mt-4"
-                  onClick={handlePhotoSelect}
-                >
-                  <Image className="h-4 w-4 mr-2" />
-                  Elegir foto
-                </Button>
-              </div>
-            ) : (
-              <div className="relative">
-                <img 
-                  src={selectedImage}
-                  alt="Foto seleccionada"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <Button 
-                  size="sm" 
-                  variant="secondary"
-                  className="absolute top-2 right-2"
-                  onClick={() => {
-                    setSelectedImage(null);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.value = '';
-                    }
-                  }}
-                >
-                  Cambiar
-                </Button>
-              </div>
-            )}
-            
-            {/* Hidden file input */}
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+          
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelect}
+            className="hidden"
+          />
+        </div>
+
+        {/* Form Section */}
+        <div className="bg-white rounded-lg p-6 shadow-sm space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre del fotógrafo *
+            </label>
             <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
+              type="text"
+              value={photographerName}
+              onChange={(e) => setPhotographerName(e.target.value)}
+              placeholder="Tu nombre completo"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Título de la foto
-              </label>
-              <Input
-                type="text"
-                placeholder="Dale un título a tu foto"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Descripción (opcional)
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Describe tu foto..."
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            />
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Descripción (opcional)
-              </label>
-              <Input
-                type="text"
-                placeholder="Cuéntanos sobre tu foto..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+        {/* Contest Info */}
+        {currentContest && (
+          <div className="bg-blue-50 rounded-lg p-4">
+            <h4 className="font-semibold text-blue-900 mb-2">Información del Concurso</h4>
+            <div className="text-sm text-blue-700 space-y-1">
+              <p><strong>Concurso:</strong> {currentContest.title}</p>
+              <p><strong>Ubicación:</strong> {currentContest.location}</p>
+              <p><strong>Termina:</strong> {new Date(currentContest.endDate).toLocaleDateString()}</p>
+              {currentContest.prize && (
+                <p><strong>Premio:</strong> {currentContest.prize}</p>
+              )}
             </div>
+          </div>
+        )}
 
-            {/* Location */}
-            <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-              <MapPin className="h-4 w-4 mr-2" />
-              <span>Tu ubicación se añadirá automáticamente</span>
-            </div>
+        {/* Rules */}
+        <div className="bg-gray-50 rounded-lg p-4">
+          <h4 className="font-semibold text-gray-900 mb-2">Reglas Importantes</h4>
+          <ul className="text-sm text-gray-600 space-y-1">
+            <li>• Las fotos deben ser originales y de tu autoría</li>
+            <li>• Solo se permite una foto por participante</li>
+            <li>• La foto debe estar relacionada con el tema del concurso</li>
+            <li>• No se permiten ediciones excesivas</li>
+          </ul>
+        </div>
 
-            <div className="pt-4">
-              <Button 
-                type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                disabled={!selectedImage}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Subir foto al concurso
-              </Button>
-            </div>
-          </form>
+        {/* Upload Button */}
+        <div className="pb-6">
+          <Button
+            onClick={handleUpload}
+            disabled={!selectedImage || !photographerName.trim() || isUploading || !activeContestId}
+            className="w-full bg-blue-600 hover:bg-blue-700 py-3 text-lg font-semibold"
+          >
+            {isUploading ? (
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Subiendo...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                <Upload className="h-5 w-5 mr-2" />
+                Subir Foto al Concurso
+              </div>
+            )}
+          </Button>
+          
+          {!activeContestId && (
+            <p className="text-center text-red-500 text-sm mt-2">
+              No hay concursos activos disponibles
+            </p>
+          )}
         </div>
       </div>
     </div>
