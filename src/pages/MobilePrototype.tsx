@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import MobileHome from "@/components/mobile/MobileHome";
 import MobileContests from "@/components/mobile/MobileContests";
@@ -10,7 +9,7 @@ import MobileLogin from "@/components/mobile/MobileLogin";
 import MobileRegister from "@/components/mobile/MobileRegister";
 import MobileGalleryHome from "@/components/mobile/MobileGalleryHome";
 
-type Screen = 'home' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | 'login' | 'register' | 'gallery' | 'settings';
+type Screen = 'home' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | 'login' | 'register' | 'gallery';
 
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
@@ -52,8 +51,6 @@ const MobilePrototype = () => {
         return <MobileRegister onNavigate={navigateToScreen} />;
       case 'gallery':
         return <MobileGalleryHome onNavigate={navigateToScreen} />;
-      case 'settings':
-        return <MobileProfile onNavigate={navigateToScreen} />;
       default:
         return <MobileHome onNavigate={navigateToScreen} />;
     }
