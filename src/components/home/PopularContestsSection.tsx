@@ -73,7 +73,6 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
       location: featured.contests!.location || "Sin ubicación",
       dateStart: new Date().toISOString().split('T')[0],
       dateEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      // REMOVED: participantsCount completely - no longer passed to ContestCard
       photosCount: 0,
     }));
 
