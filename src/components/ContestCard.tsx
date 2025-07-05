@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { MapPin, Camera, User } from "lucide-react";
+import { MapPin, Camera } from "lucide-react";
 
 type ContestCardProps = {
   id: string;
@@ -11,7 +11,6 @@ type ContestCardProps = {
   location: string;
   dateStart: string;
   dateEnd: string;
-  participantsCount: number;
   photosCount: number;
 };
 
@@ -33,7 +32,6 @@ const ContestCard = ({
   title,
   imageUrl,
   location,
-  participantsCount,
   photosCount,
 }: ContestCardProps) => {
   const [imageError, setImageError] = useState(false);
@@ -103,11 +101,7 @@ const ContestCard = ({
         </div>
         
         {/* Stats */}
-        <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
-          <div className="flex items-center">
-            <User className="w-3 h-3 mr-1" />
-            <span>{participantsCount} participantes</span>
-          </div>
+        <div className="flex items-center justify-end mt-3 text-xs text-muted-foreground">
           <div className="flex items-center">
             <Camera className="w-3 h-3 mr-1" />
             <span>{photosCount} fotos</span>
