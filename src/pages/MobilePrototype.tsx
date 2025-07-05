@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import MobileHome from "@/components/mobile/MobileHome";
 import MobileContests from "@/components/mobile/MobileContests";
@@ -14,7 +15,6 @@ type Screen = 'home' | 'contests' | 'upload' | 'voting' | 'vote' | 'profile' | '
 const MobilePrototype = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [currentContestId, setCurrentContestId] = useState<string | undefined>(undefined);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   console.log('MobilePrototype - currentScreen:', currentScreen);
   console.log('MobilePrototype - currentContestId:', currentContestId);
@@ -25,10 +25,6 @@ const MobilePrototype = () => {
     if (contestId) {
       setCurrentContestId(contestId);
     }
-  };
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
   };
 
   const renderScreen = () => {
@@ -46,7 +42,7 @@ const MobilePrototype = () => {
       case 'profile':
         return <MobileProfile onNavigate={navigateToScreen} />;
       case 'login':
-        return <MobileLogin onNavigate={navigateToScreen} onLogin={handleLogin} />;
+        return <MobileLogin onNavigate={navigateToScreen} />;
       case 'register':
         return <MobileRegister onNavigate={navigateToScreen} />;
       case 'gallery':

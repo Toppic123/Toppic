@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,7 @@ import { ArrowLeft, Home } from "lucide-react";
 
 interface MobileLoginProps {
   onNavigate: (screen: 'home' | 'register') => void;
-  onLogin?: () => void;
+  onLogin: () => void;
 }
 
 const MobileLogin = ({ onNavigate, onLogin }: MobileLoginProps) => {
@@ -17,11 +18,7 @@ const MobileLogin = ({ onNavigate, onLogin }: MobileLoginProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Simulate login
-    if (onLogin) {
-      onLogin();
-    }
-    // Navigate to home after login
-    onNavigate('home');
+    onLogin();
   };
 
   return (

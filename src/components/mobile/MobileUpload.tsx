@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,17 +7,14 @@ import { ArrowLeft, Camera, MapPin, Upload, Image } from "lucide-react";
 
 interface MobileUploadProps {
   onNavigate: (screen: 'contests') => void;
-  contestId?: string;
 }
 
-const MobileUpload = ({ onNavigate, contestId }: MobileUploadProps) => {
+const MobileUpload = ({ onNavigate }: MobileUploadProps) => {
   const [selectedContest, setSelectedContest] = useState("Primavera en Barcelona");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  console.log('MobileUpload - contestId:', contestId);
 
   const handlePhotoSelect = () => {
     fileInputRef.current?.click();
