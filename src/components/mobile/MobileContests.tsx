@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +9,7 @@ import Map from "@/components/Map";
 import { useContestsData } from "@/hooks/useContestsData";
 
 interface MobileContestsProps {
-  onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile', contestId?: string) => void;
+  onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile') => void;
 }
 
 // Function to clean contest titles by removing "FOTOGRAFIA" and similar words
@@ -107,11 +106,11 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     return (
       <MobileContestDetail 
         contestId={selectedContestId}
-        onNavigate={(screen, contestId) => {
+        onNavigate={(screen) => {
           if (screen === 'contests') {
             handleBackFromDetail();
           } else {
-            onNavigate(screen, contestId || selectedContestId);
+            onNavigate(screen);
           }
         }}
       />
@@ -293,7 +292,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                       <span className="text-sm text-gray-500">{contest.participants} participantes</span>
                       <Button 
                         size="sm"
-                        onClick={() => onNavigate('upload', contest.id)}
+                        onClick={() => onNavigate('upload')}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
                         <Camera className="h-4 w-4 mr-1" />
@@ -305,7 +304,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={() => onNavigate('voting', contest.id)}
+                        onClick={() => onNavigate('voting')}
                         className="flex-1"
                       >
                         Fotos
@@ -313,7 +312,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                       <Button 
                         size="sm" 
                         variant="outline"
-                        onClick={() => onNavigate('vote', contest.id)}
+                        onClick={() => onNavigate('vote')}
                         className="flex-1 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
                       >
                         Votar
