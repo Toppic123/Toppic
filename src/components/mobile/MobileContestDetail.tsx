@@ -17,9 +17,14 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
   const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(contestId);
   const [contest, setContest] = useState<any>(null);
 
+  console.log('MobileContestDetail - contestId:', contestId);
+  console.log('MobileContestDetail - contests:', contests);
+  console.log('MobileContestDetail - approvedPhotos:', approvedPhotos);
+
   useEffect(() => {
     if (contests.length > 0) {
       const foundContest = contests.find(c => c.id === contestId);
+      console.log('MobileContestDetail - foundContest:', foundContest);
       if (foundContest) {
         setContest(foundContest);
       }
@@ -27,7 +32,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
   }, [contests, contestId]);
 
   // Check if contest has ended
-  const contestEndDate = contest ? new Date(contest.end_date) : null;
+  const contestEndDate = contest ? new Date(contest.endDate) : null;
   const now = new Date();
   const hasEnded = contestEndDate ? contestEndDate < now || contest.status !== 'active' : false;
 
@@ -84,7 +89,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
           <SocialShareButtons 
             url={window.location.href}
             title={contest.title}
-            imageUrl={contest.image_url}
+            imageUrl={contest.imageUrl}
           />
         </div>
       </div>
@@ -94,7 +99,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
         {/* Contest Image */}
         <div className="relative">
           <img 
-            src={contest.image_url}
+            src={contest.imageUrl}
             alt={contest.title}
             className="w-full h-48 object-cover"
           />
@@ -118,7 +123,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
               </div>
               <div className="flex items-center text-gray-600">
                 <Calendar className="h-5 w-5 mr-3" />
-                <span>Termina el {new Date(contest.end_date).toLocaleDateString()}</span>
+                <span>Termina el {new Date(contest.endDate).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center text-gray-600">
                 <Trophy className="h-5 w-5 mr-3" />

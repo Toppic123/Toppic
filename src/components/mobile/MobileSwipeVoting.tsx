@@ -1,4 +1,3 @@
-
 import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +20,7 @@ interface VotingPhoto {
   votes: number;
 }
 
-const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingProps) => {
+const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) => {
   const { toast } = useToast();
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [votes, setVotes] = useState(0);
@@ -33,9 +32,17 @@ const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingPro
   const startX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch real photos and contest data
-  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(contestId);
+  // Fetch real photos and contest data - use the first active contest if no contestId provided
   const { contests, isLoading: contestsLoading } = useContestsData();
+  
+  // Get the contest ID to use - either provided or first active contest
+  const activeContestId = contestId || contests.find(c => c.status === 'active')?.id;
+  
+  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(activeContestId);
+
+  console.log('MobileSwipeVoting - contestId:', contestId);
+  console.log('MobileSwipeVoting - activeContestId:', activeContestId);
+  console.log('MobileSwipeVoting - approvedPhotos:', approvedPhotos);
 
   // Convert contest photos to voting format
   const votingPhotos: VotingPhoto[] = approvedPhotos.map((photo) => ({
@@ -43,7 +50,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingPro
     image: photo.image_url,
     photographer: photo.photographer_name,
     title: photo.description || "Sin título",
-    contest: contests.find(c => c.id === contestId)?.title || "Concurso",
+    contest: contests.find(c => c.id === activeContestId)?.title || "Concurso",
     votes: photo.votes
   }));
 
@@ -61,6 +68,8 @@ const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingPro
   const currentPair = photoPairs[currentPairIndex];
 
   const handleVote = useCallback(async (selectedPhoto: VotingPhoto, direction: 'top' | 'bottom' | 'right') => {
+    if (!activeContestId) return;
+    
     setVotedPhoto(selectedPhoto.id);
     setSwipeDirection(direction);
     
@@ -92,7 +101,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingPro
         });
       }
     }, 800);
-  }, [currentPairIndex, photoPairs.length, votes, toast, votePhoto]);
+  }, [currentPairIndex, photoPairs.length, votes, toast, votePhoto, activeContestId]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
@@ -185,6 +194,20 @@ const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingPro
     );
   }
 
+  // Show message if no active contest found
+  if (!activeContestId) {
+    return (
+      <div className="h-full bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">No hay concursos activos disponibles</p>
+          <Button onClick={() => onNavigate('contests')}>
+            Volver a concursos
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Show message if no photos or not enough photos for voting
   if (!currentPair || votingPhotos.length < 2) {
     return (
@@ -211,7 +234,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingPro
     return 0;
   };
 
-  const currentContest = contests.find(c => c.id === contestId);
+  const currentContest = contests.find(c => c.id === activeContestId);
 
   return (
     <div className="h-full bg-black overflow-hidden relative">

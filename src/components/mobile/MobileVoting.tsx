@@ -26,15 +26,25 @@ const cleanContestTitle = (title: string): string => {
   return cleanedTitle || 'Sin título';
 };
 
-const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
+const MobileVoting = ({ onNavigate, contestId }: MobileVotingProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   
-  // Fetch real photos from the database and contest data
-  const { approvedPhotos, isLoading } = useContestPhotos(contestId);
+  // Fetch contests first to get a valid contest ID
   const { contests, isLoading: contestsLoading } = useContestsData();
+  
+  // Use provided contestId or fall back to first active contest
+  const activeContestId = contestId || contests.find(c => c.status === 'active')?.id;
+  
+  // Fetch real photos from the database using the active contest ID
+  const { approvedPhotos, isLoading } = useContestPhotos(activeContestId);
+
+  console.log('MobileVoting - contestId:', contestId);
+  console.log('MobileVoting - activeContestId:', activeContestId);
+  console.log('MobileVoting - contests:', contests);
+  console.log('MobileVoting - approvedPhotos:', approvedPhotos);
 
   // Get current contest data
-  const currentContest = contests.find(c => c.id === contestId);
+  const currentContest = contests.find(c => c.id === activeContestId);
 
   const handlePhotoClick = (photo: any) => {
     const formattedPhoto = {
@@ -110,6 +120,13 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-gray-500">Cargando fotos...</p>
+          </div>
+        ) : !activeContestId ? (
+          <div className="text-center py-8">
+            <p className="text-gray-500 mb-4">No hay concursos activos disponibles</p>
+            <Button onClick={() => onNavigate('contests')} className="bg-blue-600 hover:bg-blue-700">
+              Ver concursos
+            </Button>
           </div>
         ) : approvedPhotos.length > 0 ? (
           <div className="grid grid-cols-2 gap-3">
