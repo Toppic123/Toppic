@@ -14,7 +14,7 @@ interface MobileContestDetailProps {
 
 const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps) => {
   const { contests, isLoading } = useContestsData();
-  const { approvedPhotos } = useContestPhotos(contestId);
+  const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(contestId);
   const [contest, setContest] = useState<any>(null);
 
   useEffect(() => {
@@ -26,10 +26,18 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
     }
   }, [contests, contestId]);
 
-  if (isLoading) {
+  // Check if contest has ended
+  const contestEndDate = contest ? new Date(contest.end_date) : null;
+  const now = new Date();
+  const hasEnded = contestEndDate ? contestEndDate < now || contest.status !== 'active' : false;
+
+  if (isLoading || photosLoading) {
     return (
       <div className="h-full bg-white flex items-center justify-center">
-        <p className="text-gray-500">Cargando información del concurso...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-500">Cargando información del concurso...</p>
+        </div>
       </div>
     );
   }
@@ -76,7 +84,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
           <SocialShareButtons 
             url={window.location.href}
             title={contest.title}
-            imageUrl={contest.imageUrl}
+            imageUrl={contest.image_url}
           />
         </div>
       </div>
@@ -86,13 +94,13 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
         {/* Contest Image */}
         <div className="relative">
           <img 
-            src={contest.imageUrl}
+            src={contest.image_url}
             alt={contest.title}
             className="w-full h-48 object-cover"
           />
           <div className="absolute top-3 right-3">
-            <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
-              {contest.isActive ? "Activo" : "Finalizado"}
+            <Badge className={contest.status === 'active' && !hasEnded ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+              {hasEnded ? "Finalizado" : contest.status === 'active' ? "Activo" : "Pendiente"}
             </Badge>
           </div>
         </div>
@@ -110,7 +118,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
               </div>
               <div className="flex items-center text-gray-600">
                 <Calendar className="h-5 w-5 mr-3" />
-                <span>Termina el {new Date(contest.endDate).toLocaleDateString()}</span>
+                <span>Termina el {new Date(contest.end_date).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center text-gray-600">
                 <Trophy className="h-5 w-5 mr-3" />
@@ -143,13 +151,23 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
 
           {/* Action Buttons */}
           <div className="space-y-3 pb-6">
-            <Button 
-              onClick={() => onNavigate('upload')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
-            >
-              <Camera className="h-5 w-5 mr-2" />
-              Participar en el Concurso
-            </Button>
+            {!hasEnded ? (
+              <Button 
+                onClick={() => onNavigate('upload')}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+              >
+                <Camera className="h-5 w-5 mr-2" />
+                Participar en el Concurso
+              </Button>
+            ) : (
+              <Button 
+                disabled
+                className="w-full bg-gray-400 text-white py-3 cursor-not-allowed"
+              >
+                <Camera className="h-5 w-5 mr-2" />
+                Concurso Finalizado
+              </Button>
+            )}
             
             <div className="grid grid-cols-2 gap-3">
               <Button 

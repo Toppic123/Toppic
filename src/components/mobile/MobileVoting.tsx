@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Share2, MessageCircle, Trophy, Users, Vote } from "lucide-react";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
+import { useContestsData } from "@/hooks/useContestsData";
 import MobilePhotoDetail from "./MobilePhotoDetail";
 import ContestAdBanner from "./ContestAdBanner";
 
@@ -28,8 +29,12 @@ const cleanContestTitle = (title: string): string => {
 const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
   
-  // Fetch real photos from the database
+  // Fetch real photos from the database and contest data
   const { approvedPhotos, isLoading } = useContestPhotos(contestId);
+  const { contests, isLoading: contestsLoading } = useContestsData();
+
+  // Get current contest data
+  const currentContest = contests.find(c => c.id === contestId);
 
   const handlePhotoClick = (photo: any) => {
     const formattedPhoto = {
@@ -64,7 +69,9 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
           >
             ← Volver
           </Button>
-          <h1 className="text-lg font-semibold">{cleanContestTitle("Concurso de Fotografía")}</h1>
+          <h1 className="text-lg font-semibold">
+            {currentContest ? cleanContestTitle(currentContest.title) : "Cargando..."}
+          </h1>
           <div></div>
         </div>
         
@@ -76,10 +83,12 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
             </div>
             <div className="flex items-center gap-1">
               <Trophy size={16} />
-              <span>Premio: 500€</span>
+              <span>Premio: {currentContest?.prize || "Por determinar"}</span>
             </div>
           </div>
-          <Badge className="bg-green-500 text-white">Activo</Badge>
+          <Badge className={currentContest?.status === 'active' ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
+            {currentContest?.status === 'active' ? "Activo" : "Finalizado"}
+          </Badge>
         </div>
 
         {/* Vote Button */}
@@ -97,7 +106,7 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
 
       {/* Photo Grid - Two photos horizontally */}
       <div className="p-4">
-        {isLoading ? (
+        {isLoading || contestsLoading ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-gray-500">Cargando fotos...</p>
@@ -126,6 +135,10 @@ const MobileVoting = ({ onNavigate, contestId = "1" }: MobileVotingProps) => {
                       <div className="flex items-center gap-1">
                         <MessageCircle size={12} />
                         <span>0</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Trophy size={12} />
+                        <span>{photo.votes} votos</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
