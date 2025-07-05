@@ -4,88 +4,54 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Home, RotateCcw, ThumbsUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useContestPhotos } from "@/hooks/useContestPhotos";
+import { useContestsData } from "@/hooks/useContestsData";
 
 interface MobileSwipeVotingProps {
   onNavigate: (screen: 'contests' | 'home') => void;
+  contestId?: string;
 }
 
 interface VotingPhoto {
-  id: number;
+  id: string;
   image: string;
   photographer: string;
   title: string;
   contest: string;
-  rating: number;
+  votes: number;
 }
 
-const mockVotingPhotos: VotingPhoto[] = [
-  {
-    id: 1,
-    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
-    photographer: "María López",
-    title: "Flores de primavera",
-    contest: "Primavera en Barcelona",
-    rating: 1200
-  },
-  {
-    id: 2,
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400",
-    photographer: "Carlos Ruiz",
-    title: "Geometría urbana",
-    contest: "Arquitectura Urbana",
-    rating: 1180
-  },
-  {
-    id: 3,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400",
-    photographer: "Ana García",
-    title: "Atardecer dorado",
-    contest: "Vida en la Playa",
-    rating: 1150
-  },
-  {
-    id: 4,
-    image: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400",
-    photographer: "Luis Martín",
-    title: "Bosque misterioso",
-    contest: "Naturaleza Salvaje",
-    rating: 1220
-  },
-  {
-    id: 5,
-    image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400",
-    photographer: "Sofia Chen",
-    title: "Refugio en la montaña",
-    contest: "Arquitectura Rural",
-    rating: 1100
-  },
-  {
-    id: 6,
-    image: "https://images.unsplash.com/photo-1544737151500-6e4b999de2a9?w=400",
-    photographer: "Roberto Silva",
-    title: "Reflejos urbanos",
-    contest: "Ciudad Nocturna",
-    rating: 1250
-  }
-];
-
-const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
+const MobileSwipeVoting = ({ onNavigate, contestId = "1" }: MobileSwipeVotingProps) => {
   const { toast } = useToast();
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [votes, setVotes] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'top' | 'bottom' | 'right' | null>(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [votedPhoto, setVotedPhoto] = useState<number | null>(null);
+  const [votedPhoto, setVotedPhoto] = useState<string | null>(null);
   const startY = useRef(0);
   const startX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Fetch real photos and contest data
+  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(contestId);
+  const { contests, isLoading: contestsLoading } = useContestsData();
+
+  // Convert contest photos to voting format
+  const votingPhotos: VotingPhoto[] = approvedPhotos.map((photo) => ({
+    id: photo.id,
+    image: photo.image_url,
+    photographer: photo.photographer_name,
+    title: photo.description || "Sin título",
+    contest: contests.find(c => c.id === contestId)?.title || "Concurso",
+    votes: photo.votes
+  }));
+
   const createPhotoPairs = () => {
     const pairs = [];
-    for (let i = 0; i < mockVotingPhotos.length - 1; i += 2) {
-      if (mockVotingPhotos[i + 1]) {
-        pairs.push([mockVotingPhotos[i], mockVotingPhotos[i + 1]]);
+    for (let i = 0; i < votingPhotos.length - 1; i += 2) {
+      if (votingPhotos[i + 1]) {
+        pairs.push([votingPhotos[i], votingPhotos[i + 1]]);
       }
     }
     return pairs;
@@ -94,14 +60,21 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
   const photoPairs = createPhotoPairs();
   const currentPair = photoPairs[currentPairIndex];
 
-  const handleVote = useCallback((selectedPhoto: VotingPhoto, direction: 'top' | 'bottom' | 'right') => {
+  const handleVote = useCallback(async (selectedPhoto: VotingPhoto, direction: 'top' | 'bottom' | 'right') => {
     setVotedPhoto(selectedPhoto.id);
     setSwipeDirection(direction);
+    
+    // Vote on the selected photo using the real voting function
+    try {
+      await votePhoto(selectedPhoto.id);
+    } catch (error) {
+      console.error('Error voting photo:', error);
+    }
     
     setTimeout(() => {
       toast({
         title: "Voto registrado",
-        description: `Has elegido "${selectedPhoto.title}"`
+        description: `Has elegido "${selectedPhoto.title}" de ${selectedPhoto.photographer}`
       });
       
       setVotes(votes + 1);
@@ -119,7 +92,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
         });
       }
     }, 800);
-  }, [currentPairIndex, photoPairs.length, votes, toast]);
+  }, [currentPairIndex, photoPairs.length, votes, toast, votePhoto]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
@@ -200,11 +173,29 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     }
   }, [isDragging, handleVote]);
 
-  if (!currentPair) {
+  // Show loading state
+  if (photosLoading || contestsLoading) {
     return (
       <div className="h-full bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">No hay más fotos para comparar</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-500">Cargando fotos del concurso...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no photos or not enough photos for voting
+  if (!currentPair || votingPhotos.length < 2) {
+    return (
+      <div className="h-full bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">
+            {votingPhotos.length === 0 
+              ? "No hay fotos disponibles para votar en este concurso" 
+              : "Se necesitan al menos 2 fotos para poder votar"
+            }
+          </p>
           <Button onClick={() => onNavigate('contests')}>
             Volver a concursos
           </Button>
@@ -219,6 +210,8 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
     }
     return 0;
   };
+
+  const currentContest = contests.find(c => c.id === contestId);
 
   return (
     <div className="h-full bg-black overflow-hidden relative">
@@ -235,7 +228,9 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
           </Button>
           <div className="text-center">
             <h1 className="text-lg font-semibold">Votación Comparativa</h1>
-            <p className="text-sm opacity-80">{votes} votos • {currentPairIndex + 1}/{photoPairs.length}</p>
+            <p className="text-sm opacity-80">
+              {currentContest?.title || "Concurso"} • {votes} votos • {currentPairIndex + 1}/{photoPairs.length}
+            </p>
           </div>
           <Button
             variant="ghost"
@@ -297,7 +292,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             <h3 className="text-sm font-semibold mb-1">{currentPair[0].title}</h3>
             <p className="text-xs opacity-90">por {currentPair[0].photographer}</p>
             <div className="text-xs opacity-75 mt-1">
-              Rating ELO: {currentPair[0].rating}
+              Votos: {currentPair[0].votes}
             </div>
           </div>
         </div>
@@ -334,7 +329,7 @@ const MobileSwipeVoting = ({ onNavigate }: MobileSwipeVotingProps) => {
             <h3 className="text-sm font-semibold mb-1">{currentPair[1].title}</h3>
             <p className="text-xs opacity-90">por {currentPair[1].photographer}</p>
             <div className="text-xs opacity-75 mt-1">
-              Rating ELO: {currentPair[1].rating}
+              Votos: {currentPair[1].votes}
             </div>
           </div>
         </div>
