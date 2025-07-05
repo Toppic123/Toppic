@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight, Trophy, Star, Crown, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
@@ -42,18 +42,18 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
 
   if (isLoading) {
     return (
-      <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-gray-950/30 dark:to-background relative overflow-hidden">
-        {/* Background Pattern - unified */}
-        <div className="absolute inset-0 opacity-4">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <section className="py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-red-950/20 relative overflow-hidden">
+        {/* Background Pattern - unique for popular contests */}
+        <div className="absolute inset-0 opacity-6">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-orange-400 to-red-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         </div>
         
         <div className="container max-w-7xl mx-auto px-4 relative z-10">
           <ModernSectionTitle 
             title="Concursos Populares"
             subtitle="Cargando concursos destacados..."
-            icon={Trophy}
+            icon={Crown}
             gradient="from-amber-500 via-orange-500 to-red-500"
             showSparkles={false}
           />
@@ -62,7 +62,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
     );
   }
 
-  // Convert featured contests to the format expected by ContestCard - REMOVED participants count completely
+  // Convert featured contests to the format expected by ContestCard
   const displayContests = featuredContests
     .filter(featured => featured.contests && featured.is_active)
     .slice(0, 3)
@@ -77,20 +77,28 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
     }));
 
   return (
-    <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-gray-950/30 dark:to-background relative overflow-hidden">
-      {/* Background Pattern - unified */}
-      <div className="absolute inset-0 opacity-4">
+    <section className="py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-red-950/20 relative overflow-hidden">
+      {/* Background Pattern - unique for popular contests */}
+      <div className="absolute inset-0 opacity-6">
         <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-red-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-yellow-400/30 to-orange-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-orange-400/30 to-red-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      </div>
+
+      {/* Geometric decorations unique to this section */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-40 left-20 w-28 h-28 border-2 border-amber-200/40 rounded-full animate-bounce" style={{ animationDuration: '3s' }}></div>
+        <div className="absolute bottom-32 right-24 w-20 h-20 border-2 border-orange-200/50 rotate-45 animate-pulse"></div>
+        <Star className="absolute top-1/4 right-1/3 w-12 h-12 text-amber-300/30 animate-pulse" style={{ animationDelay: '1s' }} />
+        <Crown className="absolute bottom-1/4 left-1/4 w-16 h-16 text-orange-300/20 animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        {/* Modern Title - unified style without DESTACADO badge */}
+        {/* Modern Title with trophy theme */}
         <ModernSectionTitle 
           title="Concursos Populares"
           subtitle="Descubre los concursos más populares y emocionantes de nuestra comunidad"
-          icon={Trophy}
+          icon={Crown}
           gradient="from-amber-500 via-orange-500 to-red-500"
           showSparkles={false}
         />
@@ -133,7 +141,7 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
                 >
                   <Link to="/contests" className="flex items-center">
                     <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    <Trophy className="mr-3 h-5 w-5 relative z-10" />
+                    <Crown className="mr-3 h-5 w-5 relative z-10" />
                     <span className="relative z-10">{texts.seeAll}</span>
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
                   </Link>
