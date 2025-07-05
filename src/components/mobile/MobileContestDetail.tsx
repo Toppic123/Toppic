@@ -9,7 +9,7 @@ import SocialShareButtons from "@/components/SocialShareButtons";
 
 interface MobileContestDetailProps {
   contestId: string;
-  onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'vote') => void;
+  onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'vote', contestId?: string) => void;
 }
 
 const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps) => {
@@ -158,7 +158,7 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
           <div className="space-y-3 pb-6">
             {!hasEnded ? (
               <Button 
-                onClick={() => onNavigate('upload')}
+                onClick={() => onNavigate('upload', contestId)}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
               >
                 <Camera className="h-5 w-5 mr-2" />
@@ -176,14 +176,14 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
             
             <div className="grid grid-cols-2 gap-3">
               <Button 
-                onClick={() => onNavigate('voting')}
+                onClick={() => onNavigate('voting', contestId)}
                 variant="outline"
                 className="py-3"
               >
                 Ver Fotos ({approvedPhotos.length})
               </Button>
               <Button 
-                onClick={() => onNavigate('vote')}
+                onClick={() => onNavigate('vote', contestId)}
                 variant="outline"
                 className="py-3 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
               >
