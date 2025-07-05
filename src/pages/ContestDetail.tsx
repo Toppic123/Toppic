@@ -3,7 +3,7 @@ import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import PhotoCard from "@/components/PhotoCard";
@@ -35,11 +35,22 @@ const ContestDetail = () => {
     return <Navigate to="/contests" replace />;
   }
 
+  // Check if contest has ended
+  const contestEndDate = new Date(contest.endDate);
+  const now = new Date();
+  const hasEnded = contestEndDate < now || contest.status !== 'active';
+
   const handleUploadPhoto = () => {
     if (!user) {
       navigate("/login");
       return;
     }
+    
+    if (hasEnded) {
+      // Show a toast or message instead of navigating
+      return;
+    }
+    
     // Navigate to upload page with contest context
     navigate("/upload", { state: { contestId: id, contestTitle: contest.title } });
   };
@@ -83,13 +94,36 @@ const ContestDetail = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
           <div className="container mx-auto">
-            <Badge className="mb-2" variant={contest.isActive ? "default" : "secondary"}>
-              {contest.isActive ? "Activo" : "Finalizado"}
+            <Badge className="mb-2" variant={contest.isActive && !hasEnded ? "default" : "secondary"}>
+              {hasEnded ? "Finalizado" : contest.isActive ? "Activo" : "Pendiente"}
             </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{contest.title}</h1>
           </div>
         </div>
       </div>
+
+      {/* Contest Ended Notice */}
+      {hasEnded && (
+        <div className="container mx-auto px-4 py-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <Clock className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-amber-800 mb-1">
+                  Concurso finalizado
+                </h3>
+                <p className="text-sm text-amber-700">
+                  Este concurso terminó el {contestEndDate.toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })} y ya no acepta nuevas participaciones.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Contest Info */}
       <div className="container mx-auto px-4 py-8">
@@ -112,9 +146,11 @@ const ContestDetail = () => {
                 <div className="text-center">
                   <Calendar className="h-8 w-8 text-primary mx-auto mb-2" />
                   <p className="text-2xl font-bold">
-                    {Math.ceil((new Date(contest.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))}
+                    {hasEnded ? 0 : Math.max(0, Math.ceil((contestEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))}
                   </p>
-                  <p className="text-sm text-muted-foreground">Días restantes</p>
+                  <p className="text-sm text-muted-foreground">
+                    {hasEnded ? "Finalizado" : "Días restantes"}
+                  </p>
                 </div>
               </div>
               
@@ -131,10 +167,17 @@ const ContestDetail = () => {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold">Fotos del concurso</h2>
-                <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
-                  <Upload className="h-4 w-4" />
-                  Subir foto
-                </Button>
+                {!hasEnded ? (
+                  <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    Subir foto
+                  </Button>
+                ) : (
+                  <Button disabled className="flex items-center gap-2" variant="secondary">
+                    <Clock className="h-4 w-4" />
+                    Concurso finalizado
+                  </Button>
+                )}
               </div>
               
               {photosLoading ? (
@@ -190,12 +233,14 @@ const ContestDetail = () => {
                 <div className="text-center py-8">
                   <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground mb-4">
-                    Aún no hay fotos en este concurso
+                    {hasEnded ? "Este concurso no recibió participaciones" : "Aún no hay fotos en este concurso"}
                   </p>
-                  <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
-                    <Upload className="h-4 w-4" />
-                    Sé el primero en participar
-                  </Button>
+                  {!hasEnded && (
+                    <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      Sé el primero en participar
+                    </Button>
+                  )}
                 </div>
               )}
             </div>

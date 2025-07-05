@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload as UploadIcon, MapPin, Info, AlertCircle } from "lucide-react";
+import { Camera, Upload as UploadIcon, MapPin, Info, AlertCircle, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Select,
@@ -108,10 +107,18 @@ const Upload = () => {
     return distance;
   };
 
-  // Filter contests based on user location - FIXED to use real coordinates from database
+  // Filter contests based on user location and status - EXCLUDE finished contests
   const nearbyContests = allContests.filter(contest => {
-    // Only show active contests
+    // Only show active contests - EXCLUDE finished contests
     if (contest.status !== 'active') return false;
+    
+    // Check if contest has ended based on end_date
+    const contestEndDate = new Date(contest.endDate);
+    const now = new Date();
+    if (contestEndDate < now) {
+      console.log(`Contest ${contest.title} has ended on ${contest.endDate}, excluding from upload options`);
+      return false;
+    }
     
     // If no location data, show all active contests
     if (!userLocation) return true;
@@ -138,7 +145,10 @@ const Upload = () => {
       userLocation: userLocation,
       distance: distance.toFixed(2) + 'km',
       maxDistance: maxDistance + 'km',
-      isWithinRange: distance <= maxDistance
+      isWithinRange: distance <= maxDistance,
+      status: contest.status,
+      endDate: contest.endDate,
+      hasEnded: contestEndDate < now
     });
     
     return distance <= maxDistance;
@@ -148,7 +158,8 @@ const Upload = () => {
     distance: userLocation && contest.coordinates ? 
       `${calculateDistance(userLocation.lat, userLocation.lng, contest.coordinates.lat, contest.coordinates.lng).toFixed(1)} km` : 
       "Calculando...",
-    type: contest.category as "landscape" | "people" | "public_event"
+    type: contest.category as "landscape" | "people" | "public_event",
+    endDate: contest.endDate
   }));
   
   // Redirect if not logged in
@@ -330,6 +341,37 @@ const Upload = () => {
       return;
     }
 
+    // Additional check: Verify contest is still active and hasn't ended
+    const selectedContestData = allContests.find(c => c.id === selectedContest);
+    if (!selectedContestData) {
+      toast({
+        title: "Concurso no encontrado",
+        description: "El concurso seleccionado ya no está disponible",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (selectedContestData.status !== 'active') {
+      toast({
+        title: "Concurso finalizado",
+        description: "No se pueden subir fotos a un concurso que ya ha finalizado",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const contestEndDate = new Date(selectedContestData.endDate);
+    const now = new Date();
+    if (contestEndDate < now) {
+      toast({
+        title: "Concurso finalizado",
+        description: "Este concurso ya ha terminado y no acepta más participaciones",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (!consents) {
       toast({
         title: "Consentimientos requeridos",
@@ -457,6 +499,25 @@ const Upload = () => {
         </Card>
       )}
 
+      {/* No Active Contests Notice */}
+      {nearbyContests.length === 0 && (
+        <Card className="mb-6 border-gray-200 bg-gray-50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <Clock className="h-5 w-5 text-gray-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-gray-800 mb-1">
+                  No hay concursos activos disponibles
+                </h3>
+                <p className="text-sm text-gray-700">
+                  Actualmente no hay concursos activos en tu área que acepten nuevas participaciones. Los concursos que han finalizado no permiten nuevas fotos.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Step 1: Upload & Contest Selection */}
       {currentStep === "upload" && (
         <Card>
@@ -469,13 +530,13 @@ const Upload = () => {
           <CardContent>
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="contest">Selecciona un concurso cercano</Label>
+                <Label htmlFor="contest">Selecciona un concurso activo cercano</Label>
                 
                 {/* Location note */}
                 <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg mb-4">
                   <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div className="text-sm text-blue-800">
-                    <p className="mb-2">Los concursos mostrados están filtrados según tu ubicación actual. Solo puedes participar en concursos cercanos a ti.</p>
+                    <p className="mb-2">Los concursos mostrados están filtrados según tu ubicación actual. Solo puedes participar en concursos activos y que no hayan finalizado.</p>
                     <p className="font-medium">⚠️ Límite: Solo puedes subir una foto por concurso.</p>
                   </div>
                 </div>
@@ -491,7 +552,12 @@ const Upload = () => {
                     <SelectContent>
                       {nearbyContests.map(contest => (
                         <SelectItem key={contest.id} value={contest.id}>
-                          {contest.name} ({contest.distance})
+                          <div className="flex flex-col">
+                            <span>{contest.name} ({contest.distance})</span>
+                            <span className="text-xs text-gray-500">
+                              Termina: {new Date(contest.endDate).toLocaleDateString('es-ES')}
+                            </span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -499,7 +565,7 @@ const Upload = () => {
                 ) : (
                   <div className="p-4 border border-gray-200 rounded-lg text-center text-gray-500">
                     <p>No hay concursos activos disponibles en tu área.</p>
-                    <p className="text-sm mt-1">Los concursos deben estar activos para poder participar.</p>
+                    <p className="text-sm mt-1">Los concursos deben estar activos y no haber finalizado para poder participar.</p>
                   </div>
                 )}
               </div>

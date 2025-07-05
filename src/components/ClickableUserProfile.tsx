@@ -1,77 +1,103 @@
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import UserNotAvailable from "./UserNotAvailable";
 
 interface ClickableUserProfileProps {
   photographer: string;
   photographerAvatar?: string;
   size?: "sm" | "md" | "lg";
   showAvatar?: boolean;
+  className?: string;
 }
 
 const ClickableUserProfile = ({ 
   photographer, 
   photographerAvatar, 
-  size = "md",
-  showAvatar = true 
+  size = "sm",
+  showAvatar = true,
+  className = ""
 }: ClickableUserProfileProps) => {
+  const navigate = useNavigate();
+  const [profileError, setProfileError] = useState(false);
+
   const sizeClasses = {
-    sm: {
-      avatar: "w-6 h-6",
-      text: "text-sm"
-    },
-    md: {
-      avatar: "w-8 h-8", 
-      text: "text-base"
-    },
-    lg: {
-      avatar: "w-10 h-10",
-      text: "text-lg"
+    sm: "text-sm",
+    md: "text-base",
+    lg: "text-lg"
+  };
+
+  const avatarSizes = {
+    sm: "h-6 w-6",
+    md: "h-8 w-8", 
+    lg: "h-10 w-10"
+  };
+
+  // Check if this is a system/admin created photo or non-existent user
+  const isSystemUser = !photographer || 
+                      photographer === 'Anónimo' || 
+                      photographer === 'Admin' || 
+                      photographer === 'Sistema' ||
+                      photographer.includes('@admin') ||
+                      profileError;
+
+  const handleProfileClick = async () => {
+    if (isSystemUser) {
+      // Don't navigate, just show that user is not available
+      return;
+    }
+
+    try {
+      // In a real app, you might want to check if the user exists first
+      // For now, we'll assume navigation works unless we know it's a system user
+      navigate(`/profile/${encodeURIComponent(photographer)}`);
+    } catch (error) {
+      console.error('Error navigating to profile:', error);
+      setProfileError(true);
     }
   };
 
-  const currentSize = sizeClasses[size];
-
-  // Create a proper profile URL slug from the photographer name
-  const createProfileSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters except spaces and hyphens
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
-      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
-  };
-
-  const profileSlug = createProfileSlug(photographer);
+  if (isSystemUser) {
+    return (
+      <div className={`flex items-center gap-2 ${className}`}>
+        {showAvatar && (
+          <Avatar className={avatarSizes[size]}>
+            <AvatarFallback className="bg-gray-200">
+              <User className="h-3 w-3 text-gray-400" />
+            </AvatarFallback>
+          </Avatar>
+        )}
+        <UserNotAvailable 
+          size={size} 
+          showIcon={false}
+          message="Usuario no disponible"
+          className={sizeClasses[size]}
+        />
+      </div>
+    );
+  }
 
   return (
-    <Link to={`/profile/${profileSlug}`}>
-      <motion.div 
-        className="flex items-center space-x-2 hover:bg-gray-100 rounded-lg p-1 transition-colors cursor-pointer"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+    <div className={`flex items-center gap-2 ${className}`}>
+      {showAvatar && (
+        <Avatar className={avatarSizes[size]}>
+          <AvatarImage src={photographerAvatar} alt={photographer} />
+          <AvatarFallback>
+            <User className="h-3 w-3" />
+          </AvatarFallback>
+        </Avatar>
+      )}
+      <Button
+        variant="link"
+        className={`p-0 h-auto font-medium hover:underline ${sizeClasses[size]}`}
+        onClick={handleProfileClick}
       >
-        {showAvatar && (
-          <>
-            {photographerAvatar ? (
-              <img
-                src={photographerAvatar}
-                alt={photographer}
-                className={`${currentSize.avatar} rounded-full object-cover`}
-              />
-            ) : (
-              <div className={`${currentSize.avatar} rounded-full bg-primary/10 flex items-center justify-center`}>
-                <User className="w-4 h-4" />
-              </div>
-            )}
-          </>
-        )}
-        <span className={`${currentSize.text} font-medium text-primary hover:text-primary/80 transition-colors`}>
-          {photographer}
-        </span>
-      </motion.div>
-    </Link>
+        {photographer}
+      </Button>
+    </div>
   );
 };
 
