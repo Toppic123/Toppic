@@ -43,20 +43,17 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
   ];
 
   return (
-    <section className="py-32 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-950/20 dark:via-purple-950/20 dark:to-pink-950/20 relative overflow-hidden">
-      {/* Background Pattern - unique for how it works */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-muted/20 dark:to-background relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 right-20 w-32 h-2 bg-gradient-to-r from-indigo-200/40 to-transparent rounded-full"></div>
+        <div className="absolute bottom-32 left-16 w-2 h-32 bg-gradient-to-b from-purple-200/40 to-transparent rounded-full"></div>
       </div>
 
-      {/* Geometric decorations unique to this section */}
+      {/* Minimal geometric decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-36 right-16 w-32 h-2 bg-gradient-to-r from-indigo-200/40 to-purple-200/40 rounded-full rotate-45 animate-pulse"></div>
-        <div className="absolute bottom-44 left-12 w-2 h-32 bg-gradient-to-b from-purple-200/40 to-pink-200/40 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <Lightbulb className="absolute top-1/3 left-1/5 w-10 h-10 text-indigo-300/30 animate-pulse" style={{ animationDelay: '0.5s' }} />
-        <Zap className="absolute bottom-1/3 right-1/5 w-14 h-14 text-purple-300/25 animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/3 right-1/4 w-10 h-10 border border-indigo-200/30 rounded-full"></div>
+        <Lightbulb className="absolute bottom-1/3 left-1/5 w-8 h-8 text-indigo-300/20" />
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">

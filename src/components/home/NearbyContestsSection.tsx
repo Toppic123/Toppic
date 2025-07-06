@@ -14,18 +14,17 @@ const NearbyContestsSection = () => {
   };
 
   return (
-    <section className="py-32 bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/20 dark:via-teal-950/20 dark:to-cyan-950/20 relative overflow-hidden">
-      {/* Enhanced Background Pattern - unique for nearby contests */}
-      <div className="absolute inset-0 opacity-6">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-emerald-400 to-teal-400 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-teal-400/30 to-cyan-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-muted/20 dark:to-background relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 right-20 w-2 h-32 bg-gradient-to-b from-emerald-200/40 to-transparent rounded-full"></div>
+        <div className="absolute bottom-32 left-16 w-32 h-2 bg-gradient-to-r from-teal-200/40 to-transparent rounded-full"></div>
       </div>
 
-      {/* Geometric decorations unique to this section */}
+      {/* Minimal geometric decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-32 right-20 w-32 h-32 border-2 border-teal-200/30 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
-        <div className="absolute bottom-40 left-16 w-24 h-24 border-2 border-emerald-200/40 rounded-lg rotate-45 animate-pulse"></div>
+        <div className="absolute top-40 right-32 w-16 h-16 border border-emerald-200/30 rounded-full"></div>
+        <Compass className="absolute bottom-40 left-20 w-8 h-8 text-emerald-300/20" />
       </div>
 
       <div className="container mx-auto px-4 text-center relative z-10">
@@ -85,10 +84,10 @@ const NearbyContestsSection = () => {
             {[...Array(5)].map((_, i) => (
               <motion.div
                 key={i}
-                className="w-4 h-4 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full shadow-lg"
+                className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"
                 animate={{ 
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
+                  scale: [1, 1.2, 1],
+                  opacity: [0.4, 0.8, 0.4]
                 }}
                 transition={{ 
                   duration: 2,

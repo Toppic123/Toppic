@@ -42,11 +42,11 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
 
   if (isLoading) {
     return (
-      <section className="py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-red-950/20 relative overflow-hidden">
-        {/* Background Pattern - unique for popular contests */}
-        <div className="absolute inset-0 opacity-6">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-orange-400 to-red-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-muted/20 dark:to-background relative overflow-hidden">
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 left-20 w-2 h-32 bg-gradient-to-b from-amber-200/40 to-transparent rounded-full"></div>
+          <div className="absolute bottom-32 right-16 w-32 h-2 bg-gradient-to-r from-orange-200/40 to-transparent rounded-full"></div>
         </div>
         
         <div className="container max-w-7xl mx-auto px-4 relative z-10">
@@ -77,20 +77,17 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
     }));
 
   return (
-    <section className="py-32 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950/20 dark:via-orange-950/20 dark:to-red-950/20 relative overflow-hidden">
-      {/* Background Pattern - unique for popular contests */}
-      <div className="absolute inset-0 opacity-6">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-128 h-128 bg-gradient-to-br from-red-400 to-pink-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-orange-400/30 to-red-400/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <section className="py-32 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-muted/20 dark:to-background relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-20 left-20 w-2 h-32 bg-gradient-to-b from-amber-200/40 to-transparent rounded-full"></div>
+        <div className="absolute bottom-32 right-16 w-32 h-2 bg-gradient-to-r from-orange-200/40 to-transparent rounded-full"></div>
       </div>
 
-      {/* Geometric decorations unique to this section */}
+      {/* Minimal geometric decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-40 left-20 w-28 h-28 border-2 border-amber-200/40 rounded-full animate-bounce" style={{ animationDuration: '3s' }}></div>
-        <div className="absolute bottom-32 right-24 w-20 h-20 border-2 border-orange-200/50 rotate-45 animate-pulse"></div>
-        <Star className="absolute top-1/4 right-1/3 w-12 h-12 text-amber-300/30 animate-pulse" style={{ animationDelay: '1s' }} />
-        <Crown className="absolute bottom-1/4 left-1/4 w-16 h-16 text-orange-300/20 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-40 left-32 w-12 h-12 border border-amber-200/30 rounded-full"></div>
+        <Crown className="absolute bottom-40 right-20 w-8 h-8 text-amber-300/20" />
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
