@@ -42,8 +42,31 @@ const NearbyContestsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto"
+          className="max-w-6xl mx-auto"
         >
+          {/* Image Section */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="mb-16 flex justify-center"
+          >
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 via-teal-500/20 to-cyan-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+              <div className="relative bg-white/80 backdrop-blur-sm border border-emerald-200/30 rounded-3xl p-8 shadow-2xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&crop=center" 
+                  alt="Persona buscando ubicación en móvil"
+                  className="w-full max-w-md h-64 object-cover rounded-2xl shadow-lg"
+                />
+                <div className="absolute -bottom-4 -right-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full p-4 shadow-xl">
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Enhanced CTA Button with location theme */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
