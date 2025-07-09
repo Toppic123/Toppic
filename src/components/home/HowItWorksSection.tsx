@@ -50,7 +50,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-emerald-50/40 dark:bg-emerald-500/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container max-w-5xl mx-auto px-4 relative z-10">
+      <div className="container max-w-6xl mx-auto px-4 relative z-10">
         {/* Clean title */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
@@ -66,7 +66,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
           {/* Desktop layout - horizontal */}
           <div className="hidden lg:block">
             {/* Connecting line */}
-            <div className="absolute top-20 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-200 via-emerald-200 to-red-200 dark:from-indigo-700 dark:via-emerald-700 dark:to-red-700 z-0"></div>
+            <div className="absolute top-28 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-200 via-emerald-200 to-red-200 dark:from-indigo-700 dark:via-emerald-700 dark:to-red-700 z-0"></div>
             
             <div className="flex justify-between items-start relative z-10">
               {steps.map((step, index) => (
@@ -80,20 +80,20 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                     duration: 0.6,
                     ease: "easeOut"
                   }}
-                  className="flex flex-col items-center text-center max-w-xs group"
+                  className="flex flex-col items-center text-center max-w-sm group"
                 >
                   {/* Circle container */}
-                  <div className="relative mb-6">
+                  <div className="relative mb-8">
                     {/* Main circle */}
                     <motion.div 
-                      className="w-40 h-40 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 relative z-10"
+                      className="w-56 h-56 rounded-full flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300 relative z-10"
                       style={{ backgroundColor: step.color }}
                       whileHover={{ scale: 1.05 }}
                     >
                       {/* White inner circle */}
-                      <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-inner">
+                      <div className="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-inner">
                         <step.icon 
-                          className="w-12 h-12"
+                          className="w-16 h-16"
                           style={{ color: step.color }}
                         />
                       </div>
@@ -101,7 +101,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                     
                     {/* Step number badge */}
                     <div 
-                      className="absolute -top-3 -right-3 w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg z-20"
+                      className="absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-lg z-20"
                       style={{ backgroundColor: step.color }}
                     >
                       {step.number}
@@ -111,12 +111,12 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                   {/* Content */}
                   <div>
                     <h3 
-                      className="text-xl font-bold mb-3"
+                      className="text-2xl font-bold mb-4"
                       style={{ color: step.color }}
                     >
                       {step.title}
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 text-base leading-relaxed font-medium">
                       {step.description}
                     </p>
                   </div>
@@ -126,7 +126,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
           </div>
 
           {/* Mobile layout - vertical */}
-          <div className="lg:hidden space-y-8">
+          <div className="lg:hidden space-y-12">
             {steps.map((step, index) => (
               <motion.div
                 key={index}
@@ -138,20 +138,20 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                   duration: 0.6,
                   ease: "easeOut"
                 }}
-                className="flex items-center space-x-6 group"
+                className="flex items-center space-x-8 group relative"
               >
                 {/* Circle container */}
                 <div className="relative flex-shrink-0">
                   {/* Main circle */}
                   <motion.div 
-                    className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300"
+                    className="w-32 h-32 rounded-full flex items-center justify-center shadow-xl group-hover:shadow-2xl transition-all duration-300"
                     style={{ backgroundColor: step.color }}
                     whileHover={{ scale: 1.05 }}
                   >
                     {/* White inner circle */}
-                    <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center">
+                    <div className="w-22 h-22 bg-white rounded-full flex items-center justify-center">
                       <step.icon 
-                        className="w-6 h-6"
+                        className="w-10 h-10"
                         style={{ color: step.color }}
                       />
                     </div>
@@ -159,7 +159,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                   
                   {/* Step number badge */}
                   <div 
-                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
+                    className="absolute -top-3 -right-3 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg"
                     style={{ backgroundColor: step.color }}
                   >
                     {step.number}
@@ -169,21 +169,22 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                 {/* Content */}
                 <div className="flex-grow">
                   <h3 
-                    className="text-lg font-bold mb-2"
+                    className="text-xl font-bold mb-3"
                     style={{ color: step.color }}
                   >
                     {step.title}
                   </h3>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                  <p className="text-slate-600 dark:text-slate-400 text-base leading-relaxed font-medium">
                     {step.description}
                   </p>
                 </div>
 
                 {/* Vertical connector */}
                 {index < steps.length - 1 && (
-                  <div className="absolute left-10 top-24 w-0.5 h-16 bg-gradient-to-b from-current to-transparent opacity-30" 
-                       style={{ color: step.color }}>
-                  </div>
+                  <div 
+                    className="absolute left-16 top-36 w-0.5 h-24 bg-gradient-to-b from-current to-transparent opacity-30" 
+                    style={{ color: step.color }}
+                  ></div>
                 )}
               </motion.div>
             ))}
