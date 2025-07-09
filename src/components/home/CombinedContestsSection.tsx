@@ -135,21 +135,45 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
-                    className="space-y-4 mb-6"
+                    className="space-y-3 mb-6"
                   >
                     {displayContests.map((contest) => (
                       <motion.div key={contest.id} variants={itemVariants}>
-                        <div className="transform scale-90 origin-left">
-                          <ContestCard 
-                            id={contest.id}
-                            title={contest.title}
-                            imageUrl={contest.imageUrl}
-                            location={contest.location}
-                            dateStart={contest.dateStart}
-                            dateEnd={contest.dateEnd}
-                            photosCount={contest.photosCount}
-                          />
-                        </div>
+                        <Link 
+                          to={`/contests/${contest.id}`}
+                          className="block group"
+                        >
+                          <div className="flex items-center gap-4 p-3 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-amber-100 dark:border-amber-900/30 group-hover:border-amber-200 dark:group-hover:border-amber-800/50">
+                            {/* Imagen más pequeña */}
+                            <div className="w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
+                              <img 
+                                src={contest.imageUrl} 
+                                alt={contest.title}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                            </div>
+                            
+                            {/* Contenido compacto */}
+                            <div className="flex-grow min-w-0">
+                              <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1 truncate group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                                {contest.title}
+                              </h4>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate mb-1">
+                                📍 {contest.location}
+                              </p>
+                              <div className="flex items-center gap-2 text-xs text-slate-400">
+                                <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full">
+                                  Activo
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* Icono de flecha */}
+                            <div className="flex-shrink-0">
+                              <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-amber-500 group-hover:translate-x-1 transition-all duration-300" />
+                            </div>
+                          </div>
+                        </Link>
                       </motion.div>
                     ))}
                   </motion.div>
@@ -175,10 +199,10 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
                   </motion.div>
                 </>
               ) : (
-                <div className="text-center py-12 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl border border-amber-200/30">
-                  <Crown className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-                  <p className="text-amber-700 dark:text-amber-300 mb-2">No hay concursos destacados</p>
-                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                <div className="text-center py-8 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl border border-amber-200/30">
+                  <Crown className="w-8 h-8 text-amber-400 mx-auto mb-3" />
+                  <p className="text-amber-700 dark:text-amber-300 mb-1 text-sm">No hay concursos destacados</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400">
                     Próximamente tendremos concursos populares
                   </p>
                 </div>
