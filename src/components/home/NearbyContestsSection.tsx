@@ -55,18 +55,18 @@ const NearbyContestsSection = () => {
             <Button
               size="lg"
               onClick={handleViewContests}
-              className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 text-white px-8 sm:px-12 md:px-16 py-6 sm:py-8 text-lg sm:text-xl md:text-2xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group w-full sm:w-auto max-w-sm sm:max-w-none mx-auto"
+              className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 text-white w-80 h-80 text-lg sm:text-xl md:text-2xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group mx-auto flex flex-col items-center justify-center"
             >
               {/* Animated background overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
               
-              <Navigation className="mr-2 sm:mr-4 h-5 w-5 sm:h-6 md:h-8 sm:w-6 md:w-8 relative z-10" />
-              <span className="relative z-10 text-center break-words">
-                <span className="hidden sm:inline">EXPLORAR CONCURSOS CERCANOS</span>
-                <span className="sm:hidden">EXPLORAR CERCA</span>
+              <Navigation className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 relative z-10 mb-4" />
+              <span className="relative z-10 text-center break-words px-6">
+                <span className="hidden sm:inline">EXPLORAR<br/>CONCURSOS<br/>CERCANOS</span>
+                <span className="sm:hidden">EXPLORAR<br/>CERCA</span>
               </span>
               <motion.div
-                className="ml-2 sm:ml-3 relative z-10"
+                className="mt-4 relative z-10"
                 animate={{ x: [0, 8, 0] }}
                 transition={{ 
                   duration: 1.5,
