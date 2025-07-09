@@ -22,7 +22,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: Upload,
       title: "PARTICIPA",
-      description: "Sube tus mejores fotografías y únete a la competencia. Comparte tu talento con la comunidad.",
+      description: "Sube tus mejores fotografías y únete a la competencia",
       gradient: "from-blue-500 via-purple-500 to-pink-500",
       number: "01",
       color: "blue"
@@ -30,7 +30,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: ThumbsUp,
       title: "VOTA",
-      description: "Evalúa y vota por las fotografías que más te gusten. Tu opinión cuenta para elegir a los ganadores.",
+      description: "Evalúa las fotografías que más te gusten",
       gradient: "from-teal-500 via-green-500 to-emerald-500",
       number: "02",
       color: "teal"
@@ -38,7 +38,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: Award,
       title: "GANA",
-      description: "Obtén premios increíbles y reconocimiento por tu talento. Destaca entre los mejores fotógrafos.",
+      description: "Obtén premios increíbles y reconocimiento",
       gradient: "from-orange-500 via-red-500 to-pink-500",
       number: "03",
       color: "orange"
