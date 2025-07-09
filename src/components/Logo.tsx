@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import toppicsLogo from '@/assets/toppics-logo.png';
 
 interface LogoProps {
   variant?: 'default' | 'small' | 'large';
@@ -23,10 +22,11 @@ const Logo: React.FC<LogoProps> = ({
   return (
     <Link to="/" className="flex items-center gap-2">
       <img 
-        src={toppicsLogo} 
-        alt="TOPPICS Modern Logo" 
+        src="/lovable-uploads/e24b365f-9171-4e3a-9573-1dfae2e79a5c.png" 
+        alt="TOPPICS Logo" 
         className={`${size} transition-transform hover:scale-105`}
       />
+      <span className={`${textSize} font-bold text-primary`}>TOPPICS</span>
     </Link>
   );
 };
