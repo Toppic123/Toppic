@@ -1,7 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Star, Heart, User, Share2 } from "lucide-react";
+import { Trophy, Star, Heart, User, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -84,6 +84,56 @@ const WinningGallerySection = () => {
   const handlePhotoClick = (photo: any) => {
     setSelectedPhoto(photo);
   };
+
+  // Navigation functions
+  const getCurrentPhotoIndex = useCallback(() => {
+    if (!selectedPhoto) return -1;
+    return winningPhotos.findIndex(photo => photo.id === selectedPhoto.id);
+  }, [selectedPhoto, winningPhotos]);
+
+  const navigateToPhoto = useCallback((direction: 'prev' | 'next') => {
+    const currentIndex = getCurrentPhotoIndex();
+    if (currentIndex === -1) return;
+
+    let nextIndex;
+    if (direction === 'prev') {
+      nextIndex = currentIndex === 0 ? winningPhotos.length - 1 : currentIndex - 1;
+    } else {
+      nextIndex = currentIndex === winningPhotos.length - 1 ? 0 : currentIndex + 1;
+    }
+    
+    setSelectedPhoto(winningPhotos[nextIndex]);
+  }, [getCurrentPhotoIndex, winningPhotos]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!selectedPhoto) return;
+      
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          navigateToPhoto('prev');
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          navigateToPhoto('next');
+          break;
+        case 'Escape':
+          event.preventDefault();
+          setSelectedPhoto(null);
+          break;
+      }
+    };
+
+    if (selectedPhoto) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedPhoto, navigateToPhoto]);
 
   return (
     <>
@@ -187,12 +237,48 @@ const WinningGallerySection = () => {
               </DialogHeader>
               
               <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full min-h-0">
-                <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden">
+                <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden relative">
                   <img 
                     src={selectedPhoto.imageUrl || selectedPhoto.image_url} 
                     alt={selectedPhoto.title}
                     className="max-w-full max-h-full object-contain"
                   />
+                  
+                  {/* Navigation Buttons */}
+                  {winningPhotos.length > 1 && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70 hover:text-white rounded-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToPhoto('prev');
+                        }}
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70 hover:text-white rounded-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToPhoto('next');
+                        }}
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </Button>
+                    </>
+                  )}
+                  
+                  {/* Photo Counter */}
+                  {winningPhotos.length > 1 && (
+                    <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                      {getCurrentPhotoIndex() + 1} / {winningPhotos.length}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="col-span-2 flex flex-col border-l">
