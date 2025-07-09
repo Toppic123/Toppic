@@ -58,33 +58,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
     setIsUploading(true);
     
     try {
-      // Check if contest-images bucket exists, if not create it
-      console.log('🪣 Checking if contest-images bucket exists...');
-      const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-      
-      if (listError) {
-        console.error('❌ Error listing buckets:', listError);
-      } else {
-        console.log('📋 Available buckets:', buckets.map(b => b.name));
-        const contestImagesBucket = buckets.find(b => b.name === 'contest-images');
-        if (!contestImagesBucket) {
-          console.log('🪣 Creating contest-images bucket...');
-          const { error: createError } = await supabase.storage.createBucket('contest-images', {
-            public: true,
-            allowedMimeTypes: ['image/*'],
-            fileSizeLimit: 5242880 // 5MB
-          });
-          
-          if (createError) {
-            console.error('❌ Error creating bucket:', createError);
-          } else {
-            console.log('✅ contest-images bucket created successfully');
-          }
-        } else {
-          console.log('✅ contest-images bucket already exists');
-        }
-      }
-
       // Generate unique filename with timestamp
       const fileExt = file.name.split('.').pop();
       const fileName = `contest-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -119,19 +92,6 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
       const publicUrl = urlData.publicUrl;
       
       console.log('🌐 Generated public URL:', publicUrl);
-      console.log('📞 About to call onChange with URL:', publicUrl);
-      
-      // Test if the image URL is accessible
-      try {
-        const response = await fetch(publicUrl, { method: 'HEAD' });
-        console.log('🔍 Image URL accessibility test:', {
-          url: publicUrl,
-          status: response.status,
-          accessible: response.ok
-        });
-      } catch (testError) {
-        console.error('❌ Error testing image URL:', testError);
-      }
       
       // Update preview immediately
       setPreviewUrl(publicUrl);
@@ -200,6 +160,7 @@ const ContestImageUpload = ({ value, onChange }: ContestImageUploadProps) => {
               Vista previa de la imagen:
             </div>
             <img
+              key={previewUrl} // Force re-render when URL changes
               src={previewUrl}
               alt="Vista previa del concurso"
               className="w-full max-w-md h-48 object-cover rounded-lg border"

@@ -62,11 +62,10 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // Update form data when contest prop changes
+  // Update form data when contest prop changes - IMPROVED image handling
   React.useEffect(() => {
     console.log('ContestFormDialog - contest prop changed:', contest);
     if (contest) {
-      // Use image_url as the primary field (database field name)
       const imageUrl = contest.image_url || contest.imageUrl || '';
       console.log('Setting image_url from contest:', imageUrl);
       console.log('Setting plan from contest:', contest.plan);
@@ -125,14 +124,13 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      console.log('Form data being submitted with plan:', formData.plan);
-      // Fix: Ensure plan is correctly passed in the submission data
+      console.log('Form data being submitted with image_url:', formData.image_url);
       const submissionData = {
         title: formData.title,
         organizer: formData.organizer,
         description: formData.description,
         location: formData.location,
-        image_url: formData.image_url,
+        image_url: formData.image_url, // Ensure image_url is properly included
         prize: formData.prize,
         startDate: formData.startDate,
         endDate: formData.endDate,
@@ -143,11 +141,11 @@ export const ContestFormDialog = ({ isOpen, onClose, contest, onSubmit }: Contes
         minimumDistanceKm: formData.minimumDistanceKm,
         photoOwnership: formData.photoOwnership,
         commercialUse: formData.commercialUse,
-        plan: formData.plan, // Ensure plan is included in submission data
+        plan: formData.plan,
         latitude: formData.latitude,
         longitude: formData.longitude
       };
-      console.log('Submission data with plan:', submissionData);
+      console.log('Submission data with image_url:', submissionData.image_url);
       await onSubmit(submissionData);
       onClose();
     } catch (error) {
