@@ -22,7 +22,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: Upload,
       title: "PARTICIPA",
-      description: "Sube tus mejores fotografías y únete a la competencia",
+      description: "Sube tus mejores fotografías y únete a la competencia. Comparte tu talento con la comunidad.",
       gradient: "from-blue-500 via-purple-500 to-pink-500",
       number: "01",
       color: "blue"
@@ -30,7 +30,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: ThumbsUp,
       title: "VOTA",
-      description: "Evalúa y vota por las fotografías que más te gusten",
+      description: "Evalúa y vota por las fotografías que más te gusten. Tu opinión cuenta para elegir a los ganadores.",
       gradient: "from-teal-500 via-green-500 to-emerald-500",
       number: "02",
       color: "teal"
@@ -38,7 +38,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: Award,
       title: "GANA",
-      description: "Obtén premios increíbles y reconocimiento por tu talento",
+      description: "Obtén premios increíbles y reconocimiento por tu talento. Destaca entre los mejores fotógrafos.",
       gradient: "from-orange-500 via-red-500 to-pink-500",
       number: "03",
       color: "orange"
@@ -91,22 +91,22 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
                     </div>
                     
                     {/* Step number */}
-                    <div className={`text-3xl font-black bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent mb-4`}>
-                      STEP {step.number}
+                    <div className={`text-4xl font-black bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent mb-6`}>
+                      {step.number}
                     </div>
                     
                     {/* Icon */}
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center mb-6 shadow-lg`}>
-                      <step.icon className="w-8 h-8 text-white" />
+                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${step.gradient} flex items-center justify-center mb-6 shadow-xl`}>
+                      <step.icon className="w-10 h-10 text-white" />
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3 text-center">
+                    <h3 className={`text-2xl font-black mb-4 text-center bg-gradient-to-r ${step.gradient} bg-clip-text text-transparent`}>
                       {step.title}
                     </h3>
                     
                     {/* Description */}
-                    <p className="text-slate-600 dark:text-slate-400 text-center text-sm leading-relaxed">
+                    <p className="text-slate-700 dark:text-slate-300 text-center text-base leading-relaxed font-medium px-2">
                       {step.description}
                     </p>
                   </div>
