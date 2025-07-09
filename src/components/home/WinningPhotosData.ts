@@ -11,7 +11,7 @@ export const winningPhotos = [
   {
     id: "2", 
     url: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Momento Especial",
+    title: "BODA",
     photographer: "Ana Rodríguez", 
     category: "Boda"
   },
