@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Upload, ThumbsUp, Award, ArrowDown } from "lucide-react";
+import { Upload, ThumbsUp, Award, ArrowDown, Zap } from "lucide-react";
+import ModernSectionTitle from "./ModernSectionTitle";
 
 interface HowItWorksSectionProps {
   texts: {
@@ -51,15 +52,14 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
       </div>
 
       <div className="container max-w-6xl mx-auto px-4 relative z-10">
-        {/* Clean title */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            ¿Cómo funciona?
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Proceso simple en tres pasos
-          </p>
-        </div>
+        {/* Modern Title with process theme */}
+        <ModernSectionTitle 
+          title="¿Cómo funciona?"
+          subtitle="Proceso simple en tres pasos para comenzar a participar y ganar"
+          icon={Zap}
+          gradient="from-indigo-600 via-purple-600 to-pink-600"
+          showSparkles={true}
+        />
         
         {/* Process steps */}
         <div className="relative">
