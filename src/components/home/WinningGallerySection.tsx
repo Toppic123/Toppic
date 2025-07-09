@@ -58,12 +58,18 @@ const WinningGallerySection = () => {
   // Navigation functions - moved to top to ensure consistent hook order
   const getCurrentPhotoIndex = useCallback(() => {
     if (!selectedPhoto) return -1;
-    return winningPhotos.findIndex(photo => photo.id === selectedPhoto.id);
+    const index = winningPhotos.findIndex(photo => photo.id === selectedPhoto.id);
+    console.log('getCurrentPhotoIndex:', index, 'selectedPhoto id:', selectedPhoto?.id, 'total photos:', winningPhotos.length);
+    return index;
   }, [selectedPhoto, winningPhotos]);
 
   const navigateToPhoto = useCallback((direction: 'prev' | 'next') => {
+    console.log('navigateToPhoto called with direction:', direction);
     const currentIndex = getCurrentPhotoIndex();
-    if (currentIndex === -1) return;
+    if (currentIndex === -1) {
+      console.log('Current index is -1, cannot navigate');
+      return;
+    }
 
     let nextIndex;
     if (direction === 'prev') {
@@ -72,6 +78,8 @@ const WinningGallerySection = () => {
       nextIndex = currentIndex === winningPhotos.length - 1 ? 0 : currentIndex + 1;
     }
     
+    console.log('Navigating from index', currentIndex, 'to index', nextIndex);
+    console.log('Next photo:', winningPhotos[nextIndex]);
     setSelectedPhoto(winningPhotos[nextIndex]);
   }, [getCurrentPhotoIndex, winningPhotos]);
 
