@@ -55,37 +55,7 @@ const WinningGallerySection = () => {
   // Use database photos if available, otherwise use static photos
   const winningPhotos = dbPhotos && dbPhotos.length > 0 ? dbPhotos : staticWinningPhotos;
 
-  if (isLoading) {
-    return (
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center">
-            <p>Cargando galería de fotos ganadoras...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (!winningPhotos || winningPhotos.length === 0) {
-    return (
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
-        <div className="container max-w-7xl mx-auto">
-          <div className="text-center">
-            <Trophy className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-4xl font-bold mb-4">Galería de Fotos Ganadoras</h2>
-            <p className="text-gray-600">Próximamente se mostrarán las mejores fotografías de nuestros concursos.</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  const handlePhotoClick = (photo: any) => {
-    setSelectedPhoto(photo);
-  };
-
-  // Navigation functions
+  // Navigation functions - moved to top to ensure consistent hook order
   const getCurrentPhotoIndex = useCallback(() => {
     if (!selectedPhoto) return -1;
     return winningPhotos.findIndex(photo => photo.id === selectedPhoto.id);
@@ -134,6 +104,36 @@ const WinningGallerySection = () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, [selectedPhoto, navigateToPhoto]);
+
+  if (isLoading) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center">
+            <p>Cargando galería de fotos ganadoras...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!winningPhotos || winningPhotos.length === 0) {
+    return (
+      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-white">
+        <div className="container max-w-7xl mx-auto">
+          <div className="text-center">
+            <Trophy className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-4xl font-bold mb-4">Galería de Fotos Ganadoras</h2>
+            <p className="text-gray-600">Próximamente se mostrarán las mejores fotografías de nuestros concursos.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const handlePhotoClick = (photo: any) => {
+    setSelectedPhoto(photo);
+  };
 
   return (
     <>
