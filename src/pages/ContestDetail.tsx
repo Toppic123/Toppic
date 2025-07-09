@@ -1,12 +1,17 @@
 
 import { useParams, Navigate, useNavigate } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import PhotoCard from "@/components/PhotoCard";
+import PhotoComments from "@/components/PhotoComments";
+import SocialShareButtons from "@/components/SocialShareButtons";
+import ClickableUserProfile from "@/components/ClickableUserProfile";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ContestDetail = () => {
@@ -15,8 +20,69 @@ const ContestDetail = () => {
   const { contests, isLoading } = useContestsData();
   const { user } = useAuth();
   
+  // Navigation state for photo gallery
+  const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+  
   // Fetch real photos from the database and use voting functionality
   const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(id);
+
+  // Navigation functions for gallery
+  const getCurrentPhotoIndex = useCallback(() => {
+    if (!selectedPhoto) return -1;
+    const index = approvedPhotos.findIndex(photo => photo.id === selectedPhoto.id);
+    console.log('getCurrentPhotoIndex:', index, 'selectedPhoto id:', selectedPhoto?.id, 'total photos:', approvedPhotos.length);
+    return index;
+  }, [selectedPhoto, approvedPhotos]);
+
+  const navigateToPhoto = useCallback((direction: 'prev' | 'next') => {
+    console.log('navigateToPhoto called with direction:', direction);
+    const currentIndex = getCurrentPhotoIndex();
+    if (currentIndex === -1) {
+      console.log('Current index is -1, cannot navigate');
+      return;
+    }
+
+    let nextIndex;
+    if (direction === 'prev') {
+      nextIndex = currentIndex === 0 ? approvedPhotos.length - 1 : currentIndex - 1;
+    } else {
+      nextIndex = currentIndex === approvedPhotos.length - 1 ? 0 : currentIndex + 1;
+    }
+    
+    console.log('Navigating from index', currentIndex, 'to index', nextIndex);
+    console.log('Next photo:', approvedPhotos[nextIndex]);
+    setSelectedPhoto(approvedPhotos[nextIndex]);
+  }, [getCurrentPhotoIndex, approvedPhotos]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!selectedPhoto) return;
+      
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          navigateToPhoto('prev');
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          navigateToPhoto('next');
+          break;
+        case 'Escape':
+          event.preventDefault();
+          setSelectedPhoto(null);
+          break;
+      }
+    };
+
+    if (selectedPhoto) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedPhoto, navigateToPhoto]);
 
   if (isLoading) {
     return (
@@ -189,14 +255,16 @@ const ContestDetail = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                   {approvedPhotos.map((photo) => (
                     <div key={photo.id} className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <PhotoCard
-                        id={photo.id}
-                        imageUrl={photo.image_url}
-                        photographer={photo.photographer_name}
-                        photographerAvatar={photo.photographer_avatar}
-                        mode="grid"
-                        onVote={handleVotePhoto}
-                      />
+                      <div 
+                        className="aspect-[3/4] bg-muted overflow-hidden rounded-xl relative group cursor-pointer"
+                        onClick={() => setSelectedPhoto(photo)}
+                      >
+                        <img
+                          src={photo.image_url}
+                          alt={`Photo by ${photo.photographer_name}`}
+                          className="w-full h-full object-cover transition-opacity duration-700"
+                        />
+                      </div>
                       
                       {/* Photo info section */}
                       <div className="p-4">
@@ -306,6 +374,112 @@ const ContestDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Photo Navigation Dialog */}
+      <Dialog 
+        open={selectedPhoto !== null} 
+        onOpenChange={(open) => !open && setSelectedPhoto(null)}
+      >
+        <DialogContent className="sm:max-w-6xl h-[90vh] max-h-[900px] flex flex-col p-0 gap-0">
+          {selectedPhoto && (
+            <>
+              <div className="flex items-center justify-between px-4 py-3 border-b">
+                <div className="flex flex-col items-start">
+                  <h3 className="text-base font-medium">{selectedPhoto.photographer_name}</h3>
+                  {selectedPhoto.description && (
+                    <p className="text-sm text-muted-foreground mt-1">{selectedPhoto.description}</p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <SocialShareButtons 
+                    url={window.location.href}
+                    title={`Foto de ${selectedPhoto.photographer_name}`}
+                    imageUrl={selectedPhoto.image_url}
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSelectedPhoto(null)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-5 h-full min-h-0">
+                <div className="col-span-3 bg-black flex items-center justify-center overflow-hidden relative">
+                  <img 
+                    src={selectedPhoto.image_url} 
+                    alt={`Foto de ${selectedPhoto.photographer_name}`}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                  
+                  {/* Navigation Buttons */}
+                  {approvedPhotos.length > 1 && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70 hover:text-white rounded-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToPhoto('prev');
+                        }}
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70 hover:text-white rounded-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToPhoto('next');
+                        }}
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </Button>
+                    </>
+                  )}
+                  
+                  {/* Photo Counter */}
+                  {approvedPhotos.length > 1 && (
+                    <div className="absolute top-4 right-4 bg-black/50 text-white px-2 py-1 rounded text-sm">
+                      {getCurrentPhotoIndex() + 1} / {approvedPhotos.length}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="col-span-2 flex flex-col border-l">
+                  <div className="p-4 border-b">
+                    <ClickableUserProfile
+                      photographer={selectedPhoto.photographer_name}
+                      photographerAvatar={selectedPhoto.photographer_avatar}
+                      size="md"
+                    />
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">
+                        {selectedPhoto.votes} votos
+                      </span>
+                      {user && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleVotePhoto(selectedPhoto.id, true)}
+                        >
+                          👍 Votar
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 };
