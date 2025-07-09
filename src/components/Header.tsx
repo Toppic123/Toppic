@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import Logo from "@/components/Logo";
 
 // Use memo for better performance
 const MobileMenu = memo(({ 
@@ -37,7 +38,7 @@ const MobileMenu = memo(({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-8">
-          <div className="text-2xl font-bold text-[#4891AA]">TOPPICS</div>
+          <Logo variant="small" />
           <button
             className="text-muted-foreground"
             onClick={onClose}
@@ -150,12 +151,7 @@ const Header = () => {
       )}
     >
       <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between">
-        {/* Project name instead of Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight transition-transform hover:scale-105 text-[#4891AA]">
-            TOPPICS
-          </h1>
-        </Link>
+        <Logo variant="default" />
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
