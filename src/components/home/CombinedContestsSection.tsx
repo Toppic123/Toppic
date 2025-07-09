@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ContestCard from "@/components/ContestCard";
 import { useFeaturedContests } from "@/hooks/useFeaturedContests";
+import ModernSectionTitle from "./ModernSectionTitle";
 
 interface CombinedContestsSectionProps {
   texts: {
@@ -46,7 +47,7 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
   // Convert featured contests to the format expected by ContestCard
   const displayContests = featuredContests
     .filter(featured => featured.contests && featured.is_active)
-    .slice(0, 2) // Solo 2 concursos para el diseño combinado
+    .slice(0, 3) // Mostrar 3 concursos
     .map(featured => ({
       id: featured.contests!.id,
       title: featured.contests!.title,
@@ -61,14 +62,13 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
     return (
       <section className="pt-32 pb-24 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-muted/20 dark:to-background relative overflow-hidden">
         <div className="container max-w-7xl mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-              Descubre Concursos
-            </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400">
-              Cargando contenido...
-            </p>
-          </div>
+          <ModernSectionTitle 
+            title="Descubre Concursos"
+            subtitle="Cargando contenido..."
+            icon={Crown}
+            gradient="from-amber-500 via-orange-500 to-emerald-500"
+            showSparkles={true}
+          />
         </div>
       </section>
     );
@@ -100,18 +100,17 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
       </div>
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
-        {/* Combined Title */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            Descubre Concursos
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-            Explora concursos populares y encuentra eventos cerca de tu ubicación
-          </p>
-        </div>
+        {/* Modern Title with combined theme */}
+        <ModernSectionTitle 
+          title="Descubre Concursos"
+          subtitle="Explora concursos populares y encuentra eventos cerca de tu ubicación"
+          icon={Crown}
+          gradient="from-amber-500 via-orange-500 to-emerald-500"
+          showSparkles={true}
+        />
 
         {/* Main content grid */}
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-start">
           {/* Left side - Popular Contests */}
           <div className="order-2 lg:order-1">
             <motion.div
@@ -120,11 +119,11 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center">
-                  <Crown className="w-6 h-6 text-white" />
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
+                  <Crown className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
                   Concursos Populares
                 </h3>
               </div>
@@ -136,19 +135,21 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.2 }}
-                    className="space-y-6 mb-8"
+                    className="space-y-4 mb-6"
                   >
                     {displayContests.map((contest) => (
                       <motion.div key={contest.id} variants={itemVariants}>
-                        <ContestCard 
-                          id={contest.id}
-                          title={contest.title}
-                          imageUrl={contest.imageUrl}
-                          location={contest.location}
-                          dateStart={contest.dateStart}
-                          dateEnd={contest.dateEnd}
-                          photosCount={contest.photosCount}
-                        />
+                        <div className="transform scale-90 origin-left">
+                          <ContestCard 
+                            id={contest.id}
+                            title={contest.title}
+                            imageUrl={contest.imageUrl}
+                            location={contest.location}
+                            dateStart={contest.dateStart}
+                            dateEnd={contest.dateEnd}
+                            photosCount={contest.photosCount}
+                          />
+                        </div>
                       </motion.div>
                     ))}
                   </motion.div>
@@ -162,13 +163,13 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
                     <Button 
                       asChild 
                       size="lg" 
-                      className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-white px-8 py-6 text-lg font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group w-full"
+                      className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 hover:from-amber-600 hover:via-orange-600 hover:to-red-600 text-white px-6 py-4 text-base font-bold rounded-full shadow-xl transform transition-all duration-300 hover:scale-105 border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group w-full"
                     >
                       <Link to="/contests" className="flex items-center justify-center">
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                        <Crown className="mr-3 h-5 w-5 relative z-10" />
+                        <Crown className="mr-2 h-4 w-4 relative z-10" />
                         <span className="relative z-10">{texts.seeAll}</span>
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
+                        <ArrowRight className="ml-2 h-3 w-3 transition-transform group-hover:translate-x-1 relative z-10" />
                       </Link>
                     </Button>
                   </motion.div>
@@ -195,16 +196,16 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
               className="text-center"
             >
               <div className="flex items-center justify-center gap-3 mb-8">
-                <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center">
-                  <Compass className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
+                  <Compass className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                   Concursos Cerca de Ti
                 </h3>
               </div>
 
-              <p className="text-slate-600 dark:text-slate-400 mb-12 text-lg">
-                Descubre concursos de fotografía en tu área y participa desde tu ubicación actual
+              <p className="text-slate-600 dark:text-slate-400 mb-10 text-base text-center">
+                Descubre concursos de fotografía en tu área
               </p>
 
               <motion.div
@@ -217,13 +218,13 @@ const CombinedContestsSection = ({ texts }: CombinedContestsSectionProps) => {
                 <Button
                   size="lg"
                   onClick={handleViewContests}
-                  className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 text-white w-64 h-64 text-lg sm:text-xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group mx-auto flex items-center justify-center"
+                  className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 text-white w-80 h-80 text-xl sm:text-2xl font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl border-2 border-white/20 backdrop-blur-sm relative overflow-hidden group mx-auto flex items-center justify-center"
                 >
                   {/* Animated background overlay */}
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
                   
                   <div className="relative z-10 flex flex-col items-center justify-center text-center">
-                    <Navigation className="h-10 w-10 mb-4" />
+                    <Navigation className="h-12 w-12 mb-4" />
                     <div className="text-center leading-tight">
                       EXPLORAR<br/>CONCURSOS<br/>CERCANOS
                     </div>
