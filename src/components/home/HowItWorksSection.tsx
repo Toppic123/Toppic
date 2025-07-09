@@ -19,7 +19,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
     {
       icon: Upload,
       title: "PARTICIPA",
-      description: "Sube tus mejores fotografías y únete a la competencia",
+      description: "Comparte tus mejores fotografías",
       color: "#4F46E5", // Indigo
       lightColor: "#EEF2FF",
       number: "01"
