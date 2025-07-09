@@ -3,8 +3,7 @@ import { motion } from "framer-motion";
 import HeroSection from "@/components/home/HeroSection";
 import HowItWorksSection from "@/components/home/HowItWorksSection";
 import WinningGallerySection from "@/components/home/WinningGallerySection";
-import PopularContestsSection from "@/components/home/PopularContestsSection";
-import NearbyContestsSection from "@/components/home/NearbyContestsSection";
+import CombinedContestsSection from "@/components/home/CombinedContestsSection";
 import OrganizerSection from "@/components/home/OrganizerSection";
 import { homeTexts } from "@/components/home/HomeTexts";
 import { heroImages } from "@/components/home/HomeData";
@@ -42,8 +41,7 @@ const Index = () => {
       className="min-h-screen"
     >
       <HeroSection heroImages={heroImages} texts={cleanedHomeTexts} />
-      <PopularContestsSection texts={cleanedHomeTexts} />
-      <NearbyContestsSection />
+      <CombinedContestsSection texts={cleanedHomeTexts} />
       <HowItWorksSection texts={cleanedHomeTexts} />
       <WinningGallerySection />
       <OrganizerSection texts={cleanedHomeTexts} />
