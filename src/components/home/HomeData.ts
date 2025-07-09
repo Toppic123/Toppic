@@ -115,8 +115,8 @@ export const winningPhotos: WinningPhoto[] = [
   },
   {
     id: 8,
-    imageUrl: "https://images.unsplash.com/photo-1549451371-64aa98a6f632?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    title: "Arquitectura moderna",
+    imageUrl: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&auto=format&fit=crop&q=60",
+    title: "Momento especial",
     photographer: "Javier Acosta",
     photographerAvatar: "https://i.pravatar.cc/150?img=8",
     likes: 275
