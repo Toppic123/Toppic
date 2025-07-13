@@ -49,7 +49,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Trophy className="h-6 w-6 text-yellow-500 mr-2" />
-            <h1 className="text-xl font-semibold text-gray-900">FOTOS GANADORAS</h1>
+            <h1 className="text-xl font-semibold text-gray-900">MEJORES FOTOS</h1>
           </div>
           <Button
             variant="ghost"
