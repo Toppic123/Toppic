@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Camera, Navigation, MapPin, Sparkles, Compass } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ModernSectionTitle from "./ModernSectionTitle";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const NearbyContestsSection = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleViewContests = () => {
     navigate("/contests");
@@ -89,7 +91,7 @@ const NearbyContestsSection = () => {
                 <Navigation className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 mb-4" />
                 <div className="text-center leading-tight">
                   <div className="hidden sm:block">EXPLORAR<br/>CONCURSOS<br/>CERCANOS</div>
-                  <div className="sm:hidden">EXPLORAR<br/>CERCA</div>
+                  <div className="sm:hidden">CONCURSOS<br/>CERCANOS</div>
                 </div>
                 <motion.div
                   className="mt-4"

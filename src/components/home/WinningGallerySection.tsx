@@ -10,6 +10,7 @@ import { useWinningPhotos } from "@/hooks/use-winning-photos";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ClickableUserProfile from "@/components/ClickableUserProfile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Static photos with the corrected wedding photo
 const staticWinningPhotos = [
@@ -51,9 +52,13 @@ const staticWinningPhotos = [
 const WinningGallerySection = () => {
   const { photos: dbPhotos, loading: isLoading } = useWinningPhotos();
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+  const isMobile = useIsMobile();
 
   // Use database photos if available, otherwise use static photos
-  const winningPhotos = dbPhotos && dbPhotos.length > 0 ? dbPhotos : staticWinningPhotos;
+  const allWinningPhotos = dbPhotos && dbPhotos.length > 0 ? dbPhotos : staticWinningPhotos;
+  
+  // Show only 3 photos on mobile, all photos on desktop
+  const winningPhotos = isMobile ? allWinningPhotos.slice(0, 3) : allWinningPhotos;
 
   // Navigation functions - moved to top to ensure consistent hook order
   const getCurrentPhotoIndex = useCallback(() => {
