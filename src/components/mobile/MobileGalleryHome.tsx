@@ -80,7 +80,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {winningPhotos.map((winningPhoto) => (
+            {winningPhotos.slice(0, 8).map((winningPhoto) => (
               <div key={winningPhoto.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div className="relative">
                   <img 
