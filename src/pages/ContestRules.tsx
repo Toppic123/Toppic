@@ -40,7 +40,7 @@ const ContestRules = () => {
                 <h3 className="font-semibold mb-2">Requisitos de las Fotografías</h3>
                 <ul className="list-disc list-inside space-y-1 text-gray-700">
                   <li>Las fotografías deben ser originales y de tu autoría</li>
-                  <li>Formato JPG o PNG, tamaño máximo 10MB</li>
+                  <li>Formato JPG o PNG, tamaño máximo 25MB</li>
                   <li>Resolución mínima: 1920x1080 píxeles</li>
                   <li>No se permiten marcas de agua visibles</li>
                   <li>Las fotos deben tomarse dentro del área y período del concurso</li>

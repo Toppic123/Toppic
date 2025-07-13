@@ -42,11 +42,11 @@ const ContestPhotoManager = () => {
         return;
       }
       
-      // Validar tamaño (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
+      // Validar tamaño (max 25MB)
+      if (file.size > 25 * 1024 * 1024) {
         toast({
           title: "Error",
-          description: "El archivo es demasiado grande. Máximo 10MB",
+          description: "El archivo es demasiado grande. Máximo 25MB",
           variant: "destructive"
         });
         return;

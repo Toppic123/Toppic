@@ -34,10 +34,10 @@ const MobileUpload = ({ onNavigate, contestId }: MobileUploadProps) => {
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      if (file.size > 25 * 1024 * 1024) { // 25MB limit
         toast({
-          title: "Archivo demasiado grande",
-          description: "La imagen no puede ser mayor a 10MB",
+          title: "Archivo muy grande",
+          description: "La imagen no puede ser mayor a 25MB",
           variant: "destructive",
         });
         return;
@@ -143,7 +143,7 @@ const MobileUpload = ({ onNavigate, contestId }: MobileUploadProps) => {
             >
               <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-2">Toca para seleccionar una foto</p>
-              <p className="text-sm text-gray-500">JPG, PNG o WEBP (máx. 10MB)</p>
+              <p className="text-sm text-gray-500">JPG, PNG o WEBP (máx. 25MB)</p>
             </div>
           ) : (
             <div className="relative">

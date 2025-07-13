@@ -212,10 +212,10 @@ const Upload = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      if (file.size > 10 * 1024 * 1024) { // Increased to 10MB since we're storing originals
+      if (file.size > 25 * 1024 * 1024) { // Increased to 25MB since we're storing originals
         toast({
           title: "Archivo demasiado grande",
-          description: "Por favor selecciona una imagen de menos de 10MB",
+          description: "Por favor selecciona una imagen de menos de 25MB",
           variant: "destructive"
         });
         return;
@@ -606,7 +606,7 @@ const Upload = () => {
                         </label>
                       </div>
                       <span className="text-xs text-muted-foreground">
-                        JPG, PNG o GIF. Máximo 10MB.
+                        JPG, PNG o GIF. Máximo 25MB.
                       </span>
                     </div>
                   </div>
