@@ -230,20 +230,20 @@ const Contests = () => {
                     >
                       <div className="flex items-center gap-3">
                         <div className={`
-                          p-2 rounded-lg transition-all duration-300
+                          p-2 rounded-lg transition-all duration-300 transform
                           ${viewMode === "map" 
-                            ? "bg-white/20" 
-                            : "bg-gray-100 group-hover:bg-gray-200"
+                            ? "bg-white/20 shadow-lg" 
+                            : "bg-gray-100 group-hover:bg-gray-200 hover:shadow-md hover:scale-105"
                           }
                         `}>
                           <Map className={`w-4 h-4 ${viewMode === "map" ? "text-white" : ""}`} />
                         </div>
-                        <span className={viewMode === "map" ? "text-white" : ""}>MAPA</span>
+                        <span className={`${viewMode === "map" ? "text-white font-semibold" : "font-medium"}`}>MAPA</span>
                       </div>
                       {viewMode === "map" && (
                         <motion.div
                           layoutId="activeTab"
-                          className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl -z-10"
+                          className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl -z-10 shadow-xl ring-2 ring-emerald-400/50"
                           initial={false}
                           transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />

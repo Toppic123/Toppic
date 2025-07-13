@@ -199,7 +199,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
             variant="outline"
             size="sm"
             onClick={() => setShowMap(true)}
-            className="flex-1"
+            className="flex-1 border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/15 hover:to-primary/20 text-primary font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200"
           >
             <MapIcon className="h-4 w-4 mr-2" />
             Mapa
@@ -290,14 +290,25 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                   <div className="flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-500">{contest.participants} participantes</span>
-                      <Button 
-                        size="sm"
-                        onClick={() => onNavigate('upload', contest.id)}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <Camera className="h-4 w-4 mr-1" />
-                        Participar
-                      </Button>
+                      {contest.isActive && new Date(contest.endDate) > new Date() ? (
+                        <Button 
+                          size="sm"
+                          onClick={() => onNavigate('upload', contest.id)}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <Camera className="h-4 w-4 mr-1" />
+                          Participar
+                        </Button>
+                      ) : (
+                        <Button 
+                          size="sm"
+                          disabled
+                          className="bg-gray-400 text-white cursor-not-allowed"
+                        >
+                          <Camera className="h-4 w-4 mr-1" />
+                          Finalizado
+                        </Button>
+                      )}
                     </div>
                     
                     <div className="flex space-x-3">
