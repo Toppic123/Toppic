@@ -15,8 +15,23 @@ const NearbyContestsSection = () => {
 
   return (
     <section className="pt-16 pb-16 bg-gradient-to-b from-white via-gray-50/30 to-white dark:from-background dark:via-muted/20 dark:to-background relative overflow-hidden">
-      {/* Enhanced Background Pattern */}
+      {/* Enhanced Background Pattern with Abstract Lines */}
       <div className="absolute inset-0 opacity-30">
+        {/* Abstract subtle lines */}
+        <div className="absolute top-10 left-1/4 w-px h-64 bg-gradient-to-b from-transparent via-emerald-200/30 to-transparent rotate-12"></div>
+        <div className="absolute top-32 right-1/3 w-px h-48 bg-gradient-to-b from-transparent via-teal-200/25 to-transparent -rotate-6"></div>
+        <div className="absolute bottom-20 left-1/3 w-px h-56 bg-gradient-to-b from-transparent via-cyan-200/30 to-transparent rotate-45"></div>
+        <div className="absolute top-1/2 right-1/4 w-px h-40 bg-gradient-to-b from-transparent via-emerald-200/20 to-transparent -rotate-12"></div>
+        
+        {/* Horizontal subtle lines */}
+        <div className="absolute top-24 left-0 w-48 h-px bg-gradient-to-r from-transparent via-teal-200/25 to-transparent"></div>
+        <div className="absolute bottom-40 right-0 w-64 h-px bg-gradient-to-l from-transparent via-emerald-200/20 to-transparent"></div>
+        <div className="absolute top-2/3 left-1/5 w-32 h-px bg-gradient-to-r from-transparent via-cyan-200/30 to-transparent"></div>
+        
+        {/* Diagonal abstract lines */}
+        <div className="absolute top-16 right-16 w-24 h-px bg-gradient-to-r from-transparent via-emerald-200/25 to-transparent rotate-45 origin-left"></div>
+        <div className="absolute bottom-24 left-20 w-40 h-px bg-gradient-to-r from-transparent via-teal-200/20 to-transparent -rotate-30 origin-left"></div>
+        
         <div className="absolute top-20 right-20 w-2 h-32 bg-gradient-to-b from-emerald-200/40 to-transparent rounded-full"></div>
         <div className="absolute bottom-32 left-16 w-32 h-2 bg-gradient-to-r from-teal-200/40 to-transparent rounded-full"></div>
         
