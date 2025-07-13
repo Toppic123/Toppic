@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Camera, Search } from "lucide-react";
+import { MessageCircle, Camera, Search, Trophy, Star } from "lucide-react";
 import MobilePhotoDetail from "./MobilePhotoDetail";
-import { useFeaturedGallery } from "@/hooks/useFeaturedGallery";
+import { useWinningPhotos } from "@/hooks/use-winning-photos";
 
 interface MobileGalleryHomeProps {
   onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'profile') => void;
@@ -12,19 +12,19 @@ interface MobileGalleryHomeProps {
 
 const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
-  const { featuredPhotos, isLoading } = useFeaturedGallery();
+  const { photos: winningPhotos, loading: isLoading } = useWinningPhotos();
 
-  const handlePhotoClick = (featuredPhoto: any) => {
-    // Transform featured photo to match expected format
+  const handlePhotoClick = (winningPhoto: any) => {
+    // Transform winning photo to match expected format
     const photo = {
-      id: featuredPhoto.id,
-      url: featuredPhoto.contest_photos?.image_url,
-      author: featuredPhoto.contest_photos?.photographer_name,
-      contest: featuredPhoto.title,
-      likes: 0, // This would come from votes if we join the data
+      id: winningPhoto.id,
+      url: winningPhoto.imageUrl || winningPhoto.image_url,
+      author: winningPhoto.photographer || winningPhoto.photographer_name,
+      contest: winningPhoto.contestName || 'Concurso',
+      likes: winningPhoto.likes || 0,
       comments: 0,
       isRecent: true,
-      description: featuredPhoto.description || featuredPhoto.title
+      description: winningPhoto.title
     };
     setSelectedPhoto(photo);
   };
@@ -47,7 +47,10 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">TOP PICS</h1>
+          <div className="flex items-center">
+            <Trophy className="h-6 w-6 text-yellow-500 mr-2" />
+            <h1 className="text-xl font-semibold text-gray-900">FOTOS GANADORAS</h1>
+          </div>
           <Button
             variant="ghost"
             size="sm"
@@ -57,7 +60,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
             <Search className="h-5 w-5" />
           </Button>
         </div>
-        <p className="text-sm text-gray-600 mt-1">Las mejores fotos premiadas</p>
+        <p className="text-sm text-gray-600 mt-1">Las mejores fotografías premiadas de nuestros concursos</p>
       </div>
 
       {/* Photo Grid */}
@@ -77,27 +80,31 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
-            {featuredPhotos.map((featuredPhoto) => (
-              <div key={featuredPhoto.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
+            {winningPhotos.map((winningPhoto) => (
+              <div key={winningPhoto.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
                 <div className="relative">
                   <img 
-                    src={featuredPhoto.contest_photos?.image_url} 
-                    alt={featuredPhoto.title}
+                    src={winningPhoto.imageUrl || winningPhoto.image_url} 
+                    alt={winningPhoto.title}
                     className="w-full h-48 object-cover cursor-pointer"
-                    onClick={() => handlePhotoClick(featuredPhoto)}
+                    onClick={() => handlePhotoClick(winningPhoto)}
                   />
                   <div className="absolute top-2 left-2">
-                    <Badge className="bg-green-500 text-white text-xs">
-                      Destacada
+                    <Badge className="bg-yellow-500 text-white text-xs flex items-center gap-1">
+                      <Star className="h-3 w-3 fill-current" />
+                      Ganadora
                     </Badge>
+                  </div>
+                  <div className="absolute top-2 right-2">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
                   </div>
                 </div>
                 
                 <div className="p-3">
                   <h3 className="font-medium text-sm text-gray-900 mb-1">
-                    {featuredPhoto.contest_photos?.photographer_name}
+                    {winningPhoto.photographer || winningPhoto.photographer_name}
                   </h3>
-                  <p className="text-xs text-gray-600 mb-2">{featuredPhoto.title}</p>
+                  <p className="text-xs text-gray-600 mb-2">{winningPhoto.title}</p>
                   
                   <div className="flex items-center justify-between text-xs text-gray-500">
                     <div className="flex items-center gap-1">
