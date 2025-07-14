@@ -60,7 +60,7 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
             <Search className="h-5 w-5" />
           </Button>
         </div>
-        <p className="text-sm text-gray-600 mt-1">Las mejores fotografías premiadas de nuestros concursos</p>
+        <p className="text-sm text-gray-600 mt-1">Las mejores fotografías compartidas</p>
       </div>
 
       {/* Photo Grid */}
