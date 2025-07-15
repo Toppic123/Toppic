@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock, ChevronLeft, ChevronRight, X, Vote } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -12,6 +12,7 @@ import PhotoCard from "@/components/PhotoCard";
 import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ClickableUserProfile from "@/components/ClickableUserProfile";
+import VotingComparison from "@/components/VotingComparison";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ContestDetail = () => {
@@ -20,11 +21,12 @@ const ContestDetail = () => {
   const { contests, isLoading } = useContestsData();
   const { user } = useAuth();
   
-  // Navigation state for photo gallery
+  // Navigation state for photo gallery and voting
   const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+  const [showVoting, setShowVoting] = useState(false);
   
-  // Fetch real photos from the database and use voting functionality
-  const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(id);
+  // Fetch real photos from the database
+  const { approvedPhotos, isLoading: photosLoading } = useContestPhotos(id);
 
   // Navigation functions for gallery
   const getCurrentPhotoIndex = useCallback(() => {
@@ -121,13 +123,26 @@ const ContestDetail = () => {
     navigate("/upload", { state: { contestId: id, contestTitle: contest.title } });
   };
 
-  const handleVotePhoto = async (photoId: string, isUpvote: boolean) => {
+  const handleStartVoting = () => {
     if (!user) {
       navigate("/login");
       return;
     }
-    await votePhoto(photoId);
+    setShowVoting(true);
   };
+
+  if (showVoting) {
+    return (
+      <VotingComparison
+        contestId={id!}
+        photos={approvedPhotos}
+        onBack={() => setShowVoting(false)}
+        onVoteComplete={() => {
+          // Refresh photos or handle vote completion
+        }}
+      />
+    );
+  }
 
   return (
     <motion.div
@@ -233,17 +248,25 @@ const ContestDetail = () => {
             <div className="bg-white rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold">Fotos del concurso</h2>
-                {!hasEnded ? (
-                  <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
-                    <Upload className="h-4 w-4" />
-                    Subir foto
-                  </Button>
-                ) : (
-                  <Button disabled className="flex items-center gap-2" variant="secondary">
-                    <Clock className="h-4 w-4" />
-                    Concurso finalizado
-                  </Button>
-                )}
+                <div className="flex gap-3">
+                  {user && approvedPhotos.length >= 2 && (
+                    <Button onClick={handleStartVoting} className="flex items-center gap-2">
+                      <Vote className="h-4 w-4" />
+                      Votar
+                    </Button>
+                  )}
+                  {!hasEnded ? (
+                    <Button onClick={handleUploadPhoto} className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      Subir foto
+                    </Button>
+                  ) : (
+                    <Button disabled className="flex items-center gap-2" variant="secondary">
+                      <Clock className="h-4 w-4" />
+                      Concurso finalizado
+                    </Button>
+                  )}
+                </div>
               </div>
               
               {photosLoading ? (
@@ -458,19 +481,10 @@ const ContestDetail = () => {
                       photographerAvatar={selectedPhoto.photographer_avatar}
                       size="md"
                     />
-                    <div className="mt-3 flex items-center justify-between">
+                    <div className="mt-3">
                       <span className="text-sm text-muted-foreground">
                         {selectedPhoto.votes} votos
                       </span>
-                      {user && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleVotePhoto(selectedPhoto.id, true)}
-                        >
-                          👍 Votar
-                        </Button>
-                      )}
                     </div>
                   </div>
                   <PhotoComments photoId={selectedPhoto.id} isEmbedded={true} />

@@ -195,7 +195,7 @@ const VotingRules = () => {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold"
+                className="border-white text-white hover:bg-white hover:text-primary px-8 py-4 text-lg font-semibold transition-all duration-300"
               >
                 <Link to="/contests">
                   Ver Concursos

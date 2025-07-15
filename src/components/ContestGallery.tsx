@@ -486,29 +486,6 @@ const ContestGallery = ({
                     </div>
                   </div>
                   
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Votar esta foto:</span>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        size="sm"
-                        className="flex-1 bg-green-500 hover:bg-green-600 text-white"
-                        onClick={() => handleVotePhoto(selectedPhoto.id, true)}
-                      >
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        Me gusta
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-                        onClick={() => handleVotePhoto(selectedPhoto.id, false)}
-                      >
-                        <ThumbsDown className="h-4 w-4 mr-1" />
-                        No me gusta
-                      </Button>
-                    </div>
-                  </div>
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
