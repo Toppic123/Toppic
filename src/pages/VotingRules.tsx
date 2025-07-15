@@ -8,12 +8,6 @@ import { motion } from "framer-motion";
 const VotingRules = () => {
   const votingFeatures = [
     {
-      icon: Users,
-      title: "Votación Democrática",
-      description: "Cada usuario registrado tiene un voto por concurso, garantizando un proceso justo y transparente.",
-      color: "from-blue-500 to-cyan-500"
-    },
-    {
       icon: Zap,
       title: "Sistema ELO",
       description: "Utilizamos algoritmos avanzados de ranking como ELO Rating para comparar y clasificar fotografías de manera objetiva.",
@@ -36,12 +30,6 @@ const VotingRules = () => {
       title: "Transparencia Total",
       description: "Sistema de puntuación visible y auditable que garantiza que los mejores trabajos sean reconocidos.",
       color: "from-indigo-500 to-purple-500"
-    },
-    {
-      icon: Vote,
-      title: "Interfaz Intuitiva",
-      description: "Proceso de votación simple y rápido, diseñado para maximizar la participación de los usuarios.",
-      color: "from-pink-500 to-rose-500"
     }
   ];
 
@@ -100,7 +88,7 @@ const VotingRules = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {votingFeatures.map((feature, index) => (
             <motion.div
               key={index}

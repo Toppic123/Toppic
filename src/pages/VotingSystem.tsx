@@ -8,11 +8,6 @@ import { motion } from "framer-motion";
 const VotingSystem = () => {
   const features = [
     {
-      icon: Users,
-      title: "Votación Democrática",
-      description: "Cada usuario registrado tiene un voto por concurso, garantizando un proceso justo y transparente."
-    },
-    {
       icon: Zap,
       title: "Sistema ELO",
       description: "Utilizamos algoritmos avanzados de ranking como ELO Rating para comparar y clasificar fotografías de manera objetiva."
@@ -31,11 +26,6 @@ const VotingSystem = () => {
       icon: Trophy,
       title: "Resultados Transparentes",
       description: "Sistema de puntuación visible y auditable que garantiza que los mejores trabajos sean reconocidos."
-    },
-    {
-      icon: Vote,
-      title: "Interfaz Intuitiva",
-      description: "Proceso de votación simple y rápido, diseñado para maximizar la participación de los usuarios."
     }
   ];
 
