@@ -57,7 +57,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
           title="¿Cómo funciona?"
           subtitle="Proceso simple en tres pasos para comenzar a participar y ganar"
           icon={Zap}
-          gradient="from-indigo-600 via-purple-600 to-pink-600"
+          gradient="from-indigo-600 via-emerald-600 to-red-600"
           showSparkles={true}
         />
         

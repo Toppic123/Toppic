@@ -59,24 +59,24 @@ const Terms = () => {
         ]
       },
       {
-        title: "7. Tipos de Uso de Fotografías y Consentimiento Requerido",
-        content: "Distinguimos entre diferentes tipos de uso, todos los cuales requieren consentimiento de las personas fotografiadas:",
+        title: "7. Tipos de Uso de Fotografías y Derechos de Imagen",
+        content: "Distinguimos entre diferentes tipos de uso según los derechos de imagen aplicables:",
         list: [
-          "**Promoción de marca:** Uso en redes sociales oficiales, sitio web corporativo, material institucional y presentaciones de la empresa organizadora.",
-          "**Publicidad comercial:** Uso en campañas publicitarias pagadas, material promocional masivo, vallas publicitarias, anuncios en medios de comunicación y cualquier uso con fines lucrativos directos.",
-          "**Ambos usos requieren consentimiento explícito** de las personas identificables en las fotografías, aunque el nivel de exposición y alcance difiere.",
-          "Los participantes pueden optar por autorizar solo promoción de marca o ambos tipos de uso durante el proceso de consentimiento.",
-          "El organizador debe respetar las limitaciones de uso especificadas por cada participante."
+          "**Uso editorial:** Las fotografías ganadoras pueden ser utilizadas para fines informativos, educativos o periodísticos sin necesidad de consentimiento adicional de las personas retratadas, siempre que no dañe su imagen o reputación.",
+          "**Uso comercial:** Para cualquier uso con fines lucrativos directos (publicidad, promoción de productos/servicios), se requiere consentimiento explícito por escrito de todas las personas identificables en la fotografía.",
+          "**Recomendación:** Se prefieren fotografías temáticas sin personas identificables para uso comercial (paisajes, objetos, arquitectura, etc.) para evitar complicaciones legales.",
+          "Los organizadores especificarán en cada concurso si las fotografías ganadoras serán utilizadas únicamente para uso editorial o también comercial.",
+          "Los participantes aceptan estos términos de uso al participar en cada concurso específico."
         ]
       },
       {
-        title: "8. Propiedad de Fotos y Derechos Comerciales",
+        title: "8. Propiedad de Fotos y Derechos de Uso",
         content: "Al participar en concursos en TOPPICS:",
         list: [
           "Entiendes que las fotos ganadoras pueden convertirse en propiedad del organizador del concurso si así se especifica en las reglas del concurso.",
-          "Consientes que tus fotografías ganadoras sean utilizadas según el tipo de consentimiento otorgado (promoción de marca y/o uso comercial).",
-          "Confirmas que has obtenido los permisos apropiados de cualquier persona identificable que aparezca en tus fotos.",
-          "Consientes aparecer en fotografías que pueden ser utilizadas según los términos especificados si eres visible en fotos ganadoras.",
+          "Las fotografías ganadoras que pasen a ser propiedad de los organizadores podrán usarse para uso editorial sin restricciones adicionales.",
+          "Para uso comercial, solo se utilizarán fotografías en las que no aparezcan personas reconocibles, o aquellas para las que se haya obtenido consentimiento explícito por escrito.",
+          "**Consientes aparecer en fotografías que pueden ser utilizadas según los términos especificados si eres visible en fotos ganadoras.**",
           "Reconoces que los organizadores del concurso pueden optar por no reclamar la propiedad de las fotos y, en esos casos, conservas todos los derechos sobre tus imágenes."
         ]
       },
@@ -188,9 +188,9 @@ const Terms = () => {
             <Users className="h-4 w-4" />
             <AlertTitle>Importante: Consentimiento de Personas Fotografiadas</AlertTitle>
             <AlertDescription>
-              <strong>Todos los usos requieren consentimiento:</strong> Tanto la promoción de marca como la publicidad comercial 
-              requieren consentimiento explícito de las personas identificables en las fotografías. 
-              La diferencia está en el alcance y tipo de exposición.
+              <strong>Uso editorial vs comercial:</strong> El uso editorial no requiere consentimiento adicional en lugares públicos. 
+              El uso comercial requiere consentimiento explícito por escrito de personas identificables. 
+              Se recomiendan fotografías temáticas sin personas para uso comercial.
             </AlertDescription>
           </Alert>
 

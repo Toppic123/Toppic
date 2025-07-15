@@ -78,8 +78,23 @@ const Privacy = () => {
         content: "Podemos actualizar nuestra Política de Privacidad de vez en cuando. Te notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página y actualizando la fecha de 'Última Actualización' en la parte superior de esta Política de Privacidad. Se te aconseja revisar esta Política de Privacidad periódicamente para cualquier cambio."
       },
       {
-        title: "10. Contáctanos",
-        content: "Si tienes alguna pregunta sobre esta Política de Privacidad, por favor contáctanos en: privacidad@toppics.com"
+        title: "10. Derechos de Imagen y Uso de Fotografías",
+        content: "Respecto al tratamiento de imágenes con personas y derechos de imagen:",
+        list: [
+          "**Uso editorial:** Las fotografías pueden ser utilizadas para fines informativos, educativos o periodísticos conforme a la legislación vigente sobre libertad de información.",
+          "**Uso comercial:** Para fines publicitarios o promocionales se requiere consentimiento explícito por escrito de las personas identificables.",
+          "**Fotografías ganadoras:** Al participar en concursos, consientes que puedes aparecer en fotografías que sean utilizadas según los términos especificados.",
+          "**Recomendación de privacidad:** Para proteger la privacidad, se prefieren fotografías temáticas sin personas identificables para uso comercial.",
+          "Los datos de imagen se procesan con base en el interés legítimo para uso editorial y con consentimiento explícito para uso comercial."
+        ]
+      },
+      {
+        title: "11. Contáctanos",
+        content: "Si tienes alguna pregunta sobre esta Política de Privacidad, por favor contáctanos en:",
+        list: [
+          "Privacidad general: privacidad@toppics.com",
+          "Derechos de imagen: derechos@toppics.com"
+        ]
       }
     ]
   };
