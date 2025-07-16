@@ -370,14 +370,16 @@ const ContestDetail = () => {
                     <p className="text-sm text-muted-foreground">{contest.organizer}</p>
                   </div>
                 </div>
-                {/* Premio - Sección mejorada con mejor manejo de datos */}
-                <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-                  <Trophy className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                  <div className="w-full">
-                    <p className="font-medium text-primary">Premio</p>
-                    <p className="text-sm font-bold text-primary break-words">
-                      {contest.prize && contest.prize.trim() !== '' ? contest.prize : "Por determinar"}
-                    </p>
+                {/* Premio - Destacado visualmente */}
+                <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <Trophy className="h-6 w-6 text-yellow-600 mt-0.5 flex-shrink-0" />
+                    <div className="w-full">
+                      <p className="font-bold text-yellow-800 text-lg">🏆 Premio</p>
+                      <p className="text-base font-bold text-yellow-900 break-words mt-1">
+                        {contest.prize && contest.prize.trim() !== '' ? contest.prize : "Por determinar"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>

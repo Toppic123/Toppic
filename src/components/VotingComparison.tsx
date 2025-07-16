@@ -52,11 +52,6 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
       // Here you would implement the ELO rating system
       // For now, we'll just simulate the vote
       
-      // Remove the voted photos from available photos temporarily
-      const remainingPhotos = availablePhotos.filter(
-        photo => photo.id !== winnerPhoto.id && photo.id !== loserPhoto.id
-      );
-
       setVotesCount(prev => prev + 1);
       
       toast({
@@ -64,17 +59,8 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
         description: `Has votado por la foto de ${winnerPhoto.photographer_name}`,
       });
 
-      // Generate new pair
-      if (remainingPhotos.length >= 2) {
-        generateNewPair(remainingPhotos);
-        setAvailablePhotos(remainingPhotos);
-      } else if (availablePhotos.length >= 2) {
-        // Reset the pool if we've gone through all combinations
-        generateNewPair([...photos]);
-        setAvailablePhotos([...photos]);
-      } else {
-        setVotingComplete(true);
-      }
+      // Generate new pair from the original photos array to avoid disappearing images
+      generateNewPair([...photos]);
 
       onVoteComplete?.();
     } catch (error) {
@@ -194,7 +180,7 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
                 onClick={() => handleVote(photo, currentPair[1 - index])}
               >
                 <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/50">
-                  <div className="aspect-square relative overflow-hidden">
+                  <div className="aspect-[4/5] relative overflow-hidden">
                     <img
                       src={photo.image_url}
                       alt={`Foto de ${photo.photographer_name}`}
