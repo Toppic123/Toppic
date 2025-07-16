@@ -125,9 +125,11 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
                 <Calendar className="h-5 w-5 mr-3" />
                 <span>Termina el {new Date(contest.endDate).toLocaleDateString()}</span>
               </div>
-              <div className="flex items-center text-gray-600">
-                <Trophy className="h-5 w-5 mr-3" />
-                <span>Premio: {contest.prize}</span>
+              <div className="flex items-center">
+                <Trophy className="h-5 w-5 mr-3 text-amber-500" />
+                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 px-3 py-2 rounded-lg border border-amber-200 flex-1">
+                  <span className="text-amber-800 font-semibold">Premio: {contest.prize}</span>
+                </div>
               </div>
               <div className="flex items-center text-gray-600">
                 <Users className="h-5 w-5 mr-3" />

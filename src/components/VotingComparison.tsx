@@ -142,8 +142,8 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
         description: `Has votado por la foto de ${winnerPhoto.photographer_name}`,
       });
 
-      // Generate new pair from the original photos array to avoid disappearing images
-      generateNewPair([...photos]);
+      // Generate new pair from available photos to maintain consistency
+      generateNewPair(availablePhotos);
 
       onVoteComplete?.();
     } catch (error) {
