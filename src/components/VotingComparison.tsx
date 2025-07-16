@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, Trophy, RefreshCw } from "lucide-react";
+import { ChevronLeft, Trophy, RefreshCw, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Photo {
   id: string;
@@ -26,7 +28,44 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
   const [availablePhotos, setAvailablePhotos] = useState<Photo[]>([]);
   const [votingComplete, setVotingComplete] = useState(false);
   const [votesCount, setVotesCount] = useState(0);
+  const [votesRemaining, setVotesRemaining] = useState<number | null>(null);
+  const [dailyVotesRemaining, setDailyVotesRemaining] = useState<number | null>(null);
+  const [canVote, setCanVote] = useState(true);
+  const [isLoadingVoteStatus, setIsLoadingVoteStatus] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Load user vote status
+  const loadVoteStatus = async () => {
+    if (!user) {
+      setCanVote(false);
+      setIsLoadingVoteStatus(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('get_user_vote_status', {
+        p_user_id: user.id,
+        p_contest_id: contestId
+      });
+
+      if (error) {
+        console.error('Error loading vote status:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const status = data[0];
+        setVotesRemaining(status.votes_remaining);
+        setDailyVotesRemaining(status.daily_votes_remaining);
+        setCanVote(status.can_vote);
+      }
+    } catch (error) {
+      console.error('Error in loadVoteStatus:', error);
+    } finally {
+      setIsLoadingVoteStatus(false);
+    }
+  };
 
   useEffect(() => {
     if (photos.length >= 2) {
@@ -34,6 +73,10 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
       generateNewPair([...photos]);
     }
   }, [photos]);
+
+  useEffect(() => {
+    loadVoteStatus();
+  }, [user, contestId]);
 
   const generateNewPair = (photoList: Photo[]) => {
     if (photoList.length < 2) {
@@ -48,10 +91,50 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
   };
 
   const handleVote = async (winnerPhoto: Photo, loserPhoto: Photo) => {
+    if (!user) {
+      toast({
+        title: "Necesitas estar logueado",
+        description: "Inicia sesión para poder votar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!canVote) {
+      toast({
+        title: "Límite de votos alcanzado",
+        description: votesRemaining === 0 
+          ? "Has alcanzado el límite total de votos para este concurso"
+          : "Has alcanzado el límite diario de votos",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      // Here you would implement the ELO rating system
-      // For now, we'll just simulate the vote
-      
+      // Increment user votes in database
+      const { data, error } = await supabase.rpc('increment_user_votes', {
+        p_user_id: user.id,
+        p_contest_id: contestId
+      });
+
+      if (error) {
+        console.error('Error incrementing votes:', error);
+        toast({
+          title: "Error al votar",
+          description: "No se pudo registrar tu voto. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const result = data[0];
+        setVotesRemaining(result.votes_remaining);
+        setDailyVotesRemaining(result.daily_votes_remaining);
+        setCanVote(result.votes_remaining > 0 && result.daily_votes_remaining > 0);
+      }
+
       setVotesCount(prev => prev + 1);
       
       toast({
@@ -64,6 +147,7 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
 
       onVoteComplete?.();
     } catch (error) {
+      console.error('Error in handleVote:', error);
       toast({
         title: "Error al votar",
         description: "No se pudo registrar tu voto. Inténtalo de nuevo.",
@@ -149,6 +233,28 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
             <div className="text-center">
               <h1 className="text-2xl font-bold text-gray-900">Sistema de Votación</h1>
               <p className="text-sm text-gray-600">Comparaciones realizadas: {votesCount}</p>
+              {!isLoadingVoteStatus && user && (
+                <div className="flex items-center justify-center gap-4 mt-2">
+                  <div className="flex items-center gap-1 text-xs">
+                    <span className="text-gray-500">Votos totales restantes:</span>
+                    <span className={`font-medium ${votesRemaining === 0 ? 'text-red-500' : 'text-green-600'}`}>
+                      {votesRemaining ?? 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs">
+                    <span className="text-gray-500">Votos diarios restantes:</span>
+                    <span className={`font-medium ${dailyVotesRemaining === 0 ? 'text-red-500' : 'text-green-600'}`}>
+                      {dailyVotesRemaining ?? 0}
+                    </span>
+                  </div>
+                </div>
+              )}
+              {!canVote && !isLoadingVoteStatus && (
+                <div className="flex items-center justify-center gap-2 mt-2 text-xs text-red-600">
+                  <AlertCircle className="h-3 w-3" />
+                  <span>Has alcanzado el límite de votos</span>
+                </div>
+              )}
             </div>
             <div className="w-20"></div> {/* Spacer for balance */}
           </div>

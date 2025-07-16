@@ -424,14 +424,70 @@ export type Database = {
         }
         Relationships: []
       }
+      user_votes: {
+        Row: {
+          contest_id: string
+          created_at: string
+          daily_votes_cast: number
+          id: string
+          last_vote_date: string | null
+          updated_at: string
+          user_id: string
+          votes_cast: number
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          daily_votes_cast?: number
+          id?: string
+          last_vote_date?: string | null
+          updated_at?: string
+          user_id: string
+          votes_cast?: number
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          daily_votes_cast?: number
+          id?: string
+          last_vote_date?: string | null
+          updated_at?: string
+          user_id?: string
+          votes_cast?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_votes_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_user_vote_status: {
+        Args: { p_user_id: string; p_contest_id: string }
+        Returns: {
+          votes_remaining: number
+          daily_votes_remaining: number
+          can_vote: boolean
+        }[]
+      }
       increment_photo_votes: {
         Args: { photo_id: string }
         Returns: undefined
+      }
+      increment_user_votes: {
+        Args: { p_user_id: string; p_contest_id: string }
+        Returns: {
+          votes_remaining: number
+          daily_votes_remaining: number
+        }[]
       }
     }
     Enums: {
