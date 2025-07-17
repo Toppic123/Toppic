@@ -139,6 +139,21 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
         return;
       }
 
+      // Increment photo votes
+      const { error: photoError } = await supabase.rpc('increment_photo_votes', {
+        photo_id: winnerPhoto.id
+      });
+
+      if (photoError) {
+        console.error('Error incrementing photo votes:', photoError);
+        toast({
+          title: "Error al votar",
+          description: "No se pudo registrar tu voto. Inténtalo de nuevo.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (data && data.length > 0) {
         const result = data[0];
         setVotesRemaining(result.votes_remaining);

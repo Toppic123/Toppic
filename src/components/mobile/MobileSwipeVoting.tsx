@@ -1,10 +1,12 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Home, RotateCcw, ThumbsUp } from "lucide-react";
+import { ArrowLeft, Home, RotateCcw, ThumbsUp, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MobileSwipeVotingProps {
   onNavigate: (screen: 'contests' | 'home') => void;
@@ -22,13 +24,18 @@ interface VotingPhoto {
 
 const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [currentPairIndex, setCurrentPairIndex] = useState(0);
   const [votes, setVotes] = useState(0);
   const [swipeDirection, setSwipeDirection] = useState<'top' | 'bottom' | 'right' | null>(null);
   const [swipeDistance, setSwipeDistance] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [votedPhoto, setVotedPhoto] = useState<string | null>(null);
-  const [activePhoto, setActivePhoto] = useState<'top' | 'bottom'>('top'); // Track which photo is being swiped
+  const [activePhoto, setActivePhoto] = useState<'top' | 'bottom'>('top');
+  const [votesRemaining, setVotesRemaining] = useState<number | null>(null);
+  const [dailyVotesRemaining, setDailyVotesRemaining] = useState<number | null>(null);
+  const [canVote, setCanVote] = useState(true);
+  const [isLoadingVoteStatus, setIsLoadingVoteStatus] = useState(true);
   const startY = useRef(0);
   const startX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,6 +47,42 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
   const activeContestId = contestId || contests.find(c => c.status === 'active')?.id;
   
   const { approvedPhotos, isLoading: photosLoading, votePhoto } = useContestPhotos(activeContestId);
+
+  // Load user vote status
+  const loadVoteStatus = async () => {
+    if (!user || !activeContestId) {
+      setCanVote(false);
+      setIsLoadingVoteStatus(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('get_user_vote_status', {
+        p_user_id: user.id,
+        p_contest_id: activeContestId
+      });
+
+      if (error) {
+        console.error('Error loading vote status:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const status = data[0];
+        setVotesRemaining(status.votes_remaining);
+        setDailyVotesRemaining(status.daily_votes_remaining);
+        setCanVote(status.can_vote);
+      }
+    } catch (error) {
+      console.error('Error in loadVoteStatus:', error);
+    } finally {
+      setIsLoadingVoteStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    loadVoteStatus();
+  }, [user, activeContestId]);
 
   console.log('MobileSwipeVoting - contestId:', contestId);
   console.log('MobileSwipeVoting - activeContestId:', activeContestId);
@@ -69,40 +112,63 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
   const currentPair = photoPairs[currentPairIndex];
 
   const handleVote = useCallback(async (selectedPhoto: VotingPhoto, direction: 'top' | 'bottom' | 'right') => {
-    if (!activeContestId) return;
+    if (!activeContestId || !user) {
+      toast({
+        title: "Necesitas estar logueado",
+        description: "Inicia sesión para poder votar",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!canVote) {
+      toast({
+        title: "Límite de votos alcanzado",
+        description: votesRemaining === 0 
+          ? "Has alcanzado el límite total de votos para este concurso"
+          : "Has alcanzado el límite diario de votos",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setVotedPhoto(selectedPhoto.id);
     setSwipeDirection(direction);
     
     // Vote on the selected photo using the real voting function
     try {
-      await votePhoto(selectedPhoto.id);
-    } catch (error) {
-      console.error('Error voting photo:', error);
-    }
-    
-    setTimeout(() => {
-      toast({
-        title: "Voto registrado",
-        description: `Has elegido "${selectedPhoto.title}" de ${selectedPhoto.photographer}`
-      });
+      const result = await votePhoto(selectedPhoto.id, user.id);
+      
+      // Update vote counts from server response
+      if (result && result.length > 0) {
+        const voteData = result[0];
+        setVotesRemaining(voteData.votes_remaining);
+        setDailyVotesRemaining(voteData.daily_votes_remaining);
+        setCanVote(voteData.votes_remaining > 0 && voteData.daily_votes_remaining > 0);
+      }
       
       setVotes(votes + 1);
+      
+      // Add swipe animation for the voted photo
+      setTimeout(() => {
+        setSwipeDirection(null);
+        setSwipeDistance(0);
+        setVotedPhoto(null);
+        
+        if (currentPairIndex < photoPairs.length - 1) {
+          setCurrentPairIndex(currentPairIndex + 1);
+        } else {
+          setCurrentPairIndex(0);
+        }
+      }, 800);
+      
+    } catch (error) {
+      console.error('Error voting photo:', error);
       setSwipeDirection(null);
       setSwipeDistance(0);
       setVotedPhoto(null);
-      
-      if (currentPairIndex < photoPairs.length - 1) {
-        setCurrentPairIndex(currentPairIndex + 1);
-      } else {
-        setCurrentPairIndex(0);
-        toast({
-          title: "¡Votación completada!",
-          description: `Has votado ${votes + 1} comparaciones. Gracias por participar.`
-        });
-      }
-    }, 800);
-  }, [currentPairIndex, photoPairs.length, votes, toast, votePhoto, activeContestId]);
+    }
+  }, [currentPairIndex, photoPairs.length, votes, votePhoto, activeContestId, user, canVote, votesRemaining]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent, photoSide?: 'top' | 'bottom') => {
     setIsDragging(true);
@@ -241,6 +307,16 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
             <p className="text-sm opacity-80">
               {currentContest?.title || "Concurso"} • {votes} votos • {currentPairIndex + 1}/{photoPairs.length}
             </p>
+            {!isLoadingVoteStatus && user && (
+              <div className="flex items-center justify-center gap-3 mt-1">
+                <span className="text-xs opacity-70">
+                  Restantes: {votesRemaining ?? 0} total | {dailyVotesRemaining ?? 0} hoy
+                </span>
+                {!canVote && (
+                  <AlertCircle className="h-3 w-3 text-red-400" />
+                )}
+              </div>
+            )}
           </div>
           <Button
             variant="ghost"
@@ -293,7 +369,11 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
           <img
             src={currentPair[0].image}
             alt={currentPair[0].title}
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover transition-transform duration-500 ${
+              votedPhoto === currentPair[0].id && swipeDirection === 'right' 
+                ? 'transform translate-x-full scale-110' 
+                : ''
+            }`}
             draggable={false}
           />
           
@@ -335,7 +415,11 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
           <img
             src={currentPair[1].image}
             alt={currentPair[1].title}
-            className="w-full h-full object-cover"
+            className={`w-full h-full object-cover transition-transform duration-500 ${
+              votedPhoto === currentPair[1].id && swipeDirection === 'right' 
+                ? 'transform translate-x-full scale-110' 
+                : ''
+            }`}
             draggable={false}
           />
           

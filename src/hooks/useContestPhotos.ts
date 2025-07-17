@@ -197,13 +197,57 @@ export const useContestPhotos = (contestId?: string) => {
     }
   };
 
-  const votePhoto = async (photoId: string) => {
+  const votePhoto = async (photoId: string, userId?: string) => {
+    if (!contestId || !userId) {
+      toast({
+        title: "Error al votar",
+        description: "Necesitas estar logueado para votar.",
+        variant: "destructive",
+      });
+      throw new Error("User not authenticated");
+    }
+
     try {
-      const { error } = await supabase.rpc('increment_photo_votes', {
-        photo_id: photoId
+      // Check vote status first
+      const { data: voteStatus, error: statusError } = await supabase.rpc('get_user_vote_status', {
+        p_user_id: userId,
+        p_contest_id: contestId
+      });
+
+      if (statusError) {
+        console.error('Error checking vote status:', statusError);
+        throw statusError;
+      }
+
+      if (voteStatus && voteStatus.length > 0) {
+        const status = voteStatus[0];
+        if (!status.can_vote) {
+          const message = status.votes_remaining === 0 
+            ? "Has alcanzado el límite total de votos para este concurso"
+            : "Has alcanzado el límite diario de votos";
+          toast({
+            title: "Límite de votos alcanzado",
+            description: message,
+            variant: "destructive",
+          });
+          throw new Error("Vote limit reached");
+        }
+      }
+
+      // Increment user votes in database
+      const { data, error } = await supabase.rpc('increment_user_votes', {
+        p_user_id: userId,
+        p_contest_id: contestId
       });
 
       if (error) throw error;
+
+      // Increment photo votes
+      const { error: photoError } = await supabase.rpc('increment_photo_votes', {
+        photo_id: photoId
+      });
+
+      if (photoError) throw photoError;
 
       // Update local state
       setPhotos(prev => prev.map(photo => 
@@ -212,17 +256,10 @@ export const useContestPhotos = (contestId?: string) => {
           : photo
       ));
 
-      toast({
-        title: "Voto registrado",
-        description: "Tu voto ha sido registrado exitosamente.",
-      });
+      return data;
     } catch (error: any) {
       console.error('Error voting photo:', error);
-      toast({
-        title: "Error al votar",
-        description: error.message,
-        variant: "destructive",
-      });
+      throw error;
     }
   };
 
