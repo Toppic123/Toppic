@@ -9,7 +9,7 @@ const Privacy = () => {
   const content = {
     title: "Política de Privacidad",
     lastUpdated: "Última actualización",
-    introduction: "En TOPPICS, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta Política de Privacidad te informará sobre cómo cuidamos tus datos personales cuando visitas nuestra web y te contará acerca de tus derechos de privacidad y cómo la ley te protege.",
+    introduction: "En TOPPIC, respetamos tu privacidad y estamos comprometidos a proteger tus datos personales. Esta Política de Privacidad te informará sobre cómo cuidamos tus datos personales cuando visitas nuestra web y te contará acerca de tus derechos de privacidad y cómo la ley te protege.",
     sections: [
       {
         title: "1. Qué Datos Recopilamos",
@@ -92,8 +92,8 @@ const Privacy = () => {
         title: "11. Contáctanos",
         content: "Si tienes alguna pregunta sobre esta Política de Privacidad, por favor contáctanos en:",
         list: [
-          "Privacidad general: privacidad@toppics.com",
-          "Derechos de imagen: derechos@toppics.com"
+          "Privacidad general: privacidad@toppic.com",
+          "Derechos de imagen: derechos@toppic.com"
         ]
       }
     ]

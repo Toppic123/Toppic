@@ -84,10 +84,21 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
       return;
     }
 
-    // Shuffle and pick two random photos
+    // Create a deep copy and shuffle to ensure fresh randomization each time
     const shuffled = [...photoList].sort(() => Math.random() - 0.5);
     const pair: [Photo, Photo] = [shuffled[0], shuffled[1]];
-    setCurrentPair(pair);
+    
+    // Ensure we don't show the same pair consecutively
+    if (currentPair && 
+        ((currentPair[0].id === pair[0].id && currentPair[1].id === pair[1].id) ||
+         (currentPair[0].id === pair[1].id && currentPair[1].id === pair[0].id))) {
+      // Reshuffle if we got the same pair
+      const reshuffled = [...photoList].sort(() => Math.random() - 0.5);
+      const newPair: [Photo, Photo] = [reshuffled[0], reshuffled[1]];
+      setCurrentPair(newPair);
+    } else {
+      setCurrentPair(pair);
+    }
   };
 
   const handleVote = async (winnerPhoto: Photo, loserPhoto: Photo) => {
@@ -142,8 +153,8 @@ const VotingComparison = ({ contestId, photos, onBack, onVoteComplete }: VotingC
         description: `Has votado por la foto de ${winnerPhoto.photographer_name}`,
       });
 
-      // Generate new pair from available photos to maintain consistency
-      generateNewPair(availablePhotos);
+      // Generate new pair from original photos array for better randomization
+      generateNewPair([...photos]);
 
       onVoteComplete?.();
     } catch (error) {

@@ -15,7 +15,7 @@ const Terms = () => {
     sections: [
       {
         title: "1. Aceptación de Términos",
-        content: "Al acceder o utilizar TOPPICS, aceptas cumplir con estos Términos y Condiciones y todas las leyes y regulaciones aplicables. Si no estás de acuerdo con alguno de estos términos, no deberías usar nuestros servicios."
+        content: "Al acceder o utilizar TOPPIC, aceptas cumplir con estos Términos y Condiciones y todas las leyes y regulaciones aplicables. Si no estás de acuerdo con alguno de estos términos, no deberías usar nuestros servicios."
       },
       {
         title: "2. Cambios en los Términos",
@@ -23,7 +23,7 @@ const Terms = () => {
       },
       {
         title: "3. Uso del Servicio",
-        content: "TOPPICS proporciona una plataforma para participar en concursos de fotografía. Al utilizar nuestros servicios, aceptas:",
+        content: "TOPPIC proporciona una plataforma para participar en concursos de fotografía. Al utilizar nuestros servicios, aceptas:",
         list: [
           "No utilizar el servicio para propósitos ilegales o no autorizados",
           "No infringir derechos de propiedad intelectual",
@@ -35,7 +35,7 @@ const Terms = () => {
       },
       {
         title: "4. Cuentas de Usuario",
-        content: "Al crear una cuenta en TOPPICS, eres responsable de:",
+        content: "Al crear una cuenta en TOPPIC, eres responsable de:",
         list: [
           "Mantener la confidencialidad de tu contraseña",
           "Restringir el acceso a tu cuenta",
@@ -45,7 +45,7 @@ const Terms = () => {
       },
       {
         title: "5. Derechos de Propiedad Intelectual",
-        content: "Al subir fotografías a TOPPICS, conservas tus derechos de autor, pero nos otorgas una licencia para mostrar, promocionar y utilizar tu contenido en conexión con los servicios de la plataforma. Además, otorgas a los organizadores del concurso los derechos especificados en las reglas de cada concurso."
+        content: "Al subir fotografías a TOPPIC, conservas tus derechos de autor, pero nos otorgas una licencia para mostrar, promocionar y utilizar tu contenido en conexión con los servicios de la plataforma. Además, otorgas a los organizadores del concurso los derechos especificados en las reglas de cada concurso."
       },
       {
         title: "6. Consentimiento de Personas Fotografiadas y Derechos de Imagen",
@@ -54,7 +54,7 @@ const Terms = () => {
           "Para fotografías que incluyan personas identificables, el participante debe obtener consentimiento explícito de cada persona antes de subir la imagen.",
           "Para menores de edad, se requiere consentimiento de padres o tutores legales.",
           "El participante debe poder demostrar que posee estos consentimientos si se le solicita.",
-          "TOPPICS no se hace responsable por el uso de imágenes sin el consentimiento adecuado.",
+          "TOPPIC no se hace responsable por el uso de imágenes sin el consentimiento adecuado.",
           "El incumplimiento de estas obligaciones puede resultar en descalificación y responsabilidad legal del participante."
         ]
       },
@@ -71,7 +71,7 @@ const Terms = () => {
       },
       {
         title: "8. Propiedad de Fotos y Derechos de Uso",
-        content: "Al participar en concursos en TOPPICS:",
+        content: "Al participar en concursos en TOPPIC:",
         list: [
           "Entiendes que las fotos ganadoras pueden convertirse en propiedad del organizador del concurso si así se especifica en las reglas del concurso.",
           "Las fotografías ganadoras que pasen a ser propiedad de los organizadores podrán usarse para uso editorial sin restricciones adicionales.",
@@ -82,7 +82,7 @@ const Terms = () => {
       },
       {
         title: "9. Sistema de Votación y Selección",
-        content: "El sistema de votación y selección de TOPPICS funciona de la siguiente manera:",
+        content: "El sistema de votación y selección de TOPPIC funciona de la siguiente manera:",
         list: [
           "Inicialmente, nuestra inteligencia artificial realiza un primer filtrado de fotografías basado en criterios técnicos y estéticos de calidad.",
           "Este filtrado asegura que los participantes solo vean un máximo de 50 fotografías de máxima calidad para votar.",
@@ -118,14 +118,14 @@ const Terms = () => {
       },
       {
         title: "12. Cumplimiento del GDPR y Protección de Datos",
-        content: "TOPPICS cumple con el Reglamento General de Protección de Datos (GDPR):",
+        content: "TOPPIC cumple con el Reglamento General de Protección de Datos (GDPR):",
         list: [
           "Todos los datos personales se procesan con base legal adecuada (consentimiento, interés legítimo, etc.).",
           "Los usuarios tienen derecho al acceso, rectificación, cancelación y oposición de sus datos.",
           "Los datos se conservan solo durante el tiempo necesario para cumplir con los fines especificados.",
           "Implementamos medidas técnicas y organizativas apropiadas para proteger los datos personales.",
           "Los usuarios pueden retirar su consentimiento en cualquier momento, aunque esto puede afectar su capacidad de participar en concursos.",
-          "Para ejercer sus derechos GDPR, contacte: privacy@toppics.com"
+          "Para ejercer sus derechos GDPR, contacte: privacy@toppic.com"
         ]
       },
       {
@@ -145,26 +145,26 @@ const Terms = () => {
         list: [
           "Obtener todos los consentimientos necesarios antes de subir fotografías.",
           "Guardar evidencia de los consentimientos obtenidos durante al menos 3 años.",
-          "Proporcionar dicha evidencia si es requerida por TOPPICS o el organizador.",
+          "Proporcionar dicha evidencia si es requerida por TOPPIC o el organizador.",
           "Cumplir con todas las leyes aplicables de protección de datos y derechos de imagen.",
           "Notificar inmediatamente si una persona fotografiada retira su consentimiento."
         ]
       },
       {
         title: "15. Limitación de Responsabilidad",
-        content: "TOPPICS no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, incluida la pérdida de beneficios, derivados del uso de nuestros servicios. Sin embargo, esto no limita nuestra responsabilidad por violaciones graves del GDPR o derechos fundamentales."
+        content: "TOPPIC no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, incluida la pérdida de beneficios, derivados del uso de nuestros servicios. Sin embargo, esto no limita nuestra responsabilidad por violaciones graves del GDPR o derechos fundamentales."
       },
       {
         title: "16. Ley Aplicable",
-        content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de TOPPICS, sin tener en cuenta sus principios de conflicto de leyes. Para asuntos relacionados con el GDPR, se aplicará la legislación europea."
+        content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de TOPPIC, sin tener en cuenta sus principios de conflicto de leyes. Para asuntos relacionados con el GDPR, se aplicará la legislación europea."
       },
       {
         title: "17. Contacto",
         content: "Si tienes preguntas sobre estos Términos y Condiciones o necesitas ejercer tus derechos GDPR, contáctanos en:",
         list: [
-          "Términos generales: terminos@toppics.com",
-          "Protección de datos: privacy@toppics.com",
-          "Consentimientos y derechos de imagen: consent@toppics.com"
+          "Términos generales: terminos@toppic.com",
+          "Protección de datos: privacy@toppic.com",
+          "Consentimientos y derechos de imagen: consent@toppic.com"
         ]
       }
     ]
@@ -208,7 +208,7 @@ const Terms = () => {
             <AlertTitle>Cumplimiento GDPR</AlertTitle>
             <AlertDescription>
               Esta plataforma cumple con el GDPR. Usted tiene derechos sobre sus datos personales 
-              y puede ejercerlos contactando privacy@toppics.com
+              y puede ejercerlos contactando privacy@toppic.com
             </AlertDescription>
           </Alert>
         </div>

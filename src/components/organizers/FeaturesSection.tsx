@@ -83,7 +83,7 @@ const FeaturesSection = () => {
           ¿POR QUÉ USAR
           <br />
           <span className="text-gradient bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
-            TOPPICS?
+            TOPPIC?
           </span>
         </h2>
         

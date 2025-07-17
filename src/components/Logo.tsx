@@ -23,10 +23,10 @@ const Logo: React.FC<LogoProps> = ({
     <Link to="/" className="flex items-center gap-2">
       <img 
         src="/lovable-uploads/e24b365f-9171-4e3a-9573-1dfae2e79a5c.png" 
-        alt="TOPPICS Logo" 
+        alt="TOPPIC Logo" 
         className={`${size} transition-transform hover:scale-105`}
       />
-      <span className={`${textSize} font-bold text-primary`}>TOPPICS</span>
+      <span className={`${textSize} font-bold text-primary`}>TOPPIC</span>
     </Link>
   );
 };

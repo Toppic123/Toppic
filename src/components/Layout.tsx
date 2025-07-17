@@ -12,7 +12,7 @@ const Layout = () => {
   
   // Footer texts (in Spanish as requested)
   const footerTexts = {
-    rights: "© TOPPICS. Todos los derechos reservados.",
+    rights: "© TOPPIC. Todos los derechos reservados.",
     privacy: "Política de Privacidad",
     terms: "Términos y Condiciones",
     votingSystem: "Sistema de Votación"

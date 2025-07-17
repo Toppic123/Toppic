@@ -187,7 +187,7 @@ const PhotoRequirements = ({ compact = false }: PhotoRequirementsProps) => {
 
             <div className="bg-green-50 p-3 rounded-lg border border-green-200">
               <p className="text-sm text-green-700">
-                Para ejercer sus derechos GDPR, contacte: <strong>privacy@toppics.com</strong>
+                Para ejercer sus derechos GDPR, contacte: <strong>privacy@toppic.com</strong>
               </p>
             </div>
           </AccordionContent>

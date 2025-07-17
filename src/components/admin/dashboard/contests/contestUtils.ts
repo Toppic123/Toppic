@@ -16,7 +16,7 @@ export const mockContests: Contest[] = [
   {
     id: "1",
     title: "Concurso de Fotografía Urbana Madrid",
-    organizer: "TOPPICS",
+    organizer: "TOPPIC",
     location: "Madrid, España",
     category: "Fotografía",
     description: "Captura la esencia de Madrid en tus fotografías urbanas.",
