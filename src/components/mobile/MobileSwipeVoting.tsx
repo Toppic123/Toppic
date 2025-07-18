@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Home, RotateCcw, ThumbsUp, AlertCircle } from "lucide-react";
+import { ArrowLeft, Home, RotateCcw, ThumbsUp, AlertCircle, LogIn, UserPlus, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 interface MobileSwipeVotingProps {
-  onNavigate: (screen: 'contests' | 'home') => void;
+  onNavigate: (screen: 'contests' | 'home' | 'login' | 'register') => void;
   contestId?: string;
 }
 
@@ -36,6 +36,7 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
   const [dailyVotesRemaining, setDailyVotesRemaining] = useState<number | null>(null);
   const [canVote, setCanVote] = useState(true);
   const [isLoadingVoteStatus, setIsLoadingVoteStatus] = useState(true);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const startY = useRef(0);
   const startX = useRef(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -113,11 +114,8 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
 
   const handleVote = useCallback(async (selectedPhoto: VotingPhoto, direction: 'top' | 'bottom' | 'right') => {
     if (!activeContestId || !user) {
-      toast({
-        title: "Necesitas estar logueado",
-        description: "Inicia sesión para poder votar",
-        variant: "destructive",
-      });
+      // Show login/register dialog instead of just a toast
+      setShowLoginDialog(true);
       return;
     }
 
@@ -469,6 +467,54 @@ const MobileSwipeVoting = ({ onNavigate, contestId }: MobileSwipeVotingProps) =>
           </div>
         </div>
       </div>
+
+      {/* Login Dialog */}
+      {showLoginDialog && (
+        <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Iniciar sesión</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowLoginDialog(false)}
+                className="p-1"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <p className="text-gray-600 mb-6 text-sm">
+              Necesitas estar logueado para poder votar en los concursos.
+            </p>
+            
+            <div className="space-y-3">
+              <Button 
+                onClick={() => {
+                  setShowLoginDialog(false);
+                  onNavigate('login');
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Iniciar sesión
+              </Button>
+              
+              <Button 
+                onClick={() => {
+                  setShowLoginDialog(false);
+                  onNavigate('register');
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Crear cuenta
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
