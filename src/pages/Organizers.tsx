@@ -5,6 +5,7 @@ import PricingPlans, { PricingPlan } from "@/components/PricingPlans";
 import { useNavigate } from "react-router-dom";
 import FeaturesSection from "@/components/organizers/FeaturesSection";
 import RegistrationDialog from "@/components/organizers/RegistrationDialog";
+import AdvertisingSection from "@/components/organizers/AdvertisingSection";
 
 const Organizers = () => {
   const navigate = useNavigate();
@@ -70,6 +71,9 @@ const Organizers = () => {
       <div className="container max-w-7xl mx-auto px-4">
         {/* Features Section */}
         <FeaturesSection />
+
+        {/* Advertising Section */}
+        <AdvertisingSection />
 
         {/* Pricing Plans Section */}
         <motion.div

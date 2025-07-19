@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Edit, UserPlus, Loader2 } from "lucide-react";
+import { Edit, UserPlus, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -47,6 +47,8 @@ const UserManagement = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   // Cargar usuarios
   useEffect(() => {
@@ -117,6 +119,46 @@ const UserManagement = () => {
       role: "participant"
     });
     setIsCreateUserDialogOpen(true);
+  };
+
+  // Handle delete user
+  const handleDeleteUser = (user: User) => {
+    setUserToDelete(user);
+    setIsDeleteDialogOpen(true);
+  };
+
+  // Confirm delete user
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Aquí iría la lógica para eliminar el usuario de la base de datos
+      // Simulamos un tiempo de espera
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Actualizar la lista de usuarios localmente
+      setUsers(prevUsers => prevUsers.filter(user => user.id !== userToDelete.id));
+      setFilteredUsers(prevUsers => prevUsers.filter(user => user.id !== userToDelete.id));
+      
+      toast({
+        title: "Usuario eliminado",
+        description: `El usuario ${userToDelete.name} ha sido eliminado correctamente.`,
+      });
+      
+      setIsDeleteDialogOpen(false);
+      setUserToDelete(null);
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar el usuario.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Handle save user changes
@@ -265,13 +307,22 @@ const UserManagement = () => {
                   </td>
                   <td className="p-3 text-right">{user.photos}</td>
                   <td className="p-3 text-center">
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => handleEditUser(user.id)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit size={16} />
-                    </Button>
+                    <div className="flex justify-center gap-1">
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => handleEditUser(user.id)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Edit size={16} />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        onClick={() => handleDeleteUser(user)}
+                        className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -431,6 +482,42 @@ const UserManagement = () => {
                 </>
               ) : (
                 'Crear Usuario'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete User Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirmar Eliminación</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que quieres eliminar al usuario "{userToDelete?.name}"? 
+              Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isSubmitting}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              variant="destructive"
+              onClick={confirmDeleteUser}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Eliminando...
+                </>
+              ) : (
+                'Eliminar Usuario'
               )}
             </Button>
           </DialogFooter>
