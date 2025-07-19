@@ -44,7 +44,7 @@ const AdvertisingSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="text-3xl font-bold text-foreground mb-4"
+          className="text-4xl font-bold text-foreground mb-4"
         >
           Posibilidades de Publicidad
         </motion.h2>
@@ -93,18 +93,6 @@ const AdvertisingSection = () => {
         ))}
       </motion.div>
 
-      {/* Nuestros Planes Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0 }}
-        className="text-center"
-      >
-        <h3 className="text-3xl font-bold text-foreground mb-4">Nuestros Planes</h3>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Elige el plan que mejor se adapte a tus necesidades, con las tarifas a continuación
-        </p>
-      </motion.div>
     </motion.section>
   );
 };

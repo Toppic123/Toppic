@@ -82,6 +82,12 @@ const Organizers = () => {
           transition={{ delay: 0.6 }}
           className="mb-20"
         >
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-foreground mb-4">Nuestros Planes</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Elige el plan que mejor se adapte a tus necesidades, con las tarifas a continuación
+            </p>
+          </div>
           <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
         </motion.div>
 
