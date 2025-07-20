@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BannerUploader } from "@/components/admin/dashboard/banners";
 import { mockContests } from "@/components/admin/dashboard/contests/contestUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 // Types for banner subscription levels
 export type SubscriptionLevel = "basic" | "standard" | "premium";
@@ -47,23 +48,62 @@ const BannerManagement = ({
     ? ["homepage", "sidebar", "contestPage"] // Admin can manage all types
     : subscriptionBannerAccess[subscriptionLevel];
   
-  const handleBannerUpload = (type: string, file: File) => {
-    // Aquí se integraría con el backend para guardar el banner
-    // Por ahora solo mostramos un mensaje de éxito
-    
-    // Mostrar toast con feedback al usuario
-    toast({
-      title: "Banner subido correctamente",
-      description: `El banner ${type} ha sido asignado ${selectedContest !== "all" ? `al concurso seleccionado` : 'a todos los concursos'}.`,
-    });
-    
-    // Mostrar información de debug en consola
-    console.log('Banner uploaded:', {
-      type,
-      fileName: file.name,
-      contestId: selectedContest,
-      assignedToAll: selectedContest === "all"
-    });
+  const handleBannerUpload = async (type: string, file: File) => {
+    try {
+      // Upload image to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `banners/${fileName}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('contest-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('contest-images')
+        .getPublicUrl(filePath);
+
+      // Save banner to database
+      if (selectedContest === "all") {
+        // Create banners for all contests
+        const insertPromises = filteredContests.map(contest => 
+          supabase.from('contest_banners').insert({
+            contest_id: contest.id,
+            banner_type: type,
+            image_url: publicUrl
+          })
+        );
+        
+        await Promise.all(insertPromises);
+      } else {
+        // Create banner for specific contest
+        const { error: insertError } = await supabase
+          .from('contest_banners')
+          .insert({
+            contest_id: selectedContest,
+            banner_type: type,
+            image_url: publicUrl
+          });
+
+        if (insertError) throw insertError;
+      }
+
+      toast({
+        title: "Banner subido correctamente",
+        description: `El banner ${type} ha sido asignado ${selectedContest !== "all" ? `al concurso seleccionado` : 'a todos los concursos'}.`,
+      });
+
+    } catch (error) {
+      console.error('Error uploading banner:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo subir el banner. Inténtalo de nuevo.",
+        variant: "destructive"
+      });
+    }
   };
   
   return (

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Trophy, MessageSquare, Image, Camera, Star } from "lucide-react";
+import { Users, Trophy, MessageSquare, Image, Camera, Star, Wallet } from "lucide-react";
 import ContestManagement from "@/components/admin/dashboard/ContestManagement";
 import { OrganizerManagement } from "@/components/admin/dashboard/organizers";
 import UserManagement from "@/components/admin/dashboard/UserManagement";
@@ -10,6 +10,7 @@ import SupportMessagesManagement from "@/components/admin/dashboard/SupportMessa
 import BannerManagement from "@/components/dashboard/banners/BannerManagement";
 import ContestPhotoManager from "@/components/admin/ContestPhotoManager";
 import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedContestsManagement";
+import WithdrawalManagement from "@/components/admin/dashboard/WithdrawalManagement";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminDashboard = () => {
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 overflow-x-auto">
+          <TabsList className="grid w-full grid-cols-8 overflow-x-auto">
             <TabsTrigger value="contests" className="flex items-center gap-2 whitespace-nowrap">
               <Trophy className="h-4 w-4" />
               <span className="hidden sm:inline">Concursos</span>
@@ -55,6 +56,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="banners" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />
               <span className="hidden sm:inline">Banners</span>
+            </TabsTrigger>
+            <TabsTrigger value="withdrawals" className="flex items-center gap-2 whitespace-nowrap">
+              <Wallet className="h-4 w-4" />
+              <span className="hidden sm:inline">Retiros</span>
             </TabsTrigger>
           </TabsList>
 
@@ -142,6 +147,20 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <BannerManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="withdrawals" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Retiros</CardTitle>
+                <CardDescription>
+                  Administra las solicitudes de retiro de dinero
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <WithdrawalManagement />
               </CardContent>
             </Card>
           </TabsContent>

@@ -46,6 +46,39 @@ export type Database = {
           },
         ]
       }
+      contest_banners: {
+        Row: {
+          banner_type: string
+          contest_id: string
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          banner_type: string
+          contest_id: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          banner_type?: string
+          contest_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contest_photos: {
         Row: {
           ai_score: number | null
@@ -465,11 +498,119 @@ export type Database = {
           },
         ]
       }
+      user_wallets: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          total_earned: number
+          total_withdrawn: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_earned?: number
+          total_withdrawn?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_earned?: number
+          total_withdrawn?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          contest_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          transaction_type: string
+          user_id: string
+          withdrawal_request_id: string | null
+        }
+        Insert: {
+          amount: number
+          contest_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          transaction_type: string
+          user_id: string
+          withdrawal_request_id?: string | null
+        }
+        Update: {
+          amount?: number
+          contest_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          transaction_type?: string
+          user_id?: string
+          withdrawal_request_id?: string | null
+        }
+        Relationships: []
+      }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          id: string
+          payment_details: Json | null
+          payment_method: string
+          processed_at: string | null
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          id?: string
+          payment_details?: Json | null
+          payment_method?: string
+          processed_at?: string | null
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          id?: string
+          payment_details?: Json | null
+          payment_method?: string
+          processed_at?: string | null
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      add_prize_money: {
+        Args: {
+          p_user_id: string
+          p_amount: number
+          p_contest_id: string
+          p_description?: string
+        }
+        Returns: boolean
+      }
       get_user_vote_status: {
         Args: { p_user_id: string; p_contest_id: string }
         Returns: {
@@ -488,6 +629,10 @@ export type Database = {
           votes_remaining: number
           daily_votes_remaining: number
         }[]
+      }
+      process_withdrawal: {
+        Args: { p_request_id: string; p_amount: number; p_user_id: string }
+        Returns: boolean
       }
     }
     Enums: {
