@@ -5,7 +5,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BannerUploader } from "@/components/admin/dashboard/banners";
-import { mockContests } from "@/components/admin/dashboard/contests/contestUtils";
 import { supabase } from "@/integrations/supabase/client";
 
 // Types for banner subscription levels
@@ -31,12 +30,33 @@ const BannerManagement = ({
 }: BannerManagementProps) => {
   const [selectedContest, setSelectedContest] = useState<string>("all");
   const { toast } = useToast();
-  const [contests, setContests] = useState(mockContests);
+  const [contests, setContests] = useState<any[]>([]);
   
   // Cargar concursos cuando el componente se monta
   useEffect(() => {
-    console.info('Loaded contests for banner management:', contests);
-  }, [contests]);
+    const loadContests = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('contests')
+          .select('id, title, organizer')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        setContests(data || []);
+        console.info('Loaded contests for banner management:', data);
+      } catch (error) {
+        console.error('Error loading contests:', error);
+        toast({
+          title: "Error",
+          description: "No se pudieron cargar los concursos.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    loadContests();
+  }, [toast]);
   
   // Filter contests by organizer if not admin and organizerId provided
   const filteredContests = isAdmin 

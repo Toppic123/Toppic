@@ -238,18 +238,6 @@ const FeaturesSection = () => {
         </motion.div>
       </motion.div>
 
-      {/* Pricing Plans header section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.3 }}
-        className="text-center"
-      >
-        <h2 className="text-3xl font-bold mb-4">Nuestros Planes</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-          Elige el plan que mejor se adapte a tus necesidades.
-        </p>
-      </motion.div>
     </>
   );
 };
