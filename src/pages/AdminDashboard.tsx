@@ -146,7 +146,7 @@ const AdminDashboard = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <BannerManagement />
+                <BannerManagement isAdmin={true} />
               </CardContent>
             </Card>
           </TabsContent>
