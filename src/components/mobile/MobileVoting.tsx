@@ -7,6 +7,7 @@ import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { useContestsData } from "@/hooks/useContestsData";
 import MobilePhotoDetail from "./MobilePhotoDetail";
 import ContestAdBanner from "./ContestAdBanner";
+import ContestBannerDisplay from "../contests/ContestBannerDisplay";
 
 interface MobileVotingProps {
   onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile') => void;
@@ -82,7 +83,15 @@ const MobileVoting = ({ onNavigate, contestId }: MobileVotingProps) => {
           <h1 className="text-lg font-semibold">
             {currentContest ? cleanContestTitle(currentContest.title) : "Cargando..."}
           </h1>
-          <div></div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-black hover:bg-gray-100"
+            >
+              <Share2 size={16} />
+            </Button>
+          </div>
         </div>
         
         <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
@@ -110,6 +119,13 @@ const MobileVoting = ({ onNavigate, contestId }: MobileVotingProps) => {
           Votar fotografías
         </Button>
       </div>
+
+      {/* Contest Banner */}
+      <ContestBannerDisplay 
+        contestId={activeContestId}
+        bannerType="contestPage"
+        className="px-4 pt-4"
+      />
 
       {/* Advertisement Banner */}
       <ContestAdBanner />

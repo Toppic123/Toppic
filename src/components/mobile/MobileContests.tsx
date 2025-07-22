@@ -1,15 +1,14 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Calendar, Trophy, Camera, Filter, Map as MapIcon } from "lucide-react";
-import MobileSearchBar from "./MobileSearchBar";
-import MobileFilters from "./MobileFilters";
-import MobileContestDetail from "./MobileContestDetail";
-import Map from "@/components/Map";
+import { MapPin, Users, Trophy, Share2 } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
+import MobileContestDetail from "./MobileContestDetail";
+import ContestBannerDisplay from "../contests/ContestBannerDisplay";
 
 interface MobileContestsProps {
-  onNavigate: (screen: 'upload' | 'voting' | 'vote' | 'profile', contestId?: string) => void;
+  onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile', contestId?: string) => void;
 }
 
 // Function to clean contest titles by removing "FOTOGRAFIA" and similar words
@@ -26,143 +25,33 @@ const cleanContestTitle = (title: string): string => {
 };
 
 const MobileContests = ({ onNavigate }: MobileContestsProps) => {
-  const { contests: allContests, isLoading } = useContestsData();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
-  const [showSearch, setShowSearch] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [showMap, setShowMap] = useState(false);
-  const [selectedContestId, setSelectedContestId] = useState<string | null>(null);
-  const [locationFilter, setLocationFilter] = useState("");
-  const [themeFilter, setThemeFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedContest, setSelectedContest] = useState<any | null>(null);
+  const { contests, isLoading } = useContestsData();
+  
+  console.log('MobileContests - contests:', contests);
 
-  const handleSearch = (query: string, filters: string[]) => {
-    setSearchQuery(query);
-    setActiveFilters(filters);
-    console.log("Searching for:", query, "with filters:", filters);
+  const handleContestClick = (contest: any) => {
+    setSelectedContest(contest);
   };
 
-  const handleFiltersApply = (location: string, theme: string, status: string) => {
-    setLocationFilter(location);
-    setThemeFilter(theme);
-    setStatusFilter(status);
-    setShowFilters(false);
+  const handleShareContest = (contest: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (navigator.share) {
+      navigator.share({
+        title: cleanContestTitle(contest.title),
+        text: contest.description,
+        url: window.location.href
+      });
+    }
   };
 
-  const handleContestClick = (contestId: string) => {
-    setSelectedContestId(contestId);
-  };
-
-  const handleBackFromDetail = () => {
-    setSelectedContestId(null);
-  };
-
-  // Convert contests to mobile format with cleaned titles
-  const mobileContests = allContests.map(contest => ({
-    id: contest.id,
-    title: cleanContestTitle(contest.title), // Clean the title here
-    location: contest.location,
-    distance: "0.5 km", // Default distance
-    endDate: contest.endDate,
-    participants: contest.participants,
-    prize: contest.prize || "500€",
-    image: contest.imageUrl || "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400",
-    topics: [contest.category],
-    isActive: contest.isActive,
-    proximityKm: 0.5
-  }));
-
-  const filteredContests = mobileContests
-    .filter(contest => {
-      const matchesQuery = contest.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          contest.location.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      const matchesFilters = activeFilters.length === 0 || 
-                            activeFilters.some(filter => 
-                              contest.location.toLowerCase().includes(filter.toLowerCase()) ||
-                              contest.topics.some(topic => topic.toLowerCase().includes(filter.toLowerCase()))
-                            );
-
-      const matchesLocation = !locationFilter || contest.location.toLowerCase().includes(locationFilter.toLowerCase());
-      const matchesTheme = !themeFilter || contest.topics.some(topic => topic.toLowerCase().includes(themeFilter.toLowerCase()));
-      const matchesStatus = statusFilter === "all" || 
-                           (statusFilter === "active" && contest.isActive) ||
-                           (statusFilter === "finished" && !contest.isActive);
-      
-      return matchesQuery && matchesFilters && matchesLocation && matchesTheme && matchesStatus;
-    })
-    .sort((a, b) => a.proximityKm - b.proximityKm);
-
-  if (isLoading) {
-    return (
-      <div className="h-full bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">Cargando concursos...</p>
-      </div>
-    );
-  }
-
-  if (selectedContestId) {
+  if (selectedContest) {
     return (
       <MobileContestDetail 
-        contestId={selectedContestId}
-        onNavigate={(screen) => {
-          if (screen === 'contests') {
-            handleBackFromDetail();
-          } else {
-            onNavigate(screen, selectedContestId);
-          }
-        }}
+        contest={selectedContest} 
+        onBack={() => setSelectedContest(null)}
+        onNavigate={onNavigate}
       />
-    );
-  }
-
-  if (showSearch) {
-    return (
-      <div className="h-full bg-white">
-        <MobileSearchBar 
-          onSearch={handleSearch}
-          onClose={() => setShowSearch(false)}
-        />
-      </div>
-    );
-  }
-
-  if (showFilters) {
-    return (
-      <div className="h-full bg-white">
-        <MobileFilters 
-          onApply={handleFiltersApply}
-          onClose={() => setShowFilters(false)}
-          initialLocation={locationFilter}
-          initialTheme={themeFilter}
-          initialStatus={statusFilter}
-        />
-      </div>
-    );
-  }
-
-  if (showMap) {
-    return (
-      <div className="h-full bg-white">
-        <div className="bg-white px-4 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowMap(false)}
-              className="text-gray-600 hover:bg-gray-100 p-2"
-            >
-              ← Volver
-            </Button>
-            <h1 className="text-lg font-semibold">Mapa de Concursos</h1>
-            <div></div>
-          </div>
-        </div>
-        <div className="flex-1">
-          <Map showMustardButton={true} />
-        </div>
-      </div>
     );
   }
 
@@ -170,173 +59,99 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
     <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-white px-4 py-4 border-b border-gray-200">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-semibold text-gray-900">Concursos</h1>
-        </div>
-        <Button
-          variant="outline"
-          onClick={() => setShowSearch(true)}
-          className="w-full justify-start text-gray-500"
-        >
-          <Search className="h-4 w-4 mr-2" />
-          Buscar lugares o temas...
-        </Button>
-      </div>
-
-      {/* Filters and Map Section */}
-      <div className="px-4 py-3 bg-white border-b border-gray-200">
-        <div className="flex space-x-3">
+        <div className="flex items-center justify-between">
+          <h1 className="text-xl font-bold">Concursos</h1>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setShowFilters(true)}
-            className="flex-1"
+            className="text-black hover:bg-gray-100 border-gray-300"
           >
-            <Filter className="h-4 w-4 mr-2" />
-            Filtros
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowMap(true)}
-            className="flex-1 border-2 border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/15 hover:to-primary/20 text-primary font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200"
-          >
-            <MapIcon className="h-4 w-4 mr-2" />
-            Mapa
+            <Share2 size={16} />
           </Button>
         </div>
+        <p className="text-sm text-gray-600 mt-1">
+          Descubre y participa en concursos de fotografía
+        </p>
       </div>
 
-      {/* Active Filters Display */}
-      {(activeFilters.length > 0 || locationFilter || themeFilter || statusFilter !== "all") && (
-        <div className="px-4 py-3 bg-white border-b border-gray-200">
-          <div className="text-sm text-gray-600 mb-2">Filtros activos:</div>
-          <div className="flex flex-wrap gap-2">
-            {activeFilters.map((filter, index) => (
-              <Badge key={index} variant="secondary">
-                {filter}
-              </Badge>
-            ))}
-            {locationFilter && (
-              <Badge variant="secondary">
-                Ubicación: {locationFilter}
-              </Badge>
-            )}
-            {themeFilter && (
-              <Badge variant="secondary">
-                Tema: {themeFilter}
-              </Badge>
-            )}
-            {statusFilter !== "all" && (
-              <Badge variant="secondary">
-                {statusFilter === "active" ? "Activos" : "Finalizados"}
-              </Badge>
-            )}
+      {/* Homepage Banner */}
+      <ContestBannerDisplay 
+        bannerType="homepage"
+        className="px-4 pt-4"
+      />
+
+      {/* Contest List */}
+      <div className="p-4">
+        {isLoading ? (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-500">Cargando concursos...</p>
           </div>
-        </div>
-      )}
-
-      {/* Contests List */}
-      <div className="p-4 space-y-4">
-        {filteredContests.length > 0 ? (
-          filteredContests.map((contest, index) => (
-            <div key={contest.id}>
-              <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="relative">
+        ) : contests.length > 0 ? (
+          <div className="space-y-4">
+            {contests.map((contest) => (
+              <div 
+                key={contest.id} 
+                className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer"
+                onClick={() => handleContestClick(contest)}
+              >
+                {contest.imageUrl && (
                   <img 
-                    src={contest.image} 
-                    alt={contest.title}
-                    className="w-full h-40 object-cover cursor-pointer"
-                    onClick={() => handleContestClick(contest.id)}
+                    src={contest.imageUrl} 
+                    alt={cleanContestTitle(contest.title)}
+                    className="w-full h-48 object-cover"
                   />
-                  <div className="absolute top-3 right-3">
+                )}
+                
+                <div className="p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-lg text-gray-900 flex-1 pr-2">
+                      {cleanContestTitle(contest.title)}
+                    </h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => handleShareContest(contest, e)}
+                      className="text-black hover:bg-gray-100 p-1"
+                    >
+                      <Share2 size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                    <MapPin size={14} />
+                    <span>{contest.location}</span>
+                  </div>
+                  
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {contest.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Users size={12} />
+                        <span>{contest.participants} participantes</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Trophy size={12} />
+                        <span>Premio: {contest.prize || "Por determinar"}</span>
+                      </div>
+                    </div>
                     <Badge className={contest.isActive ? "bg-green-500 text-white" : "bg-gray-500 text-white"}>
                       {contest.isActive ? "Activo" : "Finalizado"}
                     </Badge>
                   </div>
                 </div>
-                
-                <div className="p-4">
-                  <h3 
-                    className="font-semibold text-lg text-gray-900 mb-2 cursor-pointer hover:text-blue-600"
-                    onClick={() => handleContestClick(contest.id)}
-                  >
-                    {contest.title}
-                  </h3>
-                  
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {contest.location} • {contest.distance}
-                    </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Termina el {new Date(contest.endDate).toLocaleDateString()}
-                    </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                      <Trophy className="h-4 w-4 mr-2" />
-                      Premio: {contest.prize}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {contest.topics.map((topic, topicIndex) => (
-                      <Badge key={topicIndex} variant="outline" className="text-xs">
-                        {topic}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">{contest.participants} participantes</span>
-                      {contest.isActive && new Date(contest.endDate) > new Date() ? (
-                        <Button 
-                          size="sm"
-                          onClick={() => onNavigate('upload', contest.id)}
-                          className="bg-blue-600 hover:bg-blue-700"
-                        >
-                          <Camera className="h-4 w-4 mr-1" />
-                          Participar
-                        </Button>
-                      ) : (
-                        <Button 
-                          size="sm"
-                          disabled
-                          className="bg-gray-400 text-white cursor-not-allowed"
-                        >
-                          <Camera className="h-4 w-4 mr-1" />
-                          Finalizado
-                        </Button>
-                      )}
-                    </div>
-                    
-                    <div className="flex space-x-3">
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => onNavigate('voting', contest.id)}
-                        className="flex-1"
-                      >
-                        Fotos
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => onNavigate('vote', contest.id)}
-                        className="flex-1 bg-purple-50 text-purple-600 border-purple-200 hover:bg-purple-100"
-                      >
-                        Votar
-                      </Button>
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-gray-500">No se encontraron concursos que coincidan con tu búsqueda</p>
+            <p className="text-gray-500 mb-4">No hay concursos disponibles</p>
+            <Button onClick={() => onNavigate('upload')} className="bg-blue-600 hover:bg-blue-700">
+              Crear primer concurso
+            </Button>
           </div>
         )}
       </div>

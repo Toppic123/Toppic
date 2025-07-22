@@ -29,7 +29,7 @@ const SocialShareButtons = ({ url, title, imageUrl }: SocialShareButtonsProps) =
       <Button
         variant="outline"
         size="sm"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 text-black hover:bg-gray-100 border-gray-300"
         onClick={shareOnFacebook}
       >
         <Facebook size={16} />
@@ -38,7 +38,7 @@ const SocialShareButtons = ({ url, title, imageUrl }: SocialShareButtonsProps) =
       <Button
         variant="outline"
         size="sm"
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 text-black hover:bg-gray-100 border-gray-300"
         onClick={shareOnWhatsApp}
       >
         <MessageCircle size={16} />
