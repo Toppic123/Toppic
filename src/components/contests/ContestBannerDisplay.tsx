@@ -1,6 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import bannerHomepage from "@/assets/banner-homepage-photography.jpg";
+import bannerSidebar from "@/assets/banner-sidebar-photo-studio.jpg";
+import bannerContest from "@/assets/banner-contest-photo-course.jpg";
 
 interface Banner {
   id: string;
@@ -71,9 +74,9 @@ const ContestBannerDisplay = ({ contestId, bannerType, className }: ContestBanne
   // Always show placeholder banners for demonstration
   if (!isLoading && banners.length === 0) {
     const placeholderBanners = {
-      homepage: "https://placehold.co/1200x300/4891AA/white?text=Banner+Homepage+Ejemplo+Anuncio",
-      sidebar: "https://placehold.co/300x600/4891AA/white?text=Banner+Lateral+Ejemplo", 
-      contestPage: "https://placehold.co/800x200/4891AA/white?text=Banner+Concurso+Ejemplo+Publicidad"
+      homepage: bannerHomepage,
+      sidebar: bannerSidebar,
+      contestPage: bannerContest
     };
 
     return (
