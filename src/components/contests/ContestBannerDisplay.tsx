@@ -68,21 +68,24 @@ const ContestBannerDisplay = ({ contestId, bannerType, className }: ContestBanne
     loadBanners();
   }, [contestId, bannerType]);
 
-  // If no banners, show placeholder banners
+  // Always show placeholder banners for demonstration
   if (!isLoading && banners.length === 0) {
     const placeholderBanners = {
-      homepage: "https://placehold.co/1200x300/4891AA/white?text=Banner+Homepage+Example",
-      sidebar: "https://placehold.co/300x600/4891AA/white?text=Banner+Sidebar+Example", 
-      contestPage: "https://placehold.co/800x200/4891AA/white?text=Banner+Contest+Page+Example"
+      homepage: "https://placehold.co/1200x300/4891AA/white?text=Banner+Homepage+Ejemplo+Anuncio",
+      sidebar: "https://placehold.co/300x600/4891AA/white?text=Banner+Lateral+Ejemplo", 
+      contestPage: "https://placehold.co/800x200/4891AA/white?text=Banner+Concurso+Ejemplo+Publicidad"
     };
 
     return (
       <div className={className}>
-        <img 
-          src={placeholderBanners[bannerType]}
-          alt={`Banner ${bannerType} placeholder`}
-          className="w-full h-auto rounded-md border"
-        />
+        <div className="mb-2">
+          <div className="text-xs text-gray-500 mb-1">Banner publicitario de ejemplo</div>
+          <img 
+            src={placeholderBanners[bannerType]}
+            alt={`Banner ${bannerType} placeholder`}
+            className="w-full h-auto rounded-md border"
+          />
+        </div>
       </div>
     );
   }

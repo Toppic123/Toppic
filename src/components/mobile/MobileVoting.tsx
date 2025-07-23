@@ -170,7 +170,7 @@ const MobileVoting = ({ onNavigate, contestId }: MobileVotingProps) => {
                         <span>0</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Trophy size={12} />
+                        <span>🗳️</span>
                         <span>{photo.votes} votos</span>
                       </div>
                     </div>

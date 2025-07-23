@@ -133,7 +133,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                         <span>{contest.participants} participantes</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Trophy size={12} />
+                        <span>💰</span>
                         <span>Premio: {contest.prize || "Por determinar"}</span>
                       </div>
                     </div>

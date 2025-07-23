@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Calendar, Trophy, Users, Camera, Vote, Share2 } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Trophy, Users, Camera, Vote, Share2, Building2 } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import SocialShareButtons from "@/components/SocialShareButtons";
@@ -126,9 +126,9 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
                 <span>Termina el {new Date(contest.endDate).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center">
-                <Trophy className="h-5 w-5 mr-3 text-amber-500" />
-                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 px-3 py-2 rounded-lg border border-amber-200 flex-1">
-                  <span className="text-amber-800 font-semibold">Premio: {contest.prize}</span>
+                <Trophy className="h-5 w-5 mr-3 text-green-600" />
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-3 py-2 rounded-lg border border-green-200 flex-1">
+                  <span className="text-green-800 font-semibold">Premio: {contest.prize}</span>
                 </div>
               </div>
               <div className="flex items-center text-gray-600">
@@ -140,7 +140,10 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
 
           {/* Organizer Info */}
           <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Organizador</h3>
+            <div className="flex items-center mb-2">
+              <Building2 className="h-5 w-5 mr-2 text-blue-600" />
+              <h3 className="font-semibold text-gray-900">Organizador</h3>
+            </div>
             <p className="text-gray-600">{contest.organizer}</p>
           </div>
 
