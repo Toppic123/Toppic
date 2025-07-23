@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock, ChevronLeft, ChevronRight, X, Vote } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Camera, ArrowLeft, Upload, AlertCircle, Clock, ChevronLeft, ChevronRight, X, Vote, Building2 } from "lucide-react";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -13,6 +13,7 @@ import PhotoComments from "@/components/PhotoComments";
 import SocialShareButtons from "@/components/SocialShareButtons";
 import ClickableUserProfile from "@/components/ClickableUserProfile";
 import VotingComparison from "@/components/VotingComparison";
+import ContestBannerDisplay from "@/components/contests/ContestBannerDisplay";
 import { useAuth } from "@/contexts/AuthContext";
 
 const ContestDetail = () => {
@@ -298,8 +299,9 @@ const ContestDetail = () => {
                               <p className="text-xs text-gray-600 mt-1 line-clamp-2">{photo.description}</p>
                             )}
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {photo.votes} votos
+                          <div className="text-xs text-gray-500 flex items-center gap-1">
+                            <span>🗳️</span>
+                            <span>{photo.votes} votos</span>
                           </div>
                         </div>
                         
@@ -364,19 +366,18 @@ const ContestDetail = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Trophy className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                  <Building2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-medium">Organizador</p>
                     <p className="text-sm text-muted-foreground">{contest.organizer}</p>
                   </div>
                 </div>
                 {/* Premio - Destacado visualmente */}
-                <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-lg p-4 shadow-sm">
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4 shadow-sm">
                   <div className="flex items-start gap-3">
-                    <Trophy className="h-6 w-6 text-yellow-600 mt-0.5 flex-shrink-0" />
                     <div className="w-full">
-                      <p className="font-bold text-yellow-800 text-lg">🏆 Premio</p>
-                      <p className="text-base font-bold text-yellow-900 break-words mt-1">
+                      <p className="font-bold text-green-800 text-lg">💰 Premio</p>
+                      <p className="text-base font-bold text-green-900 break-words mt-1">
                         {contest.prize && contest.prize.trim() !== '' ? contest.prize : "Por determinar"}
                       </p>
                     </div>
@@ -396,6 +397,13 @@ const ContestDetail = () => {
                 <li>• Respeta las normas de la comunidad</li>
               </ul>
             </div>
+
+            {/* Contest Banner */}
+            <ContestBannerDisplay 
+              contestId={id}
+              bannerType="contestPage"
+              className="mb-6"
+            />
           </div>
         </div>
       </div>

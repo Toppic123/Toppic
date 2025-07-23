@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Calendar, Trophy, Users, Camera, Vote, Share2, Build
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
 import SocialShareButtons from "@/components/SocialShareButtons";
+import ContestBannerDisplay from "@/components/contests/ContestBannerDisplay";
 
 interface MobileContestDetailProps {
   contestId: string;
@@ -158,6 +159,13 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
               <li>• Las fotos deben cumplir con las normas de la comunidad</li>
             </ul>
           </div>
+
+          {/* Contest Banner */}
+          <ContestBannerDisplay 
+            contestId={contestId}
+            bannerType="contestPage"
+            className="mb-4"
+          />
 
           {/* Action Buttons */}
           <div className="space-y-3 pb-6">
