@@ -8,7 +8,7 @@ import MobileContestDetail from "./MobileContestDetail";
 import ContestBannerDisplay from "../contests/ContestBannerDisplay";
 
 interface MobileContestsProps {
-  onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'profile', contestId?: string) => void;
+  onNavigate: (screen: 'contests' | 'upload' | 'vote' | 'voting', contestId?: string) => void;
 }
 
 // Function to clean contest titles by removing "FOTOGRAFIA" and similar words
@@ -48,8 +48,7 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
   if (selectedContest) {
     return (
       <MobileContestDetail 
-        contest={selectedContest} 
-        onBack={() => setSelectedContest(null)}
+        contestId={selectedContest.id} 
         onNavigate={onNavigate}
       />
     );
