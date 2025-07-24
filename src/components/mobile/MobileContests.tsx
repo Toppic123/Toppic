@@ -73,11 +73,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
         </p>
       </div>
 
-      {/* Homepage Banner */}
-      <ContestBannerDisplay 
-        bannerType="homepage"
-        className="px-4 pt-4"
-      />
 
       {/* Contest List */}
       <div className="p-4">
