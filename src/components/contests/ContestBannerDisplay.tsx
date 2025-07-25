@@ -71,7 +71,7 @@ const ContestBannerDisplay = ({ contestId, bannerType, className }: ContestBanne
     loadBanners();
   }, [contestId, bannerType]);
 
-  // Always show placeholder banners for demonstration
+  // Show placeholder banners when no database banners exist
   if (!isLoading && banners.length === 0) {
     const placeholderBanners = {
       homepage: bannerHomepage,
@@ -86,7 +86,7 @@ const ContestBannerDisplay = ({ contestId, bannerType, className }: ContestBanne
           <img 
             src={placeholderBanners[bannerType]}
             alt={`Banner ${bannerType} placeholder`}
-            className="w-full h-auto rounded-md border"
+            className="w-full h-auto rounded-md border shadow-sm"
           />
         </div>
       </div>
