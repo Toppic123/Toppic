@@ -141,16 +141,19 @@ export type Database = {
           end_date: string | null
           id: string
           image_url: string | null
+          is_premium: boolean | null
           is_private: boolean | null
           latitude: number | null
           location: string | null
           longitude: number | null
+          max_premium_participants: number | null
           minimum_distance_km: number | null
           organizer: string
           participants: number | null
           photo_deadline: string | null
           photo_ownership: boolean | null
           plan: string | null
+          points_required: number | null
           prize: string | null
           start_date: string | null
           status: string
@@ -164,16 +167,19 @@ export type Database = {
           end_date?: string | null
           id?: string
           image_url?: string | null
+          is_premium?: boolean | null
           is_private?: boolean | null
           latitude?: number | null
           location?: string | null
           longitude?: number | null
+          max_premium_participants?: number | null
           minimum_distance_km?: number | null
           organizer: string
           participants?: number | null
           photo_deadline?: string | null
           photo_ownership?: boolean | null
           plan?: string | null
+          points_required?: number | null
           prize?: string | null
           start_date?: string | null
           status?: string
@@ -187,16 +193,19 @@ export type Database = {
           end_date?: string | null
           id?: string
           image_url?: string | null
+          is_premium?: boolean | null
           is_private?: boolean | null
           latitude?: number | null
           location?: string | null
           longitude?: number | null
+          max_premium_participants?: number | null
           minimum_distance_km?: number | null
           organizer?: string
           participants?: number | null
           photo_deadline?: string | null
           photo_ownership?: boolean | null
           plan?: string | null
+          points_required?: number | null
           prize?: string | null
           start_date?: string | null
           status?: string
@@ -322,6 +331,39 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_orders: {
+        Row: {
+          amount_cents: number
+          completed_at: string | null
+          created_at: string
+          id: string
+          points_purchased: number
+          status: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          points_purchased: number
+          status?: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          points_purchased?: number
+          status?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       photo_comments: {
         Row: {
           avatar_url: string | null
@@ -391,6 +433,79 @@ export type Database = {
         }
         Relationships: []
       }
+      point_transactions: {
+        Row: {
+          amount: number
+          contest_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          order_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          contest_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          contest_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "point_transactions_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      premium_contest_entries: {
+        Row: {
+          contest_id: string
+          created_at: string
+          id: string
+          points_spent: number
+          user_id: string
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          id?: string
+          points_spent: number
+          user_id: string
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          id?: string
+          points_spent?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_contest_entries_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -454,6 +569,30 @@ export type Database = {
           name?: string
           status?: string
           subject?: string
+        }
+        Relationships: []
+      }
+      user_points: {
+        Row: {
+          created_at: string
+          id: string
+          points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          points?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -602,6 +741,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_points_to_user: {
+        Args: {
+          p_user_id: string
+          p_amount: number
+          p_transaction_type: string
+          p_description?: string
+          p_order_id?: string
+        }
+        Returns: boolean
+      }
       add_prize_money: {
         Args: {
           p_user_id: string
@@ -610,6 +759,10 @@ export type Database = {
           p_description?: string
         }
         Returns: boolean
+      }
+      get_user_points: {
+        Args: { p_user_id: string }
+        Returns: number
       }
       get_user_vote_status: {
         Args: { p_user_id: string; p_contest_id: string }
@@ -632,6 +785,16 @@ export type Database = {
       }
       process_withdrawal: {
         Args: { p_request_id: string; p_amount: number; p_user_id: string }
+        Returns: boolean
+      }
+      spend_user_points: {
+        Args: {
+          p_user_id: string
+          p_amount: number
+          p_transaction_type: string
+          p_description?: string
+          p_contest_id?: string
+        }
         Returns: boolean
       }
     }
