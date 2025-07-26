@@ -159,12 +159,49 @@ const Terms = () => {
         content: "Estos términos se regirán e interpretarán de acuerdo con las leyes del país de operación de TOPPIC, sin tener en cuenta sus principios de conflicto de leyes. Para asuntos relacionados con el GDPR, se aplicará la legislación europea."
       },
       {
-        title: "17. Contacto",
+        title: "17. Sistema de Puntos Premium",
+        content: "TOPPIC ofrece un sistema de puntos premium para acceder a concursos exclusivos:",
+        list: [
+          "**Compra de puntos:** Los puntos se pueden comprar mediante tarjeta de crédito a través de Stripe (1€ = 10 puntos).",
+          "**Uso de puntos:** Los puntos se utilizan para participar en concursos premium con menos competencia y premios más altos.",
+          "**No reembolso:** Los puntos comprados no son reembolsables, excepto en casos específicos de error técnico.",
+          "**Validez:** Los puntos no tienen fecha de caducidad una vez adquiridos.",
+          "**Transparencia:** Todas las transacciones de puntos quedan registradas en tu historial de cuenta."
+        ]
+      },
+      {
+        title: "18. Sistema de Ganancias y Retiros",
+        content: "Para participantes que ganen premios en efectivo:",
+        list: [
+          "**Ganancias:** Los premios en efectivo se acreditan en tu monedero virtual dentro de la plataforma.",
+          "**Retiros:** Puedes solicitar retiros de tus ganancias con un mínimo de €20.",
+          "**Procesamiento:** Los retiros se procesan en 5-10 días hábiles mediante transferencia bancaria.",
+          "**Verificación:** Podemos requerir verificación de identidad para retiros superiores a €100.",
+          "**Comisiones:** TOPPIC no cobra comisiones por retiros, pero tu banco puede aplicar tarifas de transferencia.",
+          "**Limitaciones:** Los retiros están sujetos a verificación de cumplimiento de términos y condiciones."
+        ]
+      },
+      {
+        title: "19. Política de Pagos y Facturación",
+        content: "Respecto a los pagos y facturación en la plataforma:",
+        list: [
+          "**Procesamiento seguro:** Todos los pagos se procesan a través de Stripe con encriptación de nivel bancario.",
+          "**Facturación:** Se emiten facturas automáticamente para todas las compras de puntos.",
+          "**Impuestos:** Los precios incluyen todos los impuestos aplicables según tu ubicación.",
+          "**Disputa de pagos:** Para disputas de pagos, contacta primero nuestro soporte. Disputas bancarias pueden resultar en suspensión de cuenta.",
+          "**Política de reembolso:** Los reembolsos solo se procesan en casos de error técnico comprobado.",
+          "**Historial:** Puedes acceder a tu historial completo de pagos y facturas desde tu perfil."
+        ]
+      },
+      {
+        title: "20. Contacto",
         content: "Si tienes preguntas sobre estos Términos y Condiciones o necesitas ejercer tus derechos GDPR, contáctanos en:",
         list: [
           "Términos generales: terminos@toppic.com",
           "Protección de datos: privacy@toppic.com",
-          "Consentimientos y derechos de imagen: consent@toppic.com"
+          "Consentimientos y derechos de imagen: consent@toppic.com",
+          "Pagos y facturación: pagos@toppic.com",
+          "Soporte técnico: soporte@toppic.com"
         ]
       }
     ]

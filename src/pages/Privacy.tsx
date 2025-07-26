@@ -89,11 +89,24 @@ const Privacy = () => {
         ]
       },
       {
-        title: "11. Contáctanos",
+        title: "11. Sistema de Puntos y Pagos",
+        content: "En relación con nuestro sistema de puntos premium y procesamiento de pagos:",
+        list: [
+          "**Datos de pago:** Utilizamos Stripe como procesador de pagos seguro. No almacenamos información de tarjetas de crédito en nuestros servidores.",
+          "**Transacciones de puntos:** Registramos todas las transacciones de compra y gasto de puntos para transparencia y gestión de cuenta.",
+          "**Datos de facturación:** Almacenamos información necesaria para facturación e historial de compras (nombre, email, transacciones).",
+          "**Retiros:** Para procesar retiros de ganancias, podemos requerir información adicional de verificación de identidad según normativas financieras.",
+          "**Seguridad financiera:** Implementamos medidas adicionales de seguridad para proteger transacciones y datos financieros.",
+          "**Retención de datos financieros:** Los registros de transacciones se conservan según requerimientos legales de contabilidad y normativas fiscales."
+        ]
+      },
+      {
+        title: "12. Contáctanos",
         content: "Si tienes alguna pregunta sobre esta Política de Privacidad, por favor contáctanos en:",
         list: [
           "Privacidad general: privacidad@toppic.com",
-          "Derechos de imagen: derechos@toppic.com"
+          "Derechos de imagen: derechos@toppic.com",
+          "Pagos y facturación: pagos@toppic.com"
         ]
       }
     ]
