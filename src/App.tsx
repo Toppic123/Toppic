@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ContestRules from "./pages/ContestRules";
 import GalleryPage from "./pages/GalleryPage";
 import MobilePrototype from "./pages/MobilePrototype";
+import { PaymentSuccess } from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 import RoleBasedRoute from "./components/RoleBasedRoute";
 
@@ -71,6 +72,7 @@ function App() {
                       </RoleBasedRoute>
                     } 
                   />
+                  <Route path="payment-success" element={<PaymentSuccess />} />
                   <Route path="mobile-prototype" element={<MobilePrototype />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>

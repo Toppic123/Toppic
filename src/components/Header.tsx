@@ -15,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { PointsDisplay } from "@/components/PointsDisplay";
+import { PointsPurchaseDialog } from "@/components/PointsPurchaseDialog";
 
 // Use memo for better performance
 const MobileMenu = memo(({ 
@@ -110,6 +112,7 @@ const MobileMenu = memo(({
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showPointsPurchase, setShowPointsPurchase] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
@@ -192,6 +195,10 @@ const Header = () => {
           
           {user ? (
             <>
+              <PointsDisplay 
+                variant="compact" 
+                onPurchaseClick={() => setShowPointsPurchase(true)} 
+              />
               <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-xl font-bold px-6 py-3">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
@@ -248,6 +255,12 @@ const Header = () => {
         user={user}
         onSignOut={handleSignOut}
         isScrolled={isScrolled}
+      />
+      
+      {/* Points Purchase Dialog */}
+      <PointsPurchaseDialog 
+        isOpen={showPointsPurchase}
+        onOpenChange={setShowPointsPurchase}
       />
     </header>
   );
