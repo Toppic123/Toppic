@@ -4,14 +4,11 @@ import { CheckCircle, Star, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUserPoints } from '@/hooks/useUserPoints';
-import Layout from '@/components/Layout';
-
 export const PaymentSuccess: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { verifyPayment, points } = useUserPoints();
   const [verifying, setVerifying] = useState(true);
-  const [pointsAwarded, setPointsAwarded] = useState<number | null>(null);
 
   useEffect(() => {
     const sessionId = searchParams.get('session_id');

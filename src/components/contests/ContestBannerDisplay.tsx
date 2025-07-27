@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import bannerHomepage from "@/assets/banner-homepage-photography.jpg";
 import bannerSidebar from "@/assets/banner-sidebar-photo-studio.jpg";
 import bannerContest from "@/assets/banner-contest-photo-course.jpg";
+import bannerPhotographyEquipment from "@/assets/banner-photography-equipment.jpg";
+import bannerMobilePhones from "@/assets/banner-mobile-phones.jpg";
+import bannerPhotoEditing from "@/assets/banner-photo-editing.jpg";
 
 interface Banner {
   id: string;
@@ -73,21 +76,43 @@ const ContestBannerDisplay = ({ contestId, bannerType, className }: ContestBanne
 
   // Show placeholder banners when no database banners exist
   if (!isLoading && banners.length === 0) {
-    const placeholderBanners = {
-      homepage: bannerHomepage,
-      sidebar: bannerSidebar,
-      contestPage: bannerContest
-    };
+    // Array of advertising banners to show randomly
+    const advertisingBanners = [
+      {
+        src: bannerPhotographyEquipment,
+        alt: "Equipo Fotográfico Profesional",
+        title: "Publicidad de Equipo Fotográfico"
+      },
+      {
+        src: bannerMobilePhones,
+        alt: "Smartphones para Fotografía",
+        title: "Publicidad de Teléfonos Móviles"
+      },
+      {
+        src: bannerPhotoEditing,
+        alt: "Software de Edición Profesional",
+        title: "Publicidad de Software de Edición"
+      }
+    ];
+
+    // Show 1-2 random banners
+    const numBanners = Math.floor(Math.random() * 2) + 1;
+    const shuffledBanners = [...advertisingBanners].sort(() => Math.random() - 0.5).slice(0, numBanners);
 
     return (
       <div className={className}>
-        <div className="mb-2">
-          <div className="text-xs text-gray-500 mb-1">Banner publicitario de ejemplo</div>
-          <img 
-            src={placeholderBanners[bannerType]}
-            alt={`Banner ${bannerType} placeholder`}
-            className="w-full h-auto rounded-md border shadow-sm"
-          />
+        <div className="space-y-4">
+          {shuffledBanners.map((banner, index) => (
+            <div key={index} className="mb-2">
+              <div className="text-xs text-gray-500 mb-1 font-medium">{banner.title}</div>
+              <img 
+                src={banner.src}
+                alt={banner.alt}
+                className="w-full h-auto rounded-md border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+              />
+              <div className="text-xs text-gray-400 mt-1">Este es un ejemplo de cómo se mostraría tu publicidad</div>
+            </div>
+          ))}
         </div>
       </div>
     );
