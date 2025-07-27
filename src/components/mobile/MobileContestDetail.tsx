@@ -160,12 +160,6 @@ const MobileContestDetail = ({ contestId, onNavigate }: MobileContestDetailProps
             </ul>
           </div>
 
-          {/* Contest Banner */}
-          <ContestBannerDisplay 
-            contestId={contestId}
-            bannerType="contestPage"
-            className="mb-4"
-          />
 
           {/* Action Buttons */}
           <div className="space-y-3 pb-6">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Filter, X, MapPin, Tag, Calendar } from "lucide-react";
+import { Search, Filter, X, MapPin, Tag, Calendar, Crown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,8 @@ interface ContestFiltersProps {
   setActiveLocation: (location: string) => void;
   contestStatus: "all" | "active" | "finished";
   setContestStatus: (status: "all" | "active" | "finished") => void;
+  isPremium: boolean;
+  setIsPremium: (isPremium: boolean) => void;
   categories: string[];
   locations: string[];
   clearFilters: () => void;
@@ -30,6 +32,8 @@ const ContestFilters = ({
   setActiveLocation,
   contestStatus,
   setContestStatus,
+  isPremium,
+  setIsPremium,
   categories,
   locations,
   clearFilters
@@ -39,7 +43,8 @@ const ContestFilters = ({
   const activeFiltersCount = [
     activeCategory !== "all",
     activeLocation !== "all",
-    contestStatus !== "active"
+    contestStatus !== "active",
+    isPremium
   ].filter(Boolean).length;
   
   const statusOptions = [
@@ -187,6 +192,43 @@ const ContestFilters = ({
                 </CardContent>
               </Card>
               
+              {/* Tipo de concurso */}
+              <Card className="border-2 border-gray-200 shadow-md">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Crown className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Tipo</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      variant={!isPremium ? "default" : "outline"}
+                      onClick={() => setIsPremium(false)}
+                      className={cn(
+                        "justify-start h-auto p-3 rounded-lg border-2",
+                        !isPremium 
+                          ? "bg-primary text-primary-foreground border-primary shadow-lg" 
+                          : "border-gray-200 hover:border-primary/50"
+                      )}
+                    >
+                      Todos los concursos
+                    </Button>
+                    <Button
+                      variant={isPremium ? "default" : "outline"}
+                      onClick={() => setIsPremium(true)}
+                      className={cn(
+                        "justify-start h-auto p-3 rounded-lg border-2",
+                        isPremium 
+                          ? "bg-primary text-primary-foreground border-primary shadow-lg" 
+                          : "border-gray-200 hover:border-primary/50"
+                      )}
+                    >
+                      <Crown className="mr-2 h-4 w-4" />
+                      Solo Premium
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Ubicaciones */}
               <Card className="border-2 border-gray-200 shadow-md">
                 <CardContent className="p-4">
@@ -282,6 +324,21 @@ const ContestFilters = ({
               variant="ghost"
               size="sm"
               onClick={() => setContestStatus("active")}
+              className="ml-2 h-4 w-4 p-0 hover:bg-red-100 hover:text-red-600 rounded-full"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </Badge>
+        )}
+        
+        {isPremium && (
+          <Badge variant="secondary" className="px-4 py-2 rounded-full border-2 border-gray-200 bg-white shadow-md">
+            <Crown className="mr-1 h-3 w-3" />
+            Premium
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsPremium(false)}
               className="ml-2 h-4 w-4 p-0 hover:bg-red-100 hover:text-red-600 rounded-full"
             >
               <X className="h-3 w-3" />

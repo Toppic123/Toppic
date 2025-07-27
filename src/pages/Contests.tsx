@@ -21,6 +21,7 @@ const Contests = () => {
   const [viewMode, setViewMode] = useState("grid");
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active");
+  const [isPremium, setIsPremium] = useState(false);
   
   // Memoize transformed contests to prevent recreation on every render
   const transformedContests = useMemo(() => {
@@ -37,6 +38,7 @@ const Contests = () => {
       photosCount: 0, // Default since it's not in the database yet
       category: contest.category,
       isActive: contest.isActive,
+      plan: contest.plan || 'basic',
     }));
   }, [allContests]);
   
@@ -81,6 +83,7 @@ const Contests = () => {
       activeCategory, 
       activeLocation, 
       contestStatus,
+      isPremium,
       totalContests: transformedContests.length 
     });
     
@@ -90,6 +93,11 @@ const Contests = () => {
     if (contestStatus !== "all") {
       const isActive = contestStatus === "active";
       filtered = filtered.filter(contest => contest.isActive === isActive);
+    }
+    
+    // Filter by premium contests
+    if (isPremium) {
+      filtered = filtered.filter(contest => contest.plan === 'premium');
     }
     
     // Filter by search query
@@ -123,7 +131,7 @@ const Contests = () => {
     
     console.log('Filtered contests:', filtered.length);
     setDisplayedContests(filtered);
-  }, [searchQuery, activeCategory, activeLocation, contestStatus, transformedContests]);
+  }, [transformedContests, searchQuery, activeCategory, activeLocation, userLocation, contestStatus, isPremium]);
   
   // Clear all filters
   const clearFilters = () => {
@@ -131,6 +139,7 @@ const Contests = () => {
     setActiveCategory("all");
     setActiveLocation("all");
     setContestStatus("active");
+    setIsPremium(false);
   };
 
   if (isLoading) {
@@ -163,6 +172,8 @@ const Contests = () => {
               setActiveLocation={setActiveLocation}
               contestStatus={contestStatus}
               setContestStatus={setContestStatus}
+              isPremium={isPremium}
+              setIsPremium={setIsPremium}
               categories={categories}
               locations={locations}
               clearFilters={clearFilters}

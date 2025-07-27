@@ -120,12 +120,6 @@ const MobileVoting = ({ onNavigate, contestId }: MobileVotingProps) => {
         </Button>
       </div>
 
-      {/* Contest Banner */}
-      <ContestBannerDisplay 
-        contestId={activeContestId}
-        bannerType="contestPage"
-        className="px-4 pt-4"
-      />
 
       {/* Advertisement Banner */}
       <ContestAdBanner />

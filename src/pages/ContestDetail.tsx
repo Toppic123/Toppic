@@ -398,12 +398,6 @@ const ContestDetail = () => {
               </ul>
             </div>
 
-            {/* Contest Banner */}
-            <ContestBannerDisplay 
-              contestId={id}
-              bannerType="contestPage"
-              className="mb-6"
-            />
           </div>
         </div>
       </div>
