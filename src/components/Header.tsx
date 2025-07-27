@@ -39,7 +39,7 @@ const MobileMenu = memo(({
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-8">
-          <div className="text-2xl font-bold text-[#4891AA]">TOPPIC</div>
+          <div className="text-2xl font-bold text-primary">TOPPIC</div>
           <button
             className="text-muted-foreground"
             onClick={onClose}
@@ -56,26 +56,24 @@ const MobileMenu = memo(({
               className={cn(
                 "flex items-center py-2 text-lg font-bold uppercase transition-colors",
                 location.pathname === item.path
-                  ? "text-[#4891AA]"
-                  : "text-muted-foreground hover:text-[#4891AA]",
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary",
               )}
             >
-              <item.icon className="mr-3 w-5 h-5" />
               {item.name}
             </Link>
           ))}
 
           <Link
             to="/support"
-            className="flex items-center py-2 text-lg font-bold uppercase text-muted-foreground hover:text-[#4891AA] transition-colors"
+            className="flex items-center py-2 text-lg font-bold uppercase text-muted-foreground hover:text-primary transition-colors"
           >
-            <HelpCircle className="mr-3 w-5 h-5" />
             <span>CONTACTO</span>
           </Link>
           
           {user ? (
             <>
-              <Button asChild size="sm" className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-bold">
+              <Button asChild size="sm" className="w-full justify-start rounded-full bg-primary text-primary-foreground hover:bg-primary/90 mt-4 text-lg font-bold">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -85,7 +83,7 @@ const MobileMenu = memo(({
                 onClick={onSignOut}
                 variant="ghost" 
                 size="sm"
-                className="w-full justify-start text-muted-foreground hover:text-[#4891AA] mt-2 font-bold"
+                className="w-full justify-start text-muted-foreground hover:text-primary mt-2 font-bold"
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>CERRAR SESIÓN</span>
@@ -95,7 +93,7 @@ const MobileMenu = memo(({
             <Button 
               asChild 
               size="sm"  
-              className="w-full justify-start rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 mt-4 text-lg font-bold"
+              className="w-full justify-start rounded-full bg-primary text-primary-foreground hover:bg-primary/90 mt-4 text-lg font-bold"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
@@ -155,7 +153,7 @@ const Header = () => {
       <div className="container max-w-7xl mx-auto px-4 flex items-center justify-between">
         {/* Project name instead of Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight transition-transform hover:scale-105 text-[#4891AA]">
+          <h1 className="text-2xl font-bold tracking-tight transition-transform hover:scale-105 text-primary">
             TOPPIC
           </h1>
         </Link>
@@ -170,12 +168,11 @@ const Header = () => {
                 "flex items-center text-lg font-bold uppercase transition-colors tracking-wide",
                 isScrolled
                   ? (location.pathname === item.path
-                    ? "text-[#4891AA]"
-                    : "text-muted-foreground hover:text-[#4891AA]")
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-primary")
                   : "text-white hover:text-white/80"
               )}
             >
-              <item.icon className="mr-2 w-4 h-4" />
               {item.name}
             </Link>
           ))}
@@ -184,12 +181,11 @@ const Header = () => {
           <Button asChild variant="ghost" size="sm" className={cn(
             "uppercase tracking-wide font-bold text-lg",
             isScrolled 
-              ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
+              ? "text-muted-foreground hover:text-primary hover:bg-transparent"
               : "text-white hover:text-white/80 hover:bg-transparent"
           )}>
             <Link to="/support">
-              <HelpCircle className="mr-2 h-4 w-4" />
-              <span>CONTACTO</span>
+            <span>CONTACTO</span>
             </Link>
           </Button>
           
@@ -199,7 +195,7 @@ const Header = () => {
                 variant="compact" 
                 onPurchaseClick={() => setShowPointsPurchase(true)} 
               />
-              <Button asChild size="sm" className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-xl font-bold px-6 py-3">
+              <Button asChild size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 uppercase text-xl font-bold px-6 py-3">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -212,7 +208,7 @@ const Header = () => {
                 className={cn(
                   "rounded-full uppercase font-bold",
                   isScrolled 
-                    ? "text-muted-foreground hover:text-[#4891AA] hover:bg-transparent" 
+                    ? "text-muted-foreground hover:text-primary hover:bg-transparent" 
                     : "text-white hover:text-white/80 hover:bg-transparent"
                 )}
               >
@@ -224,7 +220,7 @@ const Header = () => {
             <Button 
               asChild 
               size="sm" 
-              className="rounded-full bg-[#4891AA] text-white hover:bg-[#4891AA]/90 uppercase text-xl font-bold px-6 py-3"
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 uppercase text-xl font-bold px-6 py-3"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />
@@ -238,7 +234,7 @@ const Header = () => {
         <button
           className={cn(
             "md:hidden",
-            isScrolled ? "text-[#4891AA]" : "text-white"
+            isScrolled ? "text-primary" : "text-white"
           )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}

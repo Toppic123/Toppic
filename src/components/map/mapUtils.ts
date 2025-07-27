@@ -97,7 +97,7 @@ export const addUserLocationMarker = (map: any, lat: number, lng: number) => {
   // Add user location marker
   const userIcon = L.divIcon({
     className: 'custom-user-marker',
-    html: '<div style="background: #4891AA; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+    html: '<div style="background: hsl(0 72% 64%); width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
     iconSize: [20, 20],
     iconAnchor: [10, 10]
   });

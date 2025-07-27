@@ -69,7 +69,7 @@ const HeroSection = ({ heroImages, texts }: HeroSectionProps) => {
           <p className="text-xl md:text-3xl mb-12 max-w-2xl text-white/80">{texts.heroDescription}</p>
           
           <div className="flex flex-col sm:flex-row gap-6">
-            <Button asChild size="lg" className="rounded-full px-12 py-6 bg-white text-[#4891AA] hover:bg-white/90 text-xl font-bold h-auto">
+            <Button asChild size="lg" className="rounded-full px-12 py-6 bg-white text-primary hover:bg-white/90 text-xl font-bold h-auto">
               <Link to="/contests">
                 <Camera className="mr-3 h-6 w-6" />
                 <span>{texts.exploreContests}</span>

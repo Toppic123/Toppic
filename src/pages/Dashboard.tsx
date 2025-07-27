@@ -160,7 +160,7 @@ const Dashboard = () => {
           </p>
         </div>
         
-        <Button className="bg-[#4891AA] hover:bg-[#3a7a8b] text-white">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <Settings className="w-4 h-4 mr-2" />
           <span>Settings</span>
         </Button>
@@ -797,7 +797,7 @@ const Dashboard = () => {
                     </TabsContent>
                     
                     <div className="flex justify-end">
-                      <Button type="submit" className="bg-[#4891AA] hover:bg-[#3a7a8b] text-white">
+                      <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
                         <Save className="w-4 h-4 mr-2" />
                         <span>Save Contest Settings</span>
                       </Button>

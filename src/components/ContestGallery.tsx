@@ -165,15 +165,15 @@ const ContestGallery = ({
             
             <div className="flex flex-wrap gap-4 mb-6">
               <div className="flex items-center text-sm">
-                <MapPin className="w-4 h-4 mr-2 text-[#4891AA]" />
+                <MapPin className="w-4 h-4 mr-2 text-primary" />
                 <span>{location}</span>
               </div>
               <div className="flex items-center text-sm">
-                <Calendar className="w-4 h-4 mr-2 text-[#4891AA]" />
+                <Calendar className="w-4 h-4 mr-2 text-primary" />
                 <span>{new Date(startDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })} - {new Date(endDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
               </div>
               <div className="flex items-center text-sm">
-                <Camera className="w-4 h-4 mr-2 text-[#4891AA]" />
+                <Camera className="w-4 h-4 mr-2 text-primary" />
                 <span>{photos.length} fotografías</span>
               </div>
             </div>

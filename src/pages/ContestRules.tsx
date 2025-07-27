@@ -31,7 +31,7 @@ const ContestRules = () => {
             className="bg-white rounded-lg p-6 shadow-sm border"
           >
             <h2 className="text-2xl font-semibold mb-6 flex items-center">
-              <Camera className="w-6 h-6 mr-2 text-[#4891AA]" />
+              <Camera className="w-6 h-6 mr-2 text-primary" />
               Reglas de Participación
             </h2>
             
@@ -78,7 +78,7 @@ const ContestRules = () => {
             className="bg-white rounded-lg p-6 shadow-sm border"
           >
             <h2 className="text-2xl font-semibold mb-6 flex items-center">
-              <Star className="w-6 h-6 mr-2 text-[#4891AA]" />
+              <Star className="w-6 h-6 mr-2 text-primary" />
               Sistema de Votación
             </h2>
 
@@ -127,7 +127,7 @@ const ContestRules = () => {
             className="bg-white rounded-lg p-6 shadow-sm border"
           >
             <h2 className="text-2xl font-semibold mb-6 flex items-center">
-              <Trophy className="w-6 h-6 mr-2 text-[#4891AA]" />
+              <Trophy className="w-6 h-6 mr-2 text-primary" />
               Premios y Reconocimientos
             </h2>
 
@@ -155,7 +155,7 @@ const ContestRules = () => {
           </motion.section>
 
           <div className="flex justify-center pt-6">
-            <Button onClick={() => navigate(-1)} className="bg-[#4891AA] hover:bg-[#3a7a8b]">
+            <Button onClick={() => navigate(-1)} className="bg-primary hover:bg-primary/90">
               Volver al Concurso
             </Button>
           </div>

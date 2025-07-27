@@ -53,13 +53,14 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
 
       <div className="container max-w-6xl mx-auto px-4 relative z-10">
         {/* Modern Title with process theme */}
-        <ModernSectionTitle 
-          title="¿Cómo funciona?"
-          subtitle="Proceso simple en tres pasos para comenzar a participar y ganar"
-          icon={Zap}
-          gradient="from-indigo-600 via-emerald-600 to-red-600"
-          showSparkles={true}
-        />
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6 tracking-tight">
+            COMO FUNCIONA
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Proceso simple en tres pasos para comenzar a participar y ganar
+          </p>
+        </div>
         
         {/* Process steps */}
         <div className="relative">

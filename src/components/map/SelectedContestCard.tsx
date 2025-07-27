@@ -43,7 +43,7 @@ const SelectedContestCard = ({ contest }: SelectedContestCardProps) => {
         <Button
           onClick={() => navigate(`/contests/${contest.id}`)}
           size="sm"
-          className="bg-[#4891AA] text-white hover:bg-[#3a7a8b]"
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
         >
           Ver concurso
         </Button>

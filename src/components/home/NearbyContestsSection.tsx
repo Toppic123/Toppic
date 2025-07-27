@@ -56,13 +56,14 @@ const NearbyContestsSection = () => {
 
       <div className="container mx-auto px-4 text-center relative z-10">
         {/* Modern Title with location theme */}
-        <ModernSectionTitle 
-          title="Concursos cerca de ti"
-          subtitle="Descubre concursos de fotografía en tu área y participa desde tu ubicación actual"
-          icon={Compass}
-          gradient="from-emerald-600 via-teal-600 to-cyan-600"
-          showSparkles={false}
-        />
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6 tracking-tight">
+            CONCURSOS CERCA DE TI
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Descubre concursos de fotografía en tu área y participa desde tu ubicación actual
+          </p>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -92,13 +92,14 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
 
       <div className="container max-w-7xl mx-auto px-4 relative z-10">
         {/* Modern Title with trophy theme */}
-        <ModernSectionTitle 
-          title="Concursos Populares"
-          subtitle="Descubre los concursos más populares y emocionantes de nuestra comunidad"
-          icon={Crown}
-          gradient="from-amber-500 via-orange-500 to-red-500"
-          showSparkles={false}
-        />
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6 tracking-tight">
+            CONCURSOS POPULARES
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Descubre los concursos más populares y emocionantes de nuestra comunidad
+          </p>
+        </div>
         
         {displayContests.length > 0 ? (
           <>
