@@ -14,7 +14,7 @@ interface OrganizerSectionProps {
 
 const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
       {/* Modern Minimal Background Elements */}
       <div className="absolute inset-0">
         {/* Subtle geometric pattern */}
@@ -59,15 +59,13 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
         >
           {/* Modern title with subtle glow */}
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 tracking-tight relative">
-            <span className="bg-gradient-to-r from-white via-gray-100 to-blue-200 bg-clip-text text-transparent">
+            <span className="text-primary">
               ¿Eres organizador?
             </span>
-            {/* Subtle glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-blue-500/5 to-purple-500/5 blur-2xl -z-10"></div>
           </h2>
           
           {/* Refined subtitle */}
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto text-gray-300 font-medium px-4">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto text-muted-foreground font-medium px-4">
             OFRECE UNA EXPERIENCIA ÚNICA A LOS ASISTENTES
           </p>
           
@@ -82,7 +80,7 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
             <Button 
               asChild 
               size="lg" 
-              className="group relative rounded-full px-8 sm:px-12 md:px-16 py-6 md:py-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-2xl hover:shadow-blue-500/25 transition-all duration-500 text-base sm:text-lg md:text-xl lg:text-2xl font-bold transform hover:scale-105 hover:-translate-y-2 w-full sm:w-auto border border-blue-400/20 backdrop-blur-sm overflow-hidden"
+              className="group relative rounded-full px-8 sm:px-12 md:px-16 py-6 md:py-8 bg-primary hover:bg-primary/90 shadow-2xl hover:shadow-primary/25 transition-all duration-500 text-base sm:text-lg md:text-xl lg:text-2xl font-bold transform hover:scale-105 hover:-translate-y-2 w-full sm:w-auto border border-primary/20 backdrop-blur-sm overflow-hidden"
             >
               <Link to="/organizers" className="flex items-center justify-center relative z-10">
                 {/* Animated background overlay */}

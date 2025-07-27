@@ -29,7 +29,7 @@ export const homeTexts = {
   heroSubtitle: "Participa, vota y gana en concursos fotográficos cerca de ti",
   heroDescription: "Descubre concursos fotográficos en cualquier parte del mundo. Sube tus mejores fotos y gana increíbles premios.",
   exploreContests: "Explorar concursos",
-  winningGallery: "Galería de Fotos Ganadoras",
+  winningGallery: "Fotos Ganadoras",
   winningGalleryDesc: "",
   viewGallery: "Ver Galería Completa"
 };

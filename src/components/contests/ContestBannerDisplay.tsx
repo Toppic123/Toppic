@@ -7,6 +7,8 @@ import bannerContest from "@/assets/banner-contest-photo-course.jpg";
 import bannerPhotographyEquipment from "@/assets/banner-photography-equipment.jpg";
 import bannerMobilePhones from "@/assets/banner-mobile-phones.jpg";
 import bannerPhotoEditing from "@/assets/banner-photo-editing.jpg";
+import bannerPhotographyEquipmentNew from "@/assets/banner-photography-equipment-new.jpg";
+import bannerMobilePhonesNew from "@/assets/banner-mobile-phones-new.jpg";
 
 interface Banner {
   id: string;
@@ -79,12 +81,12 @@ const ContestBannerDisplay = ({ contestId, bannerType, className }: ContestBanne
     // Array of advertising banners to show randomly
     const advertisingBanners = [
       {
-        src: bannerPhotographyEquipment,
+        src: bannerPhotographyEquipmentNew,
         alt: "Equipo Fotográfico Profesional",
         title: "Publicidad de Equipo Fotográfico"
       },
       {
-        src: bannerMobilePhones,
+        src: bannerMobilePhonesNew,
         alt: "Smartphones para Fotografía",
         title: "Publicidad de Teléfonos Móviles"
       },
