@@ -57,7 +57,7 @@ const NearbyContestsSection = () => {
       <div className="container mx-auto px-4 text-center relative z-10">
         {/* Modern Title with location theme */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
             CONCURSOS CERCA DE TI
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

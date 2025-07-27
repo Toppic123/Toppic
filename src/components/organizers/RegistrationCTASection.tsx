@@ -15,8 +15,8 @@ const RegistrationCTASection = ({ onRegisterClick }: RegistrationCTASectionProps
       transition={{ delay: 0.7 }}
       className="text-center mb-20"
     >
-      <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-12 max-w-4xl mx-auto">
-        <Building className="h-16 w-16 text-primary mx-auto mb-6" />
+      <div className="bg-gradient-to-br from-[#f46464]/10 via-orange-50 to-red-50 rounded-3xl p-12 max-w-4xl mx-auto border border-[#f46464]/20 shadow-lg">
+        <Building className="h-16 w-16 text-[#f46464] mx-auto mb-6" />
         <h2 className="text-3xl font-bold mb-4">¿Quieres organizar concursos?</h2>
         <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
           Conecta con miles de fotógrafos apasionados y crea concursos que inspiren

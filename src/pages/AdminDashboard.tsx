@@ -13,10 +13,13 @@ import FeaturedContestsManagement from "@/components/admin/dashboard/FeaturedCon
 import WithdrawalManagement from "@/components/admin/dashboard/WithdrawalManagement";
 import { UserWalletManagement } from "@/components/admin/dashboard/UserWalletManagement";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminNotifications } from "@/hooks/useAdminNotifications";
+import { Badge } from "@/components/ui/badge";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("contests");
   const { toast } = useToast();
+  const { unreadMessages } = useAdminNotifications();
 
   return (
     <div className="min-h-screen bg-background pt-20">
@@ -54,9 +57,14 @@ const AdminDashboard = () => {
               <CreditCard className="h-4 w-4" />
               <span className="hidden sm:inline">Carteras</span>
             </TabsTrigger>
-            <TabsTrigger value="support" className="flex items-center gap-2 whitespace-nowrap">
+            <TabsTrigger value="support" className="flex items-center gap-2 whitespace-nowrap relative">
               <MessageSquare className="h-4 w-4" />
               <span className="hidden sm:inline">Soporte</span>
+              {unreadMessages > 0 && (
+                <Badge variant="destructive" className="text-xs px-1 min-w-[20px] h-5 flex items-center justify-center">
+                  {unreadMessages}
+                </Badge>
+              )}
             </TabsTrigger>
             <TabsTrigger value="banners" className="flex items-center gap-2 whitespace-nowrap">
               <Image className="h-4 w-4" />

@@ -160,7 +160,7 @@ const WinningGallerySection = () => {
           >
             <div className="flex items-center justify-center mb-4">
               <Trophy className="h-8 w-8 text-yellow-500 mr-3" />
-              <h2 className="text-4xl md:text-5xl font-bold">Galería de Fotos Ganadoras</h2>
+              <h2 className="text-4xl md:text-5xl font-black text-[#f46464] tracking-tight">FOTOS GANADORAS</h2>
             </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Descubre las fotografías más extraordinarias seleccionadas por nuestra comunidad

@@ -165,7 +165,7 @@ const Header = () => {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex items-center text-lg font-bold uppercase transition-colors tracking-wide",
+                "flex items-center text-base font-bold uppercase transition-colors tracking-wide",
                 isScrolled
                   ? (location.pathname === item.path
                     ? "text-primary"
@@ -179,7 +179,7 @@ const Header = () => {
 
           {/* Support Button */}
           <Button asChild variant="ghost" size="sm" className={cn(
-            "uppercase tracking-wide font-bold text-lg",
+            "uppercase tracking-wide font-bold text-base",
             isScrolled 
               ? "text-muted-foreground hover:text-primary hover:bg-transparent"
               : "text-white hover:text-white/80 hover:bg-transparent"
@@ -195,7 +195,7 @@ const Header = () => {
                 variant="compact" 
                 onPurchaseClick={() => setShowPointsPurchase(true)} 
               />
-              <Button asChild size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 uppercase text-xl font-bold px-6 py-3">
+              <Button asChild size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 uppercase text-base font-bold px-6 py-3">
                 <Link to="/upload">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>SUBIR FOTO</span>
@@ -220,7 +220,7 @@ const Header = () => {
             <Button 
               asChild 
               size="sm" 
-              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 uppercase text-xl font-bold px-6 py-3"
+              className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 uppercase text-base font-bold px-6 py-3"
             >
               <Link to="/login">
                 <LogIn className="mr-2 h-4 w-4" />

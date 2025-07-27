@@ -54,7 +54,7 @@ const HowItWorksSection = ({ texts }: HowItWorksSectionProps) => {
       <div className="container max-w-6xl mx-auto px-4 relative z-10">
         {/* Modern Title with process theme */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-6xl font-bold text-primary mb-6 tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
             COMO FUNCIONA
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
