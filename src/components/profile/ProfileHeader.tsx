@@ -49,8 +49,8 @@ const ProfileHeader = ({
           )}
           
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl font-bold">{user.name}</h1>
-            <p className="text-muted-foreground mb-2">@{user.username}</p>
+            <h1 className="text-2xl font-bold">{user.username || user.name}</h1>
+            <p className="text-muted-foreground mb-2">@{user.username || user.name}</p>
             
             <div className="flex items-center justify-center md:justify-start text-sm text-muted-foreground mb-4">
               <MapPin className="h-4 w-4 mr-1" />

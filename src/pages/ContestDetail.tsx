@@ -398,6 +398,13 @@ const ContestDetail = () => {
               </ul>
             </div>
 
+            {/* Contest Banners - Display after basic rules */}
+            <ContestBannerDisplay 
+              contestId={id}
+              bannerType="sidebar"
+              className="mt-6"
+            />
+
           </div>
         </div>
       </div>

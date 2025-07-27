@@ -175,8 +175,9 @@ const SupportMessagesManagement = () => {
         description: "El mensaje de soporte ha sido marcado como resuelto.",
       });
       
-      // Verificar si aún hay mensajes pendientes
-      const stillHasPending = supportMessages.some(m => m.id !== messageId && m.status === 'pending');
+      // Verificar si aún hay mensajes pendientes después de la actualización
+      const updatedMessages = supportMessages.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m);
+      const stillHasPending = updatedMessages.some(m => m.status === 'pending');
       setHasNewMessages(stillHasPending);
       
       setIsViewMessageDialogOpen(false);
