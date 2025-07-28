@@ -16,6 +16,7 @@ interface UserWalletData {
   user_id: string;
   email: string;
   name: string;
+  username: string;
   points: number;
   balance: number;
   total_earned: number;
@@ -61,6 +62,7 @@ export const UserWalletManagement: React.FC = () => {
           id,
           email,
           name,
+          username,
           user_points (points),
           user_wallets (balance, total_earned, total_withdrawn)
         `);
@@ -71,6 +73,7 @@ export const UserWalletManagement: React.FC = () => {
         user_id: profile.id,
         email: profile.email || '',
         name: profile.name || '',
+        username: profile.username || '',
         points: Array.isArray(profile.user_points) ? profile.user_points[0]?.points || 0 : 0,
         balance: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.balance || 0 : 0,
         total_earned: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.total_earned || 0 : 0,
@@ -97,11 +100,13 @@ export const UserWalletManagement: React.FC = () => {
       setFilteredUsers(users);
       return;
     }
-    const filtered = users.filter(user => 
-      (user.name && user.name.toLowerCase().includes(query.toLowerCase())) ||
-      (user.email && user.email.toLowerCase().includes(query.toLowerCase())) ||
-      (user.user_id && user.user_id.toLowerCase().includes(query.toLowerCase()))
-    );
+    const filtered = users.filter(user => {
+      const searchLower = query.toLowerCase();
+      return (user.name && user.name.toLowerCase().includes(searchLower)) ||
+             (user.username && user.username.toLowerCase().includes(searchLower)) ||
+             (user.email && user.email.toLowerCase().includes(searchLower)) ||
+             (user.user_id && user.user_id.toLowerCase().includes(searchLower));
+    });
     setFilteredUsers(filtered);
   };
 
@@ -259,7 +264,7 @@ export const UserWalletManagement: React.FC = () => {
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="text-lg">{user.name}</CardTitle>
+                  <CardTitle className="text-lg">{user.username || user.name}</CardTitle>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                 </div>
                 <div className="flex gap-2">

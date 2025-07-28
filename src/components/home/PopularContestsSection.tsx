@@ -135,11 +135,10 @@ const PopularContestsSection = ({ texts }: PopularContestsSectionProps) => {
                 <Button 
                   asChild 
                   size="lg" 
-                  className="bg-gradient-to-r from-[#f46464] to-white hover:from-[#e45555] hover:to-gray-50 text-white hover:text-[#f46464] px-8 py-6 text-lg font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 border-2 border-[#f46464]/20 backdrop-blur-sm relative overflow-hidden group"
+                  className="bg-[#f46464] hover:bg-[#e45555] text-white px-8 py-6 text-lg font-bold rounded-full shadow-2xl transform transition-all duration-300 hover:scale-105 relative overflow-hidden group"
                 >
                   <Link to="/contests" className="flex items-center">
                     <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-                    <Crown className="mr-3 h-5 w-5 relative z-10" />
                     <span className="relative z-10">{texts.seeAll}</span>
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
                   </Link>
