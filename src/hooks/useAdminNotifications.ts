@@ -48,8 +48,6 @@ export const useAdminNotifications = () => {
         // Reload the count when a message is updated
         if (payload.new.status === 'resolved' && payload.old.status === 'pending') {
           setUnreadMessages(prev => Math.max(0, prev - 1));
-        } else if (payload.new.status === 'pending' && payload.old.status === 'resolved') {
-          setUnreadMessages(prev => prev + 1);
         }
       })
       .subscribe();

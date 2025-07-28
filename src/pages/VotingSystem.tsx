@@ -176,19 +176,19 @@ const VotingSystem = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-[#f46464] py-16">
+      <div className="bg-gradient-to-r from-white to-[#f46464] py-16">
         <div className="container max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold text-white mb-6">
+          <h3 className="text-3xl font-bold text-gray-900 mb-6">
             ¿Listo para Participar?
           </h3>
-          <p className="text-xl text-white/90 mb-8">
+          <p className="text-xl text-gray-700 mb-8">
             Únete a nuestra comunidad y ayuda a decidir qué fotografías merecen ser reconocidas
           </p>
           <div className="flex justify-center">
             <Button
               asChild
               size="lg"
-              className="bg-white text-[#f46464] hover:bg-gray-50"
+              className="bg-white text-[#f46464] hover:bg-gray-50 border border-[#f46464]"
             >
               <Link to="/contests">
                 Comenzar a Votar

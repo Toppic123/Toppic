@@ -44,9 +44,9 @@ const AdvertisingSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="text-4xl md:text-5xl font-black text-[#f46464] mb-4 tracking-tight"
+          className="text-4xl font-bold text-foreground mb-4"
         >
-          POSIBILIDADES DE PUBLICIDAD
+          Posibilidades de Publicidad
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -73,18 +73,18 @@ const AdvertisingSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 + index * 0.1 }}
           >
-            <Card className="h-full hover:shadow-lg transition-shadow bg-white border-[#f46464]/30 hover:border-[#f46464] hover:bg-[#f46464]/5">
-              <CardHeader className="text-center bg-[#f46464] text-white">
-                <div className="mx-auto mb-3 p-3 bg-white/20 rounded-full w-fit text-white">
+            <Card className="h-full hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-[#f46464]/5 border-[#f46464]/20 hover:border-[#f46464]/40">
+              <CardHeader className="text-center">
+                <div className="mx-auto mb-3 p-3 bg-[#f46464]/10 rounded-full w-fit text-[#f46464]">
                   {feature.icon}
                 </div>
-                <CardTitle className="text-lg text-white">{feature.title}</CardTitle>
+                <CardTitle className="text-lg text-[#f46464]">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent className="text-center bg-white">
-                <CardDescription className="mb-3 text-gray-600">
+              <CardContent className="text-center">
+                <CardDescription className="mb-3">
                   {feature.description}
                 </CardDescription>
-                <Badge className="text-xs bg-[#f46464] text-white">
+                <Badge variant="secondary" className="text-xs">
                   {feature.reach}
                 </Badge>
               </CardContent>
