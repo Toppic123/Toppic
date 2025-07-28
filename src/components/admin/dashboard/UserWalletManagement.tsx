@@ -99,7 +99,8 @@ export const UserWalletManagement: React.FC = () => {
     }
     const filtered = users.filter(user => 
       (user.name && user.name.toLowerCase().includes(query.toLowerCase())) ||
-      (user.email && user.email.toLowerCase().includes(query.toLowerCase()))
+      (user.email && user.email.toLowerCase().includes(query.toLowerCase())) ||
+      (user.user_id && user.user_id.toLowerCase().includes(query.toLowerCase()))
     );
     setFilteredUsers(filtered);
   };

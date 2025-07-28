@@ -80,12 +80,27 @@ const Organizers = () => {
           className="mb-20"
         >
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Nuestros Planes</h2>
+            <h2 className="text-4xl md:text-5xl font-black text-[#f46464] mb-4 tracking-tight">NUESTROS PLANES</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Elige el plan que mejor se adapte a tus necesidades, con las tarifas a continuación
             </p>
           </div>
           <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
+        </motion.div>
+
+        {/* Important Notice Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mb-20"
+        >
+          <div className="bg-[#f46464] text-white p-8 rounded-2xl shadow-2xl text-center">
+            <h3 className="text-xl font-bold mb-4">⚠️ IMPORTANTE</h3>
+            <p className="text-lg leading-relaxed">
+              Estas tarifas no incluyen la recompensa que debe ofrecer obligatoriamente el organizador
+            </p>
+          </div>
         </motion.div>
 
         {/* Registration Dialog */}

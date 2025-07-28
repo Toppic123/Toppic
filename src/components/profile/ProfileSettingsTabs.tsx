@@ -35,10 +35,6 @@ const ProfileSettingsTabs = ({ userData, onDeleteAccount }: ProfileSettingsTabsP
           <BellRing className="h-4 w-4 mr-2" />
           Notificaciones
         </TabsTrigger>
-        <TabsTrigger value="appearance">
-          <PaintBucket className="h-4 w-4 mr-2" />
-          Apariencia
-        </TabsTrigger>
         <TabsTrigger value="account">
           <Shield className="h-4 w-4 mr-2" />
           Cuenta
@@ -58,9 +54,6 @@ const ProfileSettingsTabs = ({ userData, onDeleteAccount }: ProfileSettingsTabsP
         <NotificationSettings />
       </TabsContent>
 
-      <TabsContent value="appearance" className="space-y-4">
-        <AppearanceSettings />
-      </TabsContent>
 
       <TabsContent value="account" className="space-y-4">
         <AccountSettings onDeleteAccount={onDeleteAccount} />

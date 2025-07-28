@@ -45,7 +45,7 @@ export const useAdminNotifications = () => {
         schema: 'public',
         table: 'support_messages'
       }, (payload: any) => {
-        // If message was marked as resolved, decrease count
+        // Reload the count when a message is updated
         if (payload.new.status === 'resolved' && payload.old.status === 'pending') {
           setUnreadMessages(prev => Math.max(0, prev - 1));
         }

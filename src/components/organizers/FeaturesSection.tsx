@@ -79,12 +79,8 @@ const FeaturesSection = () => {
           </span>
         </motion.div>
 
-        <h2 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-primary via-blue-600 to-purple-600 bg-clip-text text-transparent mb-8 leading-tight">
-          ¿POR QUÉ USAR
-          <br />
-          <span className="text-gradient bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
-            TOPPIC?
-          </span>
+        <h2 className="text-5xl md:text-6xl font-black text-[#f46464] mb-8 leading-tight">
+          ¿POR QUÉ USAR TOPPIC?
         </h2>
         
         <motion.p 

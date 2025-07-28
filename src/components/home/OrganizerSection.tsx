@@ -14,7 +14,7 @@ interface OrganizerSectionProps {
 
 const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-800 via-gray-900 to-black relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-[#f46464] relative overflow-hidden">
       {/* Modern Minimal Background Elements */}
       <div className="absolute inset-0">
         {/* Subtle geometric pattern */}
@@ -58,14 +58,12 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
           className="text-center"
         >
           {/* Modern title with subtle glow */}
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 tracking-tight relative">
-            <span className="text-white">
-              ¿Eres organizador?
-            </span>
+          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
+            ¿ERES ORGANIZADOR?
           </h2>
           
           {/* Refined subtitle */}
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto text-gray-300 font-medium px-4">
+          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl mb-12 md:mb-16 leading-relaxed max-w-4xl mx-auto text-white font-medium px-4">
             OFRECE UNA EXPERIENCIA ÚNICA A LOS ASISTENTES
           </p>
           
@@ -80,7 +78,7 @@ const OrganizerSection = ({ texts }: OrganizerSectionProps) => {
             <Button 
               asChild 
               size="lg" 
-              className="group relative rounded-full px-8 sm:px-12 md:px-16 py-6 md:py-8 bg-primary hover:bg-primary/90 shadow-2xl hover:shadow-primary/25 transition-all duration-500 text-base sm:text-lg md:text-xl lg:text-2xl font-bold transform hover:scale-105 hover:-translate-y-2 w-full sm:w-auto border border-primary/20 backdrop-blur-sm overflow-hidden"
+              className="group relative rounded-full px-8 sm:px-12 md:px-16 py-6 md:py-8 bg-white text-[#f46464] hover:bg-gray-50 shadow-2xl transition-all duration-500 text-base sm:text-lg md:text-xl lg:text-2xl font-bold transform hover:scale-105 hover:-translate-y-2 w-full sm:w-auto border border-white/20 backdrop-blur-sm overflow-hidden"
             >
               <Link to="/organizers" className="flex items-center justify-center relative z-10">
                 {/* Animated background overlay */}

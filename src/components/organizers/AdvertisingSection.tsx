@@ -73,12 +73,12 @@ const AdvertisingSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8 + index * 0.1 }}
           >
-            <Card className="h-full hover:shadow-lg transition-shadow">
+            <Card className="h-full hover:shadow-lg transition-shadow bg-gradient-to-br from-white to-[#f46464]/5 border-[#f46464]/20 hover:border-[#f46464]/40">
               <CardHeader className="text-center">
-                <div className="mx-auto mb-3 p-3 bg-primary/10 rounded-full w-fit">
+                <div className="mx-auto mb-3 p-3 bg-[#f46464]/10 rounded-full w-fit text-[#f46464]">
                   {feature.icon}
                 </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardTitle className="text-lg text-[#f46464]">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent className="text-center">
                 <CardDescription className="mb-3">
