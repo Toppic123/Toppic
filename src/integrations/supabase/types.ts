@@ -134,6 +134,7 @@ export type Database = {
       }
       contests: {
         Row: {
+          cash_prize_amount: number | null
           commercial_use: boolean | null
           contest_password: string | null
           created_at: string | null
@@ -149,7 +150,10 @@ export type Database = {
           max_premium_participants: number | null
           minimum_distance_km: number | null
           organizer: string
+          organizer_commission_fee: number | null
           participants: number | null
+          payment_session_id: string | null
+          payment_status: string | null
           photo_deadline: string | null
           photo_ownership: boolean | null
           plan: string | null
@@ -160,6 +164,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          cash_prize_amount?: number | null
           commercial_use?: boolean | null
           contest_password?: string | null
           created_at?: string | null
@@ -175,7 +180,10 @@ export type Database = {
           max_premium_participants?: number | null
           minimum_distance_km?: number | null
           organizer: string
+          organizer_commission_fee?: number | null
           participants?: number | null
+          payment_session_id?: string | null
+          payment_status?: string | null
           photo_deadline?: string | null
           photo_ownership?: boolean | null
           plan?: string | null
@@ -186,6 +194,7 @@ export type Database = {
           title: string
         }
         Update: {
+          cash_prize_amount?: number | null
           commercial_use?: boolean | null
           contest_password?: string | null
           created_at?: string | null
@@ -201,7 +210,10 @@ export type Database = {
           max_premium_participants?: number | null
           minimum_distance_km?: number | null
           organizer?: string
+          organizer_commission_fee?: number | null
           participants?: number | null
+          payment_session_id?: string | null
+          payment_status?: string | null
           photo_deadline?: string | null
           photo_ownership?: boolean | null
           plan?: string | null
@@ -300,6 +312,56 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      organizer_payments: {
+        Row: {
+          cash_prize_amount: number
+          commission_fee: number
+          contest_id: string
+          created_at: string | null
+          id: string
+          organizer_email: string
+          paid_at: string | null
+          payment_status: string | null
+          stripe_session_id: string | null
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          cash_prize_amount: number
+          commission_fee: number
+          contest_id: string
+          created_at?: string | null
+          id?: string
+          organizer_email: string
+          paid_at?: string | null
+          payment_status?: string | null
+          stripe_session_id?: string | null
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          cash_prize_amount?: number
+          commission_fee?: number
+          contest_id?: string
+          created_at?: string | null
+          id?: string
+          organizer_email?: string
+          paid_at?: string | null
+          payment_status?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizer_payments_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organizers: {
         Row: {
