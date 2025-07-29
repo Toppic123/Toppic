@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import PrizeRewards from "@/components/PrizeRewards";
 
 export interface PricingPlan {
   name: string;
@@ -42,7 +43,7 @@ const defaultPlans: PricingPlan[] = [
       "Hasta 500 participantes",
       "1 concurso fotográfico",
       "Publicidad en la app (banners en el concurso)",
-      "Derechos sobre la foto ganadora"
+      "Derechos sobre las 3 mejores fotos"
     ],
     recommended: true,
     buttonText: "SELECCIONAR PLAN",
@@ -56,7 +57,7 @@ const defaultPlans: PricingPlan[] = [
       "Participantes ilimitados",
       "1 concurso fotográfico",
       "Publicidad en la app",
-      "Derechos sobre las 3 mejores fotos"
+      "Derechos sobre las 5 mejores fotos"
     ],
     buttonText: "SELECCIONAR PLAN",
     buttonVariant: "secondary"
@@ -112,16 +113,24 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
       </div>
 
 
+      {/* Usage Rights Notice */}
+      <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800 text-center">
+          <strong>Derechos de uso:</strong> Las fotografías que recibirás serán de uso editorial si aparecen personas retratadas 
+          y de uso comercial si no aparecen personas retratadas (debido a nuestra política de privacidad).
+        </p>
+      </div>
+
       <div className="mt-8 text-center">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
                 variant="link" 
-                className="text-lg text-muted-foreground"
+                className="text-xl text-muted-foreground font-medium"
                 onClick={onCustomPlanRequest}
               >
-                <Info className="h-4 w-4 mr-1" />
+                <Info className="h-5 w-5 mr-2" />
                 ¿Necesitas un plan personalizado?
               </Button>
             </TooltipTrigger>
@@ -133,6 +142,9 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
           </Tooltip>
         </TooltipProvider>
       </div>
+
+      {/* Prize Rewards System */}
+      <PrizeRewards />
     </div>
   );
 };

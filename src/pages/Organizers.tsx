@@ -38,7 +38,7 @@ const Organizers = () => {
       features: [
         "Hasta 500 participantes",
         "Publicidad en app",
-        "Derechos sobre la foto ganadora"
+        "Derechos sobre las 3 mejores fotos"
       ],
       recommended: true,
       buttonText: "SELECCIONAR PLAN",
@@ -51,7 +51,7 @@ const Organizers = () => {
       features: [
         "Participantes ilimitados",
         "Publicidad en app",
-        "Derechos sobre las 3 mejores fotos"
+        "Derechos sobre las 5 mejores fotos"
       ],
       buttonText: "SELECCIONAR PLAN",
       buttonVariant: "secondary"

@@ -54,13 +54,13 @@ export const UserWalletManagement: React.FC = () => {
     try {
       setLoading(true);
       
-      // Get profiles with user points and wallet data
+      // Get profiles with user points and wallet data, using username field
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select(`
           id,
           email,
-          name,
+          username,
           user_points (points),
           user_wallets (balance, total_earned, total_withdrawn)
         `);
@@ -70,7 +70,7 @@ export const UserWalletManagement: React.FC = () => {
       const formattedUsers: UserWalletData[] = profiles?.map(profile => ({
         user_id: profile.id,
         email: profile.email || '',
-        name: profile.name || '',
+        name: profile.username || profile.email || '', // Use username field instead of name
         points: Array.isArray(profile.user_points) ? profile.user_points[0]?.points || 0 : 0,
         balance: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.balance || 0 : 0,
         total_earned: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.total_earned || 0 : 0,
@@ -97,6 +97,7 @@ export const UserWalletManagement: React.FC = () => {
       setFilteredUsers(users);
       return;
     }
+    // Enhanced search to include username field (which corresponds to the name field in profiles)
     const filtered = users.filter(user => 
       (user.name && user.name.toLowerCase().includes(query.toLowerCase())) ||
       (user.email && user.email.toLowerCase().includes(query.toLowerCase())) ||

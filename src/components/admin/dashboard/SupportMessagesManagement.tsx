@@ -163,22 +163,22 @@ const SupportMessagesManagement = () => {
         
       if (error) throw error;
       
-      setSupportMessages(messages => 
-        messages.map(m => m.id === messageId ? { ...m, status: "resolved" } : m)
-      );
-      setFilteredMessages(messages => 
-        messages.map(m => m.id === messageId ? { ...m, status: "resolved" } : m)
-      );
+      // Update local state immediately with resolved status
+      const updateMessages = (messages: SupportMessage[]) => 
+        messages.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m);
+      
+      setSupportMessages(updateMessages);
+      setFilteredMessages(updateMessages);
+      
+      // Check if there are still pending messages after this update
+      const updatedMessages = supportMessages.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m);
+      const stillHasPending = updatedMessages.some(m => m.status === 'pending');
+      setHasNewMessages(stillHasPending);
       
       toast({
         title: "Mensaje marcado como resuelto",
         description: "El mensaje de soporte ha sido marcado como resuelto.",
       });
-      
-      // Verificar si aún hay mensajes pendientes después de la actualización
-      const updatedMessages = supportMessages.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m);
-      const stillHasPending = updatedMessages.some(m => m.status === 'pending');
-      setHasNewMessages(stillHasPending);
       
       setIsViewMessageDialogOpen(false);
     } catch (error) {
