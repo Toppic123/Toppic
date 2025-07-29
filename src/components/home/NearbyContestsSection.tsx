@@ -90,7 +90,7 @@ const NearbyContestsSection = () => {
               
                <div className="relative z-10 flex flex-col items-center justify-center gap-4">
                 <MapPin className="h-16 w-16" />
-                <span className="text-sm font-bold text-center leading-tight">
+                <span className="text-xl md:text-2xl font-black text-center leading-tight">
                   EXPLORAR<br />CONCURSOS<br />CERCANOS
                 </span>
               </div>
