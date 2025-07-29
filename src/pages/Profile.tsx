@@ -244,7 +244,7 @@ const Profile = () => {
             
             <div className="flex-1">
               <h1 className="text-3xl md:text-4xl font-bold mb-2 text-gray-900">
-                {profileToShow?.name || profileToShow?.username || 'Usuario Anónimo'}
+                {profileToShow?.username || profileToShow?.name || 'Usuario Anónimo'}
               </h1>
               {profileToShow?.bio && (
                 <p className="text-lg text-gray-600 mb-4 max-w-2xl">{profileToShow.bio}</p>

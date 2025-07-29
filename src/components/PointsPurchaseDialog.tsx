@@ -142,6 +142,7 @@ export const PointsPurchaseDialog: React.FC<PointsPurchaseDialogProps> = ({
           <ul className="text-sm text-muted-foreground space-y-1">
             <li>• Participar en concursos premium exclusivos</li>
             <li>• Acceder a concursos con premios más altos</li>
+            <li>• Subir más fotos en cada concurso (máximo 3 en total)</li>
           </ul>
         </div>
       </DialogContent>
