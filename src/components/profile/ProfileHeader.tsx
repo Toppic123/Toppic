@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +29,10 @@ const ProfileHeader = ({
   profileImagePreview,
   onProfileImageSelect,
 }: ProfileHeaderProps) => {
+  // Display username if available, otherwise fall back to name
+  const displayName = user.username || user.name;
+  const displayHandle = user.username || user.name;
+  
   return (
     <Card className="mb-8">
       <CardContent className="pt-6">
@@ -43,14 +46,14 @@ const ProfileHeader = ({
             />
           ) : (
             <Avatar className="h-24 w-24">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback>{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarImage src={user.avatar} alt={displayName} />
+              <AvatarFallback>{displayName.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
           )}
           
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-2xl font-bold">{user.username || user.name}</h1>
-            <p className="text-muted-foreground mb-2">@{user.username || user.name}</p>
+            <h1 className="text-2xl font-bold">{displayName}</h1>
+            <p className="text-muted-foreground mb-2">@{displayHandle}</p>
             
             <div className="flex items-center justify-center md:justify-start text-sm text-muted-foreground mb-4">
               <MapPin className="h-4 w-4 mr-1" />

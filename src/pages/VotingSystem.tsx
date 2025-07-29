@@ -221,7 +221,7 @@ const VotingSystem = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">📸</span>
-                  <span>Participar en eventos VIP</span>
+                  <span>Subir más fotos en cada concurso (máximo 3 en total)</span>
                 </div>
               </div>
             </div>
@@ -287,17 +287,6 @@ const VotingSystem = () => {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="bg-[#f46464] py-16">
-        <div className="container max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
-            ¿LISTO PARA PARTICIPAR?
-          </h3>
-          <p className="text-xl text-white/90 mb-8">
-            Únete a nuestra comunidad y ayuda a decidir qué fotografías merecen ser reconocidas
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
