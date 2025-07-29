@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Search, Camera, User, X, MapPin } from "lucide-react";
+import { ArrowLeft, Search, Camera, User, X, MapPin, House } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Import mobile screens
@@ -134,7 +134,7 @@ const MobilePrototype = () => {
                       className={`flex flex-col items-center p-2 ${currentScreen === 'home' ? 'text-blue-600' : 'text-gray-500'}`}
                       onClick={() => handleNavigation('home')}
                     >
-                      <Camera className="h-5 w-5 mb-1" />
+                      <House className="h-5 w-5 mb-1" />
                       <span className="text-xs">Inicio</span>
                     </Button>
                     <Button
@@ -150,10 +150,10 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="lg"
-                      className="flex flex-col items-center justify-center p-3 text-gray-600 bg-gray-100 rounded-full border-2 border-gray-200 shadow-lg hover:bg-gray-200 hover:scale-105 transition-all duration-200"
+                      className="flex flex-col items-center justify-center p-2 text-gray-600"
                       onClick={() => handleNavigation('upload')}
                     >
-                      <MapPin className="h-8 w-8 mb-1" />
+                      <Camera className="h-8 w-8 mb-1" />
                       <span className="text-xs font-medium">Subir</span>
                     </Button>
                     <Button

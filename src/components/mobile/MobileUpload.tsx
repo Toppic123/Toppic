@@ -221,13 +221,14 @@ const MobileUpload = ({ onNavigate, contestId }: MobileUploadProps) => {
           <h4 className="font-semibold text-gray-900 mb-2">Reglas Importantes</h4>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>• Las fotos deben ser originales y de tu autoría</li>
-            <li>• Solo se permite una foto por participante</li>
+            <li>• Solo se permite una foto por participante (usuarios gratuitos)</li>
+            <li>• Los usuarios PREMIUM pueden subir hasta 3 fotos por concurso</li>
             <li>• La foto debe estar relacionada con el tema del concurso</li>
             <li>• No se permiten ediciones excesivas</li>
           </ul>
           <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
             <p className="text-sm text-yellow-800">
-              ⚠️ Límite: Solo puedes subir una foto por concurso. (solo los usuarios PREMIUM pueden subir más fotos)
+              ⚠️ Límite: Solo puedes subir una foto por concurso. (los usuarios PREMIUM pueden subir hasta 3 fotos por concurso)
             </p>
           </div>
         </div>
