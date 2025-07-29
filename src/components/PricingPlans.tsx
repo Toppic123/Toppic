@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import PrizeRewards from "@/components/PrizeRewards";
+
 
 export interface PricingPlan {
   name: string;
@@ -143,8 +143,12 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
         </TooltipProvider>
       </div>
 
-      {/* Prize Rewards System */}
-      <PrizeRewards />
+      {/* Important notice for organizers */}
+      <div className="mt-6 p-4 bg-pink-500 border border-pink-600 rounded-lg">
+        <p className="text-white text-center font-medium">
+          <strong>Importante:</strong> Estas tarifas no incluyen la recompensa que debe ofrecer obligatoriamente el organizador
+        </p>
+      </div>
     </div>
   );
 };

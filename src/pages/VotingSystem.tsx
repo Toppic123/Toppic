@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import PrizeRewards from "@/components/PrizeRewards";
 
 const VotingSystem = () => {
   const features = [
@@ -105,6 +106,55 @@ const VotingSystem = () => {
               </Card>
             </motion.div>
           ))}
+        </div>
+      </div>
+
+      {/* ELO System Detailed Section */}
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-100 py-16">
+        <div className="container max-w-6xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <div className="text-center mb-12">
+              <h3 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
+                SISTEMA ELO: LA CIENCIA DETRÁS DE LA VOTACIÓN
+              </h3>
+              <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
+                Utilizamos el mismo sistema que el ajedrez profesional para clasificar fotografías de manera objetiva y justa.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl mx-auto">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                  <h4 className="text-2xl font-bold text-gray-900 mb-4">¿Qué es el Sistema ELO?</h4>
+                  <p className="text-gray-600 mb-4">
+                    El sistema ELO es un método matemático para calcular la habilidad relativa de jugadores 
+                    en juegos de dos jugadores. Lo hemos adaptado para comparar fotografías de manera objetiva.
+                  </p>
+                  <p className="text-gray-600">
+                    Cada fotografía tiene una puntuación que sube o baja según gane o pierda comparaciones 
+                    directas con otras fotos, garantizando resultados justos y precisos.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-32 h-32 bg-primary/10 rounded-full flex items-center justify-center">
+                    <BarChart3 className="h-16 w-16 text-primary" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Prize Rewards System */}
+      <div className="bg-white py-16">
+        <div className="container max-w-6xl mx-auto px-4">
+          <PrizeRewards />
         </div>
       </div>
 
