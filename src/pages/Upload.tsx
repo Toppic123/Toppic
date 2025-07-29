@@ -18,6 +18,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import ConsentForms from "@/components/ConsentForms";
 import { useContestsData } from "@/hooks/useContestsData";
 import { useContestPhotos } from "@/hooks/useContestPhotos";
+import { usePremiumUser } from "@/hooks/usePremiumUser";
+import { useUserPoints } from "@/hooks/useUserPoints";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ConsentData {
@@ -47,6 +49,8 @@ const Upload = () => {
   const navigate = useNavigate();
   const { contests: allContests } = useContestsData();
   const { checkUserHasPhoto } = useContestPhotos(selectedContest);
+  const { isPremium } = usePremiumUser();
+  const { spendPoints } = useUserPoints();
   
   // Check if user already has a photo in the selected contest
   useEffect(() => {
@@ -537,7 +541,7 @@ const Upload = () => {
                   <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div className="text-sm text-blue-800">
                     <p className="mb-2">Los concursos mostrados están filtrados según tu ubicación actual. Solo puedes participar en concursos activos y que no hayan finalizado.</p>
-                    <p className="font-medium">⚠️ Límite: Solo puedes subir una foto por concurso.</p>
+                    <p className="font-medium">⚠️ Límite: Solo puedes subir una foto por concurso (Excepto usuarios PREMIUM).</p>
                   </div>
                 </div>
                 
@@ -617,6 +621,44 @@ const Upload = () => {
                   </p>
                 )}
               </div>
+
+              {/* Premium User Additional Photos Section */}
+              {isPremium && selectedContest && (
+                <div className="space-y-4 border-t pt-4">
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                        👑
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-purple-900 mb-2">
+                          ¡Usuario PREMIUM detectado!
+                        </h3>
+                        <p className="text-sm text-purple-800 mb-3">
+                          Como usuario PREMIUM, puedes subir hasta 3 fotos adicionales a este concurso por 25 puntos cada una.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                          <div className="flex items-center gap-2 text-purple-700">
+                            <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span>Foto 1: Incluida</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-700">
+                            <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span>Foto 2: 25 puntos</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-700">
+                            <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                            <span>Foto 3: 25 puntos</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-purple-600 mt-2">
+                          * Las fotos adicionales se pueden subir después de completar la primera foto.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
           <CardFooter>

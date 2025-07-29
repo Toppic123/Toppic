@@ -10,6 +10,19 @@ import {
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UserWalletData {
@@ -45,6 +58,8 @@ export const UserWalletManagement: React.FC = () => {
     reason: ''
   });
   const [loading, setLoading] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState<UserWalletData[]>([]);
 
   useEffect(() => {
     loadUsers();
@@ -95,6 +110,7 @@ export const UserWalletManagement: React.FC = () => {
     setSearchQuery(query);
     if (!query.trim()) {
       setFilteredUsers(users);
+      setSearchSuggestions([]);
       return;
     }
     // Enhanced search to include username field (which corresponds to the name field in profiles)
@@ -104,6 +120,17 @@ export const UserWalletManagement: React.FC = () => {
       (user.user_id && user.user_id.toLowerCase().includes(query.toLowerCase()))
     );
     setFilteredUsers(filtered);
+    
+    // Set suggestions for dropdown (limit to 5 for better UX)
+    const suggestions = filtered.slice(0, 5);
+    setSearchSuggestions(suggestions);
+  };
+
+  const handleSelectUser = (user: UserWalletData) => {
+    setSearchQuery(user.name || user.email);
+    setFilteredUsers([user]);
+    setSearchSuggestions([]);
+    setSearchOpen(false);
   };
 
   const handleEditWallet = (user: UserWalletData) => {
@@ -245,12 +272,46 @@ export const UserWalletManagement: React.FC = () => {
         <h2 className="text-xl font-semibold">Gestión de Carteras</h2>
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar usuarios..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-64"
-          />
+          <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+            <PopoverTrigger asChild>
+              <div className="relative">
+                <Input
+                  placeholder="Buscar usuarios..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    handleSearch(e.target.value);
+                    setSearchOpen(e.target.value.length > 0);
+                  }}
+                  onFocus={() => setSearchOpen(searchQuery.length > 0)}
+                  className="w-64"
+                />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-0" align="start">
+              <Command>
+                <CommandList>
+                  {searchSuggestions.length > 0 ? (
+                    <CommandGroup>
+                      {searchSuggestions.map((user) => (
+                        <CommandItem
+                          key={user.user_id}
+                          onSelect={() => handleSelectUser(user)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">{user.name}</span>
+                            <span className="text-sm text-muted-foreground">{user.email}</span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  ) : searchQuery.length > 0 ? (
+                    <CommandEmpty>No se encontraron usuarios.</CommandEmpty>
+                  ) : null}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
