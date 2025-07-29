@@ -150,7 +150,7 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="lg"
-                      className="flex flex-col items-center justify-center p-3 text-yellow-600 bg-yellow-100 rounded-full border-2 border-yellow-200 shadow-lg hover:bg-yellow-200 hover:scale-105 transition-all duration-200"
+                      className="flex flex-col items-center justify-center p-3 text-gray-600 bg-gray-100 rounded-full border-2 border-gray-200 shadow-lg hover:bg-gray-200 hover:scale-105 transition-all duration-200"
                       onClick={() => handleNavigation('upload')}
                     >
                       <MapPin className="h-8 w-8 mb-1" />
