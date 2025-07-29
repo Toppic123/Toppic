@@ -506,6 +506,36 @@ export type Database = {
           },
         ]
       }
+      premium_photo_uploads: {
+        Row: {
+          contest_id: string
+          created_at: string
+          extra_photos_count: number
+          id: string
+          points_spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          extra_photos_count?: number
+          id?: string
+          points_spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          extra_photos_count?: number
+          id?: string
+          points_spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       prize_awards: {
         Row: {
           contest_id: string
@@ -797,6 +827,15 @@ export type Database = {
         Args: { contest_id_param: string }
         Returns: undefined
       }
+      get_user_photo_slots: {
+        Args: { p_user_id: string; p_contest_id: string }
+        Returns: {
+          total_slots: number
+          used_slots: number
+          remaining_slots: number
+          extra_slots_purchased: number
+        }[]
+      }
       get_user_points: {
         Args: { p_user_id: string }
         Returns: number
@@ -822,6 +861,10 @@ export type Database = {
       }
       process_withdrawal: {
         Args: { p_request_id: string; p_amount: number; p_user_id: string }
+        Returns: boolean
+      }
+      purchase_extra_photo_slot: {
+        Args: { p_user_id: string; p_contest_id: string }
         Returns: boolean
       }
       spend_user_points: {
