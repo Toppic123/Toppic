@@ -111,23 +111,14 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
         ))}
       </div>
 
-      {/* Important note about rewards */}
-      <div className="mt-8 text-center">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-4xl mx-auto mb-6">
-          <p className="text-amber-800 text-base font-medium">
-            <Info className="h-5 w-5 inline-block mr-2" />
-            Importante: Estas tarifas no incluyen la recompensa que debe ofrecer obligatoriamente el organizador
-          </p>
-        </div>
-      </div>
 
-      <div className="mt-4 text-center">
+      <div className="mt-8 text-center">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
                 variant="link" 
-                className="text-base text-muted-foreground"
+                className="text-lg text-muted-foreground"
                 onClick={onCustomPlanRequest}
               >
                 <Info className="h-4 w-4 mr-1" />

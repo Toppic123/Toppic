@@ -88,20 +88,6 @@ const Organizers = () => {
           <PricingPlans plans={customPlans} onSelectPlan={handlePlanSelection} onCustomPlanRequest={handleCustomPlanRequest} />
         </motion.div>
 
-        {/* Important Notice Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mb-20"
-        >
-          <div className="bg-[#f46464] text-white p-8 rounded-2xl shadow-2xl text-center">
-            <h3 className="text-xl font-bold mb-4">⚠️ IMPORTANTE</h3>
-            <p className="text-lg leading-relaxed">
-              Estas tarifas no incluyen la recompensa que debe ofrecer obligatoriamente el organizador
-            </p>
-          </div>
-        </motion.div>
 
         {/* Registration Dialog */}
         <RegistrationDialog 

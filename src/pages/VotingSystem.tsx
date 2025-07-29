@@ -59,36 +59,27 @@ const VotingSystem = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Votación Justa y Transparente
+            <h2 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
+              VOTACIÓN JUSTA Y TRANSPARENTE
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
               Nuestro sistema de votación combina tecnología avanzada con principios democráticos 
               para garantizar que las mejores fotografías sean reconocidas de manera justa.
             </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-primary hover:bg-primary/90"
-            >
-              <Link to="/contests">
-                Ver Concursos Activos
-              </Link>
-            </Button>
           </motion.div>
         </div>
       </div>
 
       {/* Features Grid */}
       <div className="container max-w-6xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h3 className="text-3xl font-bold text-gray-900 mb-4">
-            Características del Sistema
-          </h3>
-          <p className="text-lg text-gray-600">
-            Tecnología de vanguardia para una experiencia de votación superior
-          </p>
-        </div>
+          <div className="text-center mb-12">
+            <h3 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
+              TECNOLOGÍA DE VANGUARDIA
+            </h3>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Una experiencia de votación superior para la comunidad fotográfica
+            </p>
+          </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
@@ -121,10 +112,10 @@ const VotingSystem = () => {
       <div className="bg-white py-16">
         <div className="container max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              Cómo Funciona
+            <h3 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
+              CÓMO FUNCIONA
             </h3>
-            <p className="text-lg text-gray-600">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Un proceso simple en cuatro pasos
             </p>
           </div>
@@ -178,8 +169,8 @@ const VotingSystem = () => {
       {/* CTA Section */}
       <div className="bg-gradient-to-r from-white to-[#f46464] py-16">
         <div className="container max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">
-            ¿Listo para Participar?
+          <h3 className="text-4xl md:text-5xl font-black text-[#f46464] mb-6 tracking-tight">
+            ¿LISTO PARA PARTICIPAR?
           </h3>
           <p className="text-xl text-gray-700 mb-8">
             Únete a nuestra comunidad y ayuda a decidir qué fotografías merecen ser reconocidas
