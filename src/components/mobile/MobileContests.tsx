@@ -121,6 +121,12 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     {contest.description}
                   </p>
                   
+                  <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-xs text-yellow-800">
+                      ⚠️ Límite: Solo puedes subir una foto por concurso. (solo los usuarios PREMIUM pueden subir más fotos)
+                    </p>
+                  </div>
+                  
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 text-xs text-gray-500">
                       <div className="flex items-center gap-1">

@@ -150,19 +150,11 @@ const MobilePrototype = () => {
                     <Button
                       variant="ghost"
                       size="lg"
-                      className="flex items-center justify-center p-3 text-yellow-600 bg-yellow-100 rounded-full border-2 border-yellow-200 shadow-lg hover:bg-yellow-200 hover:scale-105 transition-all duration-200"
+                      className="flex flex-col items-center justify-center p-3 text-yellow-600 bg-yellow-100 rounded-full border-2 border-yellow-200 shadow-lg hover:bg-yellow-200 hover:scale-105 transition-all duration-200"
                       onClick={() => handleNavigation('upload')}
                     >
-                      <MapPin className="h-8 w-8" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'upload' ? 'text-blue-600' : 'text-gray-500'}`}
-                      onClick={() => handleNavigation('upload')}
-                    >
-                      <Camera className="h-5 w-5 mb-1" />
-                      <span className="text-xs">Subir</span>
+                      <MapPin className="h-8 w-8 mb-1" />
+                      <span className="text-xs font-medium">Subir</span>
                     </Button>
                     <Button
                       variant="ghost"

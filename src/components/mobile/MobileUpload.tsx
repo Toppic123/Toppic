@@ -225,6 +225,11 @@ const MobileUpload = ({ onNavigate, contestId }: MobileUploadProps) => {
             <li>• La foto debe estar relacionada con el tema del concurso</li>
             <li>• No se permiten ediciones excesivas</li>
           </ul>
+          <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-sm text-yellow-800">
+              ⚠️ Límite: Solo puedes subir una foto por concurso. (solo los usuarios PREMIUM pueden subir más fotos)
+            </p>
+          </div>
         </div>
 
         {/* Upload Button */}
