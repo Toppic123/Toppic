@@ -506,6 +506,39 @@ export type Database = {
           },
         ]
       }
+      prize_awards: {
+        Row: {
+          contest_id: string
+          created_at: string
+          email_sent: boolean
+          id: string
+          points_awarded: number
+          position: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          email_sent?: boolean
+          id?: string
+          points_awarded: number
+          position: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          email_sent?: boolean
+          id?: string
+          points_awarded?: number
+          position?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -759,6 +792,10 @@ export type Database = {
           p_description?: string
         }
         Returns: boolean
+      }
+      award_contest_prizes: {
+        Args: { contest_id_param: string }
+        Returns: undefined
       }
       get_user_points: {
         Args: { p_user_id: string }
