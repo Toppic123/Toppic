@@ -164,48 +164,6 @@ const VotingRules = () => {
         </div>
       </div>
 
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-primary via-blue-600 to-purple-600 py-20">
-        <div className="container max-w-4xl mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-4xl font-bold text-white mb-6">
-              ¿Listo para Participar?
-            </h3>
-            <p className="text-xl text-white/90 mb-10 leading-relaxed">
-              Únete a nuestra comunidad y ayuda a decidir qué fotografías merecen ser reconocidas. 
-              Tu voto cuenta y hace la diferencia.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="bg-white text-primary hover:bg-gray-50 px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <Link to="/contests">
-                  Comenzar a Votar
-                  <Vote className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-primary px-8 py-4 text-lg font-semibold transition-all duration-300"
-              >
-                <Link to="/contests">
-                  Ver Concursos
-                  <Award className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
     </div>
   );
 };
