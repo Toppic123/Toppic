@@ -144,7 +144,7 @@ const PricingPlans = ({ plans = defaultPlans, onSelectPlan, onCustomPlanRequest 
       </div>
 
       {/* Important notice for organizers */}
-      <div className="mt-6 p-4 bg-pink-500 border border-pink-600 rounded-lg">
+      <div className="mt-6 p-4 border border-[#f46464] rounded-lg" style={{ backgroundColor: '#f46464' }}>
         <p className="text-white text-center font-medium">
           <strong>Importante:</strong> Estas tarifas no incluyen la recompensa que debe ofrecer obligatoriamente el organizador
         </p>

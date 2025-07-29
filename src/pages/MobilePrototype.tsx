@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Search, Camera, User, X } from "lucide-react";
+import { ArrowLeft, Search, Camera, User, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Import mobile screens
@@ -146,14 +146,14 @@ const MobilePrototype = () => {
                       <Search className="h-5 w-5 mb-1" />
                       <span className="text-xs">Concursos</span>
                     </Button>
+                    {/* Center location button */}
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex flex-col items-center p-2 ${currentScreen === 'upload' ? 'text-blue-600' : 'text-gray-500'}`}
-                      onClick={() => handleNavigation('upload')}
+                      className="flex flex-col items-center p-2 text-yellow-500 bg-yellow-50 rounded-full"
+                      onClick={() => handleNavigation('contests')}
                     >
-                      <Camera className="h-5 w-5 mb-1" />
-                      <span className="text-xs">Subir</span>
+                      <MapPin className="h-6 w-6" />
                     </Button>
                     <Button
                       variant="ghost"
