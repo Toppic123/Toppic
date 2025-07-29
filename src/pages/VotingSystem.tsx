@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Users, Trophy, Shield, Zap, BarChart3, Vote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -212,29 +211,6 @@ const VotingSystem = () => {
                 </p>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="bg-[#f46464] py-16">
-        <div className="container max-w-4xl mx-auto px-4 text-center">
-          <h3 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight">
-            ¿LISTO PARA PARTICIPAR?
-          </h3>
-          <p className="text-xl text-white/90 mb-8">
-            Únete a nuestra comunidad y ayuda a decidir qué fotografías merecen ser reconocidas
-          </p>
-          <div className="flex justify-center">
-            <Button
-              asChild
-              size="lg"
-              className="bg-white text-[#f46464] hover:bg-gray-50 border border-white"
-            >
-              <Link to="/contests">
-                Comenzar a Votar
-              </Link>
-            </Button>
           </div>
         </div>
       </div>

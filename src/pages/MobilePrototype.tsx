@@ -146,14 +146,23 @@ const MobilePrototype = () => {
                       <Search className="h-5 w-5 mb-1" />
                       <span className="text-xs">Concursos</span>
                     </Button>
-                    {/* Center location button */}
+                    {/* Center location button - larger and redirects to upload */}
+                    <Button
+                      variant="ghost"
+                      size="lg"
+                      className="flex items-center justify-center p-3 text-yellow-600 bg-yellow-100 rounded-full border-2 border-yellow-200 shadow-lg hover:bg-yellow-200 hover:scale-105 transition-all duration-200"
+                      onClick={() => handleNavigation('upload')}
+                    >
+                      <MapPin className="h-8 w-8" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="flex flex-col items-center p-2 text-yellow-500 bg-yellow-50 rounded-full"
-                      onClick={() => handleNavigation('contests')}
+                      className={`flex flex-col items-center p-2 ${currentScreen === 'upload' ? 'text-blue-600' : 'text-gray-500'}`}
+                      onClick={() => handleNavigation('upload')}
                     >
-                      <MapPin className="h-6 w-6" />
+                      <Camera className="h-5 w-5 mb-1" />
+                      <span className="text-xs">Subir</span>
                     </Button>
                     <Button
                       variant="ghost"

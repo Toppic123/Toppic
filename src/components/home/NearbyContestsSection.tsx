@@ -88,23 +88,8 @@ const NearbyContestsSection = () => {
               {/* Animated background overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
               
-               <div className="relative z-10 flex flex-col items-center justify-center text-center">
-                <MapPin className="h-16 w-16 mb-4" />
-                <div className="text-center leading-tight">
-                  <div className="hidden sm:block">EXPLORAR<br/>CONCURSOS<br/>CERCANOS</div>
-                  <div className="sm:hidden">CONCURSOS<br/>CERCANOS</div>
-                </div>
-                <motion.div
-                  className="mt-4"
-                  animate={{ x: [0, 8, 0] }}
-                  transition={{ 
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  →
-                </motion.div>
+               <div className="relative z-10 flex items-center justify-center">
+                <MapPin className="h-24 w-24" />
               </div>
             </Button>
           </motion.div>
