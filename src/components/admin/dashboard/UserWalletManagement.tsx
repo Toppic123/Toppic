@@ -85,7 +85,7 @@ export const UserWalletManagement: React.FC = () => {
       const formattedUsers: UserWalletData[] = profiles?.map(profile => ({
         user_id: profile.id,
         email: profile.email || '',
-        name: profile.username || profile.email || '', // Use username field instead of name
+        name: profile.username || profile.email || 'Usuario sin nombre', // Use username field instead of name
         points: Array.isArray(profile.user_points) ? profile.user_points[0]?.points || 0 : 0,
         balance: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.balance || 0 : 0,
         total_earned: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.total_earned || 0 : 0,
