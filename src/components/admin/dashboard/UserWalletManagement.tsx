@@ -78,7 +78,8 @@ export const UserWalletManagement: React.FC = () => {
           username,
           user_points (points),
           user_wallets (balance, total_earned, total_withdrawn)
-        `);
+        `)
+        .not('email', 'is', null); // Only get profiles with emails
 
       if (profilesError) throw profilesError;
 

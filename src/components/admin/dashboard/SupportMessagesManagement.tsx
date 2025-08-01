@@ -163,17 +163,8 @@ const SupportMessagesManagement = () => {
         
       if (error) throw error;
       
-      // Update local state immediately with resolved status
-      const updateMessages = (messages: SupportMessage[]) => 
-        messages.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m);
-      
-      setSupportMessages(updateMessages);
-      setFilteredMessages(updateMessages);
-      
-      // Check if there are still pending messages after this update
-      const updatedMessages = supportMessages.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m);
-      const stillHasPending = updatedMessages.some(m => m.status === 'pending');
-      setHasNewMessages(stillHasPending);
+      // Reload messages from database to ensure consistency
+      window.location.reload();
       
       toast({
         title: "Mensaje marcado como resuelto",
