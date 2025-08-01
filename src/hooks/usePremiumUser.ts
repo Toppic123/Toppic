@@ -8,15 +8,15 @@ export const usePremiumUser = () => {
   const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
-    // A user is considered premium if they have 50 or more points
-    // This threshold can be adjusted based on business requirements
-    const premiumThreshold = 50;
+    // A user is considered premium if they have enough points to add one more photo (5 points)
+    // This means users can see the premium section when they have at least 5 points
+    const premiumThreshold = 5;
     setIsPremium(points >= premiumThreshold);
   }, [points]);
 
   return {
     isPremium,
     points,
-    premiumThreshold: 50
+    premiumThreshold: 5
   };
 };
