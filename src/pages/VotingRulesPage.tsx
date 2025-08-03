@@ -200,7 +200,7 @@ const VotingRulesPage = () => {
                   🥉
                 </div>
                 <h4 className="text-2xl font-bold text-orange-700 mb-3">3er Lugar</h4>
-                <p className="text-4xl font-black text-orange-600 mb-2">25</p>
+                <p className="text-4xl font-black text-orange-600 mb-2">15</p>
                 <p className="text-orange-600">Puntos TOPPIC</p>
               </div>
             </div>

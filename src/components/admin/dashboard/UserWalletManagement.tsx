@@ -69,29 +69,39 @@ export const UserWalletManagement: React.FC = () => {
     try {
       setLoading(true);
       
-      // Get profiles with user points and wallet data, using username field
+      // Get profiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select(`
-          id,
-          email,
-          username,
-          user_points (points),
-          user_wallets (balance, total_earned, total_withdrawn)
-        `)
-        .not('email', 'is', null); // Only get profiles with emails
+        .select('id, email, username')
+        .not('email', 'is', null);
 
       if (profilesError) throw profilesError;
 
-      const formattedUsers: UserWalletData[] = profiles?.map(profile => ({
-        user_id: profile.id,
-        email: profile.email || '',
-        name: profile.username || profile.email || 'Usuario sin nombre', // Use username field instead of name
-        points: Array.isArray(profile.user_points) ? profile.user_points[0]?.points || 0 : 0,
-        balance: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.balance || 0 : 0,
-        total_earned: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.total_earned || 0 : 0,
-        total_withdrawn: Array.isArray(profile.user_wallets) ? profile.user_wallets[0]?.total_withdrawn || 0 : 0,
-      })) || [];
+      // Get user points separately
+      const { data: userPoints } = await supabase
+        .from('user_points')
+        .select('user_id, points');
+
+      // Get user wallets separately  
+      const { data: userWallets } = await supabase
+        .from('user_wallets')
+        .select('user_id, balance, total_earned, total_withdrawn');
+
+      // Combine the data
+      const formattedUsers: UserWalletData[] = profiles?.map(profile => {
+        const userPoint = userPoints?.find(up => up.user_id === profile.id);
+        const userWallet = userWallets?.find(uw => uw.user_id === profile.id);
+        
+        return {
+          user_id: profile.id,
+          email: profile.email || '',
+          name: profile.username || profile.email || 'Usuario sin nombre',
+          points: userPoint?.points || 0,
+          balance: userWallet?.balance || 0,
+          total_earned: userWallet?.total_earned || 0,
+          total_withdrawn: userWallet?.total_withdrawn || 0,
+        };
+      }) || [];
 
       setUsers(formattedUsers);
       setFilteredUsers(formattedUsers);

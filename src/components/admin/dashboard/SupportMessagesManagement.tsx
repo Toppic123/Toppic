@@ -163,8 +163,20 @@ const SupportMessagesManagement = () => {
         
       if (error) throw error;
       
-      // Reload messages from database to ensure consistency
-      window.location.reload();
+      // Update local state immediately
+      setSupportMessages(prev => 
+        prev.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m)
+      );
+      setFilteredMessages(prev => 
+        prev.map(m => m.id === messageId ? { ...m, status: "resolved" as const } : m)
+      );
+      
+      // Update notification badge
+      const updatedMessages = supportMessages.map(m => 
+        m.id === messageId ? { ...m, status: "resolved" as const } : m
+      );
+      const stillHasPending = updatedMessages.some(m => m.status === 'pending');
+      setHasNewMessages(stillHasPending);
       
       toast({
         title: "Mensaje marcado como resuelto",
