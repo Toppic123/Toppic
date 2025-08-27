@@ -1,5 +1,5 @@
 
-import { ArrowLeft, Users, Shield, Zap, BarChart3, Brain, Eye, CheckCircle, Vote, Award } from "lucide-react";
+import { ArrowLeft, Shield, Zap, BarChart3, Brain, Eye, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "react-router-dom";
