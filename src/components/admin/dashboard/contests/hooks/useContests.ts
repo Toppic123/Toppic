@@ -63,6 +63,7 @@ export const useContests = () => {
           coordinates: { lat: 40.4168, lng: -3.7038 },
           created_at: contest.created_at,
           minimum_distance_km: contest.minimum_distance_km || 0,
+          plan: (contest.plan as 'basic' | 'professional' | 'premium') || 'basic',
         }));
         
         setContests(formattedContests);

@@ -188,8 +188,8 @@ const VotingRules = () => {
                   🥇
                 </div>
                 <h4 className="text-2xl font-bold text-yellow-700 mb-3">1er Lugar</h4>
-                <p className="text-4xl font-black text-yellow-600 mb-2">100</p>
-                <p className="text-yellow-600">Puntos TOPPIC</p>
+                <p className="text-4xl font-black text-yellow-600 mb-2">50</p>
+                <p className="text-yellow-600">Puntos TOPPIC (además del premio)</p>
               </div>
               
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 text-center border-2 border-gray-200">
@@ -197,7 +197,7 @@ const VotingRules = () => {
                   🥈
                 </div>
                 <h4 className="text-2xl font-bold text-gray-700 mb-3">2do Lugar</h4>
-                <p className="text-4xl font-black text-gray-600 mb-2">50</p>
+                <p className="text-4xl font-black text-gray-600 mb-2">25</p>
                 <p className="text-gray-600">Puntos TOPPIC</p>
               </div>
               
@@ -206,7 +206,7 @@ const VotingRules = () => {
                   🥉
                 </div>
                 <h4 className="text-2xl font-bold text-orange-700 mb-3">3er Lugar</h4>
-                <p className="text-4xl font-black text-orange-600 mb-2">25</p>
+                <p className="text-4xl font-black text-orange-600 mb-2">15</p>
                 <p className="text-orange-600">Puntos TOPPIC</p>
               </div>
             </div>
