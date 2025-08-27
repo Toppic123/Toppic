@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -868,20 +868,20 @@ export type Database = {
     Functions: {
       add_points_to_user: {
         Args: {
-          p_user_id: string
           p_amount: number
-          p_transaction_type: string
           p_description?: string
           p_order_id?: string
+          p_transaction_type: string
+          p_user_id: string
         }
         Returns: boolean
       }
       add_prize_money: {
         Args: {
-          p_user_id: string
           p_amount: number
           p_contest_id: string
           p_description?: string
+          p_user_id: string
         }
         Returns: boolean
       }
@@ -890,12 +890,12 @@ export type Database = {
         Returns: undefined
       }
       get_user_photo_slots: {
-        Args: { p_user_id: string; p_contest_id: string }
+        Args: { p_contest_id: string; p_user_id: string }
         Returns: {
+          extra_slots_purchased: number
+          remaining_slots: number
           total_slots: number
           used_slots: number
-          remaining_slots: number
-          extra_slots_purchased: number
         }[]
       }
       get_user_points: {
@@ -903,11 +903,11 @@ export type Database = {
         Returns: number
       }
       get_user_vote_status: {
-        Args: { p_user_id: string; p_contest_id: string }
+        Args: { p_contest_id: string; p_user_id: string }
         Returns: {
-          votes_remaining: number
-          daily_votes_remaining: number
           can_vote: boolean
+          daily_votes_remaining: number
+          votes_remaining: number
         }[]
       }
       increment_photo_votes: {
@@ -915,27 +915,27 @@ export type Database = {
         Returns: undefined
       }
       increment_user_votes: {
-        Args: { p_user_id: string; p_contest_id: string }
+        Args: { p_contest_id: string; p_user_id: string }
         Returns: {
-          votes_remaining: number
           daily_votes_remaining: number
+          votes_remaining: number
         }[]
       }
       process_withdrawal: {
-        Args: { p_request_id: string; p_amount: number; p_user_id: string }
+        Args: { p_amount: number; p_request_id: string; p_user_id: string }
         Returns: boolean
       }
       purchase_extra_photo_slot: {
-        Args: { p_user_id: string; p_contest_id: string }
+        Args: { p_contest_id: string; p_user_id: string }
         Returns: boolean
       }
       spend_user_points: {
         Args: {
-          p_user_id: string
           p_amount: number
-          p_transaction_type: string
-          p_description?: string
           p_contest_id?: string
+          p_description?: string
+          p_transaction_type: string
+          p_user_id: string
         }
         Returns: boolean
       }
