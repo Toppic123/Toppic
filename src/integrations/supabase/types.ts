@@ -921,6 +921,10 @@ export type Database = {
           votes_remaining: number
         }[]
       }
+      is_admin_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       process_withdrawal: {
         Args: { p_amount: number; p_request_id: string; p_user_id: string }
         Returns: boolean
