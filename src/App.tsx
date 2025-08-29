@@ -24,6 +24,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ContestRules from "./pages/ContestRules";
 import GalleryPage from "./pages/GalleryPage";
 import MobilePrototype from "./pages/MobilePrototype";
+import ResetPassword from "./pages/ResetPassword";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 import RoleBasedRoute from "./components/RoleBasedRoute";
@@ -50,6 +51,7 @@ function App() {
                   <Route path="profile/:profileSlug" element={<Profile />} />
                   <Route path="login" element={<Login />} />
                   <Route path="register" element={<Register />} />
+                  <Route path="reset-password" element={<ResetPassword />} />
                   <Route path="support" element={<Support />} />
                   <Route path="terms" element={<Terms />} />
                   <Route path="privacy" element={<Privacy />} />

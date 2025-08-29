@@ -270,26 +270,27 @@ const UserManagement = () => {
         throw new Error("Ya existe un usuario con este email");
       }
       
-      // Crear usuario en Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Crear usuario en Supabase Auth con configuración administrativa
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: userFormData.email,
         password: userFormData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            name: userFormData.name,
-            role: userFormData.role
-          }
+        email_confirm: true, // Auto-confirmar email para usuarios creados por admin
+        user_metadata: {
+          name: userFormData.name,
+          role: userFormData.role
         }
       });
 
-      if (authError) throw authError;
-
-      if (!authData.user) {
-        throw new Error("No se pudo crear el usuario");
+      if (authError) {
+        console.error("Error de autenticación:", authError);
+        throw new Error(authError.message);
       }
 
-      // Crear o actualizar perfil
+      if (!authData.user) {
+        throw new Error("No se pudo crear el usuario en el sistema de autenticación");
+      }
+
+      // Crear perfil del usuario
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
@@ -298,7 +299,10 @@ const UserManagement = () => {
           email: userFormData.email,
         });
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error("Error al crear perfil:", profileError);
+        throw new Error("No se pudo crear el perfil del usuario");
+      }
 
       // Crear el usuario localmente para actualizar la UI inmediatamente
       const newUser: User = {

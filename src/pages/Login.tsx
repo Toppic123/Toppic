@@ -251,14 +251,12 @@ const Login = () => {
                   )}
                 />
                 
-                <Button 
-                  variant="link" 
-                  className="text-sm text-primary p-0 h-auto"
-                  type="button"
-                  onClick={() => setIsResetDialogOpen(true)}
+                <Link 
+                  to="/reset-password"
+                  className="text-sm text-primary p-0 h-auto hover:underline"
                 >
-                  Forgot password?
-                </Button>
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
               
               <Button type="submit" className="w-full" disabled={isSubmitting}>
