@@ -50,22 +50,43 @@ const UserManagement = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
-  // Cargar usuarios
+  // Cargar usuarios reales desde Supabase
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
       try {
-        // Para una aplicación real, esto debería hacerse a través de una API o función de Supabase
-        // Aquí simulamos la carga de usuarios
-        const mockUsers: User[] = [
-          { id: "1", name: "Ana García", email: "ana@example.com", role: "participant", photos: 12 },
-          { id: "2", name: "Juan López", email: "juan@example.com", role: "participant", photos: 8 },
-          { id: "3", name: "María Torres", email: "maria@example.com", role: "organizer", photos: 0 },
-          { id: "4", name: "Carlos Ruiz", email: "carlos@example.com", role: "participant", photos: 5 },
-        ];
+        // Obtener perfiles de usuario
+        const { data: profiles, error: profilesError } = await supabase
+          .from('profiles')
+          .select('*');
+
+        if (profilesError) throw profilesError;
+
+        // Obtener count de fotos por usuario
+        const { data: photoCounts, error: photoError } = await supabase
+          .from('contest_photos')
+          .select('user_id')
+          .eq('status', 'approved');
+
+        if (photoError) throw photoError;
+
+        // Contar fotos por usuario
+        const photoCountMap = photoCounts?.reduce((acc, photo) => {
+          acc[photo.user_id] = (acc[photo.user_id] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>) || {};
+
+        // Mapear perfiles a usuarios con role por defecto
+        const usersData: User[] = profiles?.map(profile => ({
+          id: profile.id,
+          name: profile.name || profile.email || 'Sin nombre',
+          email: profile.email || '',
+          role: profile.email === 'pisillo@gmail.com' ? 'admin' as const : 'participant' as const,
+          photos: photoCountMap[profile.id] || 0
+        })) || [];
         
-        setUsers(mockUsers);
-        setFilteredUsers(mockUsers);
+        setUsers(usersData);
+        setFilteredUsers(usersData);
       } catch (error) {
         console.error("Error al cargar usuarios:", error);
         toast({
@@ -127,16 +148,23 @@ const UserManagement = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  // Confirm delete user
+  // Confirm delete user - Eliminar usuario real
   const confirmDeleteUser = async () => {
     if (!userToDelete) return;
     
     try {
       setIsSubmitting(true);
       
-      // Aquí iría la lógica para eliminar el usuario de la base de datos
-      // Simulamos un tiempo de espera
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Eliminar perfil del usuario
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userToDelete.id);
+
+      if (profileError) throw profileError;
+
+      // Nota: Para eliminar completamente el usuario de auth.users se requeriría
+      // una función admin o usar la API de Supabase Management
       
       // Actualizar la lista de usuarios localmente
       setUsers(prevUsers => prevUsers.filter(user => user.id !== userToDelete.id));
@@ -161,19 +189,36 @@ const UserManagement = () => {
     }
   };
 
-  // Handle save user changes
+  // Handle save user changes - Actualizar usuario real
   const handleSaveUserChanges = async () => {
     try {
       setIsSubmitting(true);
       
-      // Aquí iría la lógica para actualizar el usuario en la base de datos
-      // Simulamos un tiempo de espera
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Validar datos
+      if (!userFormData.name.trim() || !userFormData.email.trim()) {
+        throw new Error("El nombre y email son obligatorios");
+      }
+
+      // Buscar el usuario actual para obtener su ID
+      const currentUser = users.find(u => u.email === userFormData.email);
+      if (!currentUser) {
+        throw new Error("Usuario no encontrado");
+      }
+      
+      // Actualizar el perfil en Supabase
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          name: userFormData.name,
+        })
+        .eq('id', currentUser.id);
+
+      if (profileError) throw profileError;
       
       // Actualizar localmente
       setUsers(prevUsers => 
         prevUsers.map(user => 
-          user.email === userFormData.email 
+          user.id === currentUser.id 
             ? { ...user, name: userFormData.name, role: userFormData.role } 
             : user
         )
@@ -192,7 +237,7 @@ const UserManagement = () => {
       console.error("Error al guardar cambios:", error);
       toast({
         title: "Error",
-        description: "No se pudieron guardar los cambios.",
+        description: error instanceof Error ? error.message : "No se pudieron guardar los cambios.",
         variant: "destructive"
       });
     } finally {
@@ -200,7 +245,7 @@ const UserManagement = () => {
     }
   };
 
-  // Handle create new user
+  // Handle create new user - Crear usuario real en Supabase
   const handleCreateUser = async () => {
     try {
       setIsSubmitting(true);
@@ -213,18 +258,56 @@ const UserManagement = () => {
       if (userFormData.password.length < 6) {
         throw new Error("La contraseña debe tener al menos 6 caracteres");
       }
+
+      // Verificar que no existe ya un usuario con este email
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('email', userFormData.email)
+        .single();
+
+      if (existingProfile) {
+        throw new Error("Ya existe un usuario con este email");
+      }
       
-      // Simular creación de usuario
+      // Crear usuario en Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: userFormData.email,
+        password: userFormData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            name: userFormData.name,
+            role: userFormData.role
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      if (!authData.user) {
+        throw new Error("No se pudo crear el usuario");
+      }
+
+      // Crear o actualizar perfil
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: authData.user.id,
+          name: userFormData.name,
+          email: userFormData.email,
+        });
+
+      if (profileError) throw profileError;
+
+      // Crear el usuario localmente para actualizar la UI inmediatamente
       const newUser: User = {
-        id: `${users.length + 1}`,
+        id: authData.user.id,
         name: userFormData.name,
         email: userFormData.email,
         role: userFormData.role,
         photos: 0
       };
-      
-      // Aquí iría la llamada a la API o Supabase para crear el usuario
-      // En una aplicación real, esto crearía el usuario en la base de datos
       
       // Actualizar la lista de usuarios localmente
       setUsers(prevUsers => [...prevUsers, newUser]);
