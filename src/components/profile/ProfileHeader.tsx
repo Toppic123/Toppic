@@ -53,7 +53,6 @@ const ProfileHeader = ({
           
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-2xl font-bold">{displayName}</h1>
-            <p className="text-muted-foreground mb-2">@{displayHandle}</p>
             
             <div className="flex items-center justify-center md:justify-start text-sm text-muted-foreground mb-4">
               <MapPin className="h-4 w-4 mr-1" />
