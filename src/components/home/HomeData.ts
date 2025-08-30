@@ -4,20 +4,24 @@ import { WinningPhoto } from "@/hooks/use-winning-photos";
 // Hero section carousel images - Updated with high-end gourmet dish
 export const heroImages = [
   {
-    url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Dos personas en un evento"
-  },
-  {
-    url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3", 
-    category: "Persona tomando fotos con móvil en concierto"
+    url: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Festival de música"
   },
   {
     url: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Torre Eiffel París"
+    category: "Arquitectura urbana"
   },
   {
-    url: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
-    category: "Plato gourmet de alta cocina"
+    url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Captura móvil perfecta"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&auto=format&fit=crop&q=60",
+    category: "Momento especial"
+  },
+  {
+    url: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    category: "Evento con amigos"
   }
 ];
 

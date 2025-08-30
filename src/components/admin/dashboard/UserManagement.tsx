@@ -264,49 +264,35 @@ const UserManagement = () => {
         .from('profiles')
         .select('email')
         .eq('email', userFormData.email)
-        .single();
+        .maybeSingle();
 
       if (existingProfile) {
         throw new Error("Ya existe un usuario con este email");
       }
       
-      // Crear usuario en Supabase Auth con configuración administrativa
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-        email: userFormData.email,
-        password: userFormData.password,
-        email_confirm: true, // Auto-confirmar email para usuarios creados por admin
-        user_metadata: {
+      // Crear usuario mediante función de Edge con permisos de administrador
+      const { data, error: fnError } = await supabase.functions.invoke('admin-create-user', {
+        body: {
+          email: userFormData.email,
+          password: userFormData.password,
           name: userFormData.name,
-          role: userFormData.role
-        }
+          role: userFormData.role,
+        },
       });
 
-      if (authError) {
-        console.error("Error de autenticación:", authError);
-        throw new Error(authError.message);
+      if (fnError) {
+        console.error('Error en función admin-create-user:', fnError);
+        throw new Error(fnError.message || 'No se pudo crear el usuario.');
       }
 
-      if (!authData.user) {
-        throw new Error("No se pudo crear el usuario en el sistema de autenticación");
-      }
-
-      // Crear perfil del usuario
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: authData.user.id,
-          name: userFormData.name,
-          email: userFormData.email,
-        });
-
-      if (profileError) {
-        console.error("Error al crear perfil:", profileError);
-        throw new Error("No se pudo crear el perfil del usuario");
+      const newUserId = (data as any)?.userId;
+      if (!newUserId) {
+        throw new Error('No se pudo crear el usuario en el servidor');
       }
 
       // Crear el usuario localmente para actualizar la UI inmediatamente
       const newUser: User = {
-        id: authData.user.id,
+        id: newUserId,
         name: userFormData.name,
         email: userFormData.email,
         role: userFormData.role,
