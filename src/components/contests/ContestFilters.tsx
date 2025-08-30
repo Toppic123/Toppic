@@ -22,6 +22,8 @@ interface ContestFiltersProps {
   categories: string[];
   locations: string[];
   clearFilters: () => void;
+  showFilters?: boolean;
+  setShowFilters?: (show: boolean) => void;
 }
 
 const ContestFilters = ({
@@ -37,10 +39,11 @@ const ContestFilters = ({
   setIsPremium,
   categories,
   locations,
-  clearFilters
+  clearFilters,
+  showFilters = false,
+  setShowFilters = () => {}
 }: ContestFiltersProps) => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
   
   const activeFiltersCount = [
     activeCategory !== "all",
@@ -340,10 +343,10 @@ const ContestFilters = ({
             <div className="mt-4 pt-4 border-t border-gray-200 flex justify-center">
               <Button
                 variant="outline"
-                onClick={() => {
-                  clearFilters();
-                  setShowFilters(false);
-                }}
+              onClick={() => {
+                clearFilters();
+                setShowFilters(false);
+              }}
                 size="sm"
                 className="border-2 border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600"
               >

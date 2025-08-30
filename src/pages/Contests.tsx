@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Grid3X3, Map } from "lucide-react";
+import { Grid3X3, Map, Filter, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import ContestFilters from "@/components/contests/ContestFilters";
@@ -23,6 +23,7 @@ const Contests = () => {
   const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
   const [contestStatus, setContestStatus] = useState<"all" | "active" | "finished">("active");
   const [isPremium, setIsPremium] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   
   // Memoize transformed contests to prevent recreation on every render
   const transformedContests = useMemo(() => {
@@ -143,6 +144,34 @@ const Contests = () => {
     setIsPremium(false);
   };
 
+  const handleNearbyContests = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setActiveLocation("nearby");
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("No se pudo obtener tu ubicación. Por favor, permite el acceso a tu ubicación.");
+        }
+      );
+    } else {
+      alert("Tu navegador no soporta geolocalización.");
+    }
+  };
+
+  const activeFiltersCount = [
+    searchQuery !== "",
+    activeCategory !== "all",
+    activeLocation !== "all",
+    contestStatus !== "active",
+    isPremium
+  ].filter(Boolean).length;
+
   if (isLoading) {
     return (
       <div className="pt-24 pb-16 min-h-screen">
@@ -160,10 +189,45 @@ const Contests = () => {
       {/* Contest Hero Section */}
       <ContestHeroSection />
       
-      <div className="pt-16 pb-16">
-        <div className="container max-w-7xl mx-auto px-4">
-          {/* Search and filters */}
-          <div className="mb-8">
+      {/* Prominent Action Buttons - Sticky Header */}
+      <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200">
+        <div className="container max-w-7xl mx-auto px-4 py-4">
+          <div className="flex flex-wrap gap-3 items-center justify-center">
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+            >
+              <Filter className="mr-2 h-5 w-5" />
+              FILTROS DE BÚSQUEDA
+              {activeFiltersCount > 0 && (
+                <Badge className="ml-2 bg-white text-blue-600 border-0 shadow-md">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Button>
+            
+            <Button
+              onClick={handleNearbyContests}
+              size="lg"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+            >
+              <MapPin className="mr-2 h-5 w-5" />
+              CONCURSOS CERCANOS
+            </Button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Filters Section - Expandable */}
+      {showFilters && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="bg-gray-50 border-b border-gray-200 sticky top-32 z-30"
+        >
+          <div className="container max-w-7xl mx-auto px-4 py-6">
             <ContestFilters
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
@@ -178,9 +242,15 @@ const Contests = () => {
               categories={categories}
               locations={locations}
               clearFilters={clearFilters}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
             />
           </div>
-          
+        </motion.div>
+      )}
+      
+      <div className="pt-8 pb-16">
+        <div className="container max-w-7xl mx-auto px-4">
           {/* Modern View mode tabs */}
           <Tabs defaultValue="grid" value={viewMode} onValueChange={setViewMode} className="mb-8">
             <div className="flex items-center justify-between mb-6">
@@ -303,6 +373,24 @@ const Contests = () => {
           </Tabs>
         </div>
       </div>
+      
+      {/* Floating "Nearby Contests" Button for List View */}
+      {viewMode === 'grid' && (
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="fixed bottom-6 right-6 z-50"
+        >
+          <Button
+            onClick={handleNearbyContests}
+            size="lg"
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 font-semibold flex items-center gap-2"
+          >
+            <MapPin className="h-5 w-5" />
+            CERCANOS
+          </Button>
+        </motion.div>
+      )}
     </div>
   );
 };
