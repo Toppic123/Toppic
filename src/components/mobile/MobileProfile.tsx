@@ -11,7 +11,7 @@ interface MobileProfileProps {
 
 const userStats = {
   name: "María García",
-  username: "@maria_photos",
+  username: "maria_photos",
   contestsWon: 3,
   contestsParticipated: 12,
   totalPhotos: 28,

@@ -29,7 +29,7 @@ const PhotoRequirements = ({ compact = false }: PhotoRequirementsProps) => {
           </div>
           <div className="flex items-start gap-2">
             <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-            <p>Máximo 1 foto por participante.</p>
+            <p>Usuarios gratuitos: 1 foto por concurso. Usuarios PREMIUM: hasta 3 fotos por concurso.</p>
           </div>
           <div className="flex items-start gap-2">
             <FileWarning className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />

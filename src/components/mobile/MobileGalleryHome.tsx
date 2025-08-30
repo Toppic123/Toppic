@@ -51,14 +51,6 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
             <Trophy className="h-6 w-6 text-yellow-500 mr-2" />
             <h1 className="text-xl font-semibold text-gray-900">MEJORES FOTOS</h1>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onNavigate('contests')}
-            className="text-gray-600 hover:bg-gray-100 p-2"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
         </div>
         <p className="text-sm text-gray-600 mt-1">Las mejores fotografías compartidas</p>
       </div>
@@ -89,15 +81,6 @@ const MobileGalleryHome = ({ onNavigate }: MobileGalleryHomeProps) => {
                     className="w-full h-48 object-cover cursor-pointer"
                     onClick={() => handlePhotoClick(winningPhoto)}
                   />
-                  <div className="absolute top-2 left-2">
-                    <Badge className="bg-yellow-500 text-white text-xs flex items-center gap-1">
-                      <Star className="h-3 w-3 fill-current" />
-                      Ganadora
-                    </Badge>
-                  </div>
-                  <div className="absolute top-2 right-2">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  </div>
                 </div>
                 
                 <div className="p-3">

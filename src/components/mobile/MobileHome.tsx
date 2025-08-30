@@ -108,12 +108,7 @@ const MobileHome = ({ onNavigate }: MobileHomeProps) => {
                   <div className="absolute bottom-2 left-2 right-2">
                     <h3 className="text-white text-sm font-medium truncate">{cleanContestTitle(photo.title)}</h3>
                     <p className="text-white/80 text-xs truncate">{photo.photographer || photo.photographer_name}</p>
-                    <Badge variant="secondary" className="text-xs mt-1">
-                      Ganadora
-                    </Badge>
-                  </div>
-                  <div className="absolute top-2 right-2">
-                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    
                   </div>
                 </div>
               ))}

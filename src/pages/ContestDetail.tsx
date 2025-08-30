@@ -391,7 +391,7 @@ const ContestDetail = () => {
               <h3 className="font-semibold text-lg mb-4">Reglas básicas</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>• Solo fotos originales tomadas por el participante</li>
-                <li>• Máximo 3 fotos por participante</li>
+                <li>• Usuarios gratuitos: 1 foto por concurso. Usuarios PREMIUM: hasta 3 fotos por concurso</li>
                 <li>• Fotos deben ser tomadas en la ubicación especificada</li>
                 <li>• No se permiten ediciones excesivas</li>
                 <li>• Respeta las normas de la comunidad</li>

@@ -44,7 +44,7 @@ const ContestRules = () => {
                   <li>Resolución mínima: 1920x1080 píxeles</li>
                   <li>No se permiten marcas de agua visibles</li>
                   <li>Las fotos deben tomarse dentro del área y período del concurso</li>
-                  <li>Máximo 1 foto por participante</li>
+                  <li>Usuarios gratuitos: 1 foto por concurso. Usuarios PREMIUM: hasta 3 fotos por concurso</li>
                 </ul>
               </div>
 

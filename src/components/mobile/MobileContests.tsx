@@ -60,13 +60,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
       <div className="bg-white px-4 py-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">Concursos</h1>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-black hover:bg-gray-100 border-gray-300"
-          >
-            <Share2 size={16} />
-          </Button>
         </div>
         <p className="text-sm text-gray-600 mt-1">
           Descubre y participa en concursos de fotografía
@@ -102,14 +95,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     <h3 className="font-semibold text-lg text-gray-900 flex-1 pr-2">
                       {cleanContestTitle(contest.title)}
                     </h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => handleShareContest(contest, e)}
-                      className="text-black hover:bg-gray-100 p-1"
-                    >
-                      <Share2 size={16} />
-                    </Button>
                   </div>
                   
                   <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
@@ -121,11 +106,6 @@ const MobileContests = ({ onNavigate }: MobileContestsProps) => {
                     {contest.description}
                   </p>
                   
-                  <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
-                    <p className="text-xs text-yellow-800">
-                      ⚠️ Límite: Solo puedes subir una foto por concurso. (los usuarios PREMIUM pueden subir hasta 3 fotos por concurso)
-                    </p>
-                  </div>
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 text-xs text-gray-500">

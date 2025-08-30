@@ -29,9 +29,18 @@ const ProfileHeader = ({
   profileImagePreview,
   onProfileImageSelect,
 }: ProfileHeaderProps) => {
-  // Display username if available, otherwise fall back to name
-  const displayName = user.username || user.name;
-  const displayHandle = user.username || user.name;
+  // Prefer person's name; title-case it. Fallback to username without '@'
+  const toTitleCase = (str: string) =>
+    str
+      ? str
+          .toLowerCase()
+          .split(' ')
+          .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ')
+      : '';
+
+  const cleanedUsername = (user.username || '').replace(/^@+/, '');
+  const displayName = user.name ? toTitleCase(user.name) : cleanedUsername;
   
   return (
     <Card className="mb-8">

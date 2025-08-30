@@ -189,12 +189,6 @@ const WinningGallerySection = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  <div className="absolute top-2 right-2">
-                    <Badge className="bg-amber-500/90 text-white border-0 flex items-center gap-1 px-3">
-                      <Trophy className="h-3 w-3" />
-                      Ganadora
-                    </Badge>
-                  </div>
                 </div>
                 
                 <div className="p-4">
