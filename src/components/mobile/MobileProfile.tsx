@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Settings, Camera, Trophy, Users, Calendar, MapPin, X } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
 
 interface MobileProfileProps {
   onNavigate: (screen: 'contests' | 'upload' | 'voting' | 'vote' | 'settings') => void;
@@ -73,6 +74,12 @@ const userContests = [
 const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
   const [activeTab, setActiveTab] = useState<'photos' | 'contests'>('photos');
   const [selectedPhoto, setSelectedPhoto] = useState<typeof userPhotos[0] | null>(null);
+  const { profile } = useProfile();
+
+  const titleCase = (s?: string | null) => s ? s.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : '';
+  const displayName = titleCase(profile?.name) || (profile?.username?.replace(/^@+/, '') || userStats.name);
+  const displayUsername = profile?.username ? profile.username.replace(/^@+/, '') : userStats.username;
+  const memberSince = profile?.created_at ? new Date(profile.created_at).toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }) : userStats.memberSince;
 
   return (
     <div className="h-full bg-gray-50 overflow-y-auto">
@@ -96,11 +103,11 @@ const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
         <div className="text-center mb-6">
           <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full mx-auto mb-3 flex items-center justify-center">
             <span className="text-2xl text-white font-bold">
-              {userStats.name.split(' ').map(n => n[0]).join('')}
+              {displayName.split(' ').map(n => n[0]).join('').toUpperCase()}
             </span>
           </div>
-          <h2 className="text-xl font-bold text-gray-900">{userStats.name}</h2>
-          <p className="text-gray-600">{userStats.username}</p>
+          <h2 className="text-xl font-bold text-gray-900">{displayName}</h2>
+          <p className="text-gray-600">{displayUsername}</p>
           <div className="flex items-center justify-center gap-1 mt-2 text-sm text-gray-500">
             <MapPin size={14} />
             <span>{userStats.location}</span>

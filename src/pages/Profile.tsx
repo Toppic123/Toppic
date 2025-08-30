@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProfileSettingsTabs from "@/components/profile/ProfileSettingsTabs";
 import PhotoGallery from "@/components/profile/PhotoGallery";
 import { supabase } from "@/integrations/supabase/client";
+import ProfileDebug from "@/components/debug/ProfileDebug";
 
 const Profile = () => {
   const { profileSlug } = useParams<{ profileSlug: string }>();
@@ -296,6 +297,11 @@ const Profile = () => {
 
       {/* Content */}
       <div className="container mx-auto px-4 py-8">
+        {isOwnProfile && (
+          <div className="mb-6">
+            <ProfileDebug />
+          </div>
+        )}
         {isOwnProfile && showSettings ? (
           <ProfileSettingsTabs onDeleteAccount={handleDeleteAccount} />
         ) : (
