@@ -40,31 +40,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       
-      // For other users, use the existing mock implementation
-      const mockRole: UserRole = Math.random() > 0.5 ? 'organizer' : 'participant';
-      setUserRole(mockRole);
-      console.log('User role set:', mockRole);
+      // Fetch user role from database
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .single();
       
-      // TODO: Replace with actual Supabase query once user_roles table is created
-      // const { data, error } = await supabase
-      //   .from('user_roles')
-      //   .select('role')
-      //   .eq('user_id', userId)
-      //   .single();
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No role found, default to participant
+          console.log('No role found, defaulting to participant');
+          setUserRole('participant');
+          
+          // Insert default role
+          const { error: insertError } = await supabase
+            .from('user_roles')
+            .insert({ user_id: userId, role: 'participant' });
+            
+          if (insertError) {
+            console.error('Error inserting default role:', insertError);
+          }
+        } else {
+          console.error('Error fetching user role:', error);
+          setUserRole('participant'); // Default fallback
+        }
+        return;
+      }
       
-      // if (error) {
-      //   console.error('Error fetching user role:', error);
-      //   return;
-      // }
-      
-      // if (data) {
-      //   setUserRole(data.role);
-      // } else {
-      //   // Default to participant if no role found
-      //   setUserRole('participant');
-      // }
+      if (data) {
+        setUserRole(data.role as UserRole);
+        console.log('User role set from database:', data.role);
+      } else {
+        // Default to participant if no role found
+        setUserRole('participant');
+        console.log('No role data, defaulting to participant');
+      }
     } catch (err) {
       console.error('Error in fetchUserRole:', err);
+      setUserRole('participant'); // Default fallback
     }
   };
 

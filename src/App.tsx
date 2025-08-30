@@ -46,9 +46,30 @@ function App() {
                   <Route path="contests" element={<Contests />} />
                   <Route path="contests/:id" element={<ContestDetail />} />
                   <Route path="contests/:id/rules" element={<ContestRules />} />
-                  <Route path="upload" element={<Upload />} />
-                  <Route path="profile" element={<Profile />} />
-                  <Route path="profile/:profileSlug" element={<Profile />} />
+                  <Route 
+                    path="upload" 
+                    element={
+                      <RoleBasedRoute allowedRoles={['participant', 'admin']}>
+                        <Upload />
+                      </RoleBasedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="profile" 
+                    element={
+                      <RoleBasedRoute allowedRoles={['participant', 'admin']}>
+                        <Profile />
+                      </RoleBasedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="profile/:profileSlug" 
+                    element={
+                      <RoleBasedRoute allowedRoles={['participant', 'admin']}>
+                        <Profile />
+                      </RoleBasedRoute>
+                    } 
+                  />
                   <Route path="login" element={<Login />} />
                   <Route path="register" element={<Register />} />
                   <Route path="reset-password" element={<ResetPassword />} />
