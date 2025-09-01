@@ -58,7 +58,7 @@ const UserProfile = ({
           
           <div className="text-center sm:text-left">
             <h2 className="text-2xl font-bold">{fullName}</h2>
-            {(!fullName || (username || '').replace(/^@+/, '').toLowerCase() !== fullName.toLowerCase()) && (
+            {!fullName && (username || '').replace(/^@+/, '') && (
               <p className="text-muted-foreground">{(username || '').replace(/^@+/, '')}</p>
             )}
             

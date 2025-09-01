@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
+const SUPABASE_URL = "https://sslwwbcvpujyfnpjypwk.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHd3YmN2cHVqeWZucGp5cHdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4OTY1MTAsImV4cCI6MjA2MDQ3MjUxMH0.4lGvPZsJ0GrkUffDwjybfk_K9BcPSdYtaAsclWjD_7Q";
 
 const Support = () => {
   const [firstName, setFirstName] = useState("");
@@ -46,12 +48,12 @@ const Support = () => {
       
       // Llamar a la función edge para enviar la notificación por email
       const notificationResponse = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-support-notification`,
+        `${SUPABASE_URL}/functions/v1/send-support-notification`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
           },
           body: JSON.stringify({
             name: `${firstName} ${lastName}`,
