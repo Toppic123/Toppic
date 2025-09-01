@@ -58,7 +58,9 @@ const UserProfile = ({
           
           <div className="text-center sm:text-left">
             <h2 className="text-2xl font-bold">{fullName}</h2>
-            <p className="text-muted-foreground">{username}</p>
+            {(!fullName || (username || '').replace(/^@+/, '').toLowerCase() !== fullName.toLowerCase()) && (
+              <p className="text-muted-foreground">{(username || '').replace(/^@+/, '')}</p>
+            )}
             
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-4">
               <div className="flex items-center">

@@ -107,14 +107,16 @@ const MobileProfile = ({ onNavigate }: MobileProfileProps) => {
             </span>
           </div>
           <h2 className="text-xl font-bold text-gray-900">{displayName}</h2>
-          <p className="text-gray-600">{displayUsername}</p>
+          {!profile?.name && (
+            <p className="text-gray-600">{displayUsername}</p>
+          )}
           <div className="flex items-center justify-center gap-1 mt-2 text-sm text-gray-500">
             <MapPin size={14} />
             <span>{userStats.location}</span>
           </div>
           <div className="flex items-center justify-center gap-1 mt-1 text-sm text-gray-500">
             <Calendar size={14} />
-            <span>Miembro desde {userStats.memberSince}</span>
+            <span>Miembro desde {memberSince}</span>
           </div>
         </div>
 
