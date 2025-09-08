@@ -10,8 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { MessageSquare, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
-const SUPABASE_URL = "https://sslwwbcvpujyfnpjypwk.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzbHd3YmN2cHVqeWZucGp5cHdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4OTY1MTAsImV4cCI6MjA2MDQ3MjUxMH0.4lGvPZsJ0GrkUffDwjybfk_K9BcPSdYtaAsclWjD_7Q";
 
 const Support = () => {
   const [firstName, setFirstName] = useState("");
@@ -46,26 +44,21 @@ const Support = () => {
         
       if (error) throw error;
       
-      // Llamar a la función edge para enviar la notificación por email
-      const notificationResponse = await fetch(
-        `${SUPABASE_URL}/functions/v1/send-support-notification`,
+      // Llamar a la función edge para enviar la notificación por email usando el cliente Supabase
+      const { error: notificationError } = await supabase.functions.invoke(
+        'send-support-notification',
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify({
+          body: {
             name: `${firstName} ${lastName}`,
             email,
             subject: message.substring(0, 50) + (message.length > 50 ? "..." : ""),
             message
-          })
+          }
         }
       );
       
-      if (!notificationResponse.ok) {
-        console.warn("No se pudo enviar la notificación al administrador, pero el mensaje se guardó correctamente.");
+      if (notificationError) {
+        console.warn("No se pudo enviar la notificación al administrador, pero el mensaje se guardó correctamente.", notificationError);
       }
       
       toast({
