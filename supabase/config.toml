@@ -11,7 +11,7 @@ max_rows = 1000
 verify_jwt = false
 
 [functions.increment-votes]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-storage-notifications]
 verify_jwt = false

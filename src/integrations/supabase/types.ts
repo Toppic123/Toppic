@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_access_log: {
+        Row: {
+          admin_user_id: string
+          id: string
+          ip_address: unknown | null
+          operation: string
+          record_id: string | null
+          table_name: string
+          timestamp: string
+          user_agent: string | null
+        }
+        Insert: {
+          admin_user_id: string
+          id?: string
+          ip_address?: unknown | null
+          operation: string
+          record_id?: string | null
+          table_name: string
+          timestamp?: string
+          user_agent?: string | null
+        }
+        Update: {
+          admin_user_id?: string
+          id?: string
+          ip_address?: unknown | null
+          operation?: string
+          record_id?: string | null
+          table_name?: string
+          timestamp?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       ai_photo_analysis: {
         Row: {
           ai_score: number
@@ -976,6 +1009,15 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      log_security_event: {
+        Args: {
+          affected_record_id?: string
+          affected_table?: string
+          event_description: string
+          event_type: string
+        }
+        Returns: undefined
+      }
       process_withdrawal: {
         Args: { p_amount: number; p_request_id: string; p_user_id: string }
         Returns: boolean
@@ -992,6 +1034,10 @@ export type Database = {
           p_transaction_type: string
           p_user_id: string
         }
+        Returns: boolean
+      }
+      validate_user_vote_limits: {
+        Args: { p_contest_id: string; p_user_id: string }
         Returns: boolean
       }
     }
